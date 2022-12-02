@@ -1,0 +1,1032 @@
+---
+title: "TCF Analysis of Student Debt and Race in California"
+author: "Peter Granville"
+date: 'October 2022'
+output: 
+pdf_document: 
+theme: cerulean
+---
+
+This document features an analysis of how the burden of student debt in California varies by race. It is a work in progress, and more analyses will be added. This HTML file is produced by the same code that runs the analysis, meaning updates to the code will automatically update this file. 
+
+```{r setup, include=FALSE}
+library(dplyr)
+library(knitr)
+library(scales)
+library(stringr)
+library(ggplot2)
+library(data.table)
+library(reshape2)
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+
+######################################################
+### We start with some basic setup. First we make  ###
+### a dataframe that relates two-digit state codes ###
+### to state names. This will be useful while      ###
+### working with PUMS data.                        ###
+######################################################
+
+statenames <- data.frame("ST"=c(
+  01,     # .Alabama/AL
+  02,     # .Alaska/AK
+  04,     # .Arizona/AZ
+  05,     # .Arkansas/AR
+  06,     # .California/CA
+  08,     # .Colorado/CO
+  09,     # .Connecticut/CT
+  10,     # .Delaware/DE
+  11,     # .District of Columbia/DC
+  12,     # .Florida/FL
+  13,     # .Georgia/GA
+  15,     # .Hawaii/HI
+  16,     # .Idaho/ID
+  17,     # .Illinois/IL
+  18,     # .Indiana/IN
+  19,     # .Iowa/IA
+  20,     # .Kansas/KS
+  21,     # .Kentucky/KY
+  22,     # .Louisiana/LA
+  23,     # .Maine/ME
+  24,     # .Maryland/MD
+  25,     # .Massachusetts/MA
+  26,     # .Michigan/MI
+  27,     # .Minnesota/MN
+  28,     # .Mississippi/MS
+  29,     # .Missouri/MO
+  30,     # .Montana/MT
+  31,     # .Nebraska/NE
+  32,     # .Nevada/NV
+  33,     # .New Hampshire/NH
+  34,     # .New Jersey/NJ
+  35,     # .New Mexico/NM
+  36,     # .New York/NY
+  37,     # .North Carolina/NC
+  38,     # .North Dakota/ND
+  39,     # .Ohio/OH
+  40,     # .Oklahoma/OK
+  41,     # .Oregon/OR
+  42,     # .Pennsylvania/PA
+  44,     # .Rhode Island/RI
+  45,     # .South Carolina/SC
+  46,     # .South Dakota/SD
+  47,     # .Tennessee/TN
+  48,     # .Texas/TX
+  49,     # .Utah/UT
+  50,     # .Vermont/VT
+  51,     # .Virginia/VA
+  53,     # .Washington/WA
+  54,     # .West Virginia/WV
+  55,     # .Wisconsin/WI
+  56,     # .Wyoming/WY
+  72     # .Puerto Rico/PR
+), "State"=c(
+  "Alabama",
+  "Alaska",
+  "Arizona",
+  "Arkansas",
+  "California",
+  "Colorado",
+  "Connecticut",
+  "Delaware",
+  "District of Columbia",
+  "Florida",
+  "Georgia",
+  "Hawaii",
+  "Idaho",
+  "Illinois",
+  "Indiana",
+  "Iowa",
+  "Kansas",
+  "Kentucky",
+  "Louisiana",
+  "Maine",
+  "Maryland",
+  "Massachusetts",
+  "Michigan",
+  "Minnesota",
+  "Mississippi",
+  "Missouri",
+  "Montana",
+  "Nebraska",
+  "Nevada",
+  "New Hampshire",
+  "New Jersey",
+  "New Mexico",
+  "New York",
+  "North Carolina",
+  "North Dakota",
+  "Ohio",
+  "Oklahoma",
+  "Oregon",
+  "Pennsylvania",
+  "Rhode Island",
+  "South Carolina",
+  "South Dakota",
+  "Tennessee",
+  "Texas",
+  "Utah",
+  "Vermont",
+  "Virginia",
+  "Washington",
+  "West Virginia",
+  "Wisconsin",
+  "Wyoming",
+  "Puerto Rico"))
+
+```
+
+### Fundamentals of student loan debt in California (via FSA Data Center)
+
+#### Q1. How does California’s total outstanding student debt compare to other states’?
+
+--
+Source: FSA Data Center, "Portfolio by Location." 
+Year(s) of analysis: Reflects debt levels as of December 31, 2021. 
+Note: For "per capita" measures, I estimate the number of adults aged 18 to 50, using American Community Survey data reflecting calendar year 2019. 
+Summary: California is a relatively low-debt state. This is likely attributable to its strong state support for public higher education and student financial aid. By virtue of its size, it is also the state with the largest amount of student loan debt and student loan borrowers. It would be wrong to paint California as the epicenter of the student debt crisis, but it is also true that there is a significant amount of loan debt in the state: $141 billion across nearly 4 billion borrowers. (This is before President Biden's cancellation takes effect.) 
+--
+
+```{r interstateComp, include=TRUE, echo=FALSE}
+
+######################################################
+### First we load in the FSA data on student loan  ###
+### portfolio by state.                            ###
+######################################################
+
+portfolio <- fread("Portfolio-by-Location.csv", header=TRUE, skip=5, nrow=54)
+
+######################################################
+### Now we convert the units of the data.          ###
+######################################################
+
+portfolio$`Balance (in billions)` <- portfolio$`Balance (in billions)` * 1000000000
+portfolio$`Borrowers (in thousands)` <- portfolio$`Borrowers (in thousands)` * 1000
+names(portfolio) <- c("State", "Balance", "Borrowers")
+
+######################################################
+### We derive a per-borrower "average balance"     ###
+### measure for every state.                       ###
+######################################################
+
+portfolio$`Average balance` <- portfolio$Balance / portfolio$Borrowers
+
+######################################################
+### We also remove non-state entries in the list.  ###
+### Before doing so we save the total borrowers    ###
+### and total debt for later.                      ###
+######################################################
+
+totalDebt <- sum(portfolio$Balance)
+totalBorrowers <- sum(portfolio$Borrowers)
+portfolio <- portfolio %>% filter(State != "Other") %>% filter(State != "Not Reported")
+
+######################################################
+### Now we do the same for the IDR portfolio and   ###
+### merge it with the other portfolio data.        ###
+######################################################
+
+portfolio.IDR <- fread("IDRPortfolio-by-Location.csv", header=TRUE, skip=5, nrow=54)
+portfolio.IDR$`Balance (in billions)` <- portfolio.IDR$`Balance (in billions)` * 1000000000
+portfolio.IDR$`Borrowers (in thousands)` <- portfolio.IDR$`Borrowers (in thousands)` * 1000
+names(portfolio.IDR) <- c("State", "IDR Balance", "IDR Borrowers")
+portfolio <- left_join(x=portfolio, y=portfolio.IDR, by="State")
+
+######################################################
+### For each state's portfolio we now derive how   ###
+### much is IDR.                                   ###
+######################################################
+
+portfolio$`Share of portfolio that is IDR` <- portfolio$`IDR Balance` / portfolio$`Balance`
+
+######################################################
+### Now we want to consider the portfolio on a     ###
+### per-capita basis.                              ###
+######################################################
+
+######################################################
+### First we load in person-level data from every  ###
+### state, merging the two datasets that contain   ###
+### the sample.                                    ###
+######################################################
+
+pusa <- fread("psam_pusa_2019.csv", header=TRUE, select=c("SERIALNO", "ST", "AGEP", "PWGTP"))
+pusb <- fread("psam_pusb_2019.csv", header=TRUE, select=c("SERIALNO", "ST", "AGEP", "PWGTP"))
+pusm <- rbind(pusa, pusb)
+rm("pusa", "pusb")
+
+######################################################
+### Most debt is held by those 18 to 50, so we     ###
+### divide total debt by state by the aggregated   ###
+### total of people aged 18 to 50 in the state.    ###
+######################################################
+
+pusm <- pusm %>% filter(AGEP >= 18 & AGEP <= 50)
+population18to50 <- aggregate(data=pusm, PWGTP ~ ST, FUN=sum)
+population18to50 <- left_join(x=population18to50, y=statenames, by="ST")
+population18to50 <- population18to50 %>% select(State, PWGTP)
+names(population18to50) <- c("State", "Number of adults aged 18-50")
+portfolio <- left_join(x=portfolio, y=population18to50, by="State")
+
+portfolio$`Debt per capita` <- portfolio$Balance / portfolio$`Number of adults aged 18-50`
+portfolio$`Borrowers per capita` <- portfolio$Borrowers / portfolio$`Number of adults aged 18-50`
+
+######################################################
+### Now we can rank California alongside other     ###
+### states according to these key measures.        ###
+######################################################
+
+######################################################
+### First we create the rank variables.            ###
+######################################################
+
+portfolio$`Rank: Balance` <- rank(portfolio$Balance, ties.method="average")
+portfolio$`Rank: Borrowers` <- rank(portfolio$Borrowers, ties.method="average")
+portfolio$`Rank: Debt per capita` <- rank(portfolio$`Debt per capita`, ties.method="average")
+portfolio$`Rank: Borrowers per capita` <- rank(portfolio$`Borrowers per capita`, ties.method="average")
+portfolio$`Rank: Average balance` <- rank(portfolio$`Average balance`, ties.method="average")
+portfolio$`Rank: Share of portfolio that is IDR` <- rank(portfolio$`Share of portfolio that is IDR`, ties.method="average")
+
+######################################################
+### Here we print the results.                     ###
+######################################################
+
+paste("California ranks ", nrow(portfolio) + 1 - portfolio$`Rank: Debt per capita`[portfolio$State=="California"], " out of ", nrow(portfolio), " states and territories on the amount of debt per capita. It has an average of ", dollar(portfolio$`Debt per capita`[portfolio$State=="California"], accuracy=1), ", versus ", dollar(mean(portfolio$`Debt per capita`, na.rm=TRUE), accuracy=1),  " at the median state.", sep="")
+
+paste("California ranks ", nrow(portfolio) + 1 - portfolio$`Rank: Borrowers per capita`[portfolio$State=="California"], " out of ", nrow(portfolio), " states and territories on the amount of borrowers per capita. It has an average of ", round(portfolio$`Borrowers per capita`[portfolio$State=="California"], digits=3), ", versus ", round(mean(portfolio$`Borrowers per capita`, na.rm=TRUE), digits=3),  " at the median state.", sep="")
+
+paste("California ranks ", nrow(portfolio) + 1 - portfolio$`Rank: Average balance`[portfolio$State=="California"], " out of ", nrow(portfolio), " states and territories on the average balance. It has an average of ", dollar(portfolio$`Average balance`[portfolio$State=="California"], accuracy=1), ", versus ", dollar(mean(portfolio$`Average balance`, na.rm=TRUE), accuracy=1),  " at the median state.", sep="")
+
+paste("California ranks ", nrow(portfolio) + 1 - portfolio$`Rank: Share of portfolio that is IDR`[portfolio$State=="California"], " out of ", nrow(portfolio), " states and territories on the share of the debt portfolio that is in IDR. Its share is ", percent(portfolio$`Share of portfolio that is IDR`[portfolio$State=="California"], accuracy=0.1), ", versus ", percent(mean(portfolio$`Share of portfolio that is IDR`, na.rm=TRUE), accuracy=0.1),  " at the median state.", sep="")
+
+paste("California ranks ", nrow(portfolio) + 1 - portfolio$`Rank: Balance`[portfolio$State=="California"], " out of ", nrow(portfolio), " states and territories in total debt balance. Its total debt is ", dollar(portfolio$`Balance`[portfolio$State=="California"], accuracy=1000000), ".", sep="")
+
+paste("California ranks ", nrow(portfolio) + 1 - portfolio$`Rank: Borrowers`[portfolio$State=="California"], " out of ", nrow(portfolio), " states and territories in total borrowers. California has ", comma(round(portfolio$`Borrowers`[portfolio$State=="California"], digits=-3)), " total borrowers.", sep="")
+
+paste("Of all the debt in the United States, ", percent(portfolio$Balance[portfolio$State=="California"] / totalDebt, accuracy=0.1), " is held by California borrowers.", sep="")
+
+paste("Of all the borrowers in the United States, ", percent(portfolio$Borrowers[portfolio$State=="California"] / totalBorrowers, accuracy=0.1), " are California borrowers.", sep="")
+
+```
+
+#### Q2. At the institution level, how does the average annual loan in California differ by MSI status? 
+
+--
+Source: FSA Data Center. 
+Year(s) of analysis: Reflects loans distributed in 2018-19. 
+Summary: I explored MSI status as one possible proxy for students' race. California, despite having a large Black population, has only one PBI. The very large numbers of Asian and Hispanic students in California correspond to a large number of HSIs and AANAPIIs in the state. In California, public four-year HSIs and AANAPIIs show slightly lower average student loans than public four-year non-HSIs and non-AANAPIIs. The same holds true in the non-profit four-year sector in California, with the exception of graduate loans at AANAPIIs, which exceed graduate loans at non-AANAPIIs. Overall, I think this was a useful exercise but will not be my main approach to measuring student debt by race.
+--
+
+```{r MSI, include=TRUE, echo=FALSE}
+
+######################################################
+### We are interested here in how debt at MSIs in  ###
+### California may be greater or lesser compared   ###
+### to other states.                               ###
+######################################################
+
+######################################################
+### First we load in student loan disbursement     ###
+### data from 2018-19.                             ###
+######################################################
+
+loans1819 <- fread("dl-dashboard-ay2018-2019-q4-california.csv", header=TRUE, skip=6)
+names(loans1819) <- c(
+  "OPEID",
+  "School",
+  "State",
+  "Zip Code",
+  "School Type",
+
+  "SUBSIDIZED: Recipients", 
+  "SUBSIDIZED: # of Loans Originated", 
+  "SUBSIDIZED: $ of Loans Originated", 
+  "SUBSIDIZED: # of Disbursements", 
+  "SUBSIDIZED: $ of Disbursements", 
+   
+  "UNSUBSIDIZED - UNDERGRADUATE: Recipients", 
+  "UNSUBSIDIZED - UNDERGRADUATE: # of Loans Originated", 
+  "UNSUBSIDIZED - UNDERGRADUATE: $ of Loans Originated", 
+  "UNSUBSIDIZED - UNDERGRADUATE: # of Disbursements", 
+  "UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements", 
+
+  "UNSUBSIDIZED - GRADUATE: Recipients", 
+  "UNSUBSIDIZED - GRADUATE: # of Loans Originated", 
+  "UNSUBSIDIZED - GRADUATE: $ of Loans Originated", 
+  "UNSUBSIDIZED - GRADUATE: # of Disbursements", 
+  "UNSUBSIDIZED - GRADUATE: $ of Disbursements", 
+
+  "PARENT PLUS: Recipients", 
+  "PARENT PLUS: # of Loans Originated", 
+  "PARENT PLUS: $ of Loans Originated", 
+  "PARENT PLUS: # of Disbursements", 
+  "PARENT PLUS: $ of Disbursements", 
+
+  "GRAD PLUS: Recipients", 
+  "GRAD PLUS: # of Loans Originated", 
+  "GRAD PLUS: $ of Loans Originated", 
+  "GRAD PLUS: # of Disbursements", 
+  "GRAD PLUS: $ of Disbursements"
+)
+
+######################################################
+### Here we must format the OPEIDs, bringing them  ###
+### to eight digits.                               ###
+######################################################
+
+loans1819$OPEID <- as.character(loans1819$OPEID)
+loans1819$OPEID <- ifelse(nchar(loans1819$OPEID)==1, paste("0", loans1819$OPEID, sep=""), loans1819$OPEID)
+loans1819$OPEID <- ifelse(nchar(loans1819$OPEID)==2, paste("0", loans1819$OPEID, sep=""), loans1819$OPEID)
+loans1819$OPEID <- ifelse(nchar(loans1819$OPEID)==3, paste("0", loans1819$OPEID, sep=""), loans1819$OPEID)
+loans1819$OPEID <- ifelse(nchar(loans1819$OPEID)==4, paste("0", loans1819$OPEID, sep=""), loans1819$OPEID)
+loans1819$OPEID <- ifelse(nchar(loans1819$OPEID)==5, paste("0", loans1819$OPEID, sep=""), loans1819$OPEID)
+loans1819$OPEID <- ifelse(nchar(loans1819$OPEID)==6, paste("0", loans1819$OPEID, sep=""), loans1819$OPEID)
+loans1819$OPEID <- ifelse(nchar(loans1819$OPEID)==7, paste("0", loans1819$OPEID, sep=""), loans1819$OPEID)
+
+######################################################
+### We only need each school's total disbursements ###
+### and its total recipients, so we select only    ###
+### those variables.                               ###
+######################################################
+
+loans1819 <- loans1819 %>% select(
+  `OPEID`,
+  `School`,
+  `State`,
+  `Zip Code`,
+  `School Type`,
+
+  `SUBSIDIZED: Recipients`, 
+  `SUBSIDIZED: $ of Disbursements`, 
+   
+  `UNSUBSIDIZED - UNDERGRADUATE: Recipients`, 
+  `UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`, 
+
+  `UNSUBSIDIZED - GRADUATE: Recipients`, 
+  `UNSUBSIDIZED - GRADUATE: $ of Disbursements`, 
+
+  `PARENT PLUS: Recipients`, 
+  `PARENT PLUS: $ of Disbursements`, 
+
+  `GRAD PLUS: Recipients`, 
+  `GRAD PLUS: $ of Disbursements`
+)
+
+######################################################
+### Here we make sure that the data are stored     ###
+### numerically.                                   ###
+######################################################
+
+loans1819$`SUBSIDIZED: Recipients` <- as.numeric(loans1819$`SUBSIDIZED: Recipients`)
+loans1819$`SUBSIDIZED: $ of Disbursements` <- as.numeric(loans1819$`SUBSIDIZED: $ of Disbursements`)
+   
+loans1819$`UNSUBSIDIZED - UNDERGRADUATE: Recipients` <- as.numeric(loans1819$`UNSUBSIDIZED - UNDERGRADUATE: Recipients`)
+loans1819$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements` <- as.numeric(loans1819$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`)
+
+loans1819$`UNSUBSIDIZED - GRADUATE: Recipients` <- as.numeric(loans1819$`UNSUBSIDIZED - GRADUATE: Recipients`)
+loans1819$`UNSUBSIDIZED - GRADUATE: $ of Disbursements` <- as.numeric(loans1819$`UNSUBSIDIZED - GRADUATE: $ of Disbursements`)
+
+loans1819$`PARENT PLUS: Recipients` <- as.numeric(loans1819$`PARENT PLUS: Recipients`)
+loans1819$`PARENT PLUS: $ of Disbursements` <- as.numeric(loans1819$`PARENT PLUS: $ of Disbursements`)
+
+loans1819$`GRAD PLUS: Recipients` <- as.numeric(loans1819$`GRAD PLUS: Recipients`)
+loans1819$`GRAD PLUS: $ of Disbursements` <- as.numeric(loans1819$`GRAD PLUS: $ of Disbursements`)
+
+######################################################
+### We also want to make sure any NA values are    ###
+### stored as zeroes.                              ###
+######################################################
+
+loans1819$`SUBSIDIZED: Recipients`[is.na(loans1819$`SUBSIDIZED: Recipients`)] <- 0
+loans1819$`SUBSIDIZED: $ of Disbursements`[is.na(loans1819$`SUBSIDIZED: $ of Disbursements`)] <- 0
+   
+loans1819$`UNSUBSIDIZED - UNDERGRADUATE: Recipients`[is.na(loans1819$`UNSUBSIDIZED - UNDERGRADUATE: Recipients`)] <- 0
+loans1819$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`[is.na(loans1819$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`)] <- 0
+
+loans1819$`UNSUBSIDIZED - GRADUATE: Recipients`[is.na(loans1819$`UNSUBSIDIZED - GRADUATE: Recipients`)] <- 0
+loans1819$`UNSUBSIDIZED - GRADUATE: $ of Disbursements`[is.na(loans1819$`UNSUBSIDIZED - GRADUATE: $ of Disbursements`)] <- 0
+
+loans1819$`PARENT PLUS: Recipients`[is.na(loans1819$`PARENT PLUS: Recipients`)] <- 0
+loans1819$`PARENT PLUS: $ of Disbursements`[is.na(loans1819$`PARENT PLUS: $ of Disbursements`)] <- 0
+
+loans1819$`GRAD PLUS: Recipients`[is.na(loans1819$`GRAD PLUS: Recipients`)] <- 0
+loans1819$`GRAD PLUS: $ of Disbursements`[is.na(loans1819$`GRAD PLUS: $ of Disbursements`)] <- 0
+
+######################################################
+### Here we create a variable for total loan       ###
+### disbursements at a college.                    ###
+######################################################
+
+loans1819$`Total $ of Disbursements` <- loans1819$`SUBSIDIZED: $ of Disbursements` + loans1819$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements` + loans1819$`UNSUBSIDIZED - GRADUATE: $ of Disbursements` + loans1819$`PARENT PLUS: $ of Disbursements` + loans1819$`GRAD PLUS: $ of Disbursements`
+
+######################################################
+### Now we load in data from the College Scorecard ###
+### on MSI status.                                 ###
+######################################################
+
+CSI.MSI <- fread("Most-Recent-Cohorts-Institution.csv", header=TRUE, select=c(
+  "OPEID",   # 8-digit OPE ID for institution
+  "HBCU",    # Flag for Historically Black College and University
+  "PBI",     # Flag for predominantly black institution
+  "ANNHI",   # Flag for Alaska Native Native Hawaiian serving institution
+  "TRIBAL",  # Flag for tribal college and university
+  "AANAPII", # Flag for Asian American Native American Pacific Islander-serving institution
+  "HSI",     # Flag for Hispanic-serving institution
+  "NANTI",   # Flag for Native American non-tribal institution
+  "CONTROL", # Control of institution
+  "CCBASIC"  # Carnegie Classification -- basic
+))
+
+######################################################
+### I now add this variable for later.             ###
+######################################################
+
+CSI.MSI$`Two-year` <- ifelse(CSI.MSI$CCBASIC %in% c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14), 1, 0)
+CSI.MSI$`Four-year` <- ifelse(CSI.MSI$CCBASIC %in% c(15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32), 1, 0)
+
+######################################################
+### Here I want to format the control variable.    ###
+######################################################
+
+CSI.MSI$Control <- rep(NA, nrow(CSI.MSI))
+CSI.MSI$Control[CSI.MSI$CONTROL==1] <- "Public"
+CSI.MSI$Control[CSI.MSI$CONTROL==2] <- "Non-profit"
+CSI.MSI$Control[CSI.MSI$CONTROL==3] <- "For-profit"
+
+######################################################
+### It's important first to remove the rows that   ###
+### have repeated OPEIDs.                          ###
+######################################################
+
+CSI.MSI <- CSI.MSI %>% filter(duplicated(OPEID)==FALSE)
+
+######################################################
+### Now we convert the MSI variables to binary.    ###
+######################################################
+
+CSI.MSI$HBCU <- as.numeric(CSI.MSI$HBCU)
+CSI.MSI$PBI <- as.numeric(CSI.MSI$PBI)
+CSI.MSI$ANNHI <- as.numeric(CSI.MSI$ANNHI)
+CSI.MSI$TRIBAL <- as.numeric(CSI.MSI$TRIBAL)
+CSI.MSI$AANAPII <- as.numeric(CSI.MSI$AANAPII)
+CSI.MSI$HSI <- as.numeric(CSI.MSI$HSI)
+CSI.MSI$NANTI <- as.numeric(CSI.MSI$NANTI)
+CSI.MSI$`Not an MSI` <- rep(0, nrow(CSI.MSI))
+CSI.MSI$`Not an MSI`[CSI.MSI$HBCU==0
+                     &
+                     CSI.MSI$PBI==0
+                     &
+                     CSI.MSI$ANNHI==0
+                     &
+                     CSI.MSI$TRIBAL==0
+                     &
+                     CSI.MSI$AANAPII==0
+                     &
+                     CSI.MSI$HSI==0
+                     &
+                     CSI.MSI$NANTI==0] <- 1
+
+######################################################
+### Here we must format the OPEIDs, bringing them  ###
+### to eight digits.                               ###
+######################################################
+
+CSI.MSI$OPEID <- as.character(CSI.MSI$OPEID)
+CSI.MSI$OPEID <- ifelse(nchar(CSI.MSI$OPEID)==1, paste("0", CSI.MSI$OPEID, sep=""), CSI.MSI$OPEID)
+CSI.MSI$OPEID <- ifelse(nchar(CSI.MSI$OPEID)==2, paste("0", CSI.MSI$OPEID, sep=""), CSI.MSI$OPEID)
+CSI.MSI$OPEID <- ifelse(nchar(CSI.MSI$OPEID)==3, paste("0", CSI.MSI$OPEID, sep=""), CSI.MSI$OPEID)
+CSI.MSI$OPEID <- ifelse(nchar(CSI.MSI$OPEID)==4, paste("0", CSI.MSI$OPEID, sep=""), CSI.MSI$OPEID)
+CSI.MSI$OPEID <- ifelse(nchar(CSI.MSI$OPEID)==5, paste("0", CSI.MSI$OPEID, sep=""), CSI.MSI$OPEID)
+CSI.MSI$OPEID <- ifelse(nchar(CSI.MSI$OPEID)==6, paste("0", CSI.MSI$OPEID, sep=""), CSI.MSI$OPEID)
+CSI.MSI$OPEID <- ifelse(nchar(CSI.MSI$OPEID)==7, paste("0", CSI.MSI$OPEID, sep=""), CSI.MSI$OPEID)
+
+######################################################
+### Now we merge the two datasets by OPEID.        ###
+######################################################
+
+loans1819 <- left_join(x=loans1819, y=CSI.MSI, by="OPEID")
+
+######################################################
+### Let's add to the document the number of MSIs   ###
+### in California by MSI category.                 ###
+######################################################
+
+californiaMSIs <- loans1819 %>% filter(State=="CA")
+table1 <- data.frame("MSI Category"=c(
+  "Historically Black Colleges and Universities (HBCU)", 
+  "Predominantly Black Institutions (PBI)", 
+  "Hispanic Serving Institutions (HSI)", 
+  "Asian American and Native American Pacific Islander-Serving Institutions (AANAPII)", 
+  "Alaskan Native or Native Hawaiian-Serving Institutions (ANNHI)", 
+  "Tribal Colleges and Universities (TCU)", 
+  "Native American-Serving Nontribal Institutions (NANTI)", 
+  "Non-MSIs"
+), "Number of California colleges"=c(
+  sum(californiaMSIs$HBCU, na.rm=TRUE), 
+  sum(californiaMSIs$PBI, na.rm=TRUE), 
+  sum(californiaMSIs$HSI, na.rm=TRUE), 
+  sum(californiaMSIs$AANAPII, na.rm=TRUE), 
+  sum(californiaMSIs$ANNHI, na.rm=TRUE), 
+  sum(californiaMSIs$TRIBAL, na.rm=TRUE), 
+  sum(californiaMSIs$NANTI, na.rm=TRUE), 
+  sum(californiaMSIs$`Not an MSI`, na.rm=TRUE) 
+))
+names(table1) <- c("MSI Category", "Number of CA colleges")
+kable(table1)
+
+######################################################
+### Here we add some text highlighting the         ###
+### breakdown of MSIs by two-years and four-years. ###
+######################################################
+
+californiaPBIs <- loans1819 %>% filter(State=="CA") %>% filter(PBI==1) %>% select(School)
+paste("California's lone PBI is ", str_to_title(californiaPBIs), ".", sep="")
+
+californiaHSIs <- loans1819 %>% filter(State=="CA") %>% filter(HSI==1) %>% select(School, `Two-year`, `Four-year`)
+paste("Of California's ", nrow(californiaHSIs), " HSIs, ",  sum(californiaHSIs$`Two-year`), " are two-years and ", sum(californiaHSIs$`Four-year`), " are four-years. Another California HSI is not in the Carnegie Classification.", sep="")
+
+californiaAANAPIIs <- loans1819 %>% filter(State=="CA") %>% filter(AANAPII==1) %>% select(School, `Two-year`, `Four-year`)
+paste("Of California's ", nrow(californiaAANAPIIs), " AANAPIIs, ",  sum(californiaAANAPIIs$`Two-year`), " are two-years and ", sum(californiaAANAPIIs$`Four-year`), " are four-years.",  sep="")
+
+######################################################
+### Here I pull the sector breakdown of the four-  ###
+### year HSIs and AANAPIIs in California.          ###
+######################################################
+
+AANAPIIsandHSIs <- loans1819 %>% filter(State=="CA") %>% filter(HSI==1 | AANAPII==1) %>% filter(`Two-year`==0)
+AANAPIIsandHSIs$`MSI Category` <- rep(NA, nrow(AANAPIIsandHSIs))
+AANAPIIsandHSIs$`MSI Category`[AANAPIIsandHSIs$HSI==1] <- "HSI"
+AANAPIIsandHSIs$`MSI Category`[AANAPIIsandHSIs$AANAPII==1] <- "AANAPII"
+AANAPIIsandHSIs$`MSI Category`[AANAPIIsandHSIs$AANAPII==1 & AANAPIIsandHSIs$HSI==1] <- "Institution is both HSI and AANAPII"
+```
+
+Of the California HSIs and AANAPIIs that are not two-years, the following is the breakdown by sector:
+
+```{r MSI2, include=TRUE, echo=FALSE}
+table2 <- table(AANAPIIsandHSIs$`MSI Category`, AANAPIIsandHSIs$Control)
+kable(table2)
+
+######################################################
+### Now, let's compare debt amounts of those HSIs  ###
+### and AANAPIIs with other four-years. We start   ###
+### with the publics (chart1) and then the         ###
+### non-profits (chart2).                          ###
+######################################################
+
+chart1 <- loans1819 %>% filter(State=="CA") %>% filter(Control=="Public") %>% filter(`Four-year`==1) %>% filter(is.na(HSI)==FALSE) %>% filter(is.na(AANAPII)==FALSE)
+chart2 <- loans1819 %>% filter(State=="CA") %>% filter(Control=="Non-profit") %>% filter(`Four-year`==1) %>% filter(is.na(HSI)==FALSE) %>% filter(is.na(AANAPII)==FALSE)
+
+chart1.HSI <- aggregate(data=chart1, cbind(
+  `SUBSIDIZED: Recipients`, 
+  `SUBSIDIZED: $ of Disbursements`, 
+  `UNSUBSIDIZED - UNDERGRADUATE: Recipients`, 
+  `UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`, 
+  `UNSUBSIDIZED - GRADUATE: Recipients`, 
+  `UNSUBSIDIZED - GRADUATE: $ of Disbursements`, 
+  `PARENT PLUS: Recipients`, 
+  `PARENT PLUS: $ of Disbursements`, 
+  `GRAD PLUS: Recipients`, 
+  `GRAD PLUS: $ of Disbursements`
+) ~ HSI, FUN=sum)
+chart1.AANAPII <- aggregate(data=chart1, cbind(
+  `SUBSIDIZED: Recipients`, 
+  `SUBSIDIZED: $ of Disbursements`, 
+  `UNSUBSIDIZED - UNDERGRADUATE: Recipients`, 
+  `UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`, 
+  `UNSUBSIDIZED - GRADUATE: Recipients`, 
+  `UNSUBSIDIZED - GRADUATE: $ of Disbursements`, 
+  `PARENT PLUS: Recipients`, 
+  `PARENT PLUS: $ of Disbursements`, 
+  `GRAD PLUS: Recipients`, 
+  `GRAD PLUS: $ of Disbursements`
+) ~ AANAPII, FUN=sum)
+chart2.HSI <- aggregate(data=chart2, cbind(
+  `SUBSIDIZED: Recipients`, 
+  `SUBSIDIZED: $ of Disbursements`, 
+  `UNSUBSIDIZED - UNDERGRADUATE: Recipients`, 
+  `UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`, 
+  `UNSUBSIDIZED - GRADUATE: Recipients`, 
+  `UNSUBSIDIZED - GRADUATE: $ of Disbursements`, 
+  `PARENT PLUS: Recipients`, 
+  `PARENT PLUS: $ of Disbursements`, 
+  `GRAD PLUS: Recipients`, 
+  `GRAD PLUS: $ of Disbursements`
+) ~ HSI, FUN=sum)
+chart2.AANAPII <- aggregate(data=chart2, cbind(
+  `SUBSIDIZED: Recipients`, 
+  `SUBSIDIZED: $ of Disbursements`, 
+  `UNSUBSIDIZED - UNDERGRADUATE: Recipients`, 
+  `UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`, 
+  `UNSUBSIDIZED - GRADUATE: Recipients`, 
+  `UNSUBSIDIZED - GRADUATE: $ of Disbursements`, 
+  `PARENT PLUS: Recipients`, 
+  `PARENT PLUS: $ of Disbursements`, 
+  `GRAD PLUS: Recipients`, 
+  `GRAD PLUS: $ of Disbursements`
+) ~ AANAPII, FUN=sum)
+
+chart1.HSI$`Subsidized Loan` <- chart1.HSI$`SUBSIDIZED: $ of Disbursements` / chart1.HSI$`SUBSIDIZED: Recipients`
+chart1.HSI$`Unsubsidized Undergraduate Loan` <- chart1.HSI$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements` / chart1.HSI$`UNSUBSIDIZED - UNDERGRADUATE: Recipients`
+chart1.HSI$`Unsubsidized Graduate Loan` <- chart1.HSI$`UNSUBSIDIZED - GRADUATE: $ of Disbursements` / chart1.HSI$`UNSUBSIDIZED - GRADUATE: Recipients`
+chart1.HSI$`Parent PLUS Loan` <- chart1.HSI$`PARENT PLUS: $ of Disbursements` / chart1.HSI$`PARENT PLUS: Recipients`
+chart1.HSI$`Grad PLUS Loan` <- chart1.HSI$`GRAD PLUS: $ of Disbursements` / chart1.HSI$`GRAD PLUS: Recipients`
+
+chart1.AANAPII$`Subsidized Loan` <- chart1.AANAPII$`SUBSIDIZED: $ of Disbursements` / chart1.AANAPII$`SUBSIDIZED: Recipients`
+chart1.AANAPII$`Unsubsidized Undergraduate Loan` <- chart1.AANAPII$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements` / chart1.AANAPII$`UNSUBSIDIZED - UNDERGRADUATE: Recipients`
+chart1.AANAPII$`Unsubsidized Graduate Loan` <- chart1.AANAPII$`UNSUBSIDIZED - GRADUATE: $ of Disbursements` / chart1.AANAPII$`UNSUBSIDIZED - GRADUATE: Recipients`
+chart1.AANAPII$`Parent PLUS Loan` <- chart1.AANAPII$`PARENT PLUS: $ of Disbursements` / chart1.AANAPII$`PARENT PLUS: Recipients`
+chart1.AANAPII$`Grad PLUS Loan` <- chart1.AANAPII$`GRAD PLUS: $ of Disbursements` / chart1.AANAPII$`GRAD PLUS: Recipients`
+
+chart2.HSI$`Subsidized Loan` <- chart2.HSI$`SUBSIDIZED: $ of Disbursements` / chart2.HSI$`SUBSIDIZED: Recipients`
+chart2.HSI$`Unsubsidized Undergraduate Loan` <- chart2.HSI$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements` / chart2.HSI$`UNSUBSIDIZED - UNDERGRADUATE: Recipients`
+chart2.HSI$`Unsubsidized Graduate Loan` <- chart2.HSI$`UNSUBSIDIZED - GRADUATE: $ of Disbursements` / chart2.HSI$`UNSUBSIDIZED - GRADUATE: Recipients`
+chart2.HSI$`Parent PLUS Loan` <- chart2.HSI$`PARENT PLUS: $ of Disbursements` / chart2.HSI$`PARENT PLUS: Recipients`
+chart2.HSI$`Grad PLUS Loan` <- chart2.HSI$`GRAD PLUS: $ of Disbursements` / chart2.HSI$`GRAD PLUS: Recipients`
+
+chart2.AANAPII$`Subsidized Loan` <- chart2.AANAPII$`SUBSIDIZED: $ of Disbursements` / chart2.AANAPII$`SUBSIDIZED: Recipients`
+chart2.AANAPII$`Unsubsidized Undergraduate Loan` <- chart2.AANAPII$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements` / chart2.AANAPII$`UNSUBSIDIZED - UNDERGRADUATE: Recipients`
+chart2.AANAPII$`Unsubsidized Graduate Loan` <- chart2.AANAPII$`UNSUBSIDIZED - GRADUATE: $ of Disbursements` / chart2.AANAPII$`UNSUBSIDIZED - GRADUATE: Recipients`
+chart2.AANAPII$`Parent PLUS Loan` <- chart2.AANAPII$`PARENT PLUS: $ of Disbursements` / chart2.AANAPII$`PARENT PLUS: Recipients`
+chart2.AANAPII$`Grad PLUS Loan` <- chart2.AANAPII$`GRAD PLUS: $ of Disbursements` / chart2.AANAPII$`GRAD PLUS: Recipients`
+
+chart1.HSI <- chart1.HSI %>% select(HSI, `Subsidized Loan`, `Unsubsidized Undergraduate Loan`, `Unsubsidized Graduate Loan`, `Parent PLUS Loan`, `Grad PLUS Loan`)
+chart1.AANAPII <- chart1.AANAPII %>% select(AANAPII, `Subsidized Loan`, `Unsubsidized Undergraduate Loan`, `Unsubsidized Graduate Loan`, `Parent PLUS Loan`, `Grad PLUS Loan`)
+chart2.HSI <- chart2.HSI %>% select(HSI, `Subsidized Loan`, `Unsubsidized Undergraduate Loan`, `Unsubsidized Graduate Loan`, `Parent PLUS Loan`, `Grad PLUS Loan`)
+chart2.AANAPII <- chart2.AANAPII %>% select(AANAPII, `Subsidized Loan`, `Unsubsidized Undergraduate Loan`, `Unsubsidized Graduate Loan`, `Parent PLUS Loan`, `Grad PLUS Loan`)
+
+chart1.HSI <- reshape2::melt(data=chart1.HSI, id.vars = c("HSI"), value.name="Average Loan")
+chart1.AANAPII <- reshape2::melt(data=chart1.AANAPII, id.vars = c("AANAPII"), value.name="Average Loan")
+chart2.HSI <- reshape2::melt(data=chart2.HSI, id.vars = c("HSI"), value.name="Average Loan")
+chart2.AANAPII <- reshape2::melt(data=chart2.AANAPII, id.vars = c("AANAPII"), value.name="Average Loan")
+
+chart1.HSI$HSI <- ifelse(chart1.HSI$HSI==1, "Yes", "No")
+chart1.AANAPII$AANAPII <- ifelse(chart1.AANAPII$AANAPII==1, "Yes", "No")
+chart2.HSI$HSI <- ifelse(chart2.HSI$HSI==1, "Yes", "No")
+chart2.AANAPII$AANAPII <- ifelse(chart2.AANAPII$AANAPII==1, "Yes", "No")
+
+ggplot(data=chart1.HSI, mapping=aes(y=variable, x=`Average Loan`, fill=HSI)) + geom_bar(stat="identity", position = position_dodge(width = 0.6), width=0.5) + labs(title="Average loans at CA public four-years by HSI status", y="Loan Program") + scale_x_continuous(labels=scales::dollar_format()) + scale_fill_brewer(palette="Dark2")
+ggplot(data=chart1.AANAPII, mapping=aes(y=variable, x=`Average Loan`, fill=AANAPII)) + geom_bar(stat="identity", position = position_dodge(width = 0.6), width=0.5) + labs(title="Average loans at CA public four-years by AANAPII status", y="Loan Program") + scale_x_continuous(labels=scales::dollar_format()) + scale_fill_brewer(palette="Dark2")
+
+ggplot(data=chart2.HSI, mapping=aes(y=variable, x=`Average Loan`, fill=HSI)) + geom_bar(stat="identity", position = position_dodge(width = 0.6), width=0.5) + labs(title="Average loans at CA non-profit four-years by HSI status", y="Loan Program") + scale_x_continuous(labels=scales::dollar_format()) + scale_fill_brewer(palette="Dark2")
+ggplot(data=chart2.AANAPII, mapping=aes(y=variable, x=`Average Loan`, fill=AANAPII)) + geom_bar(stat="identity", position = position_dodge(width = 0.6), width=0.5) + labs(title="Average loans at CA non-profit four-years by AANAPII status", y="Loan Program") + scale_x_continuous(labels=scales::dollar_format()) + scale_fill_brewer(palette="Dark2")
+
+```
+
+#### Q3. Which loan programs contribute most to California's overall debt?
+
+--
+Source: FSA Data Center. 
+Year(s) of analysis: Reflects loans distributed in 2018-19.
+Summary: I ran these numbers because I am curious if, because of robust state financial aid, unmanageable student loan debt among borrowers of color in California is largely a "graduate loan" problem. The breakdown of loans distributed by California institutions is skewed more towards Grad PLUS than the breakdown of loans distributed by institutions nationwide. Unsubsidized graduate loans also take up a larger slice of the pie in California than in the nation overall. 
+--
+
+```{r loanPrograms, include=TRUE, echo=FALSE}
+
+######################################################
+### Using the loan data we had imported earlier,   ###
+### we aggregate totals by state.                  ###
+######################################################
+
+table3 <- aggregate(data=loans1819, cbind(  
+  `SUBSIDIZED: $ of Disbursements`, 
+  `UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`, 
+  `UNSUBSIDIZED - GRADUATE: $ of Disbursements`, 
+  `PARENT PLUS: $ of Disbursements`, 
+  `GRAD PLUS: $ of Disbursements`, 
+  `Total $ of Disbursements`) ~ State, FUN=sum)
+
+######################################################
+### Next we add the U.S. totals for comparison.    ###
+######################################################
+
+table3 <- table3 %>% add_row(
+  `State`="U.S.",
+  `SUBSIDIZED: $ of Disbursements`=sum(table3$`SUBSIDIZED: $ of Disbursements`), 
+  `UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`=sum(table3$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`), 
+  `UNSUBSIDIZED - GRADUATE: $ of Disbursements`=sum(table3$`UNSUBSIDIZED - GRADUATE: $ of Disbursements`), 
+  `PARENT PLUS: $ of Disbursements`=sum(table3$`PARENT PLUS: $ of Disbursements`), 
+  `GRAD PLUS: $ of Disbursements`=sum(table3$`GRAD PLUS: $ of Disbursements`), 
+  `Total $ of Disbursements`=sum(table3$`Total $ of Disbursements`)
+)
+
+######################################################
+### Now we derive each loan program's share of     ###
+### total borrowing in every state.                ###
+######################################################
+
+table3$`SUBSIDIZED share of total` <- table3$`SUBSIDIZED: $ of Disbursements` / table3$`Total $ of Disbursements`
+table3$`UNSUBSIDIZED - UNDERGRADUATE share of total` <- table3$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements` / table3$`Total $ of Disbursements`
+table3$`UNSUBSIDIZED - GRADUATE share of total` <- table3$`UNSUBSIDIZED - GRADUATE: $ of Disbursements` / table3$`Total $ of Disbursements`
+table3$`PARENT PLUS share of total` <- table3$`PARENT PLUS: $ of Disbursements` / table3$`Total $ of Disbursements`
+table3$`GRAD PLUS share of total` <- table3$`GRAD PLUS: $ of Disbursements` / table3$`Total $ of Disbursements`
+
+######################################################
+### We can now compare how California stacks up    ###
+### versus the rest of the nation.                 ###
+######################################################
+
+table3.1 <- table3 %>% filter(State %in% c("CA", "U.S.")) %>% select(State, `SUBSIDIZED share of total`, `UNSUBSIDIZED - UNDERGRADUATE share of total`, `UNSUBSIDIZED - GRADUATE share of total`, `PARENT PLUS share of total`, `GRAD PLUS share of total`)
+names(table3.1) <- c("State", "Subsidized", "Unsubsidized undergraduate", "Unsubsidized graduate", "Parent PLUS loans", "Grad PLUS")
+table3.1$`Subsidized` <- percent(table3.1$`Subsidized`)
+table3.1$`Unsubsidized undergraduate` <- percent(table3.1$`Unsubsidized undergraduate`)
+table3.1$`Unsubsidized graduate` <- percent(table3.1$`Unsubsidized graduate`)
+table3.1$`Parent PLUS loans` <- percent(table3.1$`Parent PLUS loans`)
+table3.1$`Grad PLUS` <- percent(table3.1$`Grad PLUS`)
+kable(table3.1)
+
+```
+
+#### Q4. How does the average annual loan differ by sector in California? 
+
+--
+Source: FSA Data Center. 
+Year(s) of analysis: Reflects loans distributed in 2018-19. Filtered for four-year institutions.
+Summary: The figure below compares the average annual loan in California versus the U.S. overall, broken out by sector and by loan program. Regardless of institutional control, Grad PLUS shows the highest annual loans and California sees a higher average loan than in the U.S. Parent PLUS loans are also higher, on average, in California than in the U.S., regardless of institutional control. 
+--
+
+```{r sectorLoans, include=TRUE, echo=FALSE}
+forTable4 <- loans1819 %>% filter(`Four-year`==1)
+table4 <- aggregate(data=forTable4, cbind(
+  `SUBSIDIZED: $ of Disbursements`, 
+  `SUBSIDIZED: Recipients`, 
+  `UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`,
+  `UNSUBSIDIZED - UNDERGRADUATE: Recipients`, 
+  `UNSUBSIDIZED - GRADUATE: $ of Disbursements`, 
+  `UNSUBSIDIZED - GRADUATE: Recipients`, 
+  `PARENT PLUS: $ of Disbursements`, 
+  `PARENT PLUS: Recipients`, 
+  `GRAD PLUS: $ of Disbursements`,
+  `GRAD PLUS: Recipients`
+) ~ State + Control, FUN=sum)
+
+table4.US <- aggregate(data=forTable4, cbind(
+  `SUBSIDIZED: $ of Disbursements`, 
+  `SUBSIDIZED: Recipients`, 
+  `UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`,
+  `UNSUBSIDIZED - UNDERGRADUATE: Recipients`, 
+  `UNSUBSIDIZED - GRADUATE: $ of Disbursements`, 
+  `UNSUBSIDIZED - GRADUATE: Recipients`, 
+  `PARENT PLUS: $ of Disbursements`, 
+  `PARENT PLUS: Recipients`, 
+  `GRAD PLUS: $ of Disbursements`,
+  `GRAD PLUS: Recipients`
+) ~ Control, FUN=sum)
+table4.US$State <- rep("U.S.", nrow(table4.US))
+table4 <- rbind(table4, table4.US)
+
+table4 <- table4 %>% filter(State %in% c("CA", "U.S."))
+
+table4$`Subsidized` <- table4$`SUBSIDIZED: $ of Disbursements` / table4$`SUBSIDIZED: Recipients`
+table4$`Unsub. UG` <- table4$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements` / table4$`UNSUBSIDIZED - UNDERGRADUATE: Recipients`
+table4$`Unsub. Grad.` <- table4$`UNSUBSIDIZED - GRADUATE: $ of Disbursements` / table4$`UNSUBSIDIZED - GRADUATE: Recipients`
+table4$`Parent PLUS` <- table4$`PARENT PLUS: $ of Disbursements` / table4$`PARENT PLUS: Recipients`
+table4$`Grad PLUS` <- table4$`GRAD PLUS: $ of Disbursements` / table4$`GRAD PLUS: Recipients`
+
+table4.1 <- table4 %>% select(State, Control, `Subsidized`, `Unsub. UG`, `Unsub. Grad.`, `Parent PLUS`, `Grad PLUS`)
+table4.1 <- reshape2::melt(data=table4.1, id.vars = c("State", "Control"), value.name="Average Loan")
+
+ggplot(data=table4.1, mapping=aes(x=State, y=`Average Loan`, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.4) + labs(title="Average loans by program: California vs. U.S.") + scale_y_continuous(labels=scales::dollar_format()) + facet_grid(variable ~ Control) + scale_fill_brewer(palette="Dark2")
+
+
+```
+
+### Borrowing disparities by race and ethnicity (via NPSAS)
+
+#### Q5. How does the share of students taking out student loans in California differ by race? How does this vary by sector? 
+
+First we consider undergraduate loans. 
+
+--
+Source: NPSAS:18-AC. Table retrieval number: lounfy.
+Year(s) of analysis: Reflects students enrolled in the 2017-18 academic year. Only reflects undergraduate public 4-year institutions.  
+Note: Insufficient sample size for Native American / Alaskan Native population. Zeros are counted in the averages, meaning it includes those who took out no loans. 
+Summary: Using student-level data in NPSAS, the figure below compares average undergraduate borrowing by racial group at California public four-years, compared to U.S. public four-years. Across all groups, the average federal loan total is lower in California than nationwide. However, California resembles the U.S. in that Black undergraduates and their families borrow more than their peers. California differs from the U.S. in that Latino/a undergraduates in the state borrow more than white undergraduates, though this is only the case for direct loans to the students and not Parent PLUS.   
+--
+
+```{r npsas1, include=TRUE, echo=FALSE}
+npsas1.US <- read.csv("Powerstats_lounfy.csv", skip=12, nrow=7, header=FALSE)
+npsas1.CA <- read.csv("Powerstats_lounfy.csv", skip=73, nrow=7, header=FALSE)
+
+names(npsas1.US) <- c("Group", "Federal loans (excl. PLUS)", "Parent PLUS")
+names(npsas1.CA) <- c("Group", "Federal loans (excl. PLUS)", "Parent PLUS")
+
+npsas1.US$State <- rep("U.S.", nrow(npsas1.US))
+npsas1.CA$State <- rep("CA", nrow(npsas1.CA))
+npsas1 <- rbind(npsas1.US, npsas1.CA)
+
+npsas1$Group[npsas1$Group=="Black or African American"] <- "Black"
+npsas1$Group[npsas1$Group=="Hispanic or Latino"] <- "Latino/a"
+npsas1$Group[npsas1$Group=="Native Hawaiian/other Pacific Islander"] <- "Pacific Islander"
+npsas1$Group[npsas1$Group=="More than one race"] <- "2+ races"
+npsas1 <- npsas1 %>% filter(Group != "American Indian or Alaska Native")
+
+npsas1 <- reshape2::melt(data=npsas1, id.vars = c("Group", "State"), value.name="Average Loan")
+
+npsas1$`Average Loan` <- gsub(pattern="!", x=npsas1$`Average Loan`, replacement="")
+npsas1$`Average Loan` <- gsub(pattern=",", x=npsas1$`Average Loan`, replacement="")
+npsas1$`Average Loan` <- gsub(pattern=" ", x=npsas1$`Average Loan`, replacement="")
+npsas1$`Average Loan` <- as.numeric(npsas1$`Average Loan`)
+
+ggplot(data=npsas1, mapping=aes(x=State, y=`Average Loan`, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.4) + labs(title="Average undergraduate loans at public 4-years by group: CA vs U.S.") + facet_grid(variable ~ Group) + scale_y_continuous(labels=scales::dollar_format()) + scale_fill_brewer(palette="Dark2") + theme(legend.position="none")
+
+```
+
+Now we consider graduate loans. 
+
+--
+Source: NPSAS:16. Table retrieval number: psiqll
+Year(s) of analysis: Reflects students enrolled in the 2015-16 academic year. Only reflects public 4-year institutions.  
+Notes: Private loans are also used, but the average loans are so small that Datalab considers the estimates unreliable. Due to limitations of NPSAS:16, this only applies to in-state students. Summary: Across all groups, graduate students in California borrow more than graduate students nationwide. Black students and those of two or more races show the highest average loans, upwards of $20,000 per year. It is striking how Black graduate students in California borrow an average that is roughly two-thirds higher than both the average for Black graduate students nationwide and the average for white graduate students in California.
+--
+
+```{r npsas2, include=TRUE, echo=FALSE}
+npsas2.US <- read.csv("Powerstats_psiqll.csv", skip=12, nrow=7, header=FALSE)
+npsas2.CA <- read.csv("Powerstats_psiqll.csv", skip=73, nrow=7, header=FALSE)
+
+names(npsas2.US) <- c("Group", "Total federal loans")
+names(npsas2.CA) <- c("Group", "Total federal loans")
+
+npsas2.US$State <- rep("U.S.", nrow(npsas2.US))
+npsas2.CA$State <- rep("CA", nrow(npsas2.CA))
+npsas2 <- rbind(npsas2.US, npsas2.CA)
+
+npsas2$Group[npsas2$Group=="Black or African American"] <- "Black"
+npsas2$Group[npsas2$Group=="Hispanic or Latino"] <- "Latino/a"
+npsas2$Group[npsas2$Group=="More than one race"] <- "2+ races"
+npsas2 <- npsas2 %>% filter((Group %in% c("American Indian or Alaska Native", "Native Hawaiian/other Pacific Islander"))==FALSE)
+
+npsas2$`Total federal loans` <- gsub(pattern="!", x=npsas2$`Total federal loans`, replacement="")
+npsas2$`Total federal loans` <- gsub(pattern=",", x=npsas2$`Total federal loans`, replacement="")
+npsas2$`Total federal loans` <- gsub(pattern=" ", x=npsas2$`Total federal loans`, replacement="")
+npsas2$`Total federal loans` <- as.numeric(npsas2$`Total federal loans`)
+
+ggplot(data=npsas2, mapping=aes(x=State, y=`Total federal loans`, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.6) + labs(title="Average fed. loans for graduate students by group: CA vs U.S.", caption="Groups not shown lacked sufficient samples.") + facet_grid(. ~ Group) + scale_y_continuous(labels=scales::dollar_format()) + scale_fill_brewer(palette="Dark2") + theme(legend.position="none")
+```
+
+#### Q6. How does the average graduate loan amount vary by level of study (e.g. master's, research doctorate) 
+
+--
+Source: NPSAS:16. Table retrieval numbers: vcbaev (U.S.), yyevut (CA)
+Year(s) of analysis: Reflects graduate students enrolled in the 2015-16 academic year. 
+Note: Among California students, the sample is not sufficient for any specific level other than master's. 
+Summary: We have sufficient data to measure the average loans for master's programs in California by racial group and compare it to all graduate programs. The trends we saw for all graduate programs is mirrored in master's programs. 
+--
+
+
+```{r npsas3, include=TRUE, echo=FALSE}
+npsas3.US.allGrad <- read.csv("Powerstats_vcbaev.csv", skip=12, nrow=7, header=FALSE)
+npsas3.CA.allGrad <- read.csv("Powerstats_yyevut.csv", skip=12, nrow=7, header=FALSE)
+npsas3.US.masters <- read.csv("Powerstats_vcbaev.csv", skip=73, nrow=7, header=FALSE)
+npsas3.CA.masters <- read.csv("Powerstats_yyevut.csv", skip=73, nrow=7, header=FALSE)
+
+names(npsas3.US.allGrad) <- c("Group", "Total federal loans")
+names(npsas3.CA.allGrad) <- c("Group", "Total federal loans")
+names(npsas3.US.masters) <- c("Group", "Total federal loans")
+names(npsas3.CA.masters) <- c("Group", "Total federal loans")
+
+npsas3.US.allGrad$State <- rep("U.S.", nrow(npsas3.US.allGrad))
+npsas3.CA.allGrad$State <- rep("CA", nrow(npsas3.CA.allGrad))
+npsas3.US.masters$State <- rep("U.S.", nrow(npsas3.US.masters))
+npsas3.CA.masters$State <- rep("CA", nrow(npsas3.CA.masters))
+
+npsas3.US.allGrad$Level <- rep("All graduate programs", nrow(npsas3.US.allGrad))
+npsas3.CA.allGrad$Level <- rep("All graduate programs", nrow(npsas3.CA.allGrad))
+npsas3.US.masters$Level <- rep("Master's programs", nrow(npsas3.US.masters))
+npsas3.CA.masters$Level <- rep("Master's programs", nrow(npsas3.CA.masters))
+
+npsas3 <- rbind(npsas3.US.allGrad, 
+                npsas3.CA.allGrad, 
+                npsas3.US.masters, 
+                npsas3.CA.masters)
+
+npsas3$Group[npsas3$Group=="Black or African American"] <- "Black"
+npsas3$Group[npsas3$Group=="Hispanic or Latino"] <- "Latino/a"
+npsas3$Group[npsas3$Group=="More than one race"] <- "2+ races"
+npsas3 <- npsas3 %>% filter((Group %in% c("American Indian or Alaska Native", "Native Hawaiian/other Pacific Islander", "2+ races"))==FALSE)
+
+npsas3$`Total federal loans` <- gsub(pattern="!", x=npsas3$`Total federal loans`, replacement="")
+npsas3$`Total federal loans` <- gsub(pattern=",", x=npsas3$`Total federal loans`, replacement="")
+npsas3$`Total federal loans` <- gsub(pattern=" ", x=npsas3$`Total federal loans`, replacement="")
+npsas3$`Total federal loans` <- as.numeric(npsas3$`Total federal loans`)
+
+ggplot(data=npsas3, mapping=aes(x=State, y=`Total federal loans`, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.6) + labs(title="Average fed. loans for graduate students by group and level: CA vs U.S.", caption="Groups not shown lacked sufficient samples.") + facet_grid(Level ~ Group) + scale_y_continuous(labels=scales::dollar_format()) + scale_fill_brewer(palette="Dark2") + theme(legend.position="none")
+
+```
+
+For context, here is a breakdown of gaps in average loans across all graduate program levels, reflecting the national sample. This demonstrates how professional doctorates show an extreme version of the trends just described. Although professional doctoral students in California constitutes a very small subsample in NPSAS, we can explore this further using the College Scorecard later on.
+
+```{r npsas4, include=TRUE, echo=FALSE}
+npsas4.US.masters <- read.csv("Powerstats_vcbaev.csv", skip=73, nrow=7, header=FALSE)
+npsas4.US.certificate <- read.csv("Powerstats_vcbaev.csv", skip=134, nrow=7, header=FALSE)
+npsas4.US.phd <- read.csv("Powerstats_vcbaev.csv", skip=195, nrow=7, header=FALSE)
+npsas4.US.professional <- read.csv("Powerstats_vcbaev.csv", skip=256, nrow=7, header=FALSE)
+
+names(npsas4.US.masters) <- c("Group", "Total federal loans")
+names(npsas4.US.certificate) <- c("Group", "Total federal loans")
+names(npsas4.US.phd) <- c("Group", "Total federal loans")
+names(npsas4.US.professional) <- c("Group", "Total federal loans")
+
+npsas4.US.masters$Level <- rep("Master's programs", nrow(npsas4.US.masters))
+npsas4.US.certificate$Level <- rep("Post-bac certificates", nrow(npsas4.US.certificate))
+npsas4.US.phd$Level <- rep("Research doctorates", nrow(npsas4.US.phd))
+npsas4.US.professional$Level <- rep("Professional doctorates", nrow(npsas4.US.professional))
+
+npsas4 <- rbind(npsas4.US.masters, 
+                npsas4.US.certificate, 
+                npsas4.US.phd, 
+                npsas4.US.professional)
+
+npsas4$Group[npsas4$Group=="Black or African American"] <- "Black"
+npsas4$Group[npsas4$Group=="Hispanic or Latino"] <- "Latino/a"
+npsas4$Group[npsas4$Group=="More than one race"] <- "2+ races"
+npsas4 <- npsas4 %>% filter((Group %in% c("American Indian or Alaska Native", "Native Hawaiian/other Pacific Islander", "2+ races"))==FALSE)
+
+npsas4$`Total federal loans` <- gsub(pattern="!", x=npsas4$`Total federal loans`, replacement="")
+npsas4$`Total federal loans` <- gsub(pattern=",", x=npsas4$`Total federal loans`, replacement="")
+npsas4$`Total federal loans` <- gsub(pattern=" ", x=npsas4$`Total federal loans`, replacement="")
+npsas4$`Total federal loans` <- as.numeric(npsas4$`Total federal loans`)
+
+ggplot(data=npsas4, mapping=aes(x=Group, y=`Total federal loans`, fill=Group)) + geom_bar(stat="identity", position="dodge", width=0.6) + labs(title="Average fed. loans for graduate students by group and level: U.S. only", caption="Groups not shown lacked sufficient samples.") + facet_grid(. ~ Level) + scale_y_continuous(labels=scales::dollar_format()) + scale_fill_brewer(palette="Dark2") + theme(legend.position="none")
+
+```
+
+
+#### Q7. Within certain racial groups, how does borrowing vary by ethicnity? 
+
+
+--
+Source:  NPSAS, table retrieval number ddgpwg (U.S. all), jejvld (California in-state), tpsawz (U.S. in-state).
+Year(s) of analysis:
+Note: Filtered for 4-year colleges and U.S. citizenship. Limited to in-state, undergraduate students. "Total federal loans" includes Parent PLUS. No other racial groups besides Hispanic and Asian have breakouts by ethnicity in NPSAS.
+Summary: NPSAS allows us to disaggregate by ethnicity, to a limited extent, for two racial groups (Hispanic and Asian). In California, average federal loans among Filipino undergraduates are higher than other Asian groups, matching a trend seen nationwide. Among Hispanic ethnicities in California, average loans are greatest among those of Puerto Rican descent. 
+--
+
+```{r npsas5, include=TRUE, echo=FALSE}
+npsas5.US.HSP <- read.csv("Powerstats_tpsawz.csv", skip=11, nrow=6, header=FALSE)
+npsas5.US.ASN <- read.csv("Powerstats_tpsawz.csv", skip=19, nrow=9, header=FALSE)
+
+npsas5.CA.HSP <- read.csv("Powerstats_jejvld.csv", skip=11, nrow=6, header=FALSE)
+npsas5.CA.ASN <- read.csv("Powerstats_jejvld.csv", skip=19, nrow=9, header=FALSE)
+
+names(npsas5.US.HSP) <- c("Group", "Total federal loans")
+names(npsas5.US.ASN) <- c("Group", "Total federal loans")
+names(npsas5.CA.HSP) <- c("Group", "Total federal loans")
+names(npsas5.CA.ASN) <- c("Group", "Total federal loans")
+
+npsas5.US.HSP$Race <- rep("Hispanic", nrow(npsas5.US.HSP))
+npsas5.US.ASN$Race <- rep("Asian", nrow(npsas5.US.ASN))
+npsas5.CA.HSP$Race <- rep("Hispanic", nrow(npsas5.CA.HSP))
+npsas5.CA.ASN$Race <- rep("Asian", nrow(npsas5.CA.ASN))
+
+npsas5.US.HSP$State <- rep("U.S.", nrow(npsas5.US.HSP))
+npsas5.US.ASN$State <- rep("U.S.", nrow(npsas5.US.ASN))
+npsas5.CA.HSP$State <- rep("CA", nrow(npsas5.CA.HSP))
+npsas5.CA.ASN$State <- rep("CA", nrow(npsas5.CA.ASN))
+
+npsas5 <- rbind(npsas5.US.HSP, 
+                npsas5.US.ASN, 
+                npsas5.CA.HSP, 
+                npsas5.CA.ASN)
+
+npsas5$`Total federal loans` <- gsub(pattern="!", x=npsas5$`Total federal loans`, replacement="")
+npsas5$`Total federal loans` <- gsub(pattern=",", x=npsas5$`Total federal loans`, replacement="")
+npsas5$`Total federal loans` <- gsub(pattern=" ", x=npsas5$`Total federal loans`, replacement="")
+npsas5$`Total federal loans` <- as.numeric(npsas5$`Total federal loans`)
+
+npsas5.ASN <- npsas5 %>% filter(Race=="Asian") %>% filter(Group != "Not of Asian origin")
+npsas5.HSP <- npsas5 %>% filter(Race=="Hispanic") %>% filter(Group != "Not Hispanic or Latino origin")
+npsas5.HSP$Group[npsas5.HSP$Group=="Mexican, Mexican-American, or Chicano descent"] <- "Mexican or Chicano descent"
+npsas5.HSP$Group[npsas5.HSP$Group=="Other Spanish, Hispanic, or Latino descent"] <- "Other Hispanic or Latino descent"
+
+
+ggplot(data=npsas5.ASN, mapping=aes(y=Group, x=`Total federal loans`, fill=Group)) + geom_bar(stat="identity", position="dodge") + labs(title="Average fed. loans by Asian ethinicity: U.S. vs CA") + facet_grid(State ~ .) + scale_x_continuous(labels=scales::dollar_format()) + scale_fill_brewer(palette="Dark2") + theme(legend.position="none")
+ggplot(data=npsas5.HSP, mapping=aes(y=Group, x=`Total federal loans`, fill=Group)) + geom_bar(stat="identity", position="dodge") + labs(title="Average fed. loans by Hispanic ethinicity: U.S. vs CA") + facet_grid(State ~ .) + scale_x_continuous(labels=scales::dollar_format()) + scale_fill_brewer(palette="Dark2") + theme(legend.position="none")
+
+```
+
+### The financial burden of student loan debt (via SHED)
+
+#### Q8. How does student debt affect households’ net worth in California? How does this differ by race?
+
+--
+Source:  Survey of Household Economics and Decisionmaking. 
+Year(s) of analysis: To create a sufficient sample for California, I have merged SHED data for eight years: 2014, 2015, 2016, 2017, 2018, 2019, 2020, and 2021. 
+--
+
+```{r shed1, include=TRUE, echo=FALSE}
+```
+
+### Repayment by race (via College Scorecard)
+
+#### Q9: For which institutions are cohort default rates the highest in California? Is there a relationship to race? 
+
+--
+Source:  College Scorecard
+Year(s) of analysis: 
+--
+
+#### Q10: How do student loan repayment rates in California differ by race? (Using enrollment as a proxy, as the PLUS report did)
+
+--
+Source:  
+Year(s) of analysis: 
+--

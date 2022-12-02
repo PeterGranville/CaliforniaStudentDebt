@@ -1,0 +1,411 @@
+---
+title: "What the Data Do - and Do Not - Tell Us About Student Debt in California"
+author: "Peter Granville"
+date: 'December 2022'
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    theme: cosmo
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(dplyr)
+library(knitr)
+library(shiny)
+library(scales)
+library(plotly)
+library(ggplot2)
+library(reshape2)
+library(data.table)
+```
+
+### Introduction
+
+This report accompanies The Century Foundation's report "Exact Title TBD: Student Debt and Race in California," which examines how student debt puts outsized financial burdens on Black and Latino families in California, especially for graduate borrowers and parents. 
+
+While California lawmakers rightly draw on national research on student debt and race, the state-specific analyses we conduct in this research can help guide state policy that accounts for the distinct patterns of borrowing in California. In particular, these analyses draw attention to the effects of uncapped Parent PLUS and Grad PLUS loans on California's families.
+
+In this report, we walk through the details of the data that underlie that report and explain in greater depth what we do and do not know about student debt in California. Our analysis relies on four sources: 
+
+* The Federal Student Aid (FSA) Data Center
+* The National Postsecondary Student Aid Study (NPSAS)
+* The Survey of Household Economics and Decisionmaking (SHED)
+* The College Scorecard
+
+The structure of this data-focused report mirrors that of the policy report: the charts and tables in the policy report draw from our four primary data sources in the same order that they are presented here. (The first figures in the report draw from the FSA Data Center, and they are followed by figures that draw from NPSAS, and so on.) We also draw from the American Community Survey to a limited extent. 
+
+The code used to produce this document and its charts and tables can be found at [this GitHub repository](https://github.com/PeterGranville/CaliforniaStudentDebt). All data used in this report is publicly available, courtesy of the U.S. Department of Education, the U.S. Federal Reserve, and the U.S. Census Bureau. 
+
+### Federal Student Aid Data Center
+
+The FSA Data Center is a repository of data and statistics on federal student aid, including spreadsheets on student loans reported directly from the National Student Loan Data System. For this analysis we use two files from the FSA Data Center: 
+
+* Quarterly reports on the federal student loan portfolio by borrower location, [available here](https://studentaid.gov/data-center/student/portfolio). 
+* Quarterly reports on Direct Loan disbursements and borrowers by program at the level of the institution, [available here](https://studentaid.gov/data-center/student/title-iv). 
+
+For "per capita" measures of student debt and borrowing below, the population for comparison is the estimated total of all California adults aged 18 to 50, using American Community Survey data reflecting calendar year 2021, [available here](https://www.census.gov/programs-surveys/acs/microdata/access.html). 
+
+```{r statenames, include=FALSE}
+
+######################################################
+### We start with some basic setup. First we make  ###
+### a dataframe that relates two-digit state codes ###
+### to state names. This will be useful while      ###
+### working with PUMS data.                        ###
+######################################################
+
+statenames <- data.frame("ST"=c(
+  01,     # .Alabama/AL
+  02,     # .Alaska/AK
+  04,     # .Arizona/AZ
+  05,     # .Arkansas/AR
+  06,     # .California/CA
+  08,     # .Colorado/CO
+  09,     # .Connecticut/CT
+  10,     # .Delaware/DE
+  11,     # .District of Columbia/DC
+  12,     # .Florida/FL
+  13,     # .Georgia/GA
+  15,     # .Hawaii/HI
+  16,     # .Idaho/ID
+  17,     # .Illinois/IL
+  18,     # .Indiana/IN
+  19,     # .Iowa/IA
+  20,     # .Kansas/KS
+  21,     # .Kentucky/KY
+  22,     # .Louisiana/LA
+  23,     # .Maine/ME
+  24,     # .Maryland/MD
+  25,     # .Massachusetts/MA
+  26,     # .Michigan/MI
+  27,     # .Minnesota/MN
+  28,     # .Mississippi/MS
+  29,     # .Missouri/MO
+  30,     # .Montana/MT
+  31,     # .Nebraska/NE
+  32,     # .Nevada/NV
+  33,     # .New Hampshire/NH
+  34,     # .New Jersey/NJ
+  35,     # .New Mexico/NM
+  36,     # .New York/NY
+  37,     # .North Carolina/NC
+  38,     # .North Dakota/ND
+  39,     # .Ohio/OH
+  40,     # .Oklahoma/OK
+  41,     # .Oregon/OR
+  42,     # .Pennsylvania/PA
+  44,     # .Rhode Island/RI
+  45,     # .South Carolina/SC
+  46,     # .South Dakota/SD
+  47,     # .Tennessee/TN
+  48,     # .Texas/TX
+  49,     # .Utah/UT
+  50,     # .Vermont/VT
+  51,     # .Virginia/VA
+  53,     # .Washington/WA
+  54,     # .West Virginia/WV
+  55,     # .Wisconsin/WI
+  56,     # .Wyoming/WY
+  72     # .Puerto Rico/PR
+), "State"=c(
+  "Alabama",
+  "Alaska",
+  "Arizona",
+  "Arkansas",
+  "California",
+  "Colorado",
+  "Connecticut",
+  "Delaware",
+  "District of Columbia",
+  "Florida",
+  "Georgia",
+  "Hawaii",
+  "Idaho",
+  "Illinois",
+  "Indiana",
+  "Iowa",
+  "Kansas",
+  "Kentucky",
+  "Louisiana",
+  "Maine",
+  "Maryland",
+  "Massachusetts",
+  "Michigan",
+  "Minnesota",
+  "Mississippi",
+  "Missouri",
+  "Montana",
+  "Nebraska",
+  "Nevada",
+  "New Hampshire",
+  "New Jersey",
+  "New Mexico",
+  "New York",
+  "North Carolina",
+  "North Dakota",
+  "Ohio",
+  "Oklahoma",
+  "Oregon",
+  "Pennsylvania",
+  "Rhode Island",
+  "South Carolina",
+  "South Dakota",
+  "Tennessee",
+  "Texas",
+  "Utah",
+  "Vermont",
+  "Virginia",
+  "Washington",
+  "West Virginia",
+  "Wisconsin",
+  "Wyoming",
+  "Puerto Rico"))
+```
+
+```{r pums, include=FALSE}
+######################################################
+### Here we load in person-level data from every   ###
+### state, merging the two datasets that contain   ###
+### the sample. This is useful for later.          ###
+######################################################
+
+pusa <- fread("psam_pusa_2021.csv", header=TRUE, select=c("SERIALNO", "ST", "AGEP", "PWGTP"))
+pusb <- fread("psam_pusb_2021.csv", header=TRUE, select=c("SERIALNO", "ST", "AGEP", "PWGTP"))
+pusm <- rbind(pusa, pusb)
+rm("pusa", "pusb")
+```
+
+```{r interstateComp, include=FALSE}
+
+######################################################
+### Because we will present these results in two   ###
+### tables, we first create the tables.            ###
+######################################################
+
+interstateComp <- data.frame(
+  "X1" = c(NA), 
+  "X2" = c(NA), 
+  "X3" = c(NA), 
+  "X4" = c(NA)
+)
+names(interstateComp) <- c("Measure", "50-state median", "California value", "California rank")
+
+scaleCali <- data.frame(
+  "X1" = c(NA), 
+  "X2" = c(NA), 
+  "X3" = c(NA), 
+  "X4" = c(NA)
+)
+names(scaleCali) <- c("Measure", "U.S. total", "California value", "California share")
+
+######################################################
+### Next we load in the FSA data on student loan   ###
+### portfolio by state.                            ###
+######################################################
+
+portfolio <- fread("Portfolio-by-Location.csv", header=TRUE, skip=5, nrow=54)
+
+######################################################
+### Now we convert the units of the data.          ###
+######################################################
+
+portfolio$`Balance (in billions)` <- portfolio$`Balance (in billions)` * 1000000000
+portfolio$`Borrowers (in thousands)` <- portfolio$`Borrowers (in thousands)` * 1000
+names(portfolio) <- c("State", "Balance", "Borrowers")
+
+######################################################
+### We derive a per-borrower "average balance"     ###
+### measure for every state.                       ###
+######################################################
+
+portfolio$`Average balance` <- portfolio$Balance / portfolio$Borrowers
+
+######################################################
+### We also remove non-state entries in the list.  ###
+### Before doing so we save the total borrowers    ###
+### and total debt for later.                      ###
+######################################################
+
+totalDebt <- sum(portfolio$Balance)
+totalBorrowers <- sum(portfolio$Borrowers)
+portfolio <- portfolio %>% filter(State != "Other") %>% filter(State != "Not Reported")
+
+######################################################
+### Now we want to consider the portfolio on a     ###
+### per-capita basis.                              ###
+######################################################
+
+######################################################
+### Most debt is held by those 18 to 50, so we     ###
+### divide total debt by state by the aggregated   ###
+### total of people aged 18 to 50 in the state.    ###
+######################################################
+
+pusm <- pusm %>% filter(AGEP >= 18 & AGEP <= 50)
+population18to50 <- aggregate(data=pusm, PWGTP ~ ST, FUN=sum)
+population18to50 <- left_join(x=population18to50, y=statenames, by="ST")
+population18to50 <- population18to50 %>% select(State, PWGTP)
+names(population18to50) <- c("State", "Number of adults aged 18-50")
+portfolio <- left_join(x=portfolio, y=population18to50, by="State")
+
+portfolio$`Debt per capita` <- portfolio$Balance / portfolio$`Number of adults aged 18-50`
+portfolio$`Borrowers per capita` <- portfolio$Borrowers / portfolio$`Number of adults aged 18-50`
+
+######################################################
+### Now we can rank California alongside other     ###
+### states according to these key measures.        ###
+######################################################
+
+######################################################
+### First we create the rank variables.            ###
+######################################################
+
+portfolio$`Rank: Balance` <- rank(portfolio$Balance, ties.method="average")
+portfolio$`Rank: Borrowers` <- rank(portfolio$Borrowers, ties.method="average")
+portfolio$`Rank: Debt per capita` <- rank(portfolio$`Debt per capita`, ties.method="average")
+portfolio$`Rank: Borrowers per capita` <- rank(portfolio$`Borrowers per capita`, ties.method="average")
+portfolio$`Rank: Average balance` <- rank(portfolio$`Average balance`, ties.method="average")
+
+######################################################
+### Here we add the results into the table.        ###
+######################################################
+
+interstateComp <- interstateComp %>% add_row(
+  `Measure` = "Federal student loan debt per capita", 
+  `50-state median` = dollar(median(portfolio$`Debt per capita`, na.rm=TRUE), accuracy=1), 
+  `California value` = dollar(portfolio$`Debt per capita`[portfolio$State=="California"], accuracy=1), 
+  `California rank` = (portfolio$`Rank: Debt per capita`[portfolio$State=="California"])
+)
+
+interstateComp <- interstateComp %>% add_row(
+  `Measure` = "Federal student loan borrowers per capita", 
+  `50-state median` = as.character(round(median(portfolio$`Borrowers per capita`, na.rm=TRUE), digits=3)), 
+  `California value` = as.character(round(portfolio$`Borrowers per capita`[portfolio$State=="California"], digits=3)), 
+  `California rank` = (portfolio$`Rank: Borrowers per capita`[portfolio$State=="California"])
+)
+
+interstateComp <- interstateComp %>% add_row(
+  `Measure` = "Average federal student loan balance",
+  `50-state median` = dollar(median(portfolio$`Average balance`, na.rm=TRUE), accuracy=1),
+  `California value` = dollar(portfolio$`Average balance`[portfolio$State=="California"], accuracy=1),
+  `California rank` = (portfolio$`Rank: Average balance`[portfolio$State=="California"])
+)
+
+scaleCali <- scaleCali %>% add_row(
+  `Measure` = "Total outstanding federal student loan debt",
+  `U.S. total` = dollar(sum(portfolio$`Balance`, na.rm=TRUE), accuracy=1000000),
+  `California value` = dollar(portfolio$`Balance`[portfolio$State=="California"], accuracy=1000000), 
+  `California share` = percent((portfolio$`Balance`[portfolio$State=="California"] / sum(portfolio$`Balance`, na.rm=TRUE)), accuracy=0.1)
+)
+
+scaleCali <- scaleCali %>% add_row(
+  `Measure` = "Total federal student loan borrowers",
+  `U.S. total` = comma(round(sum(portfolio$`Borrowers`, na.rm=TRUE), digits=-3)),
+  `California value` = comma(round(portfolio$`Borrowers`[portfolio$State=="California"], digits=-3)),
+  `California share` = percent((portfolio$`Borrowers`[portfolio$State=="California"] / sum(portfolio$`Borrowers`, na.rm=TRUE)), accuracy=0.1)
+)
+
+######################################################
+### Finally, let's remove the placeholder row.     ###
+######################################################
+
+interstateComp <- interstateComp %>% filter(is.na(Measure)==FALSE)
+scaleCali <- scaleCali %>% filter(is.na(Measure)==FALSE)
+```
+
+```{r kable1, results='asis'}
+kable(interstateComp)
+```
+
+California has the most outstanding federal student loan debt and borrowers of any state, amounting to around 9 percent of the total portfolio. 
+
+```{r kable2, results='asis'}
+kable(scaleCali)
+```
+
+Now we turn to the quarterly data on disbursements. To evade any impact from the COVID-19 pandemic on the data, we examine data from the 2018-19 award year. 
+
+```{r loanPrograms, include=TRUE, echo=FALSE}
+
+######################################################
+### Using the loan data we had imported earlier,   ###
+### we aggregate totals by state.                  ###
+######################################################
+
+table3 <- aggregate(data=loans1819, cbind(  
+  `SUBSIDIZED: $ of Disbursements`, 
+  `UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`, 
+  `UNSUBSIDIZED - GRADUATE: $ of Disbursements`, 
+  `PARENT PLUS: $ of Disbursements`, 
+  `GRAD PLUS: $ of Disbursements`, 
+  `Total $ of Disbursements`) ~ State, FUN=sum)
+
+######################################################
+### Next we add the U.S. totals for comparison.    ###
+######################################################
+
+table3 <- table3 %>% add_row(
+  `State`="U.S.",
+  `SUBSIDIZED: $ of Disbursements`=sum(table3$`SUBSIDIZED: $ of Disbursements`), 
+  `UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`=sum(table3$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`), 
+  `UNSUBSIDIZED - GRADUATE: $ of Disbursements`=sum(table3$`UNSUBSIDIZED - GRADUATE: $ of Disbursements`), 
+  `PARENT PLUS: $ of Disbursements`=sum(table3$`PARENT PLUS: $ of Disbursements`), 
+  `GRAD PLUS: $ of Disbursements`=sum(table3$`GRAD PLUS: $ of Disbursements`), 
+  `Total $ of Disbursements`=sum(table3$`Total $ of Disbursements`)
+)
+
+######################################################
+### Now we derive each loan program's share of     ###
+### total borrowing in every state.                ###
+######################################################
+
+table3$`SUBSIDIZED share of total` <- table3$`SUBSIDIZED: $ of Disbursements` / table3$`Total $ of Disbursements`
+table3$`UNSUBSIDIZED - UNDERGRADUATE share of total` <- table3$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements` / table3$`Total $ of Disbursements`
+table3$`UNSUBSIDIZED - GRADUATE share of total` <- table3$`UNSUBSIDIZED - GRADUATE: $ of Disbursements` / table3$`Total $ of Disbursements`
+table3$`PARENT PLUS share of total` <- table3$`PARENT PLUS: $ of Disbursements` / table3$`Total $ of Disbursements`
+table3$`GRAD PLUS share of total` <- table3$`GRAD PLUS: $ of Disbursements` / table3$`Total $ of Disbursements`
+
+######################################################
+### We can now compare how California stacks up    ###
+### versus the rest of the nation.                 ###
+######################################################
+
+table3.1 <- table3 %>% filter(State %in% c("CA", "U.S.")) %>% select(State, `SUBSIDIZED share of total`, `UNSUBSIDIZED - UNDERGRADUATE share of total`, `UNSUBSIDIZED - GRADUATE share of total`, `PARENT PLUS share of total`, `GRAD PLUS share of total`)
+names(table3.1) <- c("State", "Subsidized", "Unsubsidized undergraduate", "Unsubsidized graduate", "Parent PLUS loans", "Grad PLUS")
+table3.1$`Subsidized` <- percent(table3.1$`Subsidized`)
+table3.1$`Unsubsidized undergraduate` <- percent(table3.1$`Unsubsidized undergraduate`)
+table3.1$`Unsubsidized graduate` <- percent(table3.1$`Unsubsidized graduate`)
+table3.1$`Parent PLUS loans` <- percent(table3.1$`Parent PLUS loans`)
+table3.1$`Grad PLUS` <- percent(table3.1$`Grad PLUS`)
+kable(table3.1)
+```
+
+
+### National Postsecondary Student Aid Study
+
+### Survey of Household Economics and Decisionmaking 
+
+### College Scorecard
+
+#### {.tabset}
+
+##### Tab 1
+
+do you see me?
+
+##### Tab 2
+
+okay but do you see ME? 
+
+### Remaining Gaps
+
+
+```{r test}
+testData <- data.frame("Name"=c("Josh Allen", "Patrick Mahomes"), 
+                       "CareerTDthrows"=c(126, 180))
+g <- ggplot(data=testData, mapping=aes(x=Name, y=CareerTDthrows)) + geom_bar(stat="identity")
+ggplotly(g)
+```
