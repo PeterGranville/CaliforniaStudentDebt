@@ -320,15 +320,25 @@ interstateComp <- interstateComp %>% filter(is.na(Measure)==FALSE)
 scaleCali <- scaleCali %>% filter(is.na(Measure)==FALSE)
 ```
 
+#### {.tabset}
+##### Table 1
 ```{r kable1, results='asis'}
-kable(interstateComp, caption="Table X: California's rank on average debt measures")
+kable(interstateComp, caption="California's rank on average debt measures")
 ```
+##### Data source and notes
+***
+#### {-}
 
 California has the most outstanding federal student loan debt and borrowers of any state, amounting to around 9 percent of the total portfolio. 
 
+#### {.tabset}
+##### Table 2
 ```{r kable2, results='asis'}
-kable(scaleCali, caption="Table X: Size of California borrowers' outstanding debt")
+kable(scaleCali, caption="Size of California borrowers' outstanding debt")
 ```
+##### Data source and notes
+***
+#### {-}
 
 Now we turn to the quarterly data on disbursements. To evade any impact from the COVID-19 pandemic on the data, we examine data from the 2018-19 award year. 
 
@@ -524,9 +534,14 @@ table3.1$`Parent PLUS loans` <- percent(table3.1$`Parent PLUS loans`)
 table3.1$`Grad PLUS` <- percent(table3.1$`Grad PLUS`)
 ```
 
+#### {.tabset}
+##### Table 3
 ```{r kable3, include=TRUE, echo=FALSE}
-kable(table3.1, caption="Table X: Share of loan dollars disbursed in 2018-19 by loan type, California vs. U.S.")
+kable(table3.1, caption="Share of loan dollars disbursed in 2018-19 by loan type, California vs. U.S.")
 ```
+##### Data source and notes
+***
+#### {-}
 
 ```{r sectorLoans, include=TRUE, echo=FALSE}
 
@@ -624,11 +639,18 @@ table4.1 <- table4 %>% select(State, Control, `Subsidized`, `Unsub. UG`, `Unsub.
 table4.1 <- reshape2::melt(data=table4.1, id.vars = c("State", "Control"), value.name="Average Loan")
 ```
 
+#### {.tabset}
+##### Figure 1
 ```{r figure1, include=TRUE, echo=FALSE}
 g1 <- ggplot(data=table4.1, mapping=aes(x=State, y=`Average Loan`, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.4) + labs(title="Average Loan by Type and Sector: California vs. U.S.", caption="Author's analysis of data from the Federal Student Aid Data Center.") + scale_y_continuous(labels=scales::dollar_format()) + facet_grid(Control ~ variable) + scale_fill_brewer(palette="Dark2") + theme(text=element_text(family="Optima")) 
 
 ggplotly(g1, width=850, height=500)
 ```
+##### Data source and notes
+Source: FSA Data Center. 
+Year(s) of analysis: Reflects loans distributed in 2018-19. Filtered for four-year institutions.
+***
+#### {-}
 
 Text text text. 
 
@@ -670,11 +692,23 @@ npsas1$`Average Loan` <- gsub(pattern=" ", x=npsas1$`Average Loan`, replacement=
 npsas1$`Average Loan` <- as.numeric(npsas1$`Average Loan`)
 ```
 
+#### {.tabset}
+##### Figure 2
 ```{r figure2}
 g2 <- ggplot(data=npsas1, mapping=aes(x=State, y=`Average Loan`, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.4) + labs(title="Average undergraduate loans at public 4-years by group: CA vs U.S.") + facet_grid(variable ~ Group) + scale_y_continuous(labels=scales::dollar_format()) + scale_fill_brewer(palette="Dark2") + theme(legend.position="none", text=element_text(family="Optima"))
 
 ggplotly(g2)
 ```
+##### Data source and notes
+Source: NPSAS:18-AC. Table retrieval number: lounfy.
+
+Year(s) of analysis: Reflects students enrolled in the 2017-18 academic year. Only reflects undergraduate public 4-year institutions.  
+
+Note: Insufficient sample size for Native American / Alaskan Native population. Zeros are counted in the averages, meaning it includes those who took out no loans. 
+
+***
+#### {-}
+
 
 ```{r npsas2, include=TRUE, echo=FALSE}
 npsas2.US <- read.csv("Powerstats_psiqll.csv", skip=12, nrow=7, header=FALSE)
@@ -699,22 +733,116 @@ npsas2$`Total federal loans` <- as.numeric(npsas2$`Total federal loans`)
 ```
 
 #### {.tabset}
-
-##### Chart
-
+##### Figure 3
 ```{r figure3}
 g3 <- ggplot(data=npsas2, mapping=aes(x=State, y=`Total federal loans`, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.6) + labs(title="Average federal student loans for graduate students, by group: CA vs U.S.", caption="Groups not shown lacked sufficient samples.") + facet_grid(. ~ Group) + scale_y_continuous(labels=scales::dollar_format()) + scale_fill_brewer(palette="Dark2") + theme(legend.position="none", text=element_text(family="Optima"))
 
 ggplotly(g3)
 ```
+##### Data source and notes 
+Source: NPSAS:16. Table retrieval number: psiqll. Data can be accessed at [NCES Datalab](https://nces.ed.gov/datalab/). 
 
-##### Source and notes 
+Year(s) of analysis: Reflects students enrolled in the 2015-16 academic year. Only reflects public 4-year institutions.  
 
-Here are some notes. 
+Notes: Private loans are also used, but the average loans are so small that Datalab considers the estimates unreliable. Due to limitations of NPSAS:16, this only applies to in-state students. 
 
+***
 #### {-}
 
-This comes after the tabset ... right?
+Among California students, the sample is not sufficient for a breakdown by award level. For context, here is a breakdown of gaps in average loans across all graduate program levels, reflecting the national sample. This demonstrates how professional doctorates show an extreme version of the trends just described. Although professional doctoral students in California constitutes a very small subsample in NPSAS, we can explore this further using the College Scorecard later on.
+
+```{r npsas4, include=TRUE, echo=FALSE}
+npsas4.US.masters <- read.csv("Powerstats_vcbaev.csv", skip=73, nrow=7, header=FALSE)
+npsas4.US.certificate <- read.csv("Powerstats_vcbaev.csv", skip=134, nrow=7, header=FALSE)
+npsas4.US.phd <- read.csv("Powerstats_vcbaev.csv", skip=195, nrow=7, header=FALSE)
+npsas4.US.professional <- read.csv("Powerstats_vcbaev.csv", skip=256, nrow=7, header=FALSE)
+
+names(npsas4.US.masters) <- c("Group", "Total federal loans")
+names(npsas4.US.certificate) <- c("Group", "Total federal loans")
+names(npsas4.US.phd) <- c("Group", "Total federal loans")
+names(npsas4.US.professional) <- c("Group", "Total federal loans")
+
+npsas4.US.masters$Level <- rep("Master's programs", nrow(npsas4.US.masters))
+npsas4.US.certificate$Level <- rep("Post-bac certificates", nrow(npsas4.US.certificate))
+npsas4.US.phd$Level <- rep("Research doctorates", nrow(npsas4.US.phd))
+npsas4.US.professional$Level <- rep("Professional doctorates", nrow(npsas4.US.professional))
+
+npsas4 <- rbind(npsas4.US.masters, 
+                npsas4.US.certificate, 
+                npsas4.US.phd, 
+                npsas4.US.professional)
+
+npsas4$Group[npsas4$Group=="Black or African American"] <- "Black"
+npsas4$Group[npsas4$Group=="Hispanic or Latino"] <- "Latino/a"
+npsas4$Group[npsas4$Group=="More than one race"] <- "2+ races"
+npsas4 <- npsas4 %>% filter((Group %in% c("American Indian or Alaska Native", "Native Hawaiian/other Pacific Islander", "2+ races"))==FALSE)
+
+npsas4$`Total federal loans` <- gsub(pattern="!", x=npsas4$`Total federal loans`, replacement="")
+npsas4$`Total federal loans` <- gsub(pattern=",", x=npsas4$`Total federal loans`, replacement="")
+npsas4$`Total federal loans` <- gsub(pattern=" ", x=npsas4$`Total federal loans`, replacement="")
+npsas4$`Total federal loans` <- as.numeric(npsas4$`Total federal loans`)
+```
+
+#### {.tabset}
+##### Figure 4
+```{r figure4}
+g4 <- ggplot(data=npsas4, mapping=aes(x=Group, y=`Total federal loans`, fill=Group)) + geom_bar(stat="identity", position="dodge", width=0.6) + labs(title="Average federal loans for graduate students by group and level: U.S. only", caption="Groups not shown lacked sufficient samples.") + facet_grid(. ~ Level) + scale_y_continuous(labels=scales::dollar_format()) + scale_fill_brewer(palette="Dark2") + theme(legend.position="none", text=element_text(family="Optima"))
+
+ggplotly(g4, width=800, height=400)
+```
+##### Data source and notes
+***
+#### {-}
+
+#### {.tabset}
+##### Figure 5
+```{r npsas5, include=TRUE, echo=FALSE}
+npsas5.US.HSP <- read.csv("Powerstats_tpsawz.csv", skip=11, nrow=6, header=FALSE)
+npsas5.US.ASN <- read.csv("Powerstats_tpsawz.csv", skip=19, nrow=9, header=FALSE)
+
+npsas5.CA.HSP <- read.csv("Powerstats_jejvld.csv", skip=11, nrow=6, header=FALSE)
+npsas5.CA.ASN <- read.csv("Powerstats_jejvld.csv", skip=19, nrow=9, header=FALSE)
+
+names(npsas5.US.HSP) <- c("Group", "Total federal loans")
+names(npsas5.US.ASN) <- c("Group", "Total federal loans")
+names(npsas5.CA.HSP) <- c("Group", "Total federal loans")
+names(npsas5.CA.ASN) <- c("Group", "Total federal loans")
+
+npsas5.US.HSP$Race <- rep("Hispanic", nrow(npsas5.US.HSP))
+npsas5.US.ASN$Race <- rep("Asian", nrow(npsas5.US.ASN))
+npsas5.CA.HSP$Race <- rep("Hispanic", nrow(npsas5.CA.HSP))
+npsas5.CA.ASN$Race <- rep("Asian", nrow(npsas5.CA.ASN))
+
+npsas5.US.HSP$State <- rep("U.S.", nrow(npsas5.US.HSP))
+npsas5.US.ASN$State <- rep("U.S.", nrow(npsas5.US.ASN))
+npsas5.CA.HSP$State <- rep("CA", nrow(npsas5.CA.HSP))
+npsas5.CA.ASN$State <- rep("CA", nrow(npsas5.CA.ASN))
+
+npsas5 <- rbind(npsas5.US.HSP, 
+                npsas5.US.ASN, 
+                npsas5.CA.HSP, 
+                npsas5.CA.ASN)
+
+npsas5$`Total federal loans` <- gsub(pattern="!", x=npsas5$`Total federal loans`, replacement="")
+npsas5$`Total federal loans` <- gsub(pattern=",", x=npsas5$`Total federal loans`, replacement="")
+npsas5$`Total federal loans` <- gsub(pattern=" ", x=npsas5$`Total federal loans`, replacement="")
+npsas5$`Total federal loans` <- as.numeric(npsas5$`Total federal loans`)
+
+npsas5.ASN <- npsas5 %>% filter(Race=="Asian") %>% filter(Group != "Not of Asian origin")
+npsas5.HSP <- npsas5 %>% filter(Race=="Hispanic") %>% filter(Group != "Not Hispanic or Latino origin")
+npsas5.HSP$Group[npsas5.HSP$Group=="Mexican, Mexican-American, or Chicano descent"] <- "Mexican or Chicano descent"
+npsas5.HSP$Group[npsas5.HSP$Group=="Other Spanish, Hispanic, or Latino descent"] <- "Other Hispanic or Latino descent"
+```
+
+```{r figure5}
+g5 <- ggplot(data=npsas5.ASN, mapping=aes(y=Group, x=`Total federal loans`, fill=Group)) + geom_bar(stat="identity", position="dodge") + labs(title="Average fed. loans by Asian ethinicity: U.S. vs CA") + facet_grid(State ~ .) + scale_x_continuous(labels=scales::dollar_format()) + scale_fill_brewer(palette="Dark2") + theme(legend.position="none")
+ggplot(data=npsas5.HSP, mapping=aes(y=Group, x=`Total federal loans`, fill=Group)) + geom_bar(stat="identity", position="dodge") + labs(title="Average fed. loans by Hispanic ethinicity: U.S. vs CA") + facet_grid(State ~ .) + scale_x_continuous(labels=scales::dollar_format()) + scale_fill_brewer(palette="Dark2") + theme(legend.position="none", text=element_text(family="Optima"))
+
+ggplotly(g5)
+```
+##### Data source and notes
+***
+#### {-}
 
 ### Survey of Household Economics and Decisionmaking 
 
