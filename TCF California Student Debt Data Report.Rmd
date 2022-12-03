@@ -28,16 +28,20 @@ This report accompanies The Century Foundation's report "Exact Title TBD: Studen
 
 While California lawmakers rightly draw on national research on student debt and race, the state-specific analyses we conduct in this research can help guide state policy that accounts for the distinct patterns of borrowing in California. In particular, these analyses draw attention to the effects of uncapped Parent PLUS and Grad PLUS loans on California's families.
 
-In this report, we walk through the details of the data that underlie that report and explain in greater depth what we do and do not know about student debt in California. Our analysis relies on four sources: 
+In this report, we walk through the details of the data that underlie that report and explain in greater depth what we do and do not know about student debt in California. Our analysis relies on four sources:
 
 * The Federal Student Aid (FSA) Data Center
 * The National Postsecondary Student Aid Study (NPSAS)
 * The Survey of Household Economics and Decisionmaking (SHED)
 * The College Scorecard
 
-The structure of this data-focused report mirrors that of the policy report: the charts and tables in the policy report draw from our four primary data sources in the same order that they are presented here. (The first figures in the report draw from the FSA Data Center, and they are followed by figures that draw from NPSAS, and so on.) We also draw from the American Community Survey to a limited extent. 
+We also draw from the Integrated Postsecondary Education Data System (IPEDS) and the American Community Survey (ACS) to lesser extents. 
 
-The code used to produce this document and its charts and tables can be found at [this GitHub repository](https://github.com/PeterGranville/CaliforniaStudentDebt). All data used in this report is publicly available, courtesy of the U.S. Department of Education, the U.S. Federal Reserve, and the U.S. Census Bureau. 
+The structure of this data-focused report mirrors that of the policy-focused report: the charts and tables in the policy report draw from our four primary data sources in the same order that they are presented here. The first figures in the report draw from the FSA Data Center, and they are followed by figures that draw from NPSAS, and so on. This report is not a static PDF: you can toggle between different versions of charts and hover over barcharts and scatterplots to reveal data points. 
+
+The code used to produce this document and its charts and tables can be found at [this GitHub repository](https://github.com/PeterGranville/CaliforniaStudentDebt). All data sets used in this report are publicly available, courtesy of the U.S. Department of Education, the U.S. Federal Reserve, and the U.S. Census Bureau. 
+
+For any questions, please email [granville@tcf.org](granville@tcf.org). 
 
 ### Federal Student Aid Data Center
 
@@ -317,16 +321,154 @@ scaleCali <- scaleCali %>% filter(is.na(Measure)==FALSE)
 ```
 
 ```{r kable1, results='asis'}
-kable(interstateComp)
+kable(interstateComp, caption="Table X: California's rank on average debt measures")
 ```
 
 California has the most outstanding federal student loan debt and borrowers of any state, amounting to around 9 percent of the total portfolio. 
 
 ```{r kable2, results='asis'}
-kable(scaleCali)
+kable(scaleCali, caption="Table X: Size of California borrowers' outstanding debt")
 ```
 
 Now we turn to the quarterly data on disbursements. To evade any impact from the COVID-19 pandemic on the data, we examine data from the 2018-19 award year. 
+
+```{r loanPrep1, include=TRUE, echo=FALSE, warning=FALSE}
+
+######################################################
+### First we load in student loan disbursement     ###
+### data from 2018-19.                             ###
+######################################################
+
+loans1819 <- fread("dl-dashboard-ay2018-2019-q4-california.csv", header=TRUE, skip=6)
+names(loans1819) <- c(
+  "OPEID",
+  "School",
+  "State",
+  "Zip Code",
+  "School Type",
+
+  "SUBSIDIZED: Recipients", 
+  "SUBSIDIZED: # of Loans Originated", 
+  "SUBSIDIZED: $ of Loans Originated", 
+  "SUBSIDIZED: # of Disbursements", 
+  "SUBSIDIZED: $ of Disbursements", 
+   
+  "UNSUBSIDIZED - UNDERGRADUATE: Recipients", 
+  "UNSUBSIDIZED - UNDERGRADUATE: # of Loans Originated", 
+  "UNSUBSIDIZED - UNDERGRADUATE: $ of Loans Originated", 
+  "UNSUBSIDIZED - UNDERGRADUATE: # of Disbursements", 
+  "UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements", 
+
+  "UNSUBSIDIZED - GRADUATE: Recipients", 
+  "UNSUBSIDIZED - GRADUATE: # of Loans Originated", 
+  "UNSUBSIDIZED - GRADUATE: $ of Loans Originated", 
+  "UNSUBSIDIZED - GRADUATE: # of Disbursements", 
+  "UNSUBSIDIZED - GRADUATE: $ of Disbursements", 
+
+  "PARENT PLUS: Recipients", 
+  "PARENT PLUS: # of Loans Originated", 
+  "PARENT PLUS: $ of Loans Originated", 
+  "PARENT PLUS: # of Disbursements", 
+  "PARENT PLUS: $ of Disbursements", 
+
+  "GRAD PLUS: Recipients", 
+  "GRAD PLUS: # of Loans Originated", 
+  "GRAD PLUS: $ of Loans Originated", 
+  "GRAD PLUS: # of Disbursements", 
+  "GRAD PLUS: $ of Disbursements"
+)
+
+######################################################
+### Here we must format the OPEIDs, bringing them  ###
+### to eight digits.                               ###
+######################################################
+
+loans1819$OPEID <- as.character(loans1819$OPEID)
+loans1819$OPEID <- ifelse(nchar(loans1819$OPEID)==1, paste("0", loans1819$OPEID, sep=""), loans1819$OPEID)
+loans1819$OPEID <- ifelse(nchar(loans1819$OPEID)==2, paste("0", loans1819$OPEID, sep=""), loans1819$OPEID)
+loans1819$OPEID <- ifelse(nchar(loans1819$OPEID)==3, paste("0", loans1819$OPEID, sep=""), loans1819$OPEID)
+loans1819$OPEID <- ifelse(nchar(loans1819$OPEID)==4, paste("0", loans1819$OPEID, sep=""), loans1819$OPEID)
+loans1819$OPEID <- ifelse(nchar(loans1819$OPEID)==5, paste("0", loans1819$OPEID, sep=""), loans1819$OPEID)
+loans1819$OPEID <- ifelse(nchar(loans1819$OPEID)==6, paste("0", loans1819$OPEID, sep=""), loans1819$OPEID)
+loans1819$OPEID <- ifelse(nchar(loans1819$OPEID)==7, paste("0", loans1819$OPEID, sep=""), loans1819$OPEID)
+
+######################################################
+### We only need each school's total disbursements ###
+### and its total recipients, so we select only    ###
+### those variables.                               ###
+######################################################
+
+loans1819 <- loans1819 %>% select(
+  `OPEID`,
+  `School`,
+  `State`,
+  `Zip Code`,
+  `School Type`,
+
+  `SUBSIDIZED: Recipients`, 
+  `SUBSIDIZED: $ of Disbursements`, 
+   
+  `UNSUBSIDIZED - UNDERGRADUATE: Recipients`, 
+  `UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`, 
+
+  `UNSUBSIDIZED - GRADUATE: Recipients`, 
+  `UNSUBSIDIZED - GRADUATE: $ of Disbursements`, 
+
+  `PARENT PLUS: Recipients`, 
+  `PARENT PLUS: $ of Disbursements`, 
+
+  `GRAD PLUS: Recipients`, 
+  `GRAD PLUS: $ of Disbursements`
+)
+
+######################################################
+### Here we make sure that the data are stored     ###
+### numerically.                                   ###
+######################################################
+
+loans1819$`SUBSIDIZED: Recipients` <- as.numeric(loans1819$`SUBSIDIZED: Recipients`)
+loans1819$`SUBSIDIZED: $ of Disbursements` <- as.numeric(loans1819$`SUBSIDIZED: $ of Disbursements`)
+   
+loans1819$`UNSUBSIDIZED - UNDERGRADUATE: Recipients` <- as.numeric(loans1819$`UNSUBSIDIZED - UNDERGRADUATE: Recipients`)
+loans1819$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements` <- as.numeric(loans1819$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`)
+
+loans1819$`UNSUBSIDIZED - GRADUATE: Recipients` <- as.numeric(loans1819$`UNSUBSIDIZED - GRADUATE: Recipients`)
+loans1819$`UNSUBSIDIZED - GRADUATE: $ of Disbursements` <- as.numeric(loans1819$`UNSUBSIDIZED - GRADUATE: $ of Disbursements`)
+
+loans1819$`PARENT PLUS: Recipients` <- as.numeric(loans1819$`PARENT PLUS: Recipients`)
+loans1819$`PARENT PLUS: $ of Disbursements` <- as.numeric(loans1819$`PARENT PLUS: $ of Disbursements`)
+
+loans1819$`GRAD PLUS: Recipients` <- as.numeric(loans1819$`GRAD PLUS: Recipients`)
+loans1819$`GRAD PLUS: $ of Disbursements` <- as.numeric(loans1819$`GRAD PLUS: $ of Disbursements`)
+
+######################################################
+### We also want to make sure any NA values are    ###
+### stored as zeroes.                              ###
+######################################################
+
+loans1819$`SUBSIDIZED: Recipients`[is.na(loans1819$`SUBSIDIZED: Recipients`)] <- 0
+loans1819$`SUBSIDIZED: $ of Disbursements`[is.na(loans1819$`SUBSIDIZED: $ of Disbursements`)] <- 0
+   
+loans1819$`UNSUBSIDIZED - UNDERGRADUATE: Recipients`[is.na(loans1819$`UNSUBSIDIZED - UNDERGRADUATE: Recipients`)] <- 0
+loans1819$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`[is.na(loans1819$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`)] <- 0
+
+loans1819$`UNSUBSIDIZED - GRADUATE: Recipients`[is.na(loans1819$`UNSUBSIDIZED - GRADUATE: Recipients`)] <- 0
+loans1819$`UNSUBSIDIZED - GRADUATE: $ of Disbursements`[is.na(loans1819$`UNSUBSIDIZED - GRADUATE: $ of Disbursements`)] <- 0
+
+loans1819$`PARENT PLUS: Recipients`[is.na(loans1819$`PARENT PLUS: Recipients`)] <- 0
+loans1819$`PARENT PLUS: $ of Disbursements`[is.na(loans1819$`PARENT PLUS: $ of Disbursements`)] <- 0
+
+loans1819$`GRAD PLUS: Recipients`[is.na(loans1819$`GRAD PLUS: Recipients`)] <- 0
+loans1819$`GRAD PLUS: $ of Disbursements`[is.na(loans1819$`GRAD PLUS: $ of Disbursements`)] <- 0
+
+######################################################
+### Here we create a variable for total loan       ###
+### disbursements at a college.                    ###
+######################################################
+
+loans1819$`Total $ of Disbursements` <- loans1819$`SUBSIDIZED: $ of Disbursements` + loans1819$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements` + loans1819$`UNSUBSIDIZED - GRADUATE: $ of Disbursements` + loans1819$`PARENT PLUS: $ of Disbursements` + loans1819$`GRAD PLUS: $ of Disbursements`
+
+```
 
 ```{r loanPrograms, include=TRUE, echo=FALSE}
 
@@ -380,11 +522,199 @@ table3.1$`Unsubsidized undergraduate` <- percent(table3.1$`Unsubsidized undergra
 table3.1$`Unsubsidized graduate` <- percent(table3.1$`Unsubsidized graduate`)
 table3.1$`Parent PLUS loans` <- percent(table3.1$`Parent PLUS loans`)
 table3.1$`Grad PLUS` <- percent(table3.1$`Grad PLUS`)
-kable(table3.1)
 ```
 
+```{r kable3, include=TRUE, echo=FALSE}
+kable(table3.1, caption="Table X: Share of loan dollars disbursed in 2018-19 by loan type, California vs. U.S.")
+```
+
+```{r sectorLoans, include=TRUE, echo=FALSE}
+
+#######################################################
+### Now we load in data from the College Scorecard. ###
+#######################################################
+
+scorecard1 <- fread("Most-Recent-Cohorts-Institution.csv", header=TRUE, select=c(
+  "OPEID",   # 8-digit OPE ID for institution
+  "CONTROL", # Control of institution
+  "CCBASIC"  # Carnegie Classification -- basic
+))
+
+######################################################
+### I now add this variable for later.             ###
+######################################################
+
+scorecard1$`Two-year` <- ifelse(scorecard1$CCBASIC %in% c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14), 1, 0)
+scorecard1$`Four-year` <- ifelse(scorecard1$CCBASIC %in% c(15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32), 1, 0)
+
+######################################################
+### Here I want to format the control variable.    ###
+######################################################
+
+scorecard1$Control <- rep(NA, nrow(scorecard1))
+scorecard1$Control[scorecard1$CONTROL==1] <- "Public"
+scorecard1$Control[scorecard1$CONTROL==2] <- "Non-profit"
+scorecard1$Control[scorecard1$CONTROL==3] <- "For-profit"
+
+######################################################
+### It's important first to remove the rows that   ###
+### have repeated OPEIDs.                          ###
+######################################################
+
+scorecard1 <- scorecard1 %>% filter(duplicated(OPEID)==FALSE)
+
+######################################################
+### Here we must format the OPEIDs, bringing them  ###
+### to eight digits.                               ###
+######################################################
+
+scorecard1$OPEID <- as.character(scorecard1$OPEID)
+scorecard1$OPEID <- ifelse(nchar(scorecard1$OPEID)==1, paste("0", scorecard1$OPEID, sep=""), scorecard1$OPEID)
+scorecard1$OPEID <- ifelse(nchar(scorecard1$OPEID)==2, paste("0", scorecard1$OPEID, sep=""), scorecard1$OPEID)
+scorecard1$OPEID <- ifelse(nchar(scorecard1$OPEID)==3, paste("0", scorecard1$OPEID, sep=""), scorecard1$OPEID)
+scorecard1$OPEID <- ifelse(nchar(scorecard1$OPEID)==4, paste("0", scorecard1$OPEID, sep=""), scorecard1$OPEID)
+scorecard1$OPEID <- ifelse(nchar(scorecard1$OPEID)==5, paste("0", scorecard1$OPEID, sep=""), scorecard1$OPEID)
+scorecard1$OPEID <- ifelse(nchar(scorecard1$OPEID)==6, paste("0", scorecard1$OPEID, sep=""), scorecard1$OPEID)
+scorecard1$OPEID <- ifelse(nchar(scorecard1$OPEID)==7, paste("0", scorecard1$OPEID, sep=""), scorecard1$OPEID)
+
+######################################################
+### Now we merge the two datasets by OPEID.        ###
+######################################################
+
+loans1819 <- left_join(x=loans1819, y=scorecard1, by="OPEID")
+forTable4 <- loans1819 %>% filter(`Four-year`==1)
+
+table4 <- aggregate(data=forTable4, cbind(
+  `SUBSIDIZED: $ of Disbursements`, 
+  `SUBSIDIZED: Recipients`, 
+  `UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`,
+  `UNSUBSIDIZED - UNDERGRADUATE: Recipients`, 
+  `UNSUBSIDIZED - GRADUATE: $ of Disbursements`, 
+  `UNSUBSIDIZED - GRADUATE: Recipients`, 
+  `PARENT PLUS: $ of Disbursements`, 
+  `PARENT PLUS: Recipients`, 
+  `GRAD PLUS: $ of Disbursements`,
+  `GRAD PLUS: Recipients`
+) ~ State + Control, FUN=sum)
+
+table4.US <- aggregate(data=forTable4, cbind(
+  `SUBSIDIZED: $ of Disbursements`, 
+  `SUBSIDIZED: Recipients`, 
+  `UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`,
+  `UNSUBSIDIZED - UNDERGRADUATE: Recipients`, 
+  `UNSUBSIDIZED - GRADUATE: $ of Disbursements`, 
+  `UNSUBSIDIZED - GRADUATE: Recipients`, 
+  `PARENT PLUS: $ of Disbursements`, 
+  `PARENT PLUS: Recipients`, 
+  `GRAD PLUS: $ of Disbursements`,
+  `GRAD PLUS: Recipients`
+) ~ Control, FUN=sum)
+table4.US$State <- rep("U.S.", nrow(table4.US))
+table4 <- rbind(table4, table4.US)
+
+table4 <- table4 %>% filter(State %in% c("CA", "U.S."))
+
+table4$`Subsidized` <- table4$`SUBSIDIZED: $ of Disbursements` / table4$`SUBSIDIZED: Recipients`
+table4$`Unsub. UG` <- table4$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements` / table4$`UNSUBSIDIZED - UNDERGRADUATE: Recipients`
+table4$`Unsub. Grad.` <- table4$`UNSUBSIDIZED - GRADUATE: $ of Disbursements` / table4$`UNSUBSIDIZED - GRADUATE: Recipients`
+table4$`Parent PLUS` <- table4$`PARENT PLUS: $ of Disbursements` / table4$`PARENT PLUS: Recipients`
+table4$`Grad PLUS` <- table4$`GRAD PLUS: $ of Disbursements` / table4$`GRAD PLUS: Recipients`
+
+table4.1 <- table4 %>% select(State, Control, `Subsidized`, `Unsub. UG`, `Unsub. Grad.`, `Parent PLUS`, `Grad PLUS`)
+table4.1 <- reshape2::melt(data=table4.1, id.vars = c("State", "Control"), value.name="Average Loan")
+```
+
+```{r figure1, include=TRUE, echo=FALSE}
+g1 <- ggplot(data=table4.1, mapping=aes(x=State, y=`Average Loan`, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.4) + labs(title="Average Loan by Type and Sector: California vs. U.S.", caption="Author's analysis of data from the Federal Student Aid Data Center.") + scale_y_continuous(labels=scales::dollar_format()) + facet_grid(Control ~ variable) + scale_fill_brewer(palette="Dark2") + theme(text=element_text(family="Optima")) 
+
+ggplotly(g1, width=850, height=500)
+```
+
+Text text text. 
 
 ### National Postsecondary Student Aid Study
+
+The statistics in the previous section have all been based on institution-level data. For the most robust information on the relationship between student loan borrowing and race in California, we need student-level data. In the absence of a national student-level data set, we use survey data from the National Postsecondary Student Aid Study (NPSAS). 
+
+NPSAS is the largest federal survey of U.S. college students with a primary focus on financial aid. The study has generally been conducted every four years, most recently in 2016 (NPSAS:16), with separate data sets examining undergraduate and graduate students. 
+
+NPSAS data sets have not traditionally been used for state-level analyses, although the sample size for California students can be large enough to produce reliable estimates depending on the query. This past year, a new edition of NPSAS that was designed for state-representative samples was released. Known as NPSAS-AC (Administrative Collection), it draws from student records housed by colleges and the U.S. Department of Education for a sample of 325,000 undergraduates. Representative samples for public 4-year systems are available in NPSAS-AC for 45 states, and representative samples for public 2-year systems are available for 36 states. Thirty states have representative samples for undergraduate students overall. More information on NPSAS-AC can be found [here](https://nces.ed.gov/pubs2022/2022477.pdf). 
+
+In this section we rely primarily on NPSAS-AC, which reflects the 2017-18 year. For analysis of graduate students, we use NPSAS:16 and filter for in-state students in California. (The in-state condition is required for this query.)
+
+These data are accessed using the National Center on Education Statistics' (NCES) [Datalab tool](https://nces.ed.gov/datalab/). Every query has a unique table retrieval number that can be used by any user to run the query in Datalab. 
+
+
+```{r npsas1, include=TRUE, echo=FALSE}
+npsas1.US <- read.csv("Powerstats_lounfy.csv", skip=12, nrow=7, header=FALSE)
+npsas1.CA <- read.csv("Powerstats_lounfy.csv", skip=73, nrow=7, header=FALSE)
+
+names(npsas1.US) <- c("Group", "Federal loans (excl. PLUS)", "Parent PLUS")
+names(npsas1.CA) <- c("Group", "Federal loans (excl. PLUS)", "Parent PLUS")
+
+npsas1.US$State <- rep("U.S.", nrow(npsas1.US))
+npsas1.CA$State <- rep("CA", nrow(npsas1.CA))
+npsas1 <- rbind(npsas1.US, npsas1.CA)
+
+npsas1$Group[npsas1$Group=="Black or African American"] <- "Black"
+npsas1$Group[npsas1$Group=="Hispanic or Latino"] <- "Latino/a"
+npsas1$Group[npsas1$Group=="Native Hawaiian/other Pacific Islander"] <- "Pacific Islander"
+npsas1$Group[npsas1$Group=="More than one race"] <- "2+ races"
+npsas1 <- npsas1 %>% filter(Group != "American Indian or Alaska Native")
+
+npsas1 <- reshape2::melt(data=npsas1, id.vars = c("Group", "State"), value.name="Average Loan")
+
+npsas1$`Average Loan` <- gsub(pattern="!", x=npsas1$`Average Loan`, replacement="")
+npsas1$`Average Loan` <- gsub(pattern=",", x=npsas1$`Average Loan`, replacement="")
+npsas1$`Average Loan` <- gsub(pattern=" ", x=npsas1$`Average Loan`, replacement="")
+npsas1$`Average Loan` <- as.numeric(npsas1$`Average Loan`)
+```
+
+```{r figure2}
+g2 <- ggplot(data=npsas1, mapping=aes(x=State, y=`Average Loan`, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.4) + labs(title="Average undergraduate loans at public 4-years by group: CA vs U.S.") + facet_grid(variable ~ Group) + scale_y_continuous(labels=scales::dollar_format()) + scale_fill_brewer(palette="Dark2") + theme(legend.position="none", text=element_text(family="Optima"))
+
+ggplotly(g2)
+```
+
+```{r npsas2, include=TRUE, echo=FALSE}
+npsas2.US <- read.csv("Powerstats_psiqll.csv", skip=12, nrow=7, header=FALSE)
+npsas2.CA <- read.csv("Powerstats_psiqll.csv", skip=73, nrow=7, header=FALSE)
+
+names(npsas2.US) <- c("Group", "Total federal loans")
+names(npsas2.CA) <- c("Group", "Total federal loans")
+
+npsas2.US$State <- rep("U.S.", nrow(npsas2.US))
+npsas2.CA$State <- rep("CA", nrow(npsas2.CA))
+npsas2 <- rbind(npsas2.US, npsas2.CA)
+
+npsas2$Group[npsas2$Group=="Black or African American"] <- "Black"
+npsas2$Group[npsas2$Group=="Hispanic or Latino"] <- "Latino/a"
+npsas2$Group[npsas2$Group=="More than one race"] <- "2+ races"
+npsas2 <- npsas2 %>% filter((Group %in% c("American Indian or Alaska Native", "Native Hawaiian/other Pacific Islander"))==FALSE)
+
+npsas2$`Total federal loans` <- gsub(pattern="!", x=npsas2$`Total federal loans`, replacement="")
+npsas2$`Total federal loans` <- gsub(pattern=",", x=npsas2$`Total federal loans`, replacement="")
+npsas2$`Total federal loans` <- gsub(pattern=" ", x=npsas2$`Total federal loans`, replacement="")
+npsas2$`Total federal loans` <- as.numeric(npsas2$`Total federal loans`)
+```
+
+#### {.tabset}
+
+##### Chart
+
+```{r figure3}
+g3 <- ggplot(data=npsas2, mapping=aes(x=State, y=`Total federal loans`, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.6) + labs(title="Average federal student loans for graduate students, by group: CA vs U.S.", caption="Groups not shown lacked sufficient samples.") + facet_grid(. ~ Group) + scale_y_continuous(labels=scales::dollar_format()) + scale_fill_brewer(palette="Dark2") + theme(legend.position="none", text=element_text(family="Optima"))
+
+ggplotly(g3)
+```
+
+##### Source and notes 
+
+Here are some notes. 
+
+#### {-}
+
+This comes after the tabset ... right?
 
 ### Survey of Household Economics and Decisionmaking 
 
@@ -402,10 +732,3 @@ okay but do you see ME?
 
 ### Remaining Gaps
 
-
-```{r test}
-testData <- data.frame("Name"=c("Josh Allen", "Patrick Mahomes"), 
-                       "CareerTDthrows"=c(126, 180))
-g <- ggplot(data=testData, mapping=aes(x=Name, y=CareerTDthrows)) + geom_bar(stat="identity")
-ggplotly(g)
-```
