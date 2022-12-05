@@ -2045,7 +2045,7 @@ tblOwnDebtMon3$variable <- factor(tblOwnDebtMon3$variable, levels = c("$1,000 or
 ##### Responses to "Approximately how much is the total monthly payment that you are required to make on the loans from your education?"
 ```{r figure9A}
 tblOwnDebtMon3.CA <- tblOwnDebtMon3 %>% filter(State=="CA")
-g9A <- ggplot(data=tblOwnDebtMon3.CA, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Monthly student debt payment") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+g9A <- ggplot(data=tblOwnDebtMon3.CA, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Monthly student debt payment", y="", x="Share of student loan borrowers in California") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
 
 ggplotly(g9A, width=800, height=350)
 ```
@@ -2053,7 +2053,7 @@ ggplotly(g9A, width=800, height=350)
 ##### Responses to "Approximately how much is the total monthly payment that you are required to make on the loans from your education?"
 ```{r figure9B}
 tblOwnDebtMon3.US <- tblOwnDebtMon3 %>% filter(State=="Rest of U.S.")
-g9A <- ggplot(data=tblOwnDebtMon3.US, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Monthly student debt payment") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+g9A <- ggplot(data=tblOwnDebtMon3.US, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Monthly student debt payment", y="", x="Share of student loan borrowers in rest of U.S.") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
 
 ggplotly(g9A, width=800, height=350)
 ```
@@ -2093,25 +2093,102 @@ Survey responses collected in 2020 and 2021 are not included due to the federal 
 xxx 
 
 ### {.tabset}
-#### Figure 11: CA borrowers
-##### Responses to
-#### Figure 11: Rest of U.S. borrowers
-##### Responses to
-#### Figure 11: CA non-borrowers
-##### Responses to
+#### Figure 11: Debt for spouse's or partner's education
+```{r SpouseDebt}
+# SpouseDebt: # Do you currently owe any money used to pay for your [spouse/ partner]'s education?
+
+# table(shed$SpouseDebt)
+shed.SpouseDebt <- shed %>% filter((SpouseDebt %in% c("Not In Universe (not asked)", "Refused", "", NA))==FALSE) 
+tblSpouseDebt <- aggregate(data=shed.SpouseDebt, Weight ~ SpouseDebt + Race + State, FUN=sum)
+tblSpouseDebt2 <- aggregate(data=shed.SpouseDebt, Weight ~ SpouseDebt + State, FUN=sum)
+tblSpouseDebt2$Race <- rep("All", nrow(tblSpouseDebt2))
+tblSpouseDebt <- rbind(tblSpouseDebt, tblSpouseDebt2)
+tblSpouseDebt <- reshape2::dcast(data=tblSpouseDebt, Race + State ~ SpouseDebt, value.var="Weight")
+tblSpouseDebt$`Share who have debt for a partner or spouse's education` <- tblSpouseDebt$Yes / (tblSpouseDebt$Yes + tblSpouseDebt$No)
+```
+##### Responses to "Do you currently owe any money used to pay for your [spouse/ partner]'s education?"
+```{r figure11A}
+g11A <- ggplot(data=tblSpouseDebt, mapping=aes(y=Race, x=`Share who have debt for a partner or spouse's education`, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 0.2)) + labs(y="", title="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2")
+
+ggplotly(g11A, height=350)
+```
+#### Figure 11: Debt for child's or grandchild's education
+```{r ChildEducation}
+# ChildDebt: # Do you currently owe any money used to pay for your child or grandchild’s education?
+
+# table(shed$ChildDebt)
+shed.ChildDebt <- shed %>% filter((ChildDebt %in% c("Not In Universe (not asked)", "Do not have children or grandchildren", "Refused", "", NA))==FALSE) 
+tblChildDebt <- aggregate(data=shed.ChildDebt, Weight ~ ChildDebt + Race + State, FUN=sum)
+tblChildDebt2 <- aggregate(data=shed.ChildDebt, Weight ~ ChildDebt + State, FUN=sum)
+tblChildDebt2$Race <- rep("All", nrow(tblChildDebt2))
+tblChildDebt <- rbind(tblChildDebt, tblChildDebt2)
+tblChildDebt <- reshape2::dcast(data=tblChildDebt, Race + State ~ ChildDebt, value.var="Weight")
+tblChildDebt$`Share who have debt for a child's or grandchild's education` <- tblChildDebt$Yes / (tblChildDebt$Yes + tblChildDebt$No)
+```
+##### Responses to "Do you currently owe any money used to pay for your child or grandchild’s education?"
+```{r figure11B}
+g11B <- ggplot(data=tblChildDebt, mapping=aes(y=Race, x=`Share who have debt for a child's or grandchild's education`, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 0.2)) + labs(y="", title="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2")
+
+ggplotly(g11B, height=350)
+```
 #### Data source and notes
+Figure 11 includes all respondents, not just those who have student debt for their own education. 
+"Figure 11: Debt for spouse's or partner's education" does not include survey respondents without a spouse or partner. 
+"Figure 11: Debt for child or grandchild's education" does not include survey respondents without children or grandchildren. 
 ***
 ### {-}
 
-xxx 
+xxxx 
 
 ### {.tabset}
+```{r EdAttainment}
+# EdAttain: # What is the highest level of school you have completed or the highest degree you have received? 
+
+# table(shed$EdAttain)
+shed.EdAttain <- shed %>% filter(is.na(EdAttain)==FALSE)
+tblEdAttain <- aggregate(data=shed.EdAttain, Weight ~ EdAttain + Race + State + AnyStudentLoans, FUN=sum)
+tblEdAttain <- tblEdAttain %>% add_row(EdAttain="Less than high school diploma", Race="2+ Races, Non-Hispanic", State="CA", AnyStudentLoans="Yes", Weight=0)
+tblEdAttain <- tblEdAttain %>% add_row(EdAttain="High school degree or GED", Race="Other, Non-Hispanic", State="CA", AnyStudentLoans="Yes", Weight=0)
+tblEdAttain2 <- aggregate(data=shed.EdAttain, Weight ~ EdAttain + State + AnyStudentLoans, FUN=sum)
+tblEdAttain2$Race <- rep("All", nrow(tblEdAttain2))
+tblEdAttain <- rbind(tblEdAttain, tblEdAttain2)
+tblEdAttain <- reshape2::dcast(data=tblEdAttain, Race + State + AnyStudentLoans ~ EdAttain, value.var="Weight")
+tblEdAttain$`Total weight` <- tblEdAttain$`Associate degree` + tblEdAttain$`Bachelor's degree` + tblEdAttain$`Doctorate` + tblEdAttain$`High school degree or GED` + tblEdAttain$`Less than high school diploma` + tblEdAttain$`Master's degree` + tblEdAttain$`Professional degree` + tblEdAttain$`Some college, no degree`
+tblEdAttain$`Associate degree` <- tblEdAttain$`Associate degree` / tblEdAttain$`Total weight`
+tblEdAttain$`Bachelor's degree` <- tblEdAttain$`Bachelor's degree` / tblEdAttain$`Total weight`
+tblEdAttain$`Doctorate` <- tblEdAttain$`Doctorate` / tblEdAttain$`Total weight`
+tblEdAttain$`High school degree or GED` <- tblEdAttain$`High school degree or GED` / tblEdAttain$`Total weight`
+tblEdAttain$`Less than high school diploma` <- tblEdAttain$`Less than high school diploma` / tblEdAttain$`Total weight`
+tblEdAttain$`Master's degree` <- tblEdAttain$`Master's degree` / tblEdAttain$`Total weight`
+tblEdAttain$`Professional degree` <- tblEdAttain$`Professional degree` / tblEdAttain$`Total weight`
+tblEdAttain$`Some college, no degree` <- tblEdAttain$`Some college, no degree` / tblEdAttain$`Total weight`
+tblEdAttain <- reshape2::melt(data=tblEdAttain, id.vars = c("Race", "State", "AnyStudentLoans"), value.name="Share of borrowers") %>% filter(variable != "Total weight")
+tblEdAttain$variable <- factor(tblEdAttain$variable, levels = c("Doctorate", "Professional degree", "Master's degree", "Bachelor's degree", "Associate degree", "Some college, no degree", "High school degree or GED", "Less than high school diploma"))
+```
 #### Figure 12: CA borrowers
-##### Responses to
+##### Responses to "What is the highest level of school you have completed or the highest degree you have received?" 
+```{r figure12A}
+tblEdAttain.CA.Borrow <- tblEdAttain %>% filter(State=="CA") %>% filter(AnyStudentLoans=="Yes")
+g12A <- ggplot(data=tblEdAttain.CA.Borrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Highest level of education", x="Share of student loan borrowers in California") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+
+ggplotly(g12A, width=800, height=350)
+```
 #### Figure 12: Rest of U.S. borrowers
-##### Responses to
+##### Responses to "What is the highest level of school you have completed or the highest degree you have received?"
+```{r figure12B}
+tblEdAttain.US.Borrow <- tblEdAttain %>% filter(State=="Rest of U.S.") %>% filter(AnyStudentLoans=="Yes")
+g12B <- ggplot(data=tblEdAttain.US.Borrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Highest level of education", x="Share of student loan borrowers in the rest of the U.S.") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+
+ggplotly(g12B, width=800, height=350)
+```
 #### Figure 12: CA non-borrowers
-##### Responses to
+##### Responses to "What is the highest level of school you have completed or the highest degree you have received?"
+```{r figure12C}
+tblEdAttain.CA.Nonborrow <- tblEdAttain %>% filter(State=="CA") %>% filter(AnyStudentLoans=="No")
+g12C <- ggplot(data=tblEdAttain.CA.Nonborrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Highest level of education", x="Share of non-borrowers in California") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+
+ggplotly(g12C, width=800, height=350)
+```
 #### Data source and notes
 ***
 ### {-}
@@ -2119,12 +2196,86 @@ xxx
 xxx 
 
 ### {.tabset}
+```{r HomeOwn}
+# HomeOwn: # Do you own your home?
+
+# table(shed$HomeOwn)
+shed.HomeOwn <- shed %>% filter(is.na(HomeOwn)==FALSE) %>% filter(HomeOwn != "Refused") %>% filter(HomeOwn != "NA") 
+tblHomeOwn <- aggregate(data=shed.HomeOwn, Weight ~ HomeOwn + Race + State + AnyStudentLoans, FUN=sum)
+tblHomeOwn <- tblHomeOwn %>% add_row(HomeOwn="Own home free and clear
+", Race="2+ Races, Non-Hispanic", State="CA", AnyStudentLoans="Yes", Weight=0)
+tblHomeOwn2 <- aggregate(data=shed.HomeOwn, Weight ~ HomeOwn + State + AnyStudentLoans, FUN=sum)
+tblHomeOwn2$Race <- rep("All", nrow(tblHomeOwn2))
+tblHomeOwn <- rbind(tblHomeOwn, tblHomeOwn2)
+tblHomeOwn <- reshape2::dcast(data=tblHomeOwn, Race + State + AnyStudentLoans~ HomeOwn, value.var="Weight")
+tblHomeOwn$`Total weight` <- tblHomeOwn$`Own home with a mortgage or loan` + tblHomeOwn$`Own home free and clear` + tblHomeOwn$`Pay rent` + tblHomeOwn$`Other`
+tblHomeOwn$`Own home with a mortgage or loan` <- tblHomeOwn$`Own home with a mortgage or loan` / tblHomeOwn$`Total weight`
+tblHomeOwn$`Own home free and clear` <- tblHomeOwn$`Own home free and clear` / tblHomeOwn$`Total weight`
+tblHomeOwn$`Pay rent` <- tblHomeOwn$`Pay rent` / tblHomeOwn$`Total weight`
+tblHomeOwn$`Other` <- tblHomeOwn$`Other` / tblHomeOwn$`Total weight`
+tblHomeOwn <- reshape2::melt(data=tblHomeOwn, id.vars = c("Race", "State", "AnyStudentLoans"), value.name="Share of borrowers") %>% filter(variable != "Total weight")
+tblHomeOwn$variable <- factor(tblHomeOwn$variable, levels = c("Own home free and clear", "Own home with a mortgage or loan", "Pay rent", "Other"))
+```
 #### Figure 13: CA borrowers
-##### Responses to
+##### Responses to "Do you own your home?"
+```{r figure13A, warning=FALSE}
+tblHomeOwn.CA.Borrow <- tblHomeOwn %>% filter(State=="CA") %>% filter(AnyStudentLoans=="Yes") %>% filter(Race != "2+ Races, Non-Hispanic")
+g13A <- ggplot(data=tblHomeOwn.CA.Borrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Home ownership status", x="Share of student loan borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+
+ggplotly(g13A, width=800, height=350)
+```
 #### Figure 13: Rest of U.S. borrowers
-##### Responses to
+##### Responses to "Do you own your home?"
+```{r figure13B, warning=FALSE}
+tblHomeOwn.US.Borrow <- tblHomeOwn %>% filter(State=="Rest of U.S.") %>% filter(AnyStudentLoans=="Yes") %>% filter(Race != "2+ Races, Non-Hispanic")
+g13B <- ggplot(data=tblHomeOwn.US.Borrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Home ownership status", x="Share of student loan borrowers in rest of U.S.", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+
+ggplotly(g13B, width=800, height=350)
+```
 #### Figure 13: CA non-borrowers
-##### Responses to
+##### Responses to "Do you own your home?"
+```{r figure13C, warning=FALSE}
+tblHomeOwn.CA.Nonborrow <- tblHomeOwn %>% filter(State=="CA") %>% filter(AnyStudentLoans=="No") %>% filter(Race != "2+ Races, Non-Hispanic")
+g13C <- ggplot(data=tblHomeOwn.CA.Nonborrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Home ownership status", x="Share of non-borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+
+ggplotly(g13C, width=800, height=350)
+```
+#### Data source and notes
+Data not sufficient for "2+ Races, Non-Hispanic" group. 
+***
+### {-}
+
+xxx 
+
+### {.tabset}
+```{r UnpaidCC}
+# UnpaidCC: # Do you currently have any outstanding unpaid credit card debt?
+
+# table(shed$UnpaidCC)
+shed.UnpaidCC <- shed %>% filter((UnpaidCC %in% c("Refused", "Not In Universe (not asked)")==FALSE)) 
+tblUnpaidCC <- aggregate(data=shed.UnpaidCC, Weight ~ UnpaidCC + Race + State + AnyStudentLoans, FUN=sum)
+tblUnpaidCC2 <- aggregate(data=shed.UnpaidCC, Weight ~ UnpaidCC + State + AnyStudentLoans, FUN=sum)
+tblUnpaidCC2$Race <- rep("All", nrow(tblUnpaidCC2))
+tblUnpaidCC <- rbind(tblUnpaidCC, tblUnpaidCC2)
+tblUnpaidCC <- reshape2::dcast(data=tblUnpaidCC, Race + State + AnyStudentLoans ~ UnpaidCC, value.var="Weight")
+tblUnpaidCC$`Share with unpaid credit card debt` <- tblUnpaidCC$Yes / (tblUnpaidCC$Yes + tblUnpaidCC$No)
+```
+#### Figure 14: Student loan borrowers
+##### Responses to "Do you currently have any outstanding unpaid credit card debt?"
+```{r figure14A}
+tblUnpaidCC.Borrower <- tblUnpaidCC %>% filter(AnyStudentLoans=="Yes")
+g14A <- ggplot(data=tblUnpaidCC.Borrower, mapping=aes(y=Race, x=`Share with unpaid credit card debt`, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share of student loan borrowers") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
+
+ggplotly(g14A, width=700, height=400)
+```
+#### Figure 14: Non-borrowers
+##### Responses to "Do you currently have any outstanding unpaid credit card debt?"
+```{r figure14B}
+tblUnpaidCC.Nonborrower <- tblUnpaidCC %>% filter(AnyStudentLoans=="No")
+g14B <- ggplot(data=tblUnpaidCC.Nonborrower, mapping=aes(y=Race, x=`Share with unpaid credit card debt`, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share of non-borrowers") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
+
+ggplotly(g14B, width=700, height=400)
+```
 #### Data source and notes
 ***
 ### {-}
@@ -2132,25 +2283,49 @@ xxx
 xxx 
 
 ### {.tabset}
-#### Figure 14: CA borrowers
-##### Responses to
-#### Figure 14: Rest of U.S. borrowers
-##### Responses to
-#### Figure 14: CA non-borrowers
-##### Responses to
-#### Data source and notes
-***
-### {-}
+```{r CCBalance}
+# CCBalance: # In the past 12 months, how frequently have you carried an unpaid balance on one or more of your credit cards? 
 
-xxx 
-
-### {.tabset}
+# table(shed$CCBalance)
+shed.CCBalance <- shed %>% filter(is.na(CCBalance)==FALSE) %>% filter((CCBalance %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+tblCCBalance <- aggregate(data=shed.CCBalance, Weight ~ CCBalance + Race + State + AnyStudentLoans, FUN=sum)
+# tblCCBalance <- tblCCBalance %>% add_row(CCBalance="Once", Race="2+ Races, Non-Hispanic", State="CA", Weight=0)
+tblCCBalance2 <- aggregate(data=shed.CCBalance, Weight ~ CCBalance + State + AnyStudentLoans, FUN=sum)
+tblCCBalance2$Race <- rep("All", nrow(tblCCBalance2))
+tblCCBalance <- rbind(tblCCBalance, tblCCBalance2)
+tblCCBalance <- reshape2::dcast(data=tblCCBalance, Race + State + AnyStudentLoans ~ CCBalance, value.var="Weight")
+tblCCBalance$`Total weight` <- tblCCBalance$`Always pay in full` + tblCCBalance$`Most or all of the time` + tblCCBalance$`Some of the time` + tblCCBalance$`Once`
+tblCCBalance$`Always pay in full` <- tblCCBalance$`Always pay in full` / tblCCBalance$`Total weight`
+tblCCBalance$`Most or all of the time` <- tblCCBalance$`Most or all of the time` / tblCCBalance$`Total weight`
+tblCCBalance$`Some of the time` <- tblCCBalance$`Some of the time` / tblCCBalance$`Total weight`
+tblCCBalance$`Once` <- tblCCBalance$`Once` / tblCCBalance$`Total weight`
+tblCCBalance <- reshape2::melt(data=tblCCBalance, id.vars = c("Race", "State", "AnyStudentLoans"), value.name="Share of borrowers") %>% filter(variable != "Total weight")
+tblCCBalance$variable <- factor(tblCCBalance$variable, levels = c("Most or all of the time", "Some of the time", "Once", "Always pay in full"))
+```
 #### Figure 15: CA borrowers
-##### Responses to
+##### Responses to "In the past 12 months, how frequently have you carried an unpaid balance on one or more of your credit cards?"
+```{r figure15A}
+tblCCBalance.CA.Borrow <- tblCCBalance %>% filter(State=="CA") %>% filter(AnyStudentLoans=="Yes")
+g15A <- ggplot(data=tblCCBalance.CA.Borrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of student loan borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+
+ggplotly(g15A, width=800, height=350)
+```
 #### Figure 15: Rest of U.S. borrowers
-##### Responses to
+##### Responses to "In the past 12 months, how frequently have you carried an unpaid balance on one or more of your credit cards?"
+```{r figure15B}
+tblCCBalance.US.Borrow <- tblCCBalance %>% filter(State=="Rest of U.S.") %>% filter(AnyStudentLoans=="Yes")
+g15B <- ggplot(data=tblCCBalance.US.Borrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of student loan borrowers in rest of U.S.", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+
+ggplotly(g15B, width=800, height=350)
+```
 #### Figure 15: CA non-borrowers
-##### Responses to
+##### Responses to "In the past 12 months, how frequently have you carried an unpaid balance on one or more of your credit cards?"
+```{r figure15C}
+tblCCBalance.CA.Nonborrow <- tblCCBalance %>% filter(State=="CA") %>% filter(AnyStudentLoans=="No")
+g15C <- ggplot(data=tblCCBalance.CA.Nonborrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of non-borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+
+ggplotly(g15C, width=800, height=350)
+```
 #### Data source and notes
 ***
 ### {-}
