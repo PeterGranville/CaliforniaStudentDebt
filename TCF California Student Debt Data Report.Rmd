@@ -1893,7 +1893,7 @@ tblOwnDebt$`Share with debt` <- tblOwnDebt$Yes / (tblOwnDebt$Yes + tblOwnDebt$No
 ```{r figure6}
 g6 <- ggplot(data=tblOwnDebt, mapping=aes(y=Race, x=`Share with debt`, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(y="", title="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2")
 
-ggplotly(g6, height=350)
+ggplotly(g6, width=800, height=350)
 ```
 #### Data source and notes
 ***
@@ -1920,7 +1920,7 @@ tblOwnDebtSL$`Share of borrowers whose debt includes a student loan` <- tblOwnDe
 tblOwnDebtSL <- tblOwnDebtSL %>% filter(Race != "2+ Races, Non-Hispanic")
 g7A <- ggplot(data=tblOwnDebtSL, mapping=aes(y=Race, x=`Share of borrowers whose debt includes a student loan`, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2")
 
-ggplotly(g7A, width=700, height=400)
+ggplotly(g7A, width=800, height=350)
 ```
 #### Figure 7: Home equity
 ```{r OwnDebtHE}
@@ -1940,7 +1940,7 @@ tblOwnDebtHE$`Share of borrowers whose debt includes home equity` <- tblOwnDebtH
 tblOwnDebtHE <- tblOwnDebtHE %>% filter(Race != "2+ Races, Non-Hispanic")
 g7B <- ggplot(data=tblOwnDebtHE, mapping=aes(y=Race, x=`Share of borrowers whose debt includes home equity`, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2")
 
-ggplotly(g7B, width=700, height=400)
+ggplotly(g7B, width=800, height=350)
 ```
 #### Figure 7: Credit card debt
 ```{r OwnDebtCC}
@@ -1960,7 +1960,7 @@ tblOwnDebtCC$`Share of borrowers whose debt includes credit card debt` <- tblOwn
 tblOwnDebtCC <- tblOwnDebtCC %>% filter(Race != "2+ Races, Non-Hispanic")
 g7C <- ggplot(data=tblOwnDebtCC, mapping=aes(y=Race, x=`Share of borrowers whose debt includes credit card debt`, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
 
-ggplotly(g7C, width=700, height=400)
+ggplotly(g7C, width=800, height=350)
 ```
 #### Data source and notes
 Insufficient data for the "2+ Races, Non-Hispanic" group. 
@@ -2001,7 +2001,7 @@ tblOwnDebtTot3$variable <- factor(tblOwnDebtTot3$variable, levels = c("$100,000 
 tblOwnDebtTot3.CA <- tblOwnDebtTot3 %>% filter(State=="CA")
 g8A <- ggplot(data=tblOwnDebtTot3.CA, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Total student debt") + labs(y="", title="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
 
-ggplotly(g8A)
+ggplotly(g8A, height=350)
 ```
 #### Figure 8: Rest of U.S. borrowers
 ##### Responses to "Thinking specifically about the money that you owe for your own education, please tell the total amount that you currently owe on these loans."
@@ -2009,7 +2009,7 @@ ggplotly(g8A)
 tblOwnDebtTot3.US <- tblOwnDebtTot3 %>% filter(State=="Rest of U.S.")
 g8B <- ggplot(data=tblOwnDebtTot3.US, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Total student debt") + labs(y="", title="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
 
-ggplotly(g8B)
+ggplotly(g8B, height=350)
 ```
 #### Data source and notes
 ***
@@ -2331,6 +2331,196 @@ ggplotly(g15C, width=800, height=350)
 ### {-}
 
 xxx 
+
+### {.tabset}
+```{r Savings}
+# Savings: # What is the approximate total amount of your household's savings and investments?
+
+# table(shed$Savings)
+shed.Savings <- shed %>% filter((Savings %in% c("Not sure", "Refused", ""))==FALSE) %>% filter(is.na(Savings)==FALSE) 
+tblSavings <- aggregate(data=shed.Savings, Weight ~ Savings + Race + State + AnyStudentLoans, FUN=sum)
+tblSavings <- tblSavings %>% add_row(Savings="$250,000 - $499,999", Race="2+ Races, Non-Hispanic", State="CA", AnyStudentLoans="Yes", Weight=0)
+tblSavings <- tblSavings %>% add_row(Savings="$250,000 - $499,999", Race="Black, Non-Hispanic", State="CA", AnyStudentLoans="Yes", Weight=0)
+tblSavings <- tblSavings %>% add_row(Savings="$500,000 - $999,999", Race="Black, Non-Hispanic", State="CA", AnyStudentLoans="Yes", Weight=0)
+tblSavings2 <- aggregate(data=shed.Savings, Weight ~ Savings + State + AnyStudentLoans, FUN=sum)
+tblSavings2$Race <- rep("All", nrow(tblSavings2))
+tblSavings <- rbind(tblSavings, tblSavings2)
+tblSavings <- reshape2::dcast(data=tblSavings, Race + State + AnyStudentLoans ~ Savings, value.var="Weight")
+tblSavings$`Total weight` <- tblSavings$`Under $50,000` + tblSavings$`$50,000 - $99,999` + tblSavings$`$100,000 - $249,999` +  tblSavings$`$250,000 - $499,999` + tblSavings$`$500,000 - $999,999` + tblSavings$`$1,000,000 or more` 
+tblSavings$`Under $50,000` <- tblSavings$`Under $50,000` / tblSavings$`Total weight`
+tblSavings$`$50,000 - $99,999` <- tblSavings$`$50,000 - $99,999` / tblSavings$`Total weight`
+tblSavings$`$100,000 - $249,999` <- tblSavings$`$100,000 - $249,999` / tblSavings$`Total weight`
+tblSavings$`$250,000 - $499,999` <- tblSavings$`$250,000 - $499,999` / tblSavings$`Total weight`
+tblSavings$`$500,000 - $999,999` <- tblSavings$`$500,000 - $999,999` / tblSavings$`Total weight`
+tblSavings$`$1,000,000 or more` <- tblSavings$`$1,000,000 or more` / tblSavings$`Total weight`
+tblSavings <- reshape2::melt(data=tblSavings, id.vars = c("Race", "State", "AnyStudentLoans"), value.name="Share of borrowers") %>% filter(variable != "Total weight")
+tblSavings$variable <- factor(tblSavings$variable, levels = c("$1,000,000 or more", "$500,000 - $999,999", "$250,000 - $499,999", "$100,000 - $249,999", "$50,000 - $99,999", "Under $50,000"))
+```
+#### Figure 16: CA borrowers
+##### Responses to "What is the approximate total amount of your household's savings and investments?"
+```{r figure16A}
+tblSavings.CA.Borrow <- tblSavings %>% filter(State=="CA") %>% filter(AnyStudentLoans=="Yes")
+g16A <- ggplot(data=tblSavings.CA.Borrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Savings and investments", x="Share of student loan borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+
+ggplotly(g16A, width=800, height=350)
+```
+#### Figure 16: Rest of U.S. borrowers
+##### Responses to "What is the approximate total amount of your household's savings and investments?"
+```{r figure16B}
+tblSavings.US.Borrow <- tblSavings %>% filter(State=="Rest of U.S.") %>% filter(AnyStudentLoans=="Yes")
+g16B <- ggplot(data=tblSavings.US.Borrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Savings and investments", x="Share of student loan borrowers in rest of U.S.", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+
+ggplotly(g16B, width=800, height=350)
+```
+#### Figure 16: CA non-borrowers
+##### Responses to "What is the approximate total amount of your household's savings and investments?"
+```{r figure16C}
+tblSavings.CA.Nonborrow <- tblSavings %>% filter(State=="CA") %>% filter(AnyStudentLoans=="No")
+g16C <- ggplot(data=tblSavings.CA.Nonborrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Savings and investments", x="Share of non-borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+
+ggplotly(g16C, width=800, height=350)
+```
+#### Data source and notes
+***
+### {-}
+
+xxx 
+
+### {.tabset}
+```{r TotalInc}
+# TotalInc: # Which of the following categories best describes the total income that you received from all sources, before taxes and deductions, in the past 12 months? 
+
+# table(shed$TotalInc)
+shed.TotalInc <- shed %>% filter(is.na(TotalInc)==FALSE) %>% filter((TotalInc %in% c("Refused", ""))==FALSE) 
+tblTotalInc <- aggregate(data=shed.TotalInc, Weight ~ TotalInc + Race + State + AnyStudentLoans, FUN=sum)
+tblTotalInc2 <- aggregate(data=shed.TotalInc, Weight ~ TotalInc + State + AnyStudentLoans, FUN=sum)
+tblTotalInc2$Race <- rep("All", nrow(tblTotalInc2))
+tblTotalInc <- rbind(tblTotalInc, tblTotalInc2)
+tblTotalInc <- reshape2::dcast(data=tblTotalInc, Race + State + AnyStudentLoans ~ TotalInc, value.var="Weight")
+tblTotalInc$`Total weight` <- tblTotalInc$`$0 to $4,999` + tblTotalInc$`$5,000 to $14,999` + tblTotalInc$`$15,000 to $24,999` + tblTotalInc$`$25,000 to $39,999` + tblTotalInc$`$40,000 to $49,999` + tblTotalInc$`$50,000 to $74,999` + tblTotalInc$`$75,000 to $99,999` + tblTotalInc$`$100,000 to $149,999` + tblTotalInc$`$150,000 to $199,999` + tblTotalInc$`$200,000 or higher`
+tblTotalInc$`$0 to $4,999` <- tblTotalInc$`$0 to $4,999` / tblTotalInc$`Total weight`
+tblTotalInc$`$5,000 to $14,999` <- tblTotalInc$`$5,000 to $14,999` / tblTotalInc$`Total weight`
+tblTotalInc$`$15,000 to $24,999` <- tblTotalInc$`$15,000 to $24,999` / tblTotalInc$`Total weight`
+tblTotalInc$`$25,000 to $39,999` <- tblTotalInc$`$25,000 to $39,999` / tblTotalInc$`Total weight`
+tblTotalInc$`$40,000 to $49,999` <- tblTotalInc$`$40,000 to $49,999` / tblTotalInc$`Total weight`
+tblTotalInc$`$50,000 to $74,999` <- tblTotalInc$`$50,000 to $74,999` / tblTotalInc$`Total weight`
+tblTotalInc$`$75,000 to $99,999` <- tblTotalInc$`$75,000 to $99,999` / tblTotalInc$`Total weight`
+tblTotalInc$`$100,000 to $149,999` <- tblTotalInc$`$100,000 to $149,999` / tblTotalInc$`Total weight`
+tblTotalInc$`$150,000 to $199,999` <- tblTotalInc$`$150,000 to $199,999` / tblTotalInc$`Total weight`
+tblTotalInc$`$200,000 or higher` <- tblTotalInc$`$200,000 or higher` / tblTotalInc$`Total weight`
+tblTotalInc <- reshape2::melt(data=tblTotalInc, id.vars = c("Race", "State", "AnyStudentLoans"), value.name="Share of borrowers") %>% filter(variable != "Total weight")
+tblTotalInc$variable <- factor(tblTotalInc$variable, levels = c("$200,000 or higher", "$150,000 to $199,999", "$100,000 to $149,999", "$75,000 to $99,999", "$50,000 to $74,999", "$40,000 to $49,999", "$25,000 to $39,999", "$15,000 to $24,999", "$5,000 to $14,999", "$0 to $4,999"))
+```
+#### Figure 17: CA borrowers
+##### Responses to "Which of the following categories best describes the total income that you received from all sources, before taxes and deductions, in the past 12 months?"
+```{r figure17A}
+tblTotalInc.CA.Borrow <- tblTotalInc %>% filter(State=="CA") %>% filter(AnyStudentLoans=="Yes")
+g17A <- ggplot(data=tblTotalInc.CA.Borrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Total income", x="Share of student loan borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+
+ggplotly(g17A, width=800, height=350)
+```
+#### Figure 17: Rest of U.S. borrowers
+##### Responses to "Which of the following categories best describes the total income that you received from all sources, before taxes and deductions, in the past 12 months?"
+```{r figure17B}
+tblTotalInc.US.Borrow <- tblTotalInc %>% filter(State=="Rest of U.S.") %>% filter(AnyStudentLoans=="Yes")
+g17B <- ggplot(data=tblTotalInc.US.Borrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Total income", x="Share of student loan borrowers in rest of U.S.", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+
+ggplotly(g17B, width=800, height=350)
+```
+#### Figure 17: CA non-borrowers
+##### Responses to "Which of the following categories best describes the total income that you received from all sources, before taxes and deductions, in the past 12 months?"
+```{r figure17C}
+tblTotalInc.CA.Nonborrow <- tblTotalInc %>% filter(State=="CA") %>% filter(AnyStudentLoans=="No")
+g17C <- ggplot(data=tblTotalInc.CA.Nonborrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Total income", x="Share of non-borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+
+ggplotly(g17C, width=800, height=350)
+```
+#### Data source and notes
+***
+### {-}
+
+xxx 
+
+### {.tabset}
+#### Figure 18: CA borrowers
+##### Responses to 
+#### Figure 18: Rest of U.S. borrowers
+##### Responses to 
+#### Figure 18: CA non-borrowers
+##### Responses to 
+#### Data source and notes
+***
+### {-}
+
+xxx 
+
+### {.tabset}
+#### Figure 19: CA borrowers
+##### Responses to 
+#### Figure 19: Rest of U.S. borrowers
+##### Responses to 
+#### Figure 19: CA non-borrowers
+##### Responses to 
+#### Data source and notes
+***
+### {-}
+
+xxx 
+
+### {.tabset}
+#### Figure 20: CA borrowers
+##### Responses to 
+#### Figure 20: Rest of U.S. borrowers
+##### Responses to 
+#### Figure 20: CA non-borrowers
+##### Responses to 
+#### Data source and notes
+***
+### {-}
+
+xxx 
+
+### {.tabset}
+#### Figure 21: CA borrowers
+##### Responses to 
+#### Figure 21: Rest of U.S. borrowers
+##### Responses to 
+#### Figure 21: CA non-borrowers
+##### Responses to 
+#### Data source and notes
+***
+### {-}
+
+xxx 
+
+### {.tabset}
+#### Figure 22: CA borrowers
+##### Responses to 
+#### Figure 22: Rest of U.S. borrowers
+##### Responses to 
+#### Figure 22: CA non-borrowers
+##### Responses to 
+#### Data source and notes
+***
+### {-}
+
+xxx 
+
+### {.tabset}
+#### Figure 22: CA borrowers
+##### Responses to 
+#### Figure 22: Rest of U.S. borrowers
+##### Responses to 
+#### Figure 22: CA non-borrowers
+##### Responses to 
+#### Data source and notes
+***
+### {-}
+
+xxx 
+
+
+
 
 ## College Scorecard
 
