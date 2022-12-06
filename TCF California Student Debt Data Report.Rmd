@@ -880,7 +880,10 @@ Note: Filtered for 4-year colleges and U.S. citizenship. Limited to in-state, un
 This is some information about SHED. 
 Explain your process of variable selection: there are many but you chose the ones that seemed most relevant to the question of the financial burden of student loans. 
 Emphasize here that the relationship between student loans and these variables may be chicken-and-egg, where we can't say for sure what causes the other. 
+Acknowledge the limitations of the sample size. Would it be nice to filter by institution level and control? Yes. Would it cut the sample size down very, very far? Yes. 
+Small differences of one of two percentage points may be attributable to random noise that can raise from sampling. 
 Remember to say that the respondents are heads of households, meaning that the population represented is that of U.S. adults. (Children are not included.)
+A good example of the kind of questions SHED answers that other datasets cannot: do borrowers think their education was worth it?
 
 #### Findings
 
@@ -3322,15 +3325,33 @@ tblEdPayoff1$`Financial benefits are somewhat larger` <- tblEdPayoff1$`Financial
 tblEdPayoff1$`About the same` <- tblEdPayoff1$`About the same` / tblEdPayoff1$`Total weight`
 tblEdPayoff1$`Financial costs are somewhat larger` <- tblEdPayoff1$`Financial costs are somewhat larger` / tblEdPayoff1$`Total weight`
 tblEdPayoff1$`Financial costs are much larger` <- tblEdPayoff1$`Financial costs are much larger` / tblEdPayoff1$`Total weight`
-tblEdPayoff1 <- reshape2::melt(data=tblEdPayoff1, id.vars = c("Race", "State"), value.name="Share of borrowers") %>% filter(variable != "Total weight")
+tblEdPayoff1 <- reshape2::melt(data=tblEdPayoff1, id.vars = c("Race", "State", "AnyStudentLoans"), value.name="Share") %>% filter(variable != "Total weight")
 tblEdPayoff1$variable <- factor(tblEdPayoff1$variable, levels = c("Financial costs are much larger", "Financial costs are somewhat larger", "About the same", "Financial benefits are somewhat larger", "Financial benefits are much larger"))
 ```
 #### Figure 30: CA borrowers
-##### Responses to 
+##### Responses to "Overall, how would you say the lifetime financial benefits of your [current/most recent] educational program compare to its financial costs?"
+```{r figure30A}
+tblEdPayoff1.CA.Borrow <- tblEdPayoff1 %>% filter(State=="CA") %>% filter(AnyStudentLoans=="Yes")
+g30A <- ggplot(data=tblEdPayoff1.CA.Borrow, mapping=aes(y=Race, x=`Share`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of student loan borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+
+ggplotly(g30A, width=800, height=350)
+```
 #### Figure 30: Rest of U.S. borrowers
-##### Responses to 
+##### Responses to "Overall, how would you say the lifetime financial benefits of your [current/most recent] educational program compare to its financial costs?"
+```{r figure30B}
+tblEdPayoff1.US.Borrow <- tblEdPayoff1 %>% filter(State=="Rest of U.S.") %>% filter(AnyStudentLoans=="Yes")
+g30B <- ggplot(data=tblEdPayoff1.US.Borrow, mapping=aes(y=Race, x=`Share`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of student loan borrowers in rest of U.S.", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+
+ggplotly(g30B, width=800, height=350)
+```
 #### Figure 30: CA non-borrowers
-##### Responses to 
+##### Responses to "Overall, how would you say the lifetime financial benefits of your [current/most recent] educational program compare to its financial costs?"
+```{r figure30C}
+tblEdPayoff1.CA.Nonborrow <- tblEdPayoff1 %>% filter(State=="CA") %>% filter(AnyStudentLoans=="No")
+g30C <- ggplot(data=tblEdPayoff1.CA.Nonborrow, mapping=aes(y=Race, x=`Share`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of non-borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+
+ggplotly(g30C, width=800, height=350)
+```
 #### Data source and notes
 ***
 ### {-}
@@ -3338,12 +3359,110 @@ tblEdPayoff1$variable <- factor(tblEdPayoff1$variable, levels = c("Financial cos
 xxx 
 
 ### {.tabset}
-#### Figure 31: CA borrowers
-##### Responses to 
-#### Figure 31: Rest of U.S. borrowers
-##### Responses to 
-#### Figure 31: CA non-borrowers
-##### Responses to 
+#### Figure 31: Different field
+```{r DiffField}
+# DiffField1: # Chosen a different field of study - If you could go back and make your education decisions again, would you have done any of these things: 
+
+# table(shed$DiffField1)
+shed.DiffField1 <- shed %>% filter((DiffField1 %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+tblDiffField1 <- aggregate(data=shed.DiffField1, Weight ~ DiffField1 + Race + State + AnyStudentLoans, FUN=sum)
+tblDiffField12 <- aggregate(data=shed.DiffField1, Weight ~ DiffField1 + State + AnyStudentLoans, FUN=sum)
+tblDiffField12$Race <- rep("All", nrow(tblDiffField12))
+tblDiffField1 <- rbind(tblDiffField1, tblDiffField12)
+tblDiffField1 <- reshape2::dcast(data=tblDiffField1, Race + State + AnyStudentLoans ~ DiffField1, value.var="Weight")
+tblDiffField1$`Share` <- tblDiffField1$Yes / (tblDiffField1$Yes + tblDiffField1$No)
+
+tblDiffField1$Group <- rep(NA, nrow(tblDiffField1))
+tblDiffField1$Group[tblDiffField1$State=="CA" & tblDiffField1$AnyStudentLoans=="Yes"] <- "California student loan borrowers"
+tblDiffField1$Group[tblDiffField1$State=="Rest of U.S." & tblDiffField1$AnyStudentLoans=="Yes"] <- "Rest of U.S. student loan borrowers"
+tblDiffField1$Group[tblDiffField1$State=="CA" & tblDiffField1$AnyStudentLoans=="No"] <- "California non-borrowers"
+tblDiffField1 <- tblDiffField1 %>% filter(is.na(Group)==FALSE)
+tblDiffField1$Group <- factor(tblDiffField1$Group, levels=c("California non-borrowers", "California student loan borrowers", "Rest of U.S. student loan borrowers"))
+```
+##### Responses to "If you could go back and make your education decisions again, would you have chosen a different field of study?"
+```{r figure31A}
+g31A <- ggplot(data=tblDiffField1, mapping=aes(y=Race, x=`Share`, fill=Group)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who would have chosen a different field of study") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
+
+ggplotly(g31A, width=800, height=350)
+```
+#### Figure 31: Different school
+```{r DiffSchool}
+# DiffSchool1: # Attended a different school - If you could go back and make your education decisions again, would you have done any of these things: 
+
+# table(shed$DiffSchool1)
+shed.DiffSchool1 <- shed %>% filter((DiffSchool1 %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+tblDiffSchool1 <- aggregate(data=shed.DiffSchool1, Weight ~ DiffSchool1 + Race + State + AnyStudentLoans, FUN=sum)
+tblDiffSchool12 <- aggregate(data=shed.DiffSchool1, Weight ~ DiffSchool1 + State + AnyStudentLoans, FUN=sum)
+tblDiffSchool12$Race <- rep("All", nrow(tblDiffSchool12))
+tblDiffSchool1 <- rbind(tblDiffSchool1, tblDiffSchool12)
+tblDiffSchool1 <- reshape2::dcast(data=tblDiffSchool1, Race + State + AnyStudentLoans ~ DiffSchool1, value.var="Weight")
+tblDiffSchool1$`Share` <- tblDiffSchool1$Yes / (tblDiffSchool1$Yes + tblDiffSchool1$No)
+
+tblDiffSchool1$Group <- rep(NA, nrow(tblDiffSchool1))
+tblDiffSchool1$Group[tblDiffSchool1$State=="CA" & tblDiffSchool1$AnyStudentLoans=="Yes"] <- "California student loan borrowers"
+tblDiffSchool1$Group[tblDiffSchool1$State=="Rest of U.S." & tblDiffSchool1$AnyStudentLoans=="Yes"] <- "Rest of U.S. student loan borrowers"
+tblDiffSchool1$Group[tblDiffSchool1$State=="CA" & tblDiffSchool1$AnyStudentLoans=="No"] <- "California non-borrowers"
+tblDiffSchool1 <- tblDiffSchool1 %>% filter(is.na(Group)==FALSE)
+tblDiffSchool1$Group <- factor(tblDiffSchool1$Group, levels=c("California non-borrowers", "California student loan borrowers", "Rest of U.S. student loan borrowers"))
+```
+##### Responses to "If you could go back and make your education decisions again, would you have attended a different school?"
+```{r figure31B}
+g31B <- ggplot(data=tblDiffSchool1, mapping=aes(y=Race, x=`Share`, fill=Group)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who would have chosen a different school") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
+
+ggplotly(g31B, width=800, height=350)
+```
+#### Figure 31: Less education
+```{r LessEd}
+# LessEd1: # Not attended college or completed less education - If you could go back and make your education decisions again, would have done any of these things: 
+
+# table(shed$LessEd1)
+shed.LessEd1 <- shed %>% filter((LessEd1 %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+tblLessEd1 <- aggregate(data=shed.LessEd1, Weight ~ LessEd1 + Race + State + AnyStudentLoans, FUN=sum)
+tblLessEd12 <- aggregate(data=shed.LessEd1, Weight ~ LessEd1 + State + AnyStudentLoans, FUN=sum)
+tblLessEd12$Race <- rep("All", nrow(tblLessEd12))
+tblLessEd1 <- rbind(tblLessEd1, tblLessEd12)
+tblLessEd1 <- reshape2::dcast(data=tblLessEd1, Race + State + AnyStudentLoans ~ LessEd1, value.var="Weight")
+tblLessEd1$`Share` <- tblLessEd1$Yes / (tblLessEd1$Yes + tblLessEd1$No)
+
+tblLessEd1$Group <- rep(NA, nrow(tblLessEd1))
+tblLessEd1$Group[tblLessEd1$State=="CA" & tblLessEd1$AnyStudentLoans=="Yes"] <- "California student loan borrowers"
+tblLessEd1$Group[tblLessEd1$State=="Rest of U.S." & tblLessEd1$AnyStudentLoans=="Yes"] <- "Rest of U.S. student loan borrowers"
+tblLessEd1$Group[tblLessEd1$State=="CA" & tblLessEd1$AnyStudentLoans=="No"] <- "California non-borrowers"
+tblLessEd1 <- tblLessEd1 %>% filter(is.na(Group)==FALSE)
+tblLessEd1$Group <- factor(tblLessEd1$Group, levels=c("California non-borrowers", "California student loan borrowers", "Rest of U.S. student loan borrowers"))
+```
+##### Responses to "If you could go back and make your education decisions again, would have not attended college or completed less education?" 
+```{r figure31C}
+g31C <- ggplot(data=tblLessEd1, mapping=aes(y=Race, x=`Share`, fill=Group)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who would have completed less education") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
+
+ggplotly(g31C, width=800, height=350)
+```
+#### Figure 31: More education
+```{r MoreEd}
+# MoreEd1: # Completed more education - If you could go back and make your education decisions again, would you have done any of these things:
+
+# table(shed$MoreEd1)
+shed.MoreEd1 <- shed %>% filter((MoreEd1 %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+tblMoreEd1 <- aggregate(data=shed.MoreEd1, Weight ~ MoreEd1 + Race + State + AnyStudentLoans, FUN=sum)
+tblMoreEd12 <- aggregate(data=shed.MoreEd1, Weight ~ MoreEd1 + State + AnyStudentLoans, FUN=sum)
+tblMoreEd12$Race <- rep("All", nrow(tblMoreEd12))
+tblMoreEd1 <- rbind(tblMoreEd1, tblMoreEd12)
+tblMoreEd1 <- reshape2::dcast(data=tblMoreEd1, Race + State + AnyStudentLoans ~ MoreEd1, value.var="Weight")
+tblMoreEd1$`Share` <- tblMoreEd1$Yes / (tblMoreEd1$Yes + tblMoreEd1$No)
+
+tblMoreEd1$Group <- rep(NA, nrow(tblMoreEd1))
+tblMoreEd1$Group[tblMoreEd1$State=="CA" & tblMoreEd1$AnyStudentLoans=="Yes"] <- "California student loan borrowers"
+tblMoreEd1$Group[tblMoreEd1$State=="Rest of U.S." & tblMoreEd1$AnyStudentLoans=="Yes"] <- "Rest of U.S. student loan borrowers"
+tblMoreEd1$Group[tblMoreEd1$State=="CA" & tblMoreEd1$AnyStudentLoans=="No"] <- "California non-borrowers"
+tblMoreEd1 <- tblMoreEd1 %>% filter(is.na(Group)==FALSE)
+tblMoreEd1$Group <- factor(tblMoreEd1$Group, levels=c("California non-borrowers", "California student loan borrowers", "Rest of U.S. student loan borrowers"))
+```
+##### Responses to "If you could go back and make your education decisions again, would you have completed more education?"
+```{r figure31D}
+g31D <- ggplot(data=tblMoreEd1, mapping=aes(y=Race, x=`Share`, fill=Group)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who would have completed more education") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
+
+ggplotly(g31D, width=800, height=350)
+```
 #### Data source and notes
 ***
 ### {-}
