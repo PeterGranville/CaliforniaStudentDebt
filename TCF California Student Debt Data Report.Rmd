@@ -675,7 +675,7 @@ table4.1 <- table4 %>% select(State, Control, `Subsidized`, `Unsub. UG`, `Unsub.
 table4.1 <- reshape2::melt(data=table4.1, id.vars = c("State", "Control"), value.name="Average Loan")
 
 table4.1$Control <- as.factor(table4.1$Control)
-table4.1$Control <- factor(table4.1$Control, levels = c("For-profit", "Non-profit", "Public"))
+table4.1$Control <- factor(table4.1$Control, levels = rev(c("For-profit", "Non-profit", "Public")))
 ```
 
 #### {.tabset}
@@ -695,23 +695,27 @@ Source: Federal Student Aid Data Center, spreadsheet on Direct Loan volume for Q
 
 Across all three institutional control categories, California exceeds the rest of the U.S. in the average Parent PLUS loan and the average Grad PLUS loan. Unlike Stafford loans, Parent PLUS and Grad PLUS are both uncapped, meaning a borrower can take out as much as they would like any year. At California nonprofit and for-profit four-years, the average Parent PLUS loan *per year* is north of \$20,000, and the average Grad PLUS loan per year is around \$30,000. In both cases, the averages are lower at public institutions. 
 
+Not every graduate student borrows Grad PLUS, and not every parent who sends their child to college borrows Parent PLUS. However, high averages mean that the lasting burden between those who do borrow and those who do not is greater. These programs are two driving reasons why California has a higher average student loan balance than most other states (per Table 1).
+
 ## National Postsecondary Student Aid Study
 
 #### About the data
 
-The statistics in the previous section have all been based on institution-level data. For the most robust information on the relationship between student loan borrowing and race in California, we need student-level data. In the absence of a national student-level data set, we use survey data from the National Postsecondary Student Aid Study (NPSAS). 
+The statistics in the previous section are all based on state-level and institution-level data. For the most robust information on the relationship between student loan borrowing and race in California, we need student-level data. In the absence of a [national student-level data set](https://www.thirdway.org/video/the-college-transparency-act-explained), we use survey data from the National Postsecondary Student Aid Study (NPSAS).
 
-NPSAS is the largest federal survey of U.S. college students with a primary focus on financial aid. The study has generally been conducted every four years, most recently in 2016 (NPSAS:16), with separate data sets examining undergraduate and graduate students. 
+NPSAS is the largest survey of U.S. college students that has a primary focus on financial aid and college costs. The study has generally been conducted every four years, with the latest published data set reflecting the 2015-16 year (NPSAS:16). With every NPSAS release, separate data sets examine undergraduate and graduate students. 
 
-NPSAS data sets have not traditionally been used for state-level analyses, although the sample size for California students can be large enough to produce reliable estimates depending on the query. This past year, a new edition of NPSAS that was designed for state-representative samples was released. Known as NPSAS-AC (Administrative Collection), it draws from student records housed by colleges and the U.S. Department of Education for a sample of 325,000 undergraduates. Representative samples for public 4-year systems are available in NPSAS-AC for 45 states, and representative samples for public 2-year systems are available for 36 states. Thirty states have representative samples for undergraduate students overall. More information on NPSAS-AC can be found [here](https://nces.ed.gov/pubs2022/2022477.pdf). 
+NPSAS data sets have not traditionally been used for state-level analyses, although the sample size for California students can be large enough to produce reliable estimates depending on the query. This past year, a new edition of NPSAS that was designed for state-representative samples was released. Known as NPSAS:18-AC (Administrative Collection), it draws from student records housed by colleges and the U.S. Department of Education for a sample of 325,000 undergraduates enrolled in 2017-18. Representative samples for public 4-year systems are available in NPSAS-AC for 45 states, and representative samples for public 2-year systems are available for 36 states. Thirty states have representative samples for undergraduate students overall. More information on NPSAS-AC can be found [here](https://nces.ed.gov/pubs2022/2022477.pdf). 
 
-In this section we rely primarily on NPSAS-AC, which reflects the 2017-18 year. For analysis of graduate students, we use NPSAS:16 and filter for in-state students in California. (The in-state condition is required for this query.)
+In this section we rely primarily on NPSAS-AC. For analysis of graduate students, we use NPSAS:16 and filter for in-state students in California. The in-state condition is required to run this query in NPSAS:16.
 
-These data are accessed using the National Center on Education Statistics' (NCES) [Datalab tool](https://nces.ed.gov/datalab/). Every query has a unique table retrieval number that can be used by any user to run the query in Datalab. 
+These data are accessed using the National Center on Education Statistics' (NCES) [Datalab tool](https://nces.ed.gov/datalab/). Every query has a unique table retrieval number that can be used by any user to run the query in Datalab. These table retrieval numbers are included in the "Data source and notes" tabs of every chart. 
 
 #### Findings
 
-The figure below compares average undergraduate borrowing by racial group at California public four-years, compared to U.S. public four-years. Across all groups, the average federal loan total is lower in California than nationwide. However, California resembles the U.S. in that Black undergraduates and their families borrow more than their peers. California differs from the U.S. in that Latino/a undergraduates in the state borrow more than white undergraduates, though this is only the case for direct loans to the students and not Parent PLUS.   
+This research is primarily interested in examining how factors like the racial wealth gap shape the lasting burdens of student debt among California borrowers. Figure 2 below compares average undergraduate borrowing by racial group at California public four-years, compared to U.S. public four-years. 
+
+Across all groups, the average federal loan total is lower in California than nationwide. However, California resembles the U.S. in that Black undergraduates and their families borrow more than their peers. California differs from the U.S. in that Latino/a undergraduates in the state borrow more than white undergraduates, though this is only the case for direct loans to the students and not Parent PLUS.   
 
 ```{r npsas1}
 npsas1.US <- read.csv("Powerstats_lounfy.csv", skip=12, nrow=7, header=FALSE)
@@ -750,11 +754,12 @@ Source: NPSAS:18-AC. Table retrieval number: lounfy.
 
 Year(s) of analysis: Reflects students enrolled in the 2017-18 academic year. Only reflects undergraduate public 4-year institutions.  
 
-Note: Insufficient sample size for Native American / Alaskan Native population. Zeros are counted in the averages, meaning it includes those who took out no loans. 
+Note: Insufficient sample size for Native American / Alaskan Native population. Averages include those who took out no loans. 
 
 ***
 #### {-}
 
+NPSAS:18-AC does not have state-representative samples for graduate students, so we now use NPSAS:16 to compare the average federal loans for graduate students. California's Black graduate students and those of two or more races borrow significantly more than those who identify with other groups, borrowing between \$20,000 and \$25,000 per year. 
 
 ```{r npsas2}
 npsas2.US <- read.csv("Powerstats_psiqll.csv", skip=12, nrow=7, header=FALSE)
@@ -781,23 +786,25 @@ npsas2$`Total federal loans` <- as.numeric(npsas2$`Total federal loans`)
 #### {.tabset}
 ##### Figure 3
 ```{r figure3}
-g3 <- ggplot(data=npsas2, mapping=aes(x=State, y=`Total federal loans`, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.6) + labs(title="Average federal student loans for graduate students, by group: CA vs U.S.", caption="Groups not shown lacked sufficient samples.") + facet_grid(. ~ Group) + scale_y_continuous(labels=scales::dollar_format()) + scale_fill_brewer(palette="Dark2") + theme(legend.position="none", text=element_text(family="Optima"))
+g3 <- ggplot(data=npsas2, mapping=aes(x=State, y=`Total federal loans`, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.6) + labs(title="Average annual fed. student loans for graduate students, by group: CA vs U.S.", caption="Groups not shown lacked sufficient samples.") + facet_grid(. ~ Group) + scale_y_continuous(labels=scales::dollar_format()) + scale_fill_brewer(palette="Dark2") + theme(legend.position="none", text=element_text(family="Optima"))
 
 ggplotly(g3, height=350)
 ```
 ##### Data source and notes 
 Source: NPSAS:16. Table retrieval number: psiqll. Data can be accessed at [NCES Datalab](https://nces.ed.gov/datalab/). 
 
-Year(s) of analysis: Reflects students enrolled in the 2015-16 academic year. Only reflects public 4-year institutions.  
+Year(s) of analysis: Reflects students enrolled in the 2015-16 academic year.
 
-Notes: Private loans are also used, but the average loans are so small that Datalab considers the estimates unreliable. Due to limitations of NPSAS:16, this only applies to in-state students. 
+Notes: Private loans are also included in NPSAS, but the average loans are so small that Datalab considers the estimates unreliable. Due to limitations of NPSAS:16, this only applies to in-state students. 
 
 ***
 #### {-}
 
-Across all groups, graduate students in California borrow more than graduate students nationwide. Black students and those of two or more races show the highest average loans, upwards of $20,000 per year. It is striking how Black graduate students in California borrow an average that is roughly two-thirds higher than both the average for Black graduate students nationwide and the average for white graduate students in California.
+It is striking how Black graduate students in California borrow an average that is roughly two-thirds higher than both the average for Black graduate students nationwide and the average for white graduate students in California.
 
-Among California students, the sample is not sufficient for a breakdown by award level. For context, here is a breakdown of gaps in average loans across all graduate program levels, reflecting the national sample. This demonstrates how professional doctorates show an extreme version of the trends just described. Although professional doctoral students in California constitutes a very small subsample in NPSAS, we can explore this further using the College Scorecard later on.
+Among California students, the sample is not sufficient for a breakdown by award level. For context, Figure 4 below shows a breakdown of gaps in average loans across all graduate program levels, reflecting the national sample in NPSAS-16. 
+
+In master's programs, research doctorate programs, and professional doctorate programs (e.g. MDs and JDs), Black and Latino/a borrowers borrower more in average federal student loans per year than students from other groups. This demonstrates how professional doctorates show an extreme version of the trends just described. 
 
 ```{r npsas4}
 npsas4.US.masters <- read.csv("Powerstats_vcbaev.csv", skip=73, nrow=7, header=FALSE)
@@ -834,13 +841,23 @@ npsas4$`Total federal loans` <- as.numeric(npsas4$`Total federal loans`)
 #### {.tabset}
 ##### Figure 4
 ```{r figure4}
-g4 <- ggplot(data=npsas4, mapping=aes(x=Group, y=`Total federal loans`, fill=Group)) + geom_bar(stat="identity", position="dodge", width=0.6) + labs(title="Average federal loans for graduate students by group and level: U.S. only", caption="Groups not shown lacked sufficient samples.") + facet_grid(. ~ Level) + scale_y_continuous(labels=scales::dollar_format()) + scale_fill_brewer(palette="Dark2") + theme(legend.position="none", text=element_text(family="Optima"))
+g4 <- ggplot(data=npsas4, mapping=aes(x=Group, y=`Total federal loans`, fill=Group)) + geom_bar(stat="identity", position="dodge", width=0.6) + labs(title="Average annual fed. loans for graduate students by group and level: U.S. only", caption="Groups not shown lacked sufficient samples.") + facet_grid(. ~ Level) + scale_y_continuous(labels=scales::dollar_format()) + scale_fill_brewer(palette="Dark2") + theme(legend.position="none", text=element_text(family="Optima"))
 
 ggplotly(g4, width=800, height=350)
 ```
 ##### Data source and notes
+
+Source: NPSAS:16. Table retrieval number: vcbaev. Data can be accessed at [NCES Datalab](https://nces.ed.gov/datalab/). 
+
+Year(s) of analysis: Reflects students enrolled in the 2015-16 academic year across the U.S. 
+
+Notes: Due to limitations of NPSAS:16, this only applies to in-state students. 
+
 ***
 #### {-}
+
+
+*Editorial note:* I added this figure late, so when I have more time I will rename it Figure 5 and rename the figures that follow. 
 
 #### {.tabset}
 ```{r npsas4.1}
@@ -4836,6 +4853,224 @@ kable(kable6B, caption="Sectors of California higher education by outstanding fe
 ```
 #### Data source and notes
 ***
+### {-}
+
+
+### {.tabset}
+```{r highestBorrowingRates, warning=FALSE}
+
+Q20 <- CSI %>% select(INSTNM,              # Institution name
+                      OPEID6,              # 6-digit OPEID 
+                      STABBR,              # State abbreviation
+                      CONTROL,             # Control of institution
+                      MAIN,                # Flag for main campus
+                      PCTFLOAN,            # Percent of all undergraduate students receiving a federal student loan
+                      D_PCTPELL_PCTFLOAN,  # Number of undergraduate students (denominator percent receiving a pell grant or federal student loan)
+                      GRAD_DEBT_MDN,       # The median debt for students who have completed
+                      GRAD_DEBT_N          # The number of students in the median debt completers cohort
+) %>% filter(STABBR=="CA")
+
+Q20$PCTFLOAN <- as.numeric(Q20$PCTFLOAN)
+Q20$D_PCTPELL_PCTFLOAN <- as.numeric(Q20$D_PCTPELL_PCTFLOAN)
+Q20$N_PCTFLOAN <- Q20$PCTFLOAN * Q20$D_PCTPELL_PCTFLOAN
+
+Q20$GRAD_DEBT_MDN <- as.numeric(Q20$GRAD_DEBT_MDN)
+Q20$GRAD_DEBT_N <- as.numeric(Q20$GRAD_DEBT_N)
+
+Q20.1 <- aggregate(data=Q20, cbind(N_PCTFLOAN, D_PCTPELL_PCTFLOAN) ~ OPEID6, FUN=sum)
+Q20.1$`Percent of undergraduates who receive federal student loans` <- Q20.1$N_PCTFLOAN / Q20.1$D_PCTPELL_PCTFLOAN
+Q20.1 <- Q20.1 %>% select(OPEID6, `Percent of undergraduates who receive federal student loans`)
+Q20.2 <- Q20 %>% arrange(desc(MAIN)) %>% filter(duplicated(OPEID6)==FALSE) %>% select(OPEID6, INSTNM, CONTROL, GRAD_DEBT_MDN, GRAD_DEBT_N)
+Q20.3 <- left_join(x=Q20.1, y=Q20.2, by="OPEID6")
+
+Q20.3 <- Q20.3 %>% filter(GRAD_DEBT_N > 300) %>% arrange(desc(`Percent of undergraduates who receive federal student loans`)) %>% select(INSTNM, CONTROL, `Percent of undergraduates who receive federal student loans`, GRAD_DEBT_MDN) 
+Q20.3$`Percent of undergraduates who receive federal student loans` <- percent(Q20.3$`Percent of undergraduates who receive federal student loans`, accuracy=0.1)
+Q20.3$GRAD_DEBT_MDN <- dollar(Q20.3$GRAD_DEBT_MDN, accuracy=1)
+```
+#### Table 7
+```{r kable7, results='asis'}
+kable7 <- Q20.3[1:100, ]
+names(kable7) <- c("Institution name", "Control", "Percent of undergraduates who receive federal student loans", "Median debt at graduation")
+kable(kable7, caption="California institutions with the highest shares of undergraduates borrowing loans") %>% kable_paper("hover", full_width = F) %>% scroll_box(width = "100%", height = "400px")
+```
+#### Data source and notes 
+***
+### {-}
+
+xxx
+
+### {.tabset}
+```{r DBBR10, warning=FALSE}
+Q21 <- CSI %>% select(UNITID, OPEID, OPEID6, INSTNM, STABBR, CONTROL, MAIN, 
+                      DBRR10_FED_UG_N, DBRR10_FED_UG_NUM, DBRR10_FED_UG_DEN, DBRR10_FED_UG_RT, 
+                      DBRR10_PP_UG_N, DBRR10_PP_UG_NUM, DBRR10_PP_UG_DEN, DBRR10_PP_UG_RT,
+                      DBRR10_FED_GR_N, DBRR10_FED_GR_NUM, DBRR10_FED_GR_DEN, DBRR10_FED_GR_RT) %>% filter(STABBR=="CA")
+Q21 <- Q21 %>% arrange(desc(MAIN)) %>% filter(duplicated(OPEID6)==FALSE)
+
+Q21$DBRR10_FED_UG_N <- as.numeric(Q21$DBRR10_FED_UG_N)
+Q21$DBRR10_FED_UG_NUM <- as.numeric(Q21$DBRR10_FED_UG_NUM)
+Q21$DBRR10_FED_UG_DEN <- as.numeric(Q21$DBRR10_FED_UG_DEN)
+Q21$DBRR10_FED_UG_RT <- as.numeric(Q21$DBRR10_FED_UG_RT)
+
+Q21$DBRR10_PP_UG_N <- as.numeric(Q21$DBRR10_PP_UG_N)
+Q21$DBRR10_PP_UG_NUM <- as.numeric(Q21$DBRR10_PP_UG_NUM)
+Q21$DBRR10_PP_UG_DEN <- as.numeric(Q21$DBRR10_PP_UG_DEN)
+Q21$DBRR10_PP_UG_RT <- as.numeric(Q21$DBRR10_PP_UG_RT)
+
+Q21$DBRR10_FED_GR_N <- as.numeric(Q21$DBRR10_FED_GR_N)
+Q21$DBRR10_FED_GR_NUM <- as.numeric(Q21$DBRR10_FED_GR_NUM)
+Q21$DBRR10_FED_GR_DEN <- as.numeric(Q21$DBRR10_FED_GR_DEN)
+Q21$DBRR10_FED_GR_RT <- as.numeric(Q21$DBRR10_FED_GR_RT)
+
+Q21.S <- Q21 %>% filter(is.na(DBRR10_FED_UG_RT)==FALSE) %>% arrange(desc(DBRR10_FED_UG_RT)) %>% filter(DBRR10_FED_UG_N >= 100) %>% select(OPEID6, INSTNM, CONTROL, DBRR10_FED_UG_RT, DBRR10_FED_UG_NUM, DBRR10_FED_UG_DEN, DBRR10_FED_UG_N)
+Q21.P <- Q21 %>% filter(is.na(DBRR10_PP_UG_RT)==FALSE) %>% arrange(desc(DBRR10_PP_UG_RT)) %>% filter(DBRR10_PP_UG_N >= 100) %>% select(OPEID6, INSTNM, CONTROL, DBRR10_PP_UG_RT, DBRR10_PP_UG_NUM, DBRR10_PP_UG_DEN, DBRR10_PP_UG_N)
+Q21.G <- Q21 %>% filter(is.na(DBRR10_FED_GR_RT)==FALSE) %>% arrange(desc(DBRR10_FED_GR_RT)) %>% filter(DBRR10_FED_GR_N >= 100) %>% select(OPEID6, INSTNM, CONTROL, DBRR10_FED_GR_RT, DBRR10_FED_GR_NUM, DBRR10_FED_GR_DEN, DBRR10_FED_GR_N)
+
+names(Q21.S) <- c("OPEID6", "INSTNM", "CONTROL", "Repayment ratio", "Current balance", "Original balance", "Number of borrowers")
+names(Q21.P) <- c("OPEID6", "INSTNM", "CONTROL", "Repayment ratio", "Current balance", "Original balance", "Number of borrowers")
+names(Q21.G) <- c("OPEID6", "INSTNM", "CONTROL", "Repayment ratio", "Current balance", "Original balance", "Number of borrowers")
+
+Q21.S$`Average balance after ten years in repayment` <- Q21.S$`Current balance` / Q21.S$`Number of borrowers`
+Q21.P$`Average balance after ten years in repayment` <- Q21.P$`Current balance` / Q21.P$`Number of borrowers`
+Q21.G$`Average balance after ten years in repayment` <- Q21.G$`Current balance` / Q21.G$`Number of borrowers`
+
+Q21.S$`Repayment ratio` <- round(Q21.S$`Repayment ratio`, 3)
+Q21.P$`Repayment ratio` <- round(Q21.P$`Repayment ratio`, 3)
+Q21.G$`Repayment ratio` <- round(Q21.G$`Repayment ratio`, 3)
+
+Q21.S$`Current balance` <- dollar(round(Q21.S$`Current balance`, -3))
+Q21.P$`Current balance` <- dollar(round(Q21.P$`Current balance`, -3))
+Q21.G$`Current balance` <- dollar(round(Q21.G$`Current balance`, -3))
+
+Q21.S$`Original balance` <- dollar(round(Q21.S$`Original balance`, -3))
+Q21.P$`Original balance` <- dollar(round(Q21.P$`Original balance`, -3))
+Q21.G$`Original balance` <- dollar(round(Q21.G$`Original balance`, -3))
+
+Q21.S$`Number of borrowers` <- comma(Q21.S$`Number of borrowers`)
+Q21.P$`Number of borrowers` <- comma(Q21.P$`Number of borrowers`)
+Q21.G$`Number of borrowers` <- comma(Q21.G$`Number of borrowers`)
+
+Q21.S$`Average balance after ten years in repayment` <- dollar(Q21.S$`Average balance after ten years in repayment`, accuracy=1)
+Q21.P$`Average balance after ten years in repayment` <- dollar(Q21.P$`Average balance after ten years in repayment`, accuracy=1)
+Q21.G$`Average balance after ten years in repayment` <- dollar(Q21.G$`Average balance after ten years in repayment`, accuracy=1)
+```
+#### Table 8: Stafford
+```{r kable8A, results='asis'}
+kable8A <- Q21.S %>% select(INSTNM, CONTROL, `Repayment ratio`, `Average balance after ten years in repayment`)
+names(kable8A) <- c("Institution name", "Control of institution", "Ratio of current Stafford balance to original balance, 10 years into repayment", "Average outstanding Stafford debt, 10 years into repayment")
+kable(kable8A, caption="California institutions by ratio of Stafford borrowers' current balance to original balance, 10 years into repayment") %>% kable_paper("hover", full_width = F) %>% scroll_box(width = "100%", height = "400px")
+```
+#### Table 8: Parent PLUS
+```{r kable8B, results='asis'}
+kable8B <- Q21.P %>% select(INSTNM, CONTROL, `Repayment ratio`, `Average balance after ten years in repayment`)
+names(kable8B) <- c("Institution name", "Control of institution", "Ratio of current Parent PLUS balance to original balance, 10 years into repayment", "Average outstanding Parent PLUS debt, 10 years into repayment")
+kable(kable8B, caption="California institutions by ratio of Parent PLUS borrowers' current balance to original balance, 10 years into repayment") %>% kable_paper("hover", full_width = F) %>% scroll_box(width = "100%", height = "400px")
+```
+#### Table 8: Grad PLUS
+```{r kable8C, results='asis'}
+kable8C <- Q21.G %>% select(INSTNM, CONTROL, `Repayment ratio`, `Average balance after ten years in repayment`)
+names(kable8C) <- c("Institution name", "Control of institution", "Ratio of current Grad PLUS balance to original balance, 10 years into repayment", "Average outstanding Grad PLUS debt, 10 years into repayment")
+kable(kable8C, caption="California institutions by ratio of Grad PLUS borrowers' current balance to original balance, 10 years into repayment") %>% kable_paper("hover", full_width = F) %>% scroll_box(width = "100%", height = "400px")
+```
+#### Data source and notes
+
+***
+
+### {-}
+
+xxx
+
+
+### {.tabset}
+```{r DDNP, warning=FALSE}
+
+Q22.S <- CSI %>% select(UNITID, OPEID, OPEID6, INSTNM, STABBR, CONTROL, BBRR3_FED_UG_N, BBRR3_FED_UG_DFLT, BBRR3_FED_UG_DLNQ, BBRR3_FED_UG_NOPROG) %>% filter(STABBR=="CA") %>% filter(duplicated(OPEID6)==FALSE)
+
+Q22.S$BBRR3_FED_UG_N <- as.numeric(Q22.S$BBRR3_FED_UG_N)
+Q22.S <- Q22.S %>% filter(BBRR3_FED_UG_N >= 200)
+
+conversionsDF.BBRR3_FED_UG_DFLT <- conversionsDF
+conversionsDF.BBRR3_FED_UG_DLNQ <- conversionsDF
+conversionsDF.BBRR3_FED_UG_NOPROG <- conversionsDF
+
+names(conversionsDF.BBRR3_FED_UG_DFLT) <- c("BBRR3_FED_UG_DFLT", "BBRR3_FED_UG_DFLT.modified")
+names(conversionsDF.BBRR3_FED_UG_DLNQ) <- c("BBRR3_FED_UG_DLNQ", "BBRR3_FED_UG_DLNQ.modified")
+names(conversionsDF.BBRR3_FED_UG_NOPROG) <- c("BBRR3_FED_UG_NOPROG", "BBRR3_FED_UG_NOPROG.modified")
+
+Q22.S <- left_join(x=Q22.S, y=conversionsDF.BBRR3_FED_UG_DFLT, by="BBRR3_FED_UG_DFLT")
+Q22.S <- left_join(x=Q22.S, y=conversionsDF.BBRR3_FED_UG_DLNQ, by="BBRR3_FED_UG_DLNQ")
+Q22.S <- left_join(x=Q22.S, y=conversionsDF.BBRR3_FED_UG_NOPROG, by="BBRR3_FED_UG_NOPROG")
+
+Q22.S$`Default delinquent or not making progress` <- Q22.S$BBRR3_FED_UG_DFLT.modified + Q22.S$BBRR3_FED_UG_DLNQ.modified + Q22.S$BBRR3_FED_UG_NOPROG.modified
+Q22.S <- Q22.S %>% arrange(desc(`Default delinquent or not making progress`))
+Q22.S$`Default delinquent or not making progress` <- percent(Q22.S$`Default delinquent or not making progress`, accuracy=0.1)
+
+# Now the same for Parent PLUS borrowers. 
+
+Q22.P <- CSI %>% select(UNITID, OPEID, OPEID6, INSTNM, STABBR, CONTROL, BBRR3_PP_UG_N, BBRR3_PP_UG_DFLT, BBRR3_PP_UG_DLNQ, BBRR3_PP_UG_NOPROG) %>% filter(STABBR=="CA") %>% filter(duplicated(OPEID6)==FALSE)
+
+Q22.P$BBRR3_PP_UG_N <- as.numeric(Q22.P$BBRR3_PP_UG_N)
+Q22.P <- Q22.P %>% filter(BBRR3_PP_UG_N >= 200)
+
+conversionsDF.BBRR3_PP_UG_DFLT <- conversionsDF
+conversionsDF.BBRR3_PP_UG_DLNQ <- conversionsDF
+conversionsDF.BBRR3_PP_UG_NOPROG <- conversionsDF
+
+names(conversionsDF.BBRR3_PP_UG_DFLT) <- c("BBRR3_PP_UG_DFLT", "BBRR3_PP_UG_DFLT.modified")
+names(conversionsDF.BBRR3_PP_UG_DLNQ) <- c("BBRR3_PP_UG_DLNQ", "BBRR3_PP_UG_DLNQ.modified")
+names(conversionsDF.BBRR3_PP_UG_NOPROG) <- c("BBRR3_PP_UG_NOPROG", "BBRR3_PP_UG_NOPROG.modified")
+
+Q22.P <- left_join(x=Q22.P, y=conversionsDF.BBRR3_PP_UG_DFLT, by="BBRR3_PP_UG_DFLT")
+Q22.P <- left_join(x=Q22.P, y=conversionsDF.BBRR3_PP_UG_DLNQ, by="BBRR3_PP_UG_DLNQ")
+Q22.P <- left_join(x=Q22.P, y=conversionsDF.BBRR3_PP_UG_NOPROG, by="BBRR3_PP_UG_NOPROG")
+
+Q22.P$`Default delinquent or not making progress` <- Q22.P$BBRR3_PP_UG_DFLT.modified + Q22.P$BBRR3_PP_UG_DLNQ.modified + Q22.P$BBRR3_PP_UG_NOPROG.modified
+Q22.P <- Q22.P %>% arrange(desc(`Default delinquent or not making progress`))
+Q22.P$`Default delinquent or not making progress` <- percent(Q22.P$`Default delinquent or not making progress`, accuracy=0.1)
+
+# Now the same for graduate borrowers. 
+
+Q22.G <- CSI %>% select(UNITID, OPEID, OPEID6, INSTNM, STABBR, CONTROL, BBRR3_FED_GR_N, BBRR3_FED_GR_DFLT, BBRR3_FED_GR_DLNQ, BBRR3_FED_GR_NOPROG) %>% filter(STABBR=="CA") %>% filter(duplicated(OPEID6)==FALSE)
+
+Q22.G$BBRR3_FED_GR_N <- as.numeric(Q22.G$BBRR3_FED_GR_N)
+Q22.G <- Q22.G %>% filter(BBRR3_FED_GR_N >= 200)
+
+conversionsDF.BBRR3_FED_GR_DFLT <- conversionsDF
+conversionsDF.BBRR3_FED_GR_DLNQ <- conversionsDF
+conversionsDF.BBRR3_FED_GR_NOPROG <- conversionsDF
+
+names(conversionsDF.BBRR3_FED_GR_DFLT) <- c("BBRR3_FED_GR_DFLT", "BBRR3_FED_GR_DFLT.modified")
+names(conversionsDF.BBRR3_FED_GR_DLNQ) <- c("BBRR3_FED_GR_DLNQ", "BBRR3_FED_GR_DLNQ.modified")
+names(conversionsDF.BBRR3_FED_GR_NOPROG) <- c("BBRR3_FED_GR_NOPROG", "BBRR3_FED_GR_NOPROG.modified")
+
+Q22.G <- left_join(x=Q22.G, y=conversionsDF.BBRR3_FED_GR_DFLT, by="BBRR3_FED_GR_DFLT")
+Q22.G <- left_join(x=Q22.G, y=conversionsDF.BBRR3_FED_GR_DLNQ, by="BBRR3_FED_GR_DLNQ")
+Q22.G <- left_join(x=Q22.G, y=conversionsDF.BBRR3_FED_GR_NOPROG, by="BBRR3_FED_GR_NOPROG")
+
+Q22.G$`Default delinquent or not making progress` <- Q22.G$BBRR3_FED_GR_DFLT.modified + Q22.G$BBRR3_FED_GR_DLNQ.modified + Q22.G$BBRR3_FED_GR_NOPROG.modified
+Q22.G <- Q22.G %>% arrange(desc(`Default delinquent or not making progress`))
+Q22.G$`Default delinquent or not making progress` <- percent(Q22.G$`Default delinquent or not making progress`, accuracy=0.1)
+
+```
+#### Table 9: Stafford
+```{r kable9A, results='asis'}
+kable9A <- Q22.S %>% select(INSTNM, CONTROL, `Default delinquent or not making progress`)
+names(kable9A) <- c("Institution name", "Control of institution", "Estimated share of Stafford borrowers who are in default, delinquent, or not making progress three years into repayment")
+kable(kable9A, caption="California institutions by share of Stafford borrowers who are in default, delinquent, or not making progress three years into repayment") %>% kable_paper("hover", full_width = F) %>% scroll_box(width = "100%", height = "400px")
+```
+#### Table 9: Parent PLUS
+```{r kable9B, results='asis'}
+kable9B <- Q22.P %>% select(INSTNM, CONTROL, `Default delinquent or not making progress`)
+names(kable9B) <- c("Institution name", "Control of institution", "Estimated share of Parent PLUS borrowers who are in default, delinquent, or not making progress three years into repayment")
+kable(kable9B, caption="California institutions by share of Parent PLUS borrowers who are in default, delinquent, or not making progress three years into repayment") %>% kable_paper("hover", full_width = F) %>% scroll_box(width = "100%", height = "400px")
+```
+#### Table 9: Grad PLUS
+```{r kable9C, results='asis'}
+kable9C <- Q22.G %>% select(INSTNM, CONTROL, `Default delinquent or not making progress`)
+names(kable9C) <- c("Institution name", "Control of institution", "Estimated share of Grad PLUS borrowers who are in default, delinquent, or not making progress three years into repayment")
+kable(kable9C, caption="California institutions by share of Grad PLUS borrowers who are in default, delinquent, or not making progress three years into repayment") %>% kable_paper("hover", full_width = F) %>% scroll_box(width = "100%", height = "400px")
+```
+#### Data source and notes
 ### {-}
 
 
