@@ -946,17 +946,11 @@ Note: Filtered for 4-year colleges and U.S. citizenship. Limited to in-state, un
 
 #### About the data
 
-This is some information about SHED. 
-Explain your process of variable selection: there are many but you chose the ones that seemed most relevant to the question of the financial burden of student loans. 
-Emphasize here that the relationship between student loans and these variables may be chicken-and-egg, where we can't say for sure what causes the other. 
-Acknowledge the limitations of the sample size. Would it be nice to filter by institution level and control? Yes. Would it cut the sample size down very, very far? Yes. 
-Small differences of one of two percentage points may be attributable to random noise that can raise from sampling. 
-Remember to say that the respondents are heads of households, meaning that the population represented is that of U.S. adults. (Children are not included.)
-A good example of the kind of questions SHED answers that other datasets cannot: do borrowers think their education was worth it?
+(Description here)
 
 #### Findings
 
-Here we tee up the findings. 
+(Summary text here)
 
 ```{r shedSetup1}
 shed21 <- fread("SHED-2021.csv", header=TRUE, select=c("CaseID", "weight_pop", "ppstaten", "ppethm", "ppgender", "B2", "B6", "GH1", "A6", "A1_a", "C3", "C4A", "ED0", "ED5", "ED6_a", "ED6_b", "ED6_c", "ED6_d", "SL1", "SL2_a", "SL2_b", "SL2_c", "SL2_d", "SL3", "SL4", "SL6", "SL7", "SL8_a", "SL8_b", "SL8_c", "SL8_d", "SL8_e", "SL10", "SL11", "SL12_a", "SL12_b", "SL12_c", "SL12_d", "D1I", "K0", "I0_c", "I0_d", "I40", "I41_a", "I41_b", "I41_c", "I41_d", "I41_e", "EF1", "EF2", "EF3_a", "EF3_b", "EF3_c", "EF3_d", "EF3_e", "EF3_f", "EF3_g", "EF3_h", "EF5A", "EF5B", "EF6A_a", "EF6A_b", "EF6A_f", "EF6B_f", "ppcm0160", "ppfs0596", "ppfs1482", "iclevel", "control", "L0_b"))
@@ -1977,7 +1971,7 @@ ggplotly(g6, width=800, height=350)
 ***
 ### {-}
 
-xxx 
+(Summary text here) 
 
 ### {.tabset}
 #### Figure 7: Student loans
@@ -2041,7 +2035,7 @@ ggplotly(g7C, width=800, height=350)
 ***
 ### {-}
 
-xxx 
+(Summary text here) 
 
 ### {.tabset}
 #### Figure 8: CA borrowers
@@ -2089,7 +2083,7 @@ ggplotly(g8B, height=350)
 ***
 #### {-}
 
-xxx 
+(Summary text here) 
 
 ### {.tabset}
 ```{r OwnDebtMon3}
@@ -2137,7 +2131,7 @@ Survey responses collected in 2020 and 2021 are not included due to the federal 
 ***
 ### {-}
 
-xxx 
+(Summary text here) 
 
 ### {.tabset}
 #### Figure 10
@@ -2165,7 +2159,7 @@ Survey responses collected in 2020 and 2021 are not included due to the federal 
 ***
 ### {-}
 
-xxx 
+(Summary text here) 
 
 ### {.tabset}
 #### Figure 11: Debt for spouse's or partner's education
@@ -2213,7 +2207,7 @@ Figure 11 includes all respondents, not just those who have student debt for the
 ***
 ### {-}
 
-xxxx 
+(Summary text here)
 
 ### {.tabset}
 ```{r EdAttainment}
@@ -2266,7 +2260,7 @@ ggplotly(g12C, width=800, height=350)
 ***
 ### {-}
 
-xxx 
+(Summary text here) 
 
 ### {.tabset}
 ```{r HomeOwn}
@@ -2315,7 +2309,7 @@ ggplotly(g13C, width=800, height=350)
 ***
 ### {-}
 
-xxx 
+(Summary text here) 
 
 ### {.tabset}
 ```{r UnpaidCC}
@@ -2350,7 +2344,7 @@ ggplotly(g14B, width=800, height=350)
 ***
 ### {-}
 
-xxx 
+(Summary text here) 
 
 ### {.tabset}
 ```{r CCBalance}
@@ -2399,7 +2393,7 @@ ggplotly(g15C, width=800, height=350)
 ***
 ### {-}
 
-xxx 
+(Summary text here) 
 
 ### {.tabset}
 ```{r Savings}
@@ -2453,7 +2447,7 @@ ggplotly(g16C, width=800, height=350)
 ***
 ### {-}
 
-xxx 
+(Summary text here) 
 
 ### {.tabset}
 ```{r TotalInc}
@@ -2508,7 +2502,7 @@ ggplotly(g17C, width=800, height=350)
 ***
 ### {-}
 
-xxx 
+(Summary text here) 
 
 ### {.tabset}
 ```{r FinManage}
@@ -2557,7 +2551,7 @@ ggplotly(g18C, width=800, height=350)
 ***
 ### {-}
 
-xxx 
+(Summary text here) 
 
 ### {.tabset}
 ```{r ParComp}
@@ -2607,7 +2601,7 @@ ggplotly(g19C, width=800, height=350)
 ***
 ### {-}
 
-xxx 
+(Summary text here) 
 
 ### {.tabset}
 ```{r CreditScore}
@@ -2657,7 +2651,7 @@ ggplotly(g20C, width=800, height=350)
 ***
 ### {-}
 
-xxx 
+(Summary text here) 
 
 ### {.tabset}
 ```{r PayBills}
@@ -2704,7 +2698,7 @@ ggplotly(g21C, width=800, height=350)
 ***
 ### {-}
 
-xxx 
+(Summary text here) 
 
 ### {.tabset}
 #### Figure 22: Ability to pay student loan bill
@@ -2788,7 +2782,7 @@ Survey years 2020 and 2021 not included in "Figure 22: Ability to pay student lo
 
 ### {-}
 
-xxx 
+(Summary text here) 
 
 ### {.tabset}
 ```{r PartialSL400}
@@ -2816,7 +2810,7 @@ Survey years 2020 and 2021 not included.
 ***
 ### {-}
 
-xxx 
+(Summary text here) 
 
 ### {.tabset}
 ```{r PayBills400}
@@ -2865,7 +2859,7 @@ ggplotly(g24C, width=800, height=350)
 ***
 ### {-}
 
-xxx 
+(Summary text here) 
 
 ### {.tabset}
 ```{r CCApprov}
@@ -2913,7 +2907,7 @@ ggplotly(g25C, width=800, height=350)
 ***
 ### {-}
 
-xxx 
+(Summary text here) 
 
 ### {.tabset}
 ```{r CreditDeny}
@@ -3159,7 +3153,7 @@ ggplotly(g28B, width=800, height=350)
 ***
 ### {-}
 
-xxx 
+(Summary text here) 
 
 ### {.tabset}
 #### Figure 29: Pay $400 with credit card (no interest)
@@ -3375,7 +3369,7 @@ Responses are not exclusive to each other. For an example, a respondent could sa
 ***
 ### {-}
 
-xxx 
+(Summary text here) 
 
 ### {.tabset}
 ```{r EdPayoff1}
@@ -3425,7 +3419,7 @@ ggplotly(g30C, width=800, height=350)
 ***
 ### {-}
 
-xxx 
+(Summary text here) 
 
 ### {.tabset}
 #### Figure 31: Different field
@@ -3536,7 +3530,7 @@ ggplotly(g31D, width=800, height=350)
 ***
 ### {-}
 
-xxx 
+(Summary text here) 
 
 ### {.tabset}
 #### Figure 32: Gender
@@ -3570,7 +3564,7 @@ The gender variable, as collected and reported by SHED, only has "male" and "fem
 ***
 ### {-}
 
-xxx 
+(Summary text here) 
 
 ### {.tabset}
 ```{r InstLevel}
@@ -3621,7 +3615,7 @@ Only includes those who had college experience.
 ***
 ### {-}
 
-xxx 
+(Summary text here) 
 
 ### {.tabset}
 ```{r InstControl}
@@ -3672,17 +3666,17 @@ Only includes those who had college experience.
 ***
 ### {-}
 
-xxx
+(Summary text here)
 
 ## College Scorecard
 
 #### About the data
 
-xxxx
+(Summary text here)x
 
 #### Findings
 
-xxxx
+(Summary text here)x
 
 ```{r conversionsDF}
 conversionsDF <- data.frame("Character.Entry" = c("PrivacySuppressed", "NULL"), "Numeric.Entry"=c(NA, NA))
@@ -4897,7 +4891,7 @@ kable(kable7, caption="California institutions with the highest shares of underg
 ***
 ### {-}
 
-xxx
+(Summary text here)
 
 ### {.tabset}
 ```{r DBBR10, warning=FALSE}
@@ -4978,7 +4972,7 @@ kable(kable8C, caption="California institutions by ratio of Grad PLUS borrowers'
 
 ### {-}
 
-xxx
+(Summary text here)
 
 
 ### {.tabset}
@@ -5071,10 +5065,302 @@ names(kable9C) <- c("Institution name", "Control of institution", "Estimated sha
 kable(kable9C, caption="California institutions by share of Grad PLUS borrowers who are in default, delinquent, or not making progress three years into repayment") %>% kable_paper("hover", full_width = F) %>% scroll_box(width = "100%", height = "400px")
 ```
 #### Data source and notes
+
+Minimum 200 borrowers per institution in the ten-year repayment cohort. This does not include those in forbearance or deferment.
+
+***
 ### {-}
 
+(Summary text here)
+
+
+### {.tabset}
+```{r DebtVsEarningsCIPs}
+Q24 <- CSP %>% select(
+  UNITID,       # Unit ID for institution
+  OPEID6,       # 6-digit OPE ID for institution
+  INSTNM,       # Institution name
+  STABBR,       # Institution state
+  MAIN,         # Flag for main campus
+  CONTROL,      # Control of institution
+  CIPCODE,      # Classification of Instructional Programs (CIP) code for the field of study
+  CIPDESC,      # Text description of the field of study CIP Code
+  CREDLEV,      # Level of credential
+  CREDDESC,     # Text description of the level of credential
+  DEBT_ALL_STGP_EVAL_N,          # Borrower count for average/median Stafford and Grad PLUS loan debt disbursed at this institution
+  DEBT_ALL_STGP_EVAL_MDN,        # Median Stafford and Grad PLUS loan debt disbursed at this institution
+  EARN_MDN_HI_1YR,               # Median earnings of graduates working and not enrolled 1 year after completing highest credential
+  EARN_COUNT_WNE_HI_1YR          # Number of graduates working and not enrolled 1 year after completing highest credential	
+) %>% filter(STABBR=="CA") %>% arrange(desc(MAIN))
+
+Q24 <- Q24 %>% filter(DEBT_ALL_STGP_EVAL_N != "PrivacySuppressed") 
+Q24 <- Q24 %>% filter(DEBT_ALL_STGP_EVAL_MDN != "PrivacySuppressed")
+Q24 <- Q24 %>% filter(EARN_MDN_HI_1YR != "PrivacySuppressed") 
+Q24 <- Q24 %>% filter(EARN_COUNT_WNE_HI_1YR != "PrivacySuppressed")
+
+Q24$`Unique combination of OPEID, CIP, and CREDLEV` <- paste(Q24$OPEID6, Q24$CIPCODE, Q24$CREDLEV, sep="+")
+Q24 <- Q24 %>% filter(duplicated(`Unique combination of OPEID, CIP, and CREDLEV`)==FALSE)
+
+Q24$DEBT_ALL_STGP_EVAL_N <- as.numeric(Q24$DEBT_ALL_STGP_EVAL_N)
+Q24$DEBT_ALL_STGP_EVAL_MDN <- as.numeric(Q24$DEBT_ALL_STGP_EVAL_MDN)
+Q24$EARN_MDN_HI_1YR <- as.numeric(Q24$EARN_MDN_HI_1YR)
+Q24$EARN_COUNT_WNE_HI_1YR <- as.numeric(Q24$EARN_COUNT_WNE_HI_1YR)
+
+Q24.1 <- aggregate(data=Q24, cbind(DEBT_ALL_STGP_EVAL_N, EARN_COUNT_WNE_HI_1YR) ~ CIPDESC + CREDDESC, FUN=sum)
+names(Q24.1) <- c("CIPDESC", "CREDDESC", "Total borrower count", "Total earner count")
+Q24 <- left_join(x=Q24, y=Q24.1, by=c("CIPDESC", "CREDDESC"))
+
+Q24$`Share of all borrowers` <- Q24$DEBT_ALL_STGP_EVAL_N / Q24$`Total borrower count`
+Q24$`Weighted debt median` <- Q24$`Share of all borrowers` * Q24$DEBT_ALL_STGP_EVAL_MDN
+
+Q24$`Share of all earners` <- Q24$EARN_COUNT_WNE_HI_1YR / Q24$`Total earner count`
+Q24$`Weighted earnings median` <- Q24$`Share of all earners` * Q24$EARN_MDN_HI_1YR
+
+Q24.2 <- aggregate(data=Q24, cbind(`Weighted debt median`, `Weighted earnings median`) ~ CIPDESC + CREDDESC, FUN=sum)
+Q24.2$`Ratio of debt to earnings` <- Q24.2$`Weighted debt median` / Q24.2$`Weighted earnings median`
+
+Q24.2 <- Q24.2 %>% arrange(desc(`Ratio of debt to earnings`))
+Q24.2$`Weighted debt median` <- dollar(Q24.2$`Weighted debt median`, accuracy=1)
+Q24.2$`Weighted earnings median` <- dollar(Q24.2$`Weighted earnings median`, accuracy=1)
+Q24.2$`Ratio of debt to earnings` <- round(Q24.2$`Ratio of debt to earnings`, 2)
+```
+#### Debt vs earnings for student loan borrowers 
+```{r kable10A}
+kable10A <- Q24.2 %>% select(CIPDESC, CREDDESC, `Weighted debt median`, `Weighted earnings median`, `Ratio of debt to earnings`)
+names(kable10A) <- c("Area of study", "Credential level", "Estimated median debt", "Estimated median earnings, 1 year after completing program", "Ratio of debt to earnings")
+kable(kable10A, caption="4-digit CIPs and award levels by debt compared to earnings in California") %>% kable_paper("hover", full_width = F) %>% scroll_box(width = "100%", height = "400px")
+```
+#### Debt vs earnings for for student loan borrowers who received Pell 
+```{r DebtVsEarningsPell}
+Q25 <- CSP %>% select(
+  UNITID,       # Unit ID for institution
+  OPEID6,       # 6-digit OPE ID for institution
+  INSTNM,       # Institution name
+  STABBR,       # Institution state
+  MAIN,         # Flag for main campus
+  CONTROL,      # Control of institution
+  CIPCODE,      # Classification of Instructional Programs (CIP) code for the field of study
+  CIPDESC,      # Text description of the field of study CIP Code
+  CREDLEV,      # Level of credential
+  CREDDESC,     # Text description of the level of credential
+  DEBT_PELL_STGP_EVAL_N,         # Borrower count for average/median Stafford and Grad PLUS loan debt disbursed to Pell recipients at this institution
+  DEBT_PELL_STGP_EVAL_MDN,       # Median Stafford and Grad PLUS loan debt disbursed to Pell recipients at this institution
+  EARN_PELL_WNE_MDN_1YR,         # Median earnings of graduates who received a Pell Grant and were working and not enrolled 1 year after completing highest credential
+  EARN_COUNT_PELL_WNE_1YR        # Number of graduates who received a Pell Grant and were working and not enrolled 1 year after completing highest credential
+) %>% filter(STABBR=="CA")
+
+Q25 <- Q25 %>% filter(DEBT_PELL_STGP_EVAL_N != "PrivacySuppressed") 
+Q25 <- Q25 %>% filter(DEBT_PELL_STGP_EVAL_MDN != "PrivacySuppressed")
+Q25 <- Q25 %>% filter(EARN_PELL_WNE_MDN_1YR != "PrivacySuppressed") 
+Q25 <- Q25 %>% filter(EARN_COUNT_PELL_WNE_1YR != "PrivacySuppressed")
+
+Q25$`Unique combination of OPEID, CIP, and CREDLEV` <- paste(Q25$OPEID6, Q25$CIPCODE, Q25$CREDLEV, sep="+")
+Q25 <- Q25 %>% filter(duplicated(`Unique combination of OPEID, CIP, and CREDLEV`)==FALSE)
+
+Q25$DEBT_PELL_STGP_EVAL_N <- as.numeric(Q25$DEBT_PELL_STGP_EVAL_N)
+Q25$DEBT_PELL_STGP_EVAL_MDN <- as.numeric(Q25$DEBT_PELL_STGP_EVAL_MDN)
+Q25$EARN_PELL_WNE_MDN_1YR <- as.numeric(Q25$EARN_PELL_WNE_MDN_1YR)
+Q25$EARN_COUNT_PELL_WNE_1YR <- as.numeric(Q25$EARN_COUNT_PELL_WNE_1YR)
+
+Q25.1 <- aggregate(data=Q25, cbind(DEBT_PELL_STGP_EVAL_N, EARN_COUNT_PELL_WNE_1YR) ~ CIPDESC + CREDDESC, FUN=sum)
+names(Q25.1) <- c("CIPDESC", "CREDDESC", "Total borrower count", "Total earner count")
+Q25 <- left_join(x=Q25, y=Q25.1, by=c("CIPDESC", "CREDDESC"))
+
+Q25$`Share of all borrowers` <- Q25$DEBT_PELL_STGP_EVAL_N / Q25$`Total borrower count`
+Q25$`Weighted debt median` <- Q25$`Share of all borrowers` * Q25$DEBT_PELL_STGP_EVAL_MDN
+
+Q25$`Share of all earners` <- Q25$EARN_COUNT_PELL_WNE_1YR / Q25$`Total earner count`
+Q25$`Weighted earnings median` <- Q25$`Share of all earners` * Q25$EARN_PELL_WNE_MDN_1YR
+
+Q25.2 <- aggregate(data=Q25, cbind(`Weighted debt median`, `Weighted earnings median`) ~ CIPDESC + CREDDESC, FUN=sum)
+Q25.2$`Ratio of debt to earnings` <- Q25.2$`Weighted debt median` / Q25.2$`Weighted earnings median`
+
+Q25.2 <- Q25.2 %>% arrange(desc(`Ratio of debt to earnings`))
+Q25.2$`Weighted debt median` <- dollar(Q25.2$`Weighted debt median`, accuracy=1)
+Q25.2$`Weighted earnings median` <- dollar(Q25.2$`Weighted earnings median`, accuracy=1)
+Q25.2$`Ratio of debt to earnings` <- round(Q25.2$`Ratio of debt to earnings`, 2)
+```
+
+```{r kable10B}
+kable10B <- Q25.2 %>% select(CIPDESC, CREDDESC, `Weighted debt median`, `Weighted earnings median`, `Ratio of debt to earnings`)
+names(kable10B) <- c("Area of study", "Credential level", "Estimated median debt for Pell recipients", "Estimated median earnings for Pell recipeints, 1 year after completing program", "Ratio of debt to earnings for Pell recipients")
+kable(kable10B, caption="4-digit CIPs and award levels by debt compared to earnings in California") %>% kable_paper("hover", full_width = F) %>% scroll_box(width = "100%", height = "400px")
+```
+#### Data source and notes 
+
+***
+### {-}
+
+(Summary text here)
+
+### {.tabset}
+```{r EarningsDemographics}
+Q26.1 <- c2yr %>% select(
+  `UNITID`, 
+  `OPEID`,
+  `STABBR`,
+  `CIPCODE`,
+  `AWLEVEL`,
+  `CTOTALT`,
+  `CBKAAT`, 
+  `CHISPT`
+) %>% filter(STABBR=="CA")
+Q26.1$CIPCODE <- as.character(Q26.1$CIPCODE)
+Q26.1$CIPCODE <- ifelse(Q26.1$CIPCODE %in% c(
+  "1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+  "11", "12", "13", "14", "15", "16", "17", "18", "19", "20",
+  "21", "22", "23", "24", "25", "26", "27", "28", "29", "30",
+  "31", "32", "33", "34", "35", "36", "37", "38", "39", "40",
+  "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", 
+  "51", "52", "53", "54", "99"
+), paste(Q26.1$CIPCODE, ".0000", sep=""), Q26.1$CIPCODE)
+Q26.1$CIPCODE <-ifelse(substr(Q26.1$CIPCODE, 1, 2) %in% c("1.", "2.", "3.", "4.", "5.", "6.", "7.", "8.", "9."), paste("0", Q26.1$CIPCODE, sep=""), Q26.1$CIPCODE)
+Q26.1$CIPCODE <-ifelse(nchar(Q26.1$CIPCODE)==4, paste(Q26.1$CIPCODE, "0", sep=""), Q26.1$CIPCODE)
+Q26.1$CIPCODE <-ifelse(nchar(Q26.1$CIPCODE)==5, paste(Q26.1$CIPCODE, "0", sep=""), Q26.1$CIPCODE)
+Q26.1$CIPCODE <-ifelse(nchar(Q26.1$CIPCODE)==6, paste(Q26.1$CIPCODE, "0", sep=""), Q26.1$CIPCODE)
+Q26.1$CIPCODE <- paste(substr(Q26.1$CIPCODE, 1, 2), substr(Q26.1$CIPCODE, 4, 5), sep="")
+Q26.1 <- aggregate(data=Q26.1, cbind(CTOTALT, CBKAAT, CHISPT) ~ CIPCODE + AWLEVEL, FUN=sum)
+
+Q26.1$CREDDESC <- rep(NA, nrow(Q26.1))
+Q26.1$CREDDESC[Q26.1$AWLEVEL %in% c(2, 4, 20, 21)] <- "Undergraduate Certificate or Diploma"
+Q26.1$CREDDESC[Q26.1$AWLEVEL==3] <- "Associate's Degree"
+Q26.1$CREDDESC[Q26.1$AWLEVEL==5] <- "Bachelors Degree"
+Q26.1$CREDDESC[Q26.1$AWLEVEL %in% c(6, 8)] <- "Graduate/Professional Certificate"
+Q26.1$CREDDESC[Q26.1$AWLEVEL==7] <- "Master's Degree"
+Q26.1$CREDDESC[Q26.1$AWLEVEL==17] <- "Doctoral Degree"
+Q26.1$CREDDESC[Q26.1$AWLEVEL %in% c(18, 19)] <- "First Professional Degree"
+
+Q26.1$`Share who are BKAA` <- Q26.1$CBKAAT / Q26.1$CTOTALT
+Q26.1$`Share who are HISP` <- Q26.1$CHISPT / Q26.1$CTOTALT
+Q26.1$`Share who are BKAA or HISP` <- (Q26.1$CBKAAT + Q26.1$CHISPT) / Q26.1$CTOTALT
+Q26.1$`Rank of BKAA share` <- rank(-(Q26.1$`Share who are BKAA`), ties.method="average")
+Q26.1$`Rank of HISP share` <- rank(-(Q26.1$`Share who are HISP`), ties.method="average")
+Q26.1$`Rank of BKAA/HISP share` <- rank(-(Q26.1$`Share who are BKAA or HISP`), ties.method="average")
+
+Q26.2 <- CSP %>% select(
+  UNITID,       # Unit ID for institution
+  OPEID6,       # 6-digit OPE ID for institution
+  INSTNM,       # Institution name
+  STABBR,       # Institution state
+  MAIN,         # Flag for main campus
+  CONTROL,      # Control of institution
+  CIPCODE,      # Classification of Instructional Programs (CIP) code for the field of study
+  CIPDESC,      # Text description of the field of study CIP Code
+  CREDLEV,      # Level of credential
+  CREDDESC,     # Text description of the level of credential
+  EARN_MDN_HI_1YR,               # Median earnings of graduates working and not enrolled 1 year after completing highest credential
+  EARN_COUNT_WNE_HI_1YR          # Number of graduates working and not enrolled 1 year after completing highest credential	
+) %>% filter(STABBR=="CA") %>% arrange(desc(MAIN))
+
+Q26.2$CREDDESC[Q26.2$CREDDESC=="Post-baccalaureate Certificate"] <- "Graduate/Professional Certificate"
+
+Q26.2 <- Q26.2 %>% filter(EARN_MDN_HI_1YR != "PrivacySuppressed") 
+Q26.2 <- Q26.2 %>% filter(EARN_COUNT_WNE_HI_1YR != "PrivacySuppressed")
+
+Q26.2$`Unique combination of OPEID, CIP, and CREDLEV` <- paste(Q26.2$OPEID6, Q26.2$CIPCODE, Q26.2$CREDLEV, sep="+")
+Q26.2 <- Q26.2 %>% filter(duplicated(`Unique combination of OPEID, CIP, and CREDLEV`)==FALSE)
+
+Q26.2$EARN_MDN_HI_1YR <- as.numeric(Q26.2$EARN_MDN_HI_1YR)
+Q26.2$EARN_COUNT_WNE_HI_1YR <- as.numeric(Q26.2$EARN_COUNT_WNE_HI_1YR)
+
+Q26.3 <- aggregate(data=Q26.2, EARN_COUNT_WNE_HI_1YR ~ CIPCODE + CREDDESC, FUN=sum)
+names(Q26.3) <- c("CIPCODE", "CREDDESC", "Total earner count")
+Q26.2 <- left_join(x=Q26.2, y=Q26.3, by=c("CIPCODE", "CREDDESC"))
+
+Q26.2$`Share of all earners` <- Q26.2$EARN_COUNT_WNE_HI_1YR / Q26.2$`Total earner count`
+Q26.2$`Weighted earnings median` <- Q26.2$`Share of all earners` * Q26.2$EARN_MDN_HI_1YR
+Q26.2 <- aggregate(data=Q26.2, `Weighted earnings median` ~ CIPCODE + CREDDESC, FUN=sum)
+Q26.2$`Rank of weighted earnings` <- rank(-(Q26.2$`Weighted earnings median`), ties.method="average")
+Q26.2$CIPCODE <- as.character(Q26.2$CIPCODE)
+Q26.2$CIPCODE <- ifelse(nchar(Q26.2$CIPCODE)==3, paste("0", Q26.2$CIPCODE, sep=""), Q26.2$CIPCODE)
+
+Q26 <- inner_join(x=Q26.2, y=Q26.1, by=c("CIPCODE", "CREDDESC"))
+
+Q26.Bplot <- Q26 %>% filter(`Share who are BKAA` != 0)
+Q26.Hplot <- Q26 %>% filter(`Share who are HISP` != 0)
+```
+#### California programs by average earnings and Black/African-American enrollment
+```{r figure35A}
+g35A <- ggplot(data=Q26.Bplot, mapping=aes(x=`Rank of BKAA share`, y=`Rank of weighted earnings`)) + geom_point(stat="identity") + facet_wrap(`CREDDESC` ~ .) + labs(x="Rank of Black share of completers", y="Rank of earnings among completers") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Set2") 
+
+ggplotly(g35A, width=800, height=600)
+```
+#### California programs by average earnings and Hispanic/Latino enrollment
+```{r figure35B}
+g35B <- ggplot(data=Q26.Hplot, mapping=aes(x=`Rank of HISP share`, y=`Rank of weighted earnings`)) + geom_point(stat="identity") + facet_wrap(`CREDDESC` ~ .) + labs(x="Rank of Hispanic share of completers", y="Rank of earnings among completers") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Set2") 
+
+ggplotly(g35B, width=800, height=600)
+```
+#### Data source and notes
+***
+### {-}
+
+(Summary text here)
+
+### {.tabset}
+```{r DebtDemographics}
+
+Q27 <- CSP %>% select(
+  UNITID,       # Unit ID for institution
+  OPEID6,       # 6-digit OPE ID for institution
+  INSTNM,       # Institution name
+  STABBR,       # Institution state
+  MAIN,         # Flag for main campus
+  CONTROL,      # Control of institution
+  CIPCODE,      # Classification of Instructional Programs (CIP) code for the field of study
+  CIPDESC,      # Text description of the field of study CIP Code
+  CREDLEV,      # Level of credential
+  CREDDESC,     # Text description of the level of credential
+  DEBT_ALL_STGP_EVAL_N,          # Borrower count for average/median Stafford and Grad PLUS loan debt disbursed at this institution
+  DEBT_ALL_STGP_EVAL_MDN         # Median Stafford and Grad PLUS loan debt disbursed at this institution
+) %>% filter(STABBR=="CA") %>% arrange(desc(MAIN))
+
+Q27$CREDDESC[Q27$CREDDESC=="Post-baccalaureate Certificate"] <- "Graduate/Professional Certificate"
+
+Q27 <- Q27 %>% filter(DEBT_ALL_STGP_EVAL_MDN != "PrivacySuppressed") 
+Q27 <- Q27 %>% filter(DEBT_ALL_STGP_EVAL_N != "PrivacySuppressed")
+
+Q27$`Unique combination of OPEID, CIP, and CREDLEV` <- paste(Q27$OPEID6, Q27$CIPCODE, Q27$CREDLEV, sep="+")
+Q27 <- Q27 %>% filter(duplicated(`Unique combination of OPEID, CIP, and CREDLEV`)==FALSE)
+
+Q27$DEBT_ALL_STGP_EVAL_MDN <- as.numeric(Q27$DEBT_ALL_STGP_EVAL_MDN)
+Q27$DEBT_ALL_STGP_EVAL_N <- as.numeric(Q27$DEBT_ALL_STGP_EVAL_N)
+
+Q27.1 <- aggregate(data=Q27, DEBT_ALL_STGP_EVAL_N ~ CIPCODE + CREDDESC, FUN=sum)
+names(Q27.1) <- c("CIPCODE", "CREDDESC", "Total borrower count")
+Q27 <- left_join(x=Q27, y=Q27.1, by=c("CIPCODE", "CREDDESC"))
+
+Q27$`Share of all borrowers` <- Q27$DEBT_ALL_STGP_EVAL_N / Q27$`Total borrower count`
+Q27$`Weighted debt median` <- Q27$`Share of all borrowers` * Q27$DEBT_ALL_STGP_EVAL_MDN
+Q27 <- aggregate(data=Q27, `Weighted debt median` ~ CIPCODE + CREDDESC, FUN=sum)
+Q27$`Rank of weighted debt` <- rank(-(Q27$`Weighted debt median`), ties.method="average")
+Q27$CIPCODE <- as.character(Q27$CIPCODE)
+Q27$CIPCODE <- ifelse(nchar(Q27$CIPCODE)==3, paste("0", Q27$CIPCODE, sep=""), Q27$CIPCODE)
+
+Q27 <- inner_join(x=Q27, y=Q26.1, by=c("CIPCODE", "CREDDESC"))
+
+Q27.Bplot <- Q27 %>% filter(`Share who are BKAA` != 0)
+Q27.Hplot <- Q27 %>% filter(`Share who are HISP` != 0)
+```
+#### California programs by average debt and Black/African-American enrollment
+```{r figure36A}
+g36A <- ggplot(data=Q27.Bplot, mapping=aes(x=`Rank of BKAA share`, y=`Rank of weighted debt`)) + geom_point(stat="identity") + facet_wrap(`CREDDESC` ~ .) + labs(x="Rank of Black share of completers", y="Rank of debt among completers") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Set2") 
+
+ggplotly(g36A, width=800, height=600)
+```
+#### California programs by average debt and Hispanic/Latino enrollment
+```{r figure36B}
+
+g36B <- ggplot(data=Q27.Hplot, mapping=aes(x=`Rank of HISP share`, y=`Rank of weighted debt`, fill=CREDDESC)) + geom_point(stat="identity") + facet_wrap(`CREDDESC` ~ .) + labs(x="Rank of Hispanic share of completers", y="Rank of debt among completers") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Set2") 
+
+ggplotly(g36B, width=800, height=600)
+```
+#### Data source and notes
+***
+### {-}
 
 ## Remaining Gaps
 
-* Influx and outflux of student loan borrowers into California
-* List more brainstorming items here?
+(More to come)
+
+
