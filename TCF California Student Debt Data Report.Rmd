@@ -28,9 +28,9 @@ library(kableExtra)
 
 This report accompanies The Century Foundation's report "Exact Title TBD: Student Debt and Race in California," which examines how student debt puts outsized financial burdens on Black and Latino families in California, especially for graduate borrowers and parents. 
 
-While California lawmakers rightly draw on national research on student debt and race, the state-specific analyses we conduct in this research can help guide state policy that accounts for the distinct patterns of borrowing in California. In particular, these analyses draw attention to the effects of uncapped Parent PLUS and Grad PLUS loans on California's families.
+Though California lawmakers rightly draw on national research on student debt and race, state-specific insights can be gleaned from national data sets. TCF's state-level analyses here can help guide state policy that accounts for the distinct patterns of borrowing in California. 
 
-In this report, we walk through the details of the data that underlie that report and explain in greater depth what we do and do not know about student debt in California. Our analysis relies on four sources:
+This report draws from the best sources of Califoria-specific data on student debt to explain in depth what we know (and do not know) about student debt in California. It relies primarily on four sources:
 
 * The Federal Student Aid (FSA) Data Center
 * The National Postsecondary Student Aid Study (NPSAS)
@@ -39,13 +39,13 @@ In this report, we walk through the details of the data that underlie that repor
 
 We also draw from the Integrated Postsecondary Education Data System (IPEDS) and the American Community Survey (ACS) to lesser extents. 
 
-The structure of this data-focused report mirrors that of the policy-focused report: the charts and tables in the policy report draw from our four primary data sources in the same order that they are presented here. The first figures in the report draw from the FSA Data Center, and they are followed by figures that draw from NPSAS, and so on. This report is not a static PDF: you can toggle between different versions of charts and hover over barcharts and scatterplots to reveal data points. 
+The structure of this data-focused report mirrors that of the policy-focused report: the charts and tables in the policy report draw from our four primary data sources in the same order that they are presented here. The first figures in both reports draw from the FSA Data Center, they are followed by figures that draw from NPSAS, and so on. 
 
 This document is more descriptive than prescriptive. Even data queries did not show striking contrasts between groups are included for full transparency, so long as they are relevant to the examination of student loan debt's burden on California borrowers. 
 
-The code used to produce this document and its charts and tables can be found at [this GitHub repository](https://github.com/PeterGranville/CaliforniaStudentDebt). All data sets used in this report are publicly available, courtesy of the U.S. Department of Education, the U.S. Federal Reserve, and the U.S. Census Bureau. 
+This report is not a static PDF: you can toggle between different versions of charts and hover over barcharts to reveal the exact statistics. The code used to produce this document and its charts and tables can be found at [this GitHub repository](https://github.com/PeterGranville/CaliforniaStudentDebt). All data sets used in this report are publicly available, courtesy of the U.S. Department of Education, the U.S. Federal Reserve, and the U.S. Census Bureau. 
 
-For any questions, please email [granville@tcf.org](granville@tcf.org). 
+If you have any questions, please email Peter Granville at [granville@tcf.org](granville@tcf.org).
 
 ## Federal Student Aid Data Center
 
@@ -56,7 +56,7 @@ The FSA Data Center is a repository of data and statistics on federal student ai
 * Quarterly reports on the federal student loan portfolio by borrower location, [available here](https://studentaid.gov/data-center/student/portfolio). 
 * Quarterly reports on Direct Loan disbursements and borrowers by program at the level of the institution, [available here](https://studentaid.gov/data-center/student/title-iv). 
 
-For "per capita" measures of student debt and borrowing below, the population for comparison is the estimated total of all California adults aged 18 to 50, using American Community Survey data reflecting calendar year 2021, [available here](https://www.census.gov/programs-surveys/acs/microdata/access.html). 
+For "per capita" measures of student debt and borrowing in Table 1, the population for comparison is the estimated total of all California adults aged 18 to 50. I estimate these population totals using American Community Survey data reflecting calendar year 2021, [available here](https://www.census.gov/programs-surveys/acs/microdata/access.html). 
 
 #### Findings
 
@@ -328,27 +328,49 @@ interstateComp <- interstateComp %>% filter(is.na(Measure)==FALSE)
 scaleCali <- scaleCali %>% filter(is.na(Measure)==FALSE)
 ```
 
+Table 1 below shows how California compares to other states in its federal student loan debt per capita, its number of borrowers per capita, and its average federal student loan balance. California ranks well in the firs two measures due to a smaller percentage of its population holding debt than in other states. However, California's borrowers exceed other states' borrowers in their average balance. Californians who hold federal student loan debt averaged roughly $37,000 in June 2022. 
+
+
 #### {.tabset}
+
 ##### Table 1
+
 ```{r kable1, results='asis'}
-kable(interstateComp, caption="California's rank on average debt measures")
+kable(interstateComp, caption="California's rank on average debt measures") %>% kable_paper("hover", full_width = F)
 ```
+
 ##### Data source and notes
+
+Source: Federal Student Aid Data Center, spreadsheet on federal student loan portfolio by borrower location, [available here](https://studentaid.gov/data-center/student/portfolio), accessed December 2022. Data reflects the federal student loan portfolio as of June 30, 2022. 
+
 ***
+
 #### {-}
 
-California has the most outstanding federal student loan debt and borrowers of any state, amounting to around 9 percent of the total portfolio. 
+
+Table 2 below shows the size of California's outstanding federal student loan debt. California has the most outstanding federal student loan debt ($142 billion) and borrowers (3.8 million) of any state, amounting to around 9 percent of the nationwide rederal student loan portfolio. 
+
 
 #### {.tabset}
+
 ##### Table 2
+
 ```{r kable2, results='asis'}
-kable(scaleCali, caption="Size of California borrowers' outstanding debt")
+kable(scaleCali, caption="Size of California borrowers' outstanding debt") %>% kable_paper("hover", full_width = F)
 ```
+
 ##### Data source and notes
+
+Source: Federal Student Aid Data Center, spreadsheet on federal student loan portfolio by borrower location, [available here](https://studentaid.gov/data-center/student/portfolio), accessed December 2022. Data reflects the federal student loan portfolio as of June 30, 2022. 
+
 ***
+
 #### {-}
 
-Now we turn to the quarterly data on disbursements. To evade any impact from the COVID-19 pandemic on the data, we examine data from the 2018-19 award year. 
+
+These may come as no surprise given that California has the nation's largest populace, but it also means that California's lawmakers can do more to change the course of the nation's student debt crisis than any other state's leaders. 
+
+Table 3 below draws from the FSA Data Center's quarterly data on disbursements. To minimize any impact from the COVID-19 pandemic on our results, we examine data from the 2018-19 award year. 
 
 ```{r loanPrep1, warning=FALSE}
 
@@ -495,6 +517,9 @@ loans1819$`Total $ of Disbursements` <- loans1819$`SUBSIDIZED: $ of Disbursement
 ### we aggregate totals by state.                  ###
 ######################################################
 
+# added 12/6 04:30
+loans1819$State[loans1819$State != "CA"] <- "Rest of U.S."
+
 table3 <- aggregate(data=loans1819, cbind(  
   `SUBSIDIZED: $ of Disbursements`, 
   `UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`, 
@@ -507,15 +532,16 @@ table3 <- aggregate(data=loans1819, cbind(
 ### Next we add the U.S. totals for comparison.    ###
 ######################################################
 
-table3 <- table3 %>% add_row(
-  `State`="U.S.",
-  `SUBSIDIZED: $ of Disbursements`=sum(table3$`SUBSIDIZED: $ of Disbursements`), 
-  `UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`=sum(table3$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`), 
-  `UNSUBSIDIZED - GRADUATE: $ of Disbursements`=sum(table3$`UNSUBSIDIZED - GRADUATE: $ of Disbursements`), 
-  `PARENT PLUS: $ of Disbursements`=sum(table3$`PARENT PLUS: $ of Disbursements`), 
-  `GRAD PLUS: $ of Disbursements`=sum(table3$`GRAD PLUS: $ of Disbursements`), 
-  `Total $ of Disbursements`=sum(table3$`Total $ of Disbursements`)
-)
+# commented out 12/6 04:30
+# table3 <- table3 %>% add_row(
+#   `State`="U.S.",
+#   `SUBSIDIZED: $ of Disbursements`=sum(table3$`SUBSIDIZED: $ of Disbursements`), 
+#   `UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`=sum(table3$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`), 
+#   `UNSUBSIDIZED - GRADUATE: $ of Disbursements`=sum(table3$`UNSUBSIDIZED - GRADUATE: $ of Disbursements`), 
+#   `PARENT PLUS: $ of Disbursements`=sum(table3$`PARENT PLUS: $ of Disbursements`), 
+#   `GRAD PLUS: $ of Disbursements`=sum(table3$`GRAD PLUS: $ of Disbursements`), 
+#   `Total $ of Disbursements`=sum(table3$`Total $ of Disbursements`)
+# )
 
 ######################################################
 ### Now we derive each loan program's share of     ###
@@ -533,7 +559,7 @@ table3$`GRAD PLUS share of total` <- table3$`GRAD PLUS: $ of Disbursements` / ta
 ### versus the rest of the nation.                 ###
 ######################################################
 
-table3.1 <- table3 %>% filter(State %in% c("CA", "U.S.")) %>% select(State, `SUBSIDIZED share of total`, `UNSUBSIDIZED - UNDERGRADUATE share of total`, `UNSUBSIDIZED - GRADUATE share of total`, `PARENT PLUS share of total`, `GRAD PLUS share of total`)
+table3.1 <- table3 %>% filter(State %in% c("CA", "Rest of U.S.")) %>% select(State, `SUBSIDIZED share of total`, `UNSUBSIDIZED - UNDERGRADUATE share of total`, `UNSUBSIDIZED - GRADUATE share of total`, `PARENT PLUS share of total`, `GRAD PLUS share of total`)
 names(table3.1) <- c("State", "Subsidized", "Unsubsidized undergraduate", "Unsubsidized graduate", "Parent PLUS loans", "Grad PLUS")
 table3.1$`Subsidized` <- percent(table3.1$`Subsidized`)
 table3.1$`Unsubsidized undergraduate` <- percent(table3.1$`Unsubsidized undergraduate`)
@@ -543,13 +569,30 @@ table3.1$`Grad PLUS` <- percent(table3.1$`Grad PLUS`)
 ```
 
 #### {.tabset}
+
 ##### Table 3
+
 ```{r kable3}
-kable(table3.1, caption="Share of loan dollars disbursed in 2018-19 by loan type, California vs. U.S.")
+kable(table3.1, caption="Share of loan dollars disbursed in 2018-19 by loan type, California vs. U.S.") %>% kable_paper("hover", full_width = F)
 ```
+
 ##### Data source and notes
+
+Source: Federal Student Aid Data Center, spreadsheet on Direct Loan volume for Q4 2018-19, "Award year summary" tab, [available here](https://studentaid.gov/data-center/student/title-iv), accessed October 2022. We use the data on loan disbursements, not loan originations.
+
 ***
+
 #### {-}
+
+Comparing California to the rest of the U.S., we find that: 
+
+* California's federal student loan dollars are less concentrated in the Subsidized loan program and the Unsubsidized undergraduate loan program. 
+* California's federal student loan dollars are slightly more concentrated in the Unsubsidized graduate loan program and slightly less concentrated in the Parent PLUS loan program. 
+* California's federal student loan dollars are much more concentrated in the Grad PLUS loan program, at 19.4% versus 11.0% across the rest of the country.
+
+A major public policy emphasis for state lawmakers, in California as anywhere, is the affordability of undergraduate programs. One sign of California's success in that respect is the lower degree of undergraduate borrowing compared to across the rest of the country. (Of course, even small loan balances can strain a borrower's financial life.)
+
+By contrast, the average Grad PLUS and Parent PLUS loans in California are higher than in the rest of the U.S., as shown in Figure 1 below. 
 
 ```{r sectorLoans}
 
@@ -620,22 +663,7 @@ table4 <- aggregate(data=forTable4, cbind(
   `GRAD PLUS: Recipients`
 ) ~ State + Control, FUN=sum)
 
-table4.US <- aggregate(data=forTable4, cbind(
-  `SUBSIDIZED: $ of Disbursements`, 
-  `SUBSIDIZED: Recipients`, 
-  `UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`,
-  `UNSUBSIDIZED - UNDERGRADUATE: Recipients`, 
-  `UNSUBSIDIZED - GRADUATE: $ of Disbursements`, 
-  `UNSUBSIDIZED - GRADUATE: Recipients`, 
-  `PARENT PLUS: $ of Disbursements`, 
-  `PARENT PLUS: Recipients`, 
-  `GRAD PLUS: $ of Disbursements`,
-  `GRAD PLUS: Recipients`
-) ~ Control, FUN=sum)
-table4.US$State <- rep("U.S.", nrow(table4.US))
-table4 <- rbind(table4, table4.US)
-
-table4 <- table4 %>% filter(State %in% c("CA", "U.S."))
+table4 <- table4 %>% filter(State %in% c("CA", "Rest of U.S."))
 
 table4$`Subsidized` <- table4$`SUBSIDIZED: $ of Disbursements` / table4$`SUBSIDIZED: Recipients`
 table4$`Unsub. UG` <- table4$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements` / table4$`UNSUBSIDIZED - UNDERGRADUATE: Recipients`
@@ -645,26 +673,27 @@ table4$`Grad PLUS` <- table4$`GRAD PLUS: $ of Disbursements` / table4$`GRAD PLUS
 
 table4.1 <- table4 %>% select(State, Control, `Subsidized`, `Unsub. UG`, `Unsub. Grad.`, `Parent PLUS`, `Grad PLUS`)
 table4.1 <- reshape2::melt(data=table4.1, id.vars = c("State", "Control"), value.name="Average Loan")
+
+table4.1$Control <- as.factor(table4.1$Control)
+table4.1$Control <- factor(table4.1$Control, levels = c("For-profit", "Non-profit", "Public"))
 ```
 
 #### {.tabset}
 ##### Figure 1
 ```{r figure1}
-g1 <- ggplot(data=table4.1, mapping=aes(x=State, y=`Average Loan`, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.4) + labs(title="Average Loan by Type and Sector: California vs. U.S.", caption="Author's analysis of data from the Federal Student Aid Data Center.") + scale_y_continuous(labels=scales::dollar_format()) + facet_grid(Control ~ variable) + scale_fill_brewer(palette="Dark2") + theme(text=element_text(family="Optima")) 
+g1 <- ggplot(data=table4.1, mapping=aes(x=State, y=`Average Loan`, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.4) + labs(title="Average annual loan by type and sector: California vs. Rest of U.S.") + scale_y_continuous(labels=scales::dollar_format()) + facet_grid(Control ~ variable) + scale_fill_brewer(palette="Dark2") + theme(text=element_text(family="Optima")) 
 
 ggplotly(g1, width=850, height=500)
 ```
 ##### Data source and notes
 
-Source: FSA Data Center. 
-
-Year(s) of analysis: Reflects loans distributed in 2018-19. Filtered for four-year institutions.
+Source: Federal Student Aid Data Center, spreadsheet on Direct Loan volume for Q4 2018-19, "Award year summary" tab, [available here](https://studentaid.gov/data-center/student/title-iv), accessed October 2022. We use the data on loan disbursements, not loan originations. These averages do not include students who receive no loans. Only four-year institutions are included. 
 
 ***
 
 #### {-}
 
-The breakdown of loans distributed by California institutions is skewed more towards Grad PLUS than the breakdown of loans distributed by institutions nationwide. Unsubsidized graduate loans also take up a larger slice of the pie in California than in the nation overall.  
+Across all three institutional control categories, California exceeds the rest of the U.S. in the average Parent PLUS loan and the average Grad PLUS loan. Unlike Stafford loans, Parent PLUS and Grad PLUS are both uncapped, meaning a borrower can take out as much as they would like any year. At California nonprofit and for-profit four-years, the average Parent PLUS loan *per year* is north of \$20,000, and the average Grad PLUS loan per year is around \$30,000. In both cases, the averages are lower at public institutions. 
 
 ## National Postsecondary Student Aid Study
 
@@ -4433,25 +4462,382 @@ Q6.TotalParentDebt <- Q6 %>% arrange(desc(`Average outstanding Parent PLUS debt`
 Q6.TotalGradDebt <- Q6 %>% arrange(desc(`Average outstanding Grad PLUS debt`)) %>% filter(LPGPLUS_CNT >= 500) %>% select(INSTNM, CONTROL, LPGPLUS_AMT, LPGPLUS_CNT, `Average outstanding Grad PLUS debt`)
 Q6.TotalDebt <- Q6 %>% filter((OPEID6 %in% Institutions.Based.At.Least.Partially.Outside.CA)==FALSE) %>% arrange(desc(`Total outstanding debt`)) %>% select(INSTNM, CONTROL, `Total outstanding debt`)
 
-Q6.TotalStaffordDebt$`Average outstanding Stafford debt` <- comma(round((Q6.TotalStaffordDebt$`Average outstanding Stafford debt`), -2))
-Q6.TotalParentDebt$`Average outstanding Parent PLUS debt` <- comma(round((Q6.TotalParentDebt$`Average outstanding Parent PLUS debt`), -2))
-Q6.TotalGradDebt$`Average outstanding Grad PLUS debt` <- comma(round((Q6.TotalGradDebt$`Average outstanding Grad PLUS debt`), -2))
+Q6.TotalStaffordDebt$`Average outstanding Stafford debt` <- dollar(round((Q6.TotalStaffordDebt$`Average outstanding Stafford debt`), -2), accuracy=1)
+Q6.TotalParentDebt$`Average outstanding Parent PLUS debt` <- dollar(round((Q6.TotalParentDebt$`Average outstanding Parent PLUS debt`), -2), accuracy=1)
+Q6.TotalGradDebt$`Average outstanding Grad PLUS debt` <- dollar(round((Q6.TotalGradDebt$`Average outstanding Grad PLUS debt`), -2), accuracy=1)
 
-Q6.TotalStaffordDebt$LPSTAFFORD_AMT <- comma(round((Q6.TotalStaffordDebt$LPSTAFFORD_AMT), -3))
-Q6.TotalParentDebt$LPPPLUS_AMT <- comma(round((Q6.TotalParentDebt$LPPPLUS_AMT), -3))
-Q6.TotalGradDebt$LPGPLUS_AMT <- comma(round((Q6.TotalGradDebt$LPGPLUS_AMT), -3))
-Q6.TotalDebt$`Total outstanding debt` <- comma(round((Q6.TotalDebt$`Total outstanding debt`), -3))
+Q6.TotalStaffordDebt$LPSTAFFORD_AMT <- dollar(round((Q6.TotalStaffordDebt$LPSTAFFORD_AMT), -3), accuracy=1)
+Q6.TotalParentDebt$LPPPLUS_AMT <- dollar(round((Q6.TotalParentDebt$LPPPLUS_AMT), -3), accuracy=1)
+Q6.TotalGradDebt$LPGPLUS_AMT <- dollar(round((Q6.TotalGradDebt$LPGPLUS_AMT), -3), accuracy=1)
+Q6.TotalDebt$`Total outstanding debt` <- dollar(round((Q6.TotalDebt$`Total outstanding debt`), -3), accuracy=1)
 
-Q6.TotalStaffordDebt$LPSTAFFORD_CNT <- comma((Q6.TotalStaffordDebt$LPSTAFFORD_CNT))
-Q6.TotalParentDebt$LPPPLUS_CNT <- comma((Q6.TotalParentDebt$LPPPLUS_CNT))
-Q6.TotalGradDebt$LPGPLUS_CNT <- comma((Q6.TotalGradDebt$LPGPLUS_CNT))
+Q6.TotalStaffordDebt$LPSTAFFORD_CNT <- comma(round(Q6.TotalStaffordDebt$LPSTAFFORD_CNT, -1))
+Q6.TotalParentDebt$LPPPLUS_CNT <- comma(round(Q6.TotalParentDebt$LPPPLUS_CNT, -1))
+Q6.TotalGradDebt$LPGPLUS_CNT <- comma(round(Q6.TotalGradDebt$LPGPLUS_CNT, -1))
 ```
 
-```{r kable4, results='asis'}
-kable4 <- Q6.TotalStaffordDebt %>% select(INSTNM, CONTROL, LPSTAFFORD_AMT, LPSTAFFORD_CNT, `Average outstanding Stafford debt`)
-names(kable4) <- c("Institution name", "Control of institution", "Total outstanding Stafford loan debt", "Total Stafford loan borrowers", "Average outstanding Stafford debt")
-kable(kable4, caption="Top California institutions by average outstanding Stafford balance") %>% kable_paper("hover", full_width = F) %>% scroll_box(width = "100%", height = "400px")
+### {.tabset}
+#### Table 4: Stafford debt
+```{r kable4A, results='asis'}
+kable4A <- Q6.TotalStaffordDebt[1:100, ] %>% select(INSTNM, CONTROL, LPSTAFFORD_AMT, LPSTAFFORD_CNT, `Average outstanding Stafford debt`)
+names(kable4A) <- c("Institution name", "Control of institution", "Total outstanding Stafford loan debt", "Total Stafford loan borrowers", "Average outstanding Stafford debt")
+kable(kable4A, caption="Top 100 California institutions by average outstanding Stafford balance") %>% kable_paper("hover", full_width = F) %>% scroll_box(width = "100%", height = "400px")
 ```
+#### Table 4: Parent PLUS debt
+```{r kable4B, results='asis'}
+kable4B <- Q6.TotalParentDebt[1:100, ] %>% select(INSTNM, CONTROL, LPPPLUS_AMT, LPPPLUS_CNT, `Average outstanding Parent PLUS debt`)
+names(kable4B) <- c("Institution name", "Control of institution", "Total outstanding Parent PLUS loan debt", "Total Parent PLUS loan borrowers", "Average outstanding Parent PLUS debt")
+kable(kable4B, caption="Top 100 California institutions by average outstanding Parent PLUS balance") %>% kable_paper("hover", full_width = F) %>% scroll_box(width = "100%", height = "400px")
+```
+#### Table 4: Grad PLUS debt
+```{r kable4C, results='asis'}
+kable4C <- Q6.TotalGradDebt %>% select(INSTNM, CONTROL, LPGPLUS_AMT, LPGPLUS_CNT, `Average outstanding Grad PLUS debt`)
+names(kable4C) <- c("Institution name", "Control of institution", "Total outstanding Grad PLUS loan debt", "Total Grad PLUS loan borrowers", "Average outstanding Grad PLUS debt")
+kable(kable4C, caption="Top California institutions by average outstanding Grad PLUS balance") %>% kable_paper("hover", full_width = F) %>% scroll_box(width = "100%", height = "400px")
+```
+#### Table 4: Total debt
+```{r kable4D, results='asis'}
+kable4D <- Q6.TotalDebt[1:100, ] %>% select(INSTNM, CONTROL, `Total outstanding debt`)
+names(kable4D) <- c("Institution name", "Control of institution", "Total outstanding debt")
+kable(kable4D, caption="Top 100 California institutions by total outstanding loan balance") %>% kable_paper("hover", full_width = F) %>% scroll_box(width = "100%", height = "400px")
+```
+#### Data source and notes
+Only 73 institutions have at least 500 borrowers with outstanding Grad PLUS debt. 
+***
+### {-}
+
+
+### {.tabset}
+```{r outsideDebt, warning=FALSE}
+### What is the amount of debt that comes to California borrowers who are enrolled entirely online?
+
+ef2018a <- fread("ef2018a_dist_rv.csv", header=TRUE, select=c(
+  "UNITID",  # Unique identification number of the institution
+  "EFDELEV", # Level of student
+  "EFDETOT", # All students enrolled
+  "EFDEEXC"  # Students enrolled exclusively in distance education courses
+)) %>% filter(EFDELEV==1) %>% select(UNITID, EFDETOT, EFDEEXC) # Distance education status and level of student: Fall 2018
+names(ef2018a) <- c("UNITID", "All students enrolled", "Students enrolled exclusively online")
+
+ef2018c <- fread("ef2018c_rv.csv", header=TRUE, select=c(
+  "UNITID",   # Unique identification number of the institution
+  "EFCSTATE", # State of residence when student was first admitted
+  "EFRES01"   # First-time degree/certificate-seeking undergraduate students
+)) # Residence and migration of first-time freshman: Fall 2018
+# 58	US total
+# 6	California
+ef2018c.CA <- ef2018c %>% filter(EFCSTATE == 6) %>% select(UNITID, EFRES01)
+names(ef2018c.CA) <- c("UNITID", "Undergraduates from California")
+ef2018c.US <- ef2018c %>% filter(EFCSTATE == 58) %>% select(UNITID, EFRES01)
+names(ef2018c.US) <- c("UNITID", "All undergraduates")
+ef2018c <- full_join(x=ef2018c.US, y=ef2018c.CA, by="UNITID")
+
+hd2019 <- fread("hd2019.csv", header=TRUE, select=c(
+  "UNITID", # Unique identification number of the institution
+  "STABBR", # State abbreviation
+  "OPEID"   # Office of Postsecondary Education (OPE) ID Number
+)) # Institutional characteristics: 2018-19
+
+Q17 <- left_join(x=hd2019, y=ef2018c, by="UNITID")
+Q17 <- left_join(x=Q17, y=ef2018a, by="UNITID")
+Q17$OPEID <- as.character(Q17$OPEID)
+Q17 <- Q17 %>% filter(OPEID != "-2")
+
+Q17$`All students enrolled`[is.na(Q17$`All students enrolled`)] <- 0
+Q17$`Students enrolled exclusively online`[is.na(Q17$`Students enrolled exclusively online`)] <- 0
+Q17$`All undergraduates`[is.na(Q17$`All undergraduates`)] <- 0
+Q17$`Undergraduates from California`[is.na(Q17$`Undergraduates from California`)] <- 0
+
+Q17$OPEID6 <- Q17$OPEID
+Q17$OPEID6 <- ifelse(nchar(Q17$OPEID6)==6, paste("0", Q17$OPEID6, sep=""), Q17$OPEID6)
+Q17$OPEID6 <- ifelse(nchar(Q17$OPEID6)==7, paste("0", Q17$OPEID6, sep=""), Q17$OPEID6)
+Q17$OPEID6 <- substr(Q17$OPEID6, 1, 6)
+
+Q17 <- aggregate(data=Q17, cbind(`All undergraduates`, `Undergraduates from California`, `Students enrolled exclusively online`, `All students enrolled`) ~ OPEID6, FUN=sum)
+Q17$`California share of all undergraduates` <- Q17$`Undergraduates from California` / Q17$`All undergraduates`
+Q17$`California share of all undergraduates`[is.na(Q17$`California share of all undergraduates`)] <- 0
+Q17$`Estimated students from California enrolled online` <- Q17$`California share of all undergraduates` * Q17$`Students enrolled exclusively online`
+Q17$`Estimated students from California enrolled online as a share of all undergraduates` <- Q17$`Estimated students from California enrolled online` / Q17$`All students enrolled`
+
+# Let's find out which institutions *not* based in California have the most students from California enrolled entirely online. 
+
+Q17.2 <- CSI %>% select(OPEID6, INSTNM, CONTROL, STABBR2, MAIN, DEBT_MDN, GRAD_DEBT_MDN, LPSTAFFORD_AMT, LPPPLUS_AMT, LPGPLUS_AMT) %>% filter(MAIN==1)
+
+Q17.2$DEBT_MDN <- as.numeric(Q17.2$DEBT_MDN)
+Q17.2$GRAD_DEBT_MDN <- as.numeric(Q17.2$GRAD_DEBT_MDN)
+Q17.2$LPSTAFFORD_AMT <- as.numeric(Q17.2$LPSTAFFORD_AMT)
+Q17.2$LPPPLUS_AMT <- as.numeric(Q17.2$LPPPLUS_AMT)
+Q17.2$LPGPLUS_AMT <- as.numeric(Q17.2$LPGPLUS_AMT)
+
+Q17.2$LPSTAFFORD_AMT[is.na(Q17.2$LPSTAFFORD_AMT)] <- 0
+Q17.2$LPPPLUS_AMT[is.na(Q17.2$LPPPLUS_AMT)] <- 0
+Q17.2$LPGPLUS_AMT[is.na(Q17.2$LPGPLUS_AMT)] <- 0
+
+Q17.2$OPEID6 <- as.character(Q17.2$OPEID6)
+Q17.2$OPEID6 <- ifelse(nchar(Q17.2$OPEID6)==4, paste("0", Q17.2$OPEID6, sep=""), Q17.2$OPEID6)
+Q17.2$OPEID6 <- ifelse(nchar(Q17.2$OPEID6)==5, paste("0", Q17.2$OPEID6, sep=""), Q17.2$OPEID6)
+Q17 <- left_join(x=Q17, y=Q17.2, by="OPEID6")
+
+Q17.OutsideCA <- Q17 %>% filter(STABBR2 != "CA")
+Q17.OutsideCA <- Q17.OutsideCA %>% select(INSTNM, STABBR2, `Estimated students from California enrolled online`, `California share of all undergraduates`, `Estimated students from California enrolled online as a share of all undergraduates`, DEBT_MDN, GRAD_DEBT_MDN, LPSTAFFORD_AMT, LPPPLUS_AMT, LPGPLUS_AMT)
+
+Q17.OutsideCA$`Total outstanding debt` <- Q17.OutsideCA$LPSTAFFORD_AMT + Q17.OutsideCA$LPPPLUS_AMT + Q17.OutsideCA$LPGPLUS_AMT
+Q17.OutsideCA$`Estimated debt for students from California enrolled online` <- Q17.OutsideCA$`Estimated students from California enrolled online as a share of all undergraduates` * Q17.OutsideCA$`Total outstanding debt`
+
+Q17.OutsideCA <- Q17.OutsideCA %>% arrange(desc(`Estimated debt for students from California enrolled online`)) %>% select(INSTNM, STABBR2, `Estimated students from California enrolled online`, `Estimated debt for students from California enrolled online`)
+
+Q17.OutsideCA$`Estimated students from California enrolled online` <- comma(round(Q17.OutsideCA$`Estimated students from California enrolled online`, -1))
+Q17.OutsideCA$`Estimated debt for students from California enrolled online` <- dollar(round(Q17.OutsideCA$`Estimated debt for students from California enrolled online`, -3), accuracy=1)
+
+# sum(Q17.OutsideCA$`Estimated students from California enrolled online`, na.rm=TRUE)
+# sum(Q17.OutsideCA$`Estimated debt for students from California enrolled online`, na.rm=TRUE)
+```
+#### Table 5
+```{r kable5, results='asis'}
+kable5 <- Q17.OutsideCA[1:100, ]
+names(kable5) <- c("Institution name", "State", "Estimated students from California enrolled online", "Estimated outstanding debt from California students enrolled online")
+kable(kable5, caption="Top 100 institutions based outside California, by estimated outstanding debt from online enrollment by California students") %>% kable_paper("hover", full_width = F) %>% scroll_box(width = "100%", height = "400px")
+```
+#### Data source and notes
+Estimated enrollment is based on 2018 data. Estimated debt is based on data as of 2022. 
+***
+### {-}
+
+### {.tabset}
+#### California public segments
+```{r segments, warning=FALSE}
+Q18 <- CSI %>% select(OPEID6, INSTNM, STABBR, CONTROL, LPSTAFFORD_AMT, LPPPLUS_AMT, LPGPLUS_AMT) %>% filter(STABBR=="CA") %>% filter(CONTROL=="Public") %>% filter(duplicated(OPEID6)==FALSE)
+
+Q18$LPSTAFFORD_AMT <- as.numeric(Q18$LPSTAFFORD_AMT)
+Q18$LPPPLUS_AMT <- as.numeric(Q18$LPPPLUS_AMT)
+Q18$LPGPLUS_AMT <- as.numeric(Q18$LPGPLUS_AMT)
+
+Q18$LPSTAFFORD_AMT[is.na(Q18$LPSTAFFORD_AMT)] <- 0
+Q18$LPPPLUS_AMT[is.na(Q18$LPPPLUS_AMT)] <- 0
+Q18$LPGPLUS_AMT[is.na(Q18$LPGPLUS_AMT)] <- 0
+
+Q18$OPEID6 <- as.character(Q18$OPEID6)
+Q18$OPEID6 <- ifelse(nchar(Q18$OPEID6)==4, paste("0", Q18$OPEID6, sep=""), Q18$OPEID6)
+Q18$OPEID6 <- ifelse(nchar(Q18$OPEID6)==5, paste("0", Q18$OPEID6, sep=""), Q18$OPEID6)
+
+Q18$`Segment` <- rep(NA, nrow(Q18))
+
+Q18$`Segment`[Q18$OPEID6 %in% c(
+  "001111",
+  "001113",
+  "001118",
+  "001119",
+  "001124",
+  "001161",
+  "001162",
+  "001163",
+  "001166",
+  "001176",
+  "001178",
+  "001181",
+  "001182",
+  "001185",
+  "001186",
+  "001187",
+  "001190",
+  "001191",
+  "001192",
+  "001193",
+  "001197",
+  "001199",
+  "001201",
+  "001202",
+  "001203",
+  "001206",
+  "001208",
+  "001209",
+  "001214",
+  "001217",
+  "001219",
+  "001223",
+  "001224",
+  "001226",
+  "001227",
+  "001228",
+  "001232",
+  "001233",
+  "001237",
+  "001239",
+  "001239",
+  "001240",
+  "001242",
+  "001245",
+  "001246",
+  "001247",
+  "001250",
+  "001259",
+  "001260",
+  "001261",
+  "001266",
+  "001267",
+  "001268",
+  "001269",
+  "001270",
+  "001272",
+  "001273",
+  "001275",
+  "001280",
+  "001282",
+  "001284",
+  "001285",
+  "001286",
+  "001287",
+  "001289",
+  "001290",
+  "001292",
+  "001294",
+  "001307",
+  "001308",
+  "001309",
+  "001334",
+  "001335",
+  "001338",
+  "001344",
+  "004480",
+  "004481",
+  "004502",
+  "006720",
+  "006973",
+  "007047",
+  "007115",
+  "007536",
+  "007707",
+  "007713",
+  "008073",
+  "008596",
+  "008597",
+  "008903",
+  "008918",
+  "009272",
+  "010111",
+  "010340",
+  "011672",
+  "011820",
+  "012452",
+  "012550",
+  "012842",
+  "012907",
+  "020635",
+  "021113",
+  "021191",
+  "022260",
+  "022427",
+  "030357",
+  "035424",
+  "036957",
+  "038713",
+  "041113",
+  "041438",
+  "041735",
+  "041761",
+  "042534",
+  "042817"
+)] <- "California Community Colleges"
+
+Q18$`Segment`[Q18$OPEID6 %in% c(
+  "001134", 
+  "001137", 
+  "001138", 
+  "001139", 
+  "001140", 
+  "001141", 
+  "001142", 
+  "001143", 
+  "001144", 
+  "001146", 
+  "001147", 
+  "001149", 
+  "001150", 
+  "001151", 
+  "001153", 
+  "001154", 
+  "001155", 
+  "001156", 
+  "001157", 
+  "007993",
+  "030113", 
+  "032603", 
+  "039803"
+)] <- "California State University"
+
+Q18$`Segment`[Q18$OPEID6 %in% c(
+  "001312", 
+  "001313", 
+  "001314", 
+  "001315", 
+  "001316", 
+  "001317", 
+  "001319", 
+  "001320", 
+  "001321", 
+  "003947",
+  "041271"
+)] <- "University of California"
+
+Q18 <- Q18 %>% filter(is.na(`Segment`)==FALSE)
+Q18.1 <- aggregate(data=Q18, cbind(LPSTAFFORD_AMT, LPPPLUS_AMT, LPGPLUS_AMT) ~ Segment, FUN=sum)
+Q18.1 <- Q18.1 %>% add_row(Segment="All segments", 
+                           LPSTAFFORD_AMT=sum(Q18.1$LPSTAFFORD_AMT, na.rm=TRUE), 
+                           LPPPLUS_AMT=sum(Q18.1$LPPPLUS_AMT, na.rm=TRUE), 
+                           LPGPLUS_AMT=sum(Q18.1$LPGPLUS_AMT, na.rm=TRUE))
+Q18.1$`Total debt` <- Q18.1$LPSTAFFORD_AMT + Q18.1$LPPPLUS_AMT + Q18.1$LPGPLUS_AMT
+
+Q18.1$LPSTAFFORD_AMT <- dollar(round(Q18.1$LPSTAFFORD_AMT, -3), accuracy=1)
+Q18.1$LPPPLUS_AMT <- dollar(round(Q18.1$LPPPLUS_AMT, -3), accuracy=1)
+Q18.1$LPGPLUS_AMT <- dollar(round(Q18.1$LPGPLUS_AMT, -3), accuracy=1)
+Q18.1$`Total debt` <- dollar(round(Q18.1$`Total debt`, -3), accuracy=1)
+```
+
+```{r kable6A, results='asis'}
+kable6A <- Q18.1
+names(kable6A) <- c("Segment", "Outstanding Stafford debt", "Outstanding Parent PLUS debt", "Outstanding Grad PLUS debt", "Total debt")
+kable(kable6A, caption="Public segments of California higher education by outstanding federal student loan debt") %>% kable_paper("hover", full_width = F) %>% scroll_box(width = "100%")
+```
+#### All California sectors
+```{r sectors, warning=FALSE}
+Q19 <- CSI %>% select(OPEID6, INSTNM, STABBR, MAIN, CONTROL, LPSTAFFORD_AMT, LPPPLUS_AMT, LPGPLUS_AMT) %>% filter(STABBR=="CA") %>% filter(MAIN==1) %>% filter(duplicated(OPEID6)==FALSE)
+
+Q19$LPSTAFFORD_AMT <- as.numeric(Q19$LPSTAFFORD_AMT)
+Q19$LPPPLUS_AMT <- as.numeric(Q19$LPPPLUS_AMT)
+Q19$LPGPLUS_AMT <- as.numeric(Q19$LPGPLUS_AMT)
+
+Q19$LPSTAFFORD_AMT[is.na(Q19$LPSTAFFORD_AMT)] <- 0
+Q19$LPPPLUS_AMT[is.na(Q19$LPPPLUS_AMT)] <- 0
+Q19$LPGPLUS_AMT[is.na(Q19$LPGPLUS_AMT)] <- 0
+
+Q19$OPEID6 <- as.character(Q19$OPEID6)
+Q19$OPEID6 <- ifelse(nchar(Q19$OPEID6)==4, paste("0", Q19$OPEID6, sep=""), Q19$OPEID6)
+Q19$OPEID6 <- ifelse(nchar(Q19$OPEID6)==5, paste("0", Q19$OPEID6, sep=""), Q19$OPEID6)
+
+Q19 <- aggregate(data=Q19, cbind(LPSTAFFORD_AMT, LPPPLUS_AMT, LPGPLUS_AMT) ~ CONTROL, FUN=sum)
+
+Q19$`Total debt` <- Q19$LPSTAFFORD_AMT + Q19$LPPPLUS_AMT + Q19$LPGPLUS_AMT
+
+Q19 <- Q19 %>% add_row(CONTROL="All sectors", 
+                       LPSTAFFORD_AMT=sum(Q19$LPSTAFFORD_AMT), 
+                       LPPPLUS_AMT=sum(Q19$LPPPLUS_AMT), 
+                       LPGPLUS_AMT=sum(Q19$LPGPLUS_AMT), 
+                       `Total debt`=sum(Q19$`Total debt`))
+Q19$LPSTAFFORD_AMT <- dollar(round(Q19$LPSTAFFORD_AMT, -3), accuracy=1)
+Q19$LPPPLUS_AMT <- dollar(round(Q19$LPPPLUS_AMT, -3), accuracy=1)
+Q19$LPGPLUS_AMT <- dollar(round(Q19$LPGPLUS_AMT, -3), accuracy=1)
+Q19$`Total debt` <- dollar(round(Q19$`Total debt`, -3), accuracy=1)
+```
+
+```{r kable6B, results='asis'}
+kable6B <- Q19
+names(kable6B) <- c("Sector", "Outstanding Stafford debt", "Outstanding Parent PLUS debt", "Outstanding Grad PLUS debt", "Total debt")
+kable(kable6B, caption="Sectors of California higher education by outstanding federal student loan debt") %>% kable_paper("hover", full_width = F) %>% scroll_box(width = "100%")
+```
+#### Data source and notes
+***
+### {-}
+
 
 ## Remaining Gaps
 
