@@ -40,6 +40,8 @@ We also draw from the Integrated Postsecondary Education Data System (IPEDS) and
 
 The structure of this data-focused report mirrors that of the policy-focused report: the charts and tables in the policy report draw from our four primary data sources in the same order that they are presented here. The first figures in the report draw from the FSA Data Center, and they are followed by figures that draw from NPSAS, and so on. This report is not a static PDF: you can toggle between different versions of charts and hover over barcharts and scatterplots to reveal data points. 
 
+This document is more descriptive than prescriptive. Even data queries did not show striking contrasts between groups are included for full transparency, so long as they are relevant to the examination of student loan debt's burden on California borrowers. 
+
 The code used to produce this document and its charts and tables can be found at [this GitHub repository](https://github.com/PeterGranville/CaliforniaStudentDebt). All data sets used in this report are publicly available, courtesy of the U.S. Department of Education, the U.S. Federal Reserve, and the U.S. Census Bureau. 
 
 For any questions, please email [granville@tcf.org](granville@tcf.org). 
@@ -876,6 +878,9 @@ Note: Filtered for 4-year colleges and U.S. citizenship. Limited to in-state, un
 #### About the data
 
 This is some information about SHED. 
+Explain your process of variable selection: there are many but you chose the ones that seemed most relevant to the question of the financial burden of student loans. 
+Emphasize here that the relationship between student loans and these variables may be chicken-and-egg, where we can't say for sure what causes the other. 
+Remember to say that the respondents are heads of households, meaning that the population represented is that of U.S. adults. (Children are not included.)
 
 #### Findings
 
@@ -1493,7 +1498,8 @@ shed$State[shed$State != "CA"] <- "Rest of U.S."
 # table(shed$State)
 
 # Race
-# table(shed$Race)
+shed$Race[shed$Race=="2+ Races, Non-Hispanic"] <- "Other, Non-Hispanic"
+shed$Race <- factor(shed$Race, levels=rev(c("All", "White, Non-Hispanic", "Hispanic", "Black, Non-Hispanic", "Other, Non-Hispanic")))
 
 # Gender
 # table(shed$Gender)
@@ -1917,7 +1923,6 @@ tblOwnDebtSL$`Share of borrowers whose debt includes a student loan` <- tblOwnDe
 ```
 ##### Responses to "Think about the money you currently owe for your own education. Is the money you owe for that education a student loan?"
 ```{r figure7A}
-tblOwnDebtSL <- tblOwnDebtSL %>% filter(Race != "2+ Races, Non-Hispanic")
 g7A <- ggplot(data=tblOwnDebtSL, mapping=aes(y=Race, x=`Share of borrowers whose debt includes a student loan`, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2")
 
 ggplotly(g7A, width=800, height=350)
@@ -1937,7 +1942,6 @@ tblOwnDebtHE$`Share of borrowers whose debt includes home equity` <- tblOwnDebtH
 ```
 ##### Responses to "Think about the money you currently owe for your own education. Is the money you owe for that education home equity?
 ```{r figure7B}
-tblOwnDebtHE <- tblOwnDebtHE %>% filter(Race != "2+ Races, Non-Hispanic")
 g7B <- ggplot(data=tblOwnDebtHE, mapping=aes(y=Race, x=`Share of borrowers whose debt includes home equity`, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2")
 
 ggplotly(g7B, width=800, height=350)
@@ -1957,13 +1961,11 @@ tblOwnDebtCC$`Share of borrowers whose debt includes credit card debt` <- tblOwn
 ```
 ##### Responses to "Think about the money you currently owe for your own education. Is the money you owe for that education credit card debt?"
 ```{r figure7C}
-tblOwnDebtCC <- tblOwnDebtCC %>% filter(Race != "2+ Races, Non-Hispanic")
 g7C <- ggplot(data=tblOwnDebtCC, mapping=aes(y=Race, x=`Share of borrowers whose debt includes credit card debt`, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
 
 ggplotly(g7C, width=800, height=350)
 ```
 #### Data source and notes
-Insufficient data for the "2+ Races, Non-Hispanic" group. 
 ***
 ### {-}
 
@@ -2040,6 +2042,7 @@ tblOwnDebtMon3$`$500 to $999` <- tblOwnDebtMon3$`$500 to $999` / tblOwnDebtMon3$
 tblOwnDebtMon3$`$1,000 or above` <- tblOwnDebtMon3$`$1,000 or above` / tblOwnDebtMon3$`Total weight`
 tblOwnDebtMon3 <- reshape2::melt(data=tblOwnDebtMon3, id.vars = c("Race", "State"), value.name="Share of borrowers") %>% filter(variable != "Total weight")
 tblOwnDebtMon3$variable <- factor(tblOwnDebtMon3$variable, levels = c("$1,000 or above", "$500 to $999", "$400 to $499", "$300 to $399", "$200 to $299", "$100 to $199", "$1 to $99", "$0"))
+tblOwnDebtMon3$Race <- factor(tblOwnDebtMon3$Race, levels=rev(c("All", "White, Non-Hispanic", "Hispanic", "Black, Non-Hispanic", "Other, Non-Hispanic")))
 ```
 #### Figure 9: CA borrowers
 ##### Responses to "Approximately how much is the total monthly payment that you are required to make on the loans from your education?"
@@ -2147,8 +2150,6 @@ xxxx
 # table(shed$EdAttain)
 shed.EdAttain <- shed %>% filter(is.na(EdAttain)==FALSE)
 tblEdAttain <- aggregate(data=shed.EdAttain, Weight ~ EdAttain + Race + State + AnyStudentLoans, FUN=sum)
-tblEdAttain <- tblEdAttain %>% add_row(EdAttain="Less than high school diploma", Race="2+ Races, Non-Hispanic", State="CA", AnyStudentLoans="Yes", Weight=0)
-tblEdAttain <- tblEdAttain %>% add_row(EdAttain="High school degree or GED", Race="Other, Non-Hispanic", State="CA", AnyStudentLoans="Yes", Weight=0)
 tblEdAttain2 <- aggregate(data=shed.EdAttain, Weight ~ EdAttain + State + AnyStudentLoans, FUN=sum)
 tblEdAttain2$Race <- rep("All", nrow(tblEdAttain2))
 tblEdAttain <- rbind(tblEdAttain, tblEdAttain2)
@@ -2169,7 +2170,7 @@ tblEdAttain$variable <- factor(tblEdAttain$variable, levels = c("Doctorate", "Pr
 ##### Responses to "What is the highest level of school you have completed or the highest degree you have received?" 
 ```{r figure12A}
 tblEdAttain.CA.Borrow <- tblEdAttain %>% filter(State=="CA") %>% filter(AnyStudentLoans=="Yes")
-g12A <- ggplot(data=tblEdAttain.CA.Borrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Highest level of education", x="Share of student loan borrowers in California") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+g12A <- ggplot(data=tblEdAttain.CA.Borrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Highest level of education", x="Share of student loan borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
 
 ggplotly(g12A, width=800, height=350)
 ```
@@ -2177,7 +2178,7 @@ ggplotly(g12A, width=800, height=350)
 ##### Responses to "What is the highest level of school you have completed or the highest degree you have received?"
 ```{r figure12B}
 tblEdAttain.US.Borrow <- tblEdAttain %>% filter(State=="Rest of U.S.") %>% filter(AnyStudentLoans=="Yes")
-g12B <- ggplot(data=tblEdAttain.US.Borrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Highest level of education", x="Share of student loan borrowers in the rest of the U.S.") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+g12B <- ggplot(data=tblEdAttain.US.Borrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Highest level of education", x="Share of student loan borrowers in the rest of the U.S.", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
 
 ggplotly(g12B, width=800, height=350)
 ```
@@ -2185,7 +2186,7 @@ ggplotly(g12B, width=800, height=350)
 ##### Responses to "What is the highest level of school you have completed or the highest degree you have received?"
 ```{r figure12C}
 tblEdAttain.CA.Nonborrow <- tblEdAttain %>% filter(State=="CA") %>% filter(AnyStudentLoans=="No")
-g12C <- ggplot(data=tblEdAttain.CA.Nonborrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Highest level of education", x="Share of non-borrowers in California") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+g12C <- ggplot(data=tblEdAttain.CA.Nonborrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Highest level of education", x="Share of non-borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
 
 ggplotly(g12C, width=800, height=350)
 ```
@@ -2202,8 +2203,6 @@ xxx
 # table(shed$HomeOwn)
 shed.HomeOwn <- shed %>% filter(is.na(HomeOwn)==FALSE) %>% filter(HomeOwn != "Refused") %>% filter(HomeOwn != "NA") 
 tblHomeOwn <- aggregate(data=shed.HomeOwn, Weight ~ HomeOwn + Race + State + AnyStudentLoans, FUN=sum)
-tblHomeOwn <- tblHomeOwn %>% add_row(HomeOwn="Own home free and clear
-", Race="2+ Races, Non-Hispanic", State="CA", AnyStudentLoans="Yes", Weight=0)
 tblHomeOwn2 <- aggregate(data=shed.HomeOwn, Weight ~ HomeOwn + State + AnyStudentLoans, FUN=sum)
 tblHomeOwn2$Race <- rep("All", nrow(tblHomeOwn2))
 tblHomeOwn <- rbind(tblHomeOwn, tblHomeOwn2)
@@ -2219,7 +2218,7 @@ tblHomeOwn$variable <- factor(tblHomeOwn$variable, levels = c("Own home free and
 #### Figure 13: CA borrowers
 ##### Responses to "Do you own your home?"
 ```{r figure13A, warning=FALSE}
-tblHomeOwn.CA.Borrow <- tblHomeOwn %>% filter(State=="CA") %>% filter(AnyStudentLoans=="Yes") %>% filter(Race != "2+ Races, Non-Hispanic")
+tblHomeOwn.CA.Borrow <- tblHomeOwn %>% filter(State=="CA") %>% filter(AnyStudentLoans=="Yes") 
 g13A <- ggplot(data=tblHomeOwn.CA.Borrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Home ownership status", x="Share of student loan borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
 
 ggplotly(g13A, width=800, height=350)
@@ -2227,7 +2226,7 @@ ggplotly(g13A, width=800, height=350)
 #### Figure 13: Rest of U.S. borrowers
 ##### Responses to "Do you own your home?"
 ```{r figure13B, warning=FALSE}
-tblHomeOwn.US.Borrow <- tblHomeOwn %>% filter(State=="Rest of U.S.") %>% filter(AnyStudentLoans=="Yes") %>% filter(Race != "2+ Races, Non-Hispanic")
+tblHomeOwn.US.Borrow <- tblHomeOwn %>% filter(State=="Rest of U.S.") %>% filter(AnyStudentLoans=="Yes") 
 g13B <- ggplot(data=tblHomeOwn.US.Borrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Home ownership status", x="Share of student loan borrowers in rest of U.S.", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
 
 ggplotly(g13B, width=800, height=350)
@@ -2235,13 +2234,12 @@ ggplotly(g13B, width=800, height=350)
 #### Figure 13: CA non-borrowers
 ##### Responses to "Do you own your home?"
 ```{r figure13C, warning=FALSE}
-tblHomeOwn.CA.Nonborrow <- tblHomeOwn %>% filter(State=="CA") %>% filter(AnyStudentLoans=="No") %>% filter(Race != "2+ Races, Non-Hispanic")
+tblHomeOwn.CA.Nonborrow <- tblHomeOwn %>% filter(State=="CA") %>% filter(AnyStudentLoans=="No") 
 g13C <- ggplot(data=tblHomeOwn.CA.Nonborrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Home ownership status", x="Share of non-borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
 
 ggplotly(g13C, width=800, height=350)
 ```
 #### Data source and notes
-Data not sufficient for "2+ Races, Non-Hispanic" group. 
 ***
 ### {-}
 
@@ -2266,7 +2264,7 @@ tblUnpaidCC$`Share with unpaid credit card debt` <- tblUnpaidCC$Yes / (tblUnpaid
 tblUnpaidCC.Borrower <- tblUnpaidCC %>% filter(AnyStudentLoans=="Yes")
 g14A <- ggplot(data=tblUnpaidCC.Borrower, mapping=aes(y=Race, x=`Share with unpaid credit card debt`, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share of student loan borrowers") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
 
-ggplotly(g14A, width=700, height=400)
+ggplotly(g14A, width=800, height=350)
 ```
 #### Figure 14: Non-borrowers
 ##### Responses to "Do you currently have any outstanding unpaid credit card debt?"
@@ -2274,7 +2272,7 @@ ggplotly(g14A, width=700, height=400)
 tblUnpaidCC.Nonborrower <- tblUnpaidCC %>% filter(AnyStudentLoans=="No")
 g14B <- ggplot(data=tblUnpaidCC.Nonborrower, mapping=aes(y=Race, x=`Share with unpaid credit card debt`, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share of non-borrowers") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
 
-ggplotly(g14B, width=700, height=400)
+ggplotly(g14B, width=800, height=350)
 ```
 #### Data source and notes
 ***
@@ -2289,7 +2287,6 @@ xxx
 # table(shed$CCBalance)
 shed.CCBalance <- shed %>% filter(is.na(CCBalance)==FALSE) %>% filter((CCBalance %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
 tblCCBalance <- aggregate(data=shed.CCBalance, Weight ~ CCBalance + Race + State + AnyStudentLoans, FUN=sum)
-# tblCCBalance <- tblCCBalance %>% add_row(CCBalance="Once", Race="2+ Races, Non-Hispanic", State="CA", Weight=0)
 tblCCBalance2 <- aggregate(data=shed.CCBalance, Weight ~ CCBalance + State + AnyStudentLoans, FUN=sum)
 tblCCBalance2$Race <- rep("All", nrow(tblCCBalance2))
 tblCCBalance <- rbind(tblCCBalance, tblCCBalance2)
@@ -2339,7 +2336,6 @@ xxx
 # table(shed$Savings)
 shed.Savings <- shed %>% filter((Savings %in% c("Not sure", "Refused", ""))==FALSE) %>% filter(is.na(Savings)==FALSE) 
 tblSavings <- aggregate(data=shed.Savings, Weight ~ Savings + Race + State + AnyStudentLoans, FUN=sum)
-tblSavings <- tblSavings %>% add_row(Savings="$250,000 - $499,999", Race="2+ Races, Non-Hispanic", State="CA", AnyStudentLoans="Yes", Weight=0)
 tblSavings <- tblSavings %>% add_row(Savings="$250,000 - $499,999", Race="Black, Non-Hispanic", State="CA", AnyStudentLoans="Yes", Weight=0)
 tblSavings <- tblSavings %>% add_row(Savings="$500,000 - $999,999", Race="Black, Non-Hispanic", State="CA", AnyStudentLoans="Yes", Weight=0)
 tblSavings2 <- aggregate(data=shed.Savings, Weight ~ Savings + State + AnyStudentLoans, FUN=sum)
@@ -2355,6 +2351,7 @@ tblSavings$`$500,000 - $999,999` <- tblSavings$`$500,000 - $999,999` / tblSaving
 tblSavings$`$1,000,000 or more` <- tblSavings$`$1,000,000 or more` / tblSavings$`Total weight`
 tblSavings <- reshape2::melt(data=tblSavings, id.vars = c("Race", "State", "AnyStudentLoans"), value.name="Share of borrowers") %>% filter(variable != "Total weight")
 tblSavings$variable <- factor(tblSavings$variable, levels = c("$1,000,000 or more", "$500,000 - $999,999", "$250,000 - $499,999", "$100,000 - $249,999", "$50,000 - $99,999", "Under $50,000"))
+tblSavings$Race <- factor(tblSavings$Race, levels=rev(c("All", "White, Non-Hispanic", "Hispanic", "Black, Non-Hispanic", "Other, Non-Hispanic")))
 ```
 #### Figure 16: CA borrowers
 ##### Responses to "What is the approximate total amount of your household's savings and investments?"
@@ -2442,12 +2439,48 @@ ggplotly(g17C, width=800, height=350)
 xxx 
 
 ### {.tabset}
+```{r FinManage}
+# FinManage: # Overall, which one of the following best describes how well you are managing financially these days? 
+
+# table(shed$FinManage)
+shed.FinManage <- shed %>% filter(is.na(FinManage)==FALSE) %>% filter((FinManage %in% c("Refused")==FALSE)) 
+tblFinManage <- aggregate(data=shed.FinManage, Weight ~ FinManage + Race + State + AnyStudentLoans, FUN=sum)
+tblFinManage2 <- aggregate(data=shed.FinManage, Weight ~ FinManage + State + AnyStudentLoans, FUN=sum)
+tblFinManage2$Race <- rep("All", nrow(tblFinManage2))
+tblFinManage <- rbind(tblFinManage, tblFinManage2)
+tblFinManage <- reshape2::dcast(data=tblFinManage, Race + State + AnyStudentLoans ~ FinManage, value.var="Weight")
+tblFinManage$`Total weight` <- tblFinManage$`Living comfortably` + tblFinManage$`Finding it difficult to get by` + tblFinManage$`Just getting by` + tblFinManage$`Doing okay`
+tblFinManage$`Living comfortably` <- tblFinManage$`Living comfortably` / tblFinManage$`Total weight`
+tblFinManage$`Finding it difficult to get by` <- tblFinManage$`Finding it difficult to get by` / tblFinManage$`Total weight`
+tblFinManage$`Just getting by` <- tblFinManage$`Just getting by` / tblFinManage$`Total weight`
+tblFinManage$`Doing okay` <- tblFinManage$`Doing okay` / tblFinManage$`Total weight`
+tblFinManage <- reshape2::melt(data=tblFinManage, id.vars = c("Race", "State", "AnyStudentLoans"), value.name="Share of borrowers") %>% filter(variable != "Total weight")
+tblFinManage$variable <- factor(tblFinManage$variable, levels = c("Finding it difficult to get by", "Just getting by", "Doing okay", "Living comfortably"))
+```
 #### Figure 18: CA borrowers
-##### Responses to 
+##### Responses to "Overall, which one of the following best describes how well you are managing financially these days?"
+```{r figure18A}
+tblFinManage.CA.Borrow <- tblFinManage %>% filter(State=="CA") %>% filter(AnyStudentLoans=="Yes")
+g18A <- ggplot(data=tblFinManage.CA.Borrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of student loan borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+
+ggplotly(g18A, width=800, height=350)
+```
 #### Figure 18: Rest of U.S. borrowers
-##### Responses to 
+##### Responses to "Overall, which one of the following best describes how well you are managing financially these days?"
+```{r figure18B}
+tblFinManage.US.Borrow <- tblFinManage %>% filter(State=="Rest of U.S.") %>% filter(AnyStudentLoans=="Yes")
+g18B <- ggplot(data=tblFinManage.US.Borrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of student loan borrowers in rest of U.S.", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+
+ggplotly(g18B, width=800, height=350)
+```
 #### Figure 18: CA non-borrowers
-##### Responses to 
+##### Responses to "Overall, which one of the following best describes how well you are managing financially these days?"
+```{r figure18C}
+tblFinManage.CA.Nonborrow <- tblFinManage %>% filter(State=="CA") %>% filter(AnyStudentLoans=="No")
+g18C <- ggplot(data=tblFinManage.CA.Nonborrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of non-borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+
+ggplotly(g18C, width=800, height=350)
+```
 #### Data source and notes
 ***
 ### {-}
@@ -2455,12 +2488,49 @@ xxx
 xxx 
 
 ### {.tabset}
+```{r ParComp}
+# ParComp: # Think of your parents when they were your age. Would you say you (and your family) are better, the same, or worse off financially than they were? 
+
+# table(shed$ParComp)
+shed.ParComp <- shed %>% filter(is.na(ParComp)==FALSE) %>% filter((ParComp %in% c("Refused")==FALSE)) 
+tblParComp <- aggregate(data=shed.ParComp, Weight ~ ParComp + Race + State + AnyStudentLoans, FUN=sum)
+tblParComp2 <- aggregate(data=shed.ParComp, Weight ~ ParComp + State + AnyStudentLoans, FUN=sum)
+tblParComp2$Race <- rep("All", nrow(tblParComp2))
+tblParComp <- rbind(tblParComp, tblParComp2)
+tblParComp <- reshape2::dcast(data=tblParComp, Race + State + AnyStudentLoans ~ ParComp, value.var="Weight")
+tblParComp$`Total weight` <- tblParComp$`Much better off` + tblParComp$`Somewhat worse off` + tblParComp$`About the same` + tblParComp$`Somewhat better off` + tblParComp$`Much worse off`
+tblParComp$`Much better off` <- tblParComp$`Much better off` / tblParComp$`Total weight`
+tblParComp$`Somewhat better off` <- tblParComp$`Somewhat better off` / tblParComp$`Total weight`
+tblParComp$`About the same` <- tblParComp$`About the same` / tblParComp$`Total weight`
+tblParComp$`Somewhat worse off` <- tblParComp$`Somewhat worse off` / tblParComp$`Total weight`
+tblParComp$`Much worse off` <- tblParComp$`Much worse off` / tblParComp$`Total weight`
+tblParComp <- reshape2::melt(data=tblParComp, id.vars = c("Race", "State", "AnyStudentLoans"), value.name="Share of borrowers") %>% filter(variable != "Total weight")
+tblParComp$variable <- factor(tblParComp$variable, levels = c("Much worse off", "Somewhat worse off", "About the same", "Somewhat better off", "Much better off"))
+```
 #### Figure 19: CA borrowers
-##### Responses to 
+##### Responses to "Think of your parents when they were your age. Would you say you (and your family) are better, the same, or worse off financially than they were?"
+```{r figure19A}
+tblParComp.CA.Borrow <- tblParComp %>% filter(State=="CA") %>% filter(AnyStudentLoans=="Yes")
+g19A <- ggplot(data=tblParComp.CA.Borrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of student loan borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+
+ggplotly(g19A, width=800, height=350)
+```
 #### Figure 19: Rest of U.S. borrowers
-##### Responses to 
+##### Responses to "Think of your parents when they were your age. Would you say you (and your family) are better, the same, or worse off financially than they were?"
+```{r figure19B}
+tblParComp.US.Borrow <- tblParComp %>% filter(State=="Rest of U.S.") %>% filter(AnyStudentLoans=="Yes")
+g19B <- ggplot(data=tblParComp.US.Borrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of student loan borrowers in rest of U.S.", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+
+ggplotly(g19B, width=800, height=350)
+```
 #### Figure 19: CA non-borrowers
-##### Responses to 
+##### Responses to "Think of your parents when they were your age. Would you say you (and your family) are better, the same, or worse off financially than they were?"
+```{r figure19C}
+tblParComp.CA.Nonborrow <- tblParComp %>% filter(State=="CA") %>% filter(AnyStudentLoans=="No")
+g19C <- ggplot(data=tblParComp.CA.Nonborrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of non-borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+
+ggplotly(g19C, width=800, height=350)
+```
 #### Data source and notes
 ***
 ### {-}
@@ -2468,12 +2538,49 @@ xxx
 xxx 
 
 ### {.tabset}
+```{r CreditScore}
+# CreditScore: # Where do you think your credit score falls? 
+
+# table(shed$CreditScore)
+shed.CreditScore <- shed %>% filter(is.na(CreditScore)==FALSE) %>% filter((CreditScore %in% c("Refused", "", "Don't know")==FALSE)) 
+tblCreditScore <- aggregate(data=shed.CreditScore, Weight ~ CreditScore + Race + State + AnyStudentLoans, FUN=sum)
+tblCreditScore2 <- aggregate(data=shed.CreditScore, Weight ~ CreditScore + State + AnyStudentLoans, FUN=sum)
+tblCreditScore2$Race <- rep("All", nrow(tblCreditScore2))
+tblCreditScore <- rbind(tblCreditScore, tblCreditScore2)
+tblCreditScore <- reshape2::dcast(data=tblCreditScore, Race + State + AnyStudentLoans ~ CreditScore, value.var="Weight")
+tblCreditScore$`Total weight` <- tblCreditScore$`Excellent` + tblCreditScore$`Poor` + tblCreditScore$`Fair` + tblCreditScore$`Good` + tblCreditScore$`Very poor`
+tblCreditScore$`Excellent` <- tblCreditScore$`Excellent` / tblCreditScore$`Total weight`
+tblCreditScore$`Good` <- tblCreditScore$`Good` / tblCreditScore$`Total weight`
+tblCreditScore$`Fair` <- tblCreditScore$`Fair` / tblCreditScore$`Total weight`
+tblCreditScore$`Poor` <- tblCreditScore$`Poor` / tblCreditScore$`Total weight`
+tblCreditScore$`Very poor` <- tblCreditScore$`Very poor` / tblCreditScore$`Total weight`
+tblCreditScore <- reshape2::melt(data=tblCreditScore, id.vars = c("Race", "State", "AnyStudentLoans"), value.name="Share") %>% filter(variable != "Total weight")
+tblCreditScore$variable <- factor(tblCreditScore$variable, levels = c("Very poor", "Poor", "Fair", "Good", "Excellent"))
+```
 #### Figure 20: CA borrowers
-##### Responses to 
+##### Responses to "Where do you think your credit score falls?"
+```{r Figure20A}
+tblCreditScore.CA.Borrow <- tblCreditScore %>% filter(State=="CA") %>% filter(AnyStudentLoans=="Yes")
+g20A <- ggplot(data=tblCreditScore.CA.Borrow, mapping=aes(y=Race, x=`Share`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of student loan borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+
+ggplotly(g20A, width=800, height=350)
+```
 #### Figure 20: Rest of U.S. borrowers
-##### Responses to 
-#### Figure 20: CA non-borrowers
-##### Responses to 
+##### Responses to "Where do you think your credit score falls?"
+```{r Figure20B}
+tblCreditScore.US.Borrow <- tblCreditScore %>% filter(State=="Rest of U.S.") %>% filter(AnyStudentLoans=="Yes")
+g20B <- ggplot(data=tblCreditScore.US.Borrow, mapping=aes(y=Race, x=`Share`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of student loan borrowers in rest of U.S.", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+
+ggplotly(g20B, width=800, height=350)
+```
+#### Figure 20: Non-borrowers
+##### Responses to "Where do you think your credit score falls?"
+```{r Figure20C}
+tblCreditScore.CA.Nonborrow <- tblCreditScore %>% filter(State=="CA") %>% filter(AnyStudentLoans=="No")
+g20C <- ggplot(data=tblCreditScore.CA.Nonborrow, mapping=aes(y=Race, x=`Share`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of non-borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+
+ggplotly(g20C, width=800, height=350)
+```
 #### Data source and notes
 ***
 ### {-}
@@ -2481,11 +2588,748 @@ xxx
 xxx 
 
 ### {.tabset}
+```{r PayBills}
+# PayBills: # Which best describes your ability to pay all of your bills in full this month? 
+
+# table(shed$PayBills)
+shed.PayBills <- shed %>% filter(is.na(PayBills)==FALSE) %>% filter((PayBills %in% c("Refused")==FALSE)) 
+tblPayBills <- aggregate(data=shed.PayBills, Weight ~ PayBills + Race + State + AnyStudentLoans, FUN=sum)
+tblPayBills2 <- aggregate(data=shed.PayBills, Weight ~ PayBills + State + AnyStudentLoans, FUN=sum)
+tblPayBills2$Race <- rep("All", nrow(tblPayBills2))
+tblPayBills <- rbind(tblPayBills, tblPayBills2)
+tblPayBills <- reshape2::dcast(data=tblPayBills, Race + State + AnyStudentLoans ~ PayBills, value.var="Weight")
+tblPayBills$`Total weight` <- tblPayBills$`I cannot pay some bills or will only make a partial payment on them` + tblPayBills$`I will be able to pay all of my bills in full`
+tblPayBills$`I cannot pay some bills or will only make a partial payment on them` <- tblPayBills$`I cannot pay some bills or will only make a partial payment on them` / tblPayBills$`Total weight`
+tblPayBills$`I will be able to pay all of my bills in full` <- tblPayBills$`I will be able to pay all of my bills in full` / tblPayBills$`Total weight`
+tblPayBills <- reshape2::melt(data=tblPayBills, id.vars = c("Race", "State", "AnyStudentLoans"), value.name="Share") %>% filter(variable != "Total weight")
+tblPayBills$variable <- factor(tblPayBills$variable, levels = c("I will be able to pay all of my bills in full", "I cannot pay some bills or will only make a partial payment on them"))
+```
 #### Figure 21: CA borrowers
-##### Responses to 
+##### Responses to "Which best describes your ability to pay all of your bills in full this month?"
+```{r figure21A}
+tblPayBills.CA.Borrow <- tblPayBills %>% filter(State=="CA") %>% filter(AnyStudentLoans=="Yes")
+g21A <- ggplot(data=tblPayBills.CA.Borrow, mapping=aes(y=Race, x=`Share`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of student loan borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Set2") 
+
+ggplotly(g21A, width=800, height=350)
+```
 #### Figure 21: Rest of U.S. borrowers
-##### Responses to 
+##### Responses to "Which best describes your ability to pay all of your bills in full this month?"
+```{r figure21B}
+tblPayBills.US.Borrow <- tblPayBills %>% filter(State=="Rest of U.S.") %>% filter(AnyStudentLoans=="Yes")
+g21B <- ggplot(data=tblPayBills.US.Borrow, mapping=aes(y=Race, x=`Share`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of student loan borrowers in rest of U.S.", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Set2") 
+
+ggplotly(g21B, width=800, height=350)
+```
 #### Figure 21: CA non-borrowers
+##### Responses to "Which best describes your ability to pay all of your bills in full this month?"
+```{r figure21C}
+tblPayBills.CA.Nonborrow <- tblPayBills %>% filter(State=="CA") %>% filter(AnyStudentLoans=="No")
+g21C <- ggplot(data=tblPayBills.CA.Nonborrow, mapping=aes(y=Race, x=`Share`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of non-borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Set2") 
+
+ggplotly(g21C, width=800, height=350)
+```
+#### Data source and notes
+***
+### {-}
+
+xxx 
+
+### {.tabset}
+#### Figure 22: Ability to pay student loan bill
+```{r PartialSL}
+# PartialSL: # Student loan ‐ Are you expecting to be unable to pay or only make a partial payment on each of the following bills this month? 
+
+# table(shed$PartialSL)
+shed.PartialSL <- shed %>% filter((PartialSL %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) %>% filter(SurveyYear %in% c(2015, 2016, 2017, 2018, 2019)) 
+tblPartialSL <- aggregate(data=shed.PartialSL, Weight ~ PartialSL + Race + State + AnyStudentLoans, FUN=sum)
+tblPartialSL2 <- aggregate(data=shed.PartialSL, Weight ~ PartialSL + State + AnyStudentLoans, FUN=sum)
+tblPartialSL2$Race <- rep("All", nrow(tblPartialSL2))
+tblPartialSL <- rbind(tblPartialSL, tblPartialSL2)
+tblPartialSL <- reshape2::dcast(data=tblPartialSL, Race + State + AnyStudentLoans ~ PartialSL, value.var="Weight")
+tblPartialSL$`Share of borrowers expecting to be unable to fully pay their student loan bill this month` <- tblPartialSL$Yes / (tblPartialSL$Yes + tblPartialSL$No)
+tblPartialSL$Group <- rep(NA, nrow(tblPartialSL))
+tblPartialSL$Group[tblPartialSL$State=="CA" & tblPartialSL$AnyStudentLoans=="Yes"] <- "California student loan borrowers"
+tblPartialSL$Group[tblPartialSL$State=="Rest of U.S." & tblPartialSL$AnyStudentLoans=="Yes"] <- "Rest of U.S. student loan borrowers"
+tblPartialSL <- tblPartialSL %>% filter(is.na(Group)==FALSE)
+tblPartialSL$Group <- factor(tblPartialSL$Group, levels=c("California non-borrowers", "California student loan borrowers", "Rest of U.S. student loan borrowers"))
+```
+##### Responses to "Are you expecting to be unable to pay or only make a partial payment on your student loan bill this month?"
+```{r figure22A}
+g22A <- ggplot(data=tblPartialSL, mapping=aes(y=Race, x=`Share of borrowers expecting to be unable to fully pay their student loan bill this month`, fill=Group)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who expect to be unable to pay their student loan bill this month") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
+
+ggplotly(g22A, width=800, height=350)
+```
+#### Figure 22: Ability to pay rent or mortgage bill
+```{r PartialRent}
+# PartialRent: # Rent or mortgage ‐ Are you expecting to be unable to pay or only make a partial payment on each of the following bills this month? 
+
+# table(shed$PartialRent)
+shed.PartialRent <- shed %>% filter((PartialRent %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+tblPartialRent <- aggregate(data=shed.PartialRent, Weight ~ PartialRent + Race + State + AnyStudentLoans, FUN=sum)
+tblPartialRent2 <- aggregate(data=shed.PartialRent, Weight ~ PartialRent + State + AnyStudentLoans, FUN=sum)
+tblPartialRent2$Race <- rep("All", nrow(tblPartialRent2))
+tblPartialRent <- rbind(tblPartialRent, tblPartialRent2)
+tblPartialRent <- reshape2::dcast(data=tblPartialRent, Race + State + AnyStudentLoans ~ PartialRent, value.var="Weight")
+tblPartialRent$`Share of borrowers expecting to be unable to fully pay their rent this month` <- tblPartialRent$Yes / (tblPartialRent$Yes + tblPartialRent$No)
+tblPartialRent$Group <- rep(NA, nrow(tblPartialRent))
+tblPartialRent$Group[tblPartialRent$State=="CA" & tblPartialRent$AnyStudentLoans=="Yes"] <- "California student loan borrowers"
+tblPartialRent$Group[tblPartialRent$State=="Rest of U.S." & tblPartialRent$AnyStudentLoans=="Yes"] <- "Rest of U.S. student loan borrowers"
+tblPartialRent$Group[tblPartialRent$State=="CA" & tblPartialRent$AnyStudentLoans=="No"] <- "California non-borrowers"
+tblPartialRent <- tblPartialRent %>% filter(is.na(Group)==FALSE)
+tblPartialSL$Group <- factor(tblPartialSL$Group, levels=c("California non-borrowers", "California student loan borrowers", "Rest of U.S. student loan borrowers"))
+```
+##### Responses to "Are you expecting to be unable to pay or only make a partial payment on each of the following bills this month?"
+```{r figure22B}
+g22B <- ggplot(data=tblPartialRent, mapping=aes(y=Race, x=`Share of borrowers expecting to be unable to fully pay their rent this month`, fill=Group)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who expect to be unable to pay their rent or mortgage bill this month") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
+
+ggplotly(g22B, width=800, height=350)
+```
+#### Figure 22: Ability to pay credit card bill
+```{r PartialCC}
+# PartialCC: # Credit card ‐ Are you expecting to be unable to pay or only make a partial payment on each of the following bills this month?
+
+# table(shed$PartialCC)
+shed.PartialCC <- shed %>% filter((PartialCC %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+tblPartialCC <- aggregate(data=shed.PartialCC, Weight ~ PartialCC + Race + State + AnyStudentLoans, FUN=sum)
+tblPartialCC2 <- aggregate(data=shed.PartialCC, Weight ~ PartialCC + State + AnyStudentLoans, FUN=sum)
+tblPartialCC2$Race <- rep("All", nrow(tblPartialCC2))
+tblPartialCC <- rbind(tblPartialCC, tblPartialCC2)
+tblPartialCC <- reshape2::dcast(data=tblPartialCC, Race + State + AnyStudentLoans~ PartialCC, value.var="Weight")
+tblPartialCC$`Share of borrowers expecting to be unable to fully pay their credit card bill this month` <- tblPartialCC$Yes / (tblPartialCC$Yes + tblPartialCC$No)
+tblPartialCC$Group <- rep(NA, nrow(tblPartialCC))
+tblPartialCC$Group[tblPartialCC$State=="CA" & tblPartialCC$AnyStudentLoans=="Yes"] <- "California student loan borrowers"
+tblPartialCC$Group[tblPartialCC$State=="Rest of U.S." & tblPartialCC$AnyStudentLoans=="Yes"] <- "Rest of U.S. student loan borrowers"
+tblPartialCC$Group[tblPartialCC$State=="CA" & tblPartialCC$AnyStudentLoans=="No"] <- "California non-borrowers"
+tblPartialCC <- tblPartialCC %>% filter(is.na(Group)==FALSE)
+tblPartialSL$Group <- factor(tblPartialSL$Group, levels=c("California non-borrowers", "California student loan borrowers", "Rest of U.S. student loan borrowers"))
+```
+##### Responses to 
+```{r figure22C}
+g22C <- ggplot(data=tblPartialCC, mapping=aes(y=Race, x=`Share of borrowers expecting to be unable to fully pay their credit card bill this month`, fill=Group)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who expect to be unable to pay their credit card bill this month") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
+
+ggplotly(g22C, width=800, height=350)
+```
+#### Data source and notes
+
+Survey years 2020 and 2021 not included in "Figure 22: Ability to pay student loan bill" due to the federal student loan repayment pause. 
+***
+
+### {-}
+
+xxx 
+
+### {.tabset}
+```{r PartialSL400}
+# PartialSL400: # Student loan ‐ Which of the following bills would you likely skip paying, or make only a partial payment on, if you had a $400 emergency expense that you had to pay?
+
+# table(shed$PartialSL400)
+shed.PartialSL400 <- shed %>% filter((PartialSL400 %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) %>% filter(SurveyYear %in% c(2015, 2016, 2017, 2018, 2019)) 
+tblPartialSL400 <- aggregate(data=shed.PartialSL400, Weight ~ PartialSL400 + Race + State, FUN=sum)
+tblPartialSL4002 <- aggregate(data=shed.PartialSL400, Weight ~ PartialSL400 + State, FUN=sum)
+tblPartialSL4002$Race <- rep("All", nrow(tblPartialSL4002))
+tblPartialSL400 <- rbind(tblPartialSL400, tblPartialSL4002)
+tblPartialSL400 <- reshape2::dcast(data=tblPartialSL400, Race + State ~ PartialSL400, value.var="Weight")
+tblPartialSL400$`Share of borrowers who would skip paying, or make only a partial payment on, their student loan bill if they had a $400 emergency expense` <- tblPartialSL400$Yes / (tblPartialSL400$Yes + tblPartialSL400$No)
+```
+#### Figure 23
+##### Responses to "Would you likely skip paying, or make only a partial payment on, your student loan bill if you had a $400 emergency expense that you had to pay?"
+```{r figure23}
+g23 <- ggplot(data=tblPartialSL400, mapping=aes(y=Race, x=`Share of borrowers who would skip paying, or make only a partial payment on, their student loan bill if they had a $400 emergency expense`, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(y="", title="", x="Share of borrowers who would not fully pay student loan bill") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2")
+
+ggplotly(g23, height=350)
+```
+#### Data source and notes
+Limited to those who have student loans. 
+Survey years 2020 and 2021 not included.
+***
+### {-}
+
+xxx 
+
+### {.tabset}
+```{r PayBills400}
+# PayBills400: # How would a $400 emergency expense that you had to pay impact your ability to pay your other bills this month? 
+
+# table(shed$PayBills400)
+shed.PayBills400 <- shed %>% filter(is.na(PayBills400)==FALSE) %>% filter((PayBills400 %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+tblPayBills400 <- aggregate(data=shed.PayBills400, Weight ~ PayBills400 + Race + State + AnyStudentLoans, FUN=sum)
+tblPayBills4002 <- aggregate(data=shed.PayBills400, Weight ~ PayBills400 + State + AnyStudentLoans, FUN=sum)
+tblPayBills4002$Race <- rep("All", nrow(tblPayBills4002))
+tblPayBills400 <- rbind(tblPayBills400, tblPayBills4002)
+tblPayBills400 <- reshape2::dcast(data=tblPayBills400, Race + State + AnyStudentLoans ~ PayBills400, value.var="Weight")
+tblPayBills400$`Total weight` <- tblPayBills400$`I could not pay some other bills or would only make a partial payment on some of them` + tblPayBills400$`I would still be able to pay all of my other bills in full`
+tblPayBills400$`I could not pay some other bills or would only make a partial payment on some of them` <- tblPayBills400$`I could not pay some other bills or would only make a partial payment on some of them` / tblPayBills400$`Total weight`
+tblPayBills400$`I would still be able to pay all of my other bills in full` <- tblPayBills400$`I would still be able to pay all of my other bills in full` / tblPayBills400$`Total weight`
+tblPayBills400 <- reshape2::melt(data=tblPayBills400, id.vars = c("Race", "State", "AnyStudentLoans"), value.name="Share") %>% filter(variable != "Total weight")
+tblPayBills400$variable <- as.character(tblPayBills400$variable)
+tblPayBills400$variable[tblPayBills400$variable=="I could not pay some other bills or would only make a partial payment on some of them"] <- "I could not fully pay some bills"
+tblPayBills400$variable <- factor(tblPayBills400$variable, levels = c("I would still be able to pay all of my other bills in full", "I could not fully pay some bills"))
+```
+#### Figure 24: CA borrowers
+##### Responses to "How would a $400 emergency expense that you had to pay impact your ability to pay your other bills this month?"
+```{r figure24A}
+tblPayBills400.CA.Borrow <- tblPayBills400 %>% filter(State=="CA") %>% filter(AnyStudentLoans=="Yes")
+g24A <- ggplot(data=tblPayBills400.CA.Borrow, mapping=aes(y=Race, x=`Share`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of student loan borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Set2") 
+
+ggplotly(g24A, width=800, height=350)
+```
+#### Figure 24: Rest of U.S. borrowers
+##### Responses to "How would a $400 emergency expense that you had to pay impact your ability to pay your other bills this month?"
+```{r figure24B}
+tblPayBills400.US.Borrow <- tblPayBills400 %>% filter(State=="Rest of U.S.") %>% filter(AnyStudentLoans=="Yes")
+g24B <- ggplot(data=tblPayBills400.US.Borrow, mapping=aes(y=Race, x=`Share`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of student loan borrowers in rest of U.S.", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Set2") 
+
+ggplotly(g24B, width=800, height=350)
+```
+#### Figure 24: CA non-borrowers
+##### Responses to "How would a $400 emergency expense that you had to pay impact your ability to pay your other bills this month?"
+```{r figure24C}
+tblPayBills400.CA.Nonborrow <- tblPayBills400 %>% filter(State=="CA") %>% filter(AnyStudentLoans=="No")
+g24C <- ggplot(data=tblPayBills400.CA.Nonborrow, mapping=aes(y=Race, x=`Share`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of non-borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Set2") 
+
+ggplotly(g24C, width=800, height=350)
+```
+#### Data source and notes
+***
+### {-}
+
+xxx 
+
+### {.tabset}
+```{r CCApprov}
+# CCApprov: # If you were to apply for a credit card today, how confident are you that you would be approved? 
+
+# table(shed$CCApprov)
+shed.CCApprov <- shed %>% filter(is.na(CCApprov)==FALSE) %>% filter((CCApprov %in% c("Refused", "Not In Universe (not asked)", "Don't know", "")==FALSE)) 
+tblCCApprov <- aggregate(data=shed.CCApprov, Weight ~ CCApprov + Race + State + AnyStudentLoans, FUN=sum)
+tblCCApprov2 <- aggregate(data=shed.CCApprov, Weight ~ CCApprov + State + AnyStudentLoans, FUN=sum)
+tblCCApprov2$Race <- rep("All", nrow(tblCCApprov2))
+tblCCApprov <- rbind(tblCCApprov, tblCCApprov2)
+tblCCApprov <- reshape2::dcast(data=tblCCApprov, Race + State + AnyStudentLoans ~ CCApprov, value.var="Weight")
+tblCCApprov$`Total weight` <- tblCCApprov$`Not confident` + tblCCApprov$`Somewhat confident` +  tblCCApprov$`Very confident`
+tblCCApprov$`Not confident` <- tblCCApprov$`Not confident` / tblCCApprov$`Total weight`
+tblCCApprov$`Somewhat confident` <- tblCCApprov$`Somewhat confident` / tblCCApprov$`Total weight`
+tblCCApprov$`Very confident` <- tblCCApprov$`Very confident` / tblCCApprov$`Total weight`
+tblCCApprov <- reshape2::melt(data=tblCCApprov, id.vars = c("Race", "State", "AnyStudentLoans"), value.name="Share") %>% filter(variable != "Total weight")
+tblCCApprov$variable <- factor(tblCCApprov$variable, levels = c("Very confident", "Somewhat confident", "Not confident"))
+```
+#### Figure 25: CA borrowers
+##### Responses to "If you were to apply for a credit card today, how confident are you that you would be approved?"
+```{r figure25A}
+tblCCApprov.CA.Borrow <- tblCCApprov %>% filter(State=="CA") %>% filter(AnyStudentLoans=="Yes")
+g25A <- ggplot(data=tblCCApprov.CA.Borrow, mapping=aes(y=Race, x=`Share`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of student loan borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Set2") 
+
+ggplotly(g25A, width=800, height=350)
+```
+#### Figure 25: Rest of U.S. borrowers
+##### Responses to "If you were to apply for a credit card today, how confident are you that you would be approved?"
+```{r figure25B}
+tblCCApprov.US.Borrow <- tblCCApprov %>% filter(State=="Rest of U.S.") %>% filter(AnyStudentLoans=="Yes")
+g25B <- ggplot(data=tblCCApprov.US.Borrow, mapping=aes(y=Race, x=`Share`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of student loan borrowers in rest of U.S.", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Set2") 
+
+ggplotly(g25B, width=800, height=350)
+```
+#### Figure 25: CA non-borrowers
+##### Responses to "If you were to apply for a credit card today, how confident are you that you would be approved?"
+```{r figure25C}
+tblCCApprov.CA.Nonborrow <- tblCCApprov %>% filter(State=="CA") %>% filter(AnyStudentLoans=="No")
+g25C <- ggplot(data=tblCCApprov.CA.Nonborrow, mapping=aes(y=Race, x=`Share`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of non-borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Set2") 
+
+ggplotly(g25C, width=800, height=350)
+```
+#### Data source and notes
+***
+### {-}
+
+xxx 
+
+### {.tabset}
+```{r CreditDeny}
+# CreditDeny: # Turned down for credit ‐ In the past 12 months, has each of the following happened to you or your spouse/partner: 
+
+# table(shed$CreditDeny)
+shed.CreditDeny <- shed %>% filter((CreditDeny %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+tblCreditDeny <- aggregate(data=shed.CreditDeny, Weight ~ CreditDeny + Race + State + AnyStudentLoans, FUN=sum)
+tblCreditDeny2 <- aggregate(data=shed.CreditDeny, Weight ~ CreditDeny + State + AnyStudentLoans, FUN=sum)
+tblCreditDeny2$Race <- rep("All", nrow(tblCreditDeny2))
+tblCreditDeny <- rbind(tblCreditDeny, tblCreditDeny2)
+tblCreditDeny <- reshape2::dcast(data=tblCreditDeny, Race + State + AnyStudentLoans ~ CreditDeny, value.var="Weight")
+tblCreditDeny$`Share of borrowers who were turned down for credit in the past 12 months` <- tblCreditDeny$Yes / (tblCreditDeny$Yes + tblCreditDeny$No)
+tblCreditDeny$Group <- rep(NA, nrow(tblCreditDeny))
+tblCreditDeny$Group[tblCreditDeny$State=="CA" & tblCreditDeny$AnyStudentLoans=="Yes"] <- "California student loan borrowers"
+tblCreditDeny$Group[tblCreditDeny$State=="Rest of U.S." & tblCreditDeny$AnyStudentLoans=="Yes"] <- "Rest of U.S. student loan borrowers"
+tblCreditDeny$Group[tblCreditDeny$State=="CA" & tblCreditDeny$AnyStudentLoans=="No"] <- "California non-borrowers"
+tblCreditDeny <- tblCreditDeny %>% filter(is.na(Group)==FALSE)
+tblCreditDeny$Group <- factor(tblCreditDeny$Group, levels=c("California non-borrowers", "California student loan borrowers", "Rest of U.S. student loan borrowers"))
+```
+#### Figure 26
+##### Responses to "In the past 12 months, have you or your spouse/partner been turned down for credit?"
+```{r figure26A}
+g26 <- ggplot(data=tblCreditDeny, mapping=aes(y=Race, x=`Share of borrowers who were turned down for credit in the past 12 months`, fill=Group)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who were turned down for credit in the past 12 months") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
+
+ggplotly(g26, width=800, height=350)
+```
+#### Data source and notes
+***
+### {-}
+
+Add a lot of caveats before this next section. 
+
+### {.tabset}
+#### Figure 27: Social Security
+```{r SocSec}
+# SocSec: # Social Security (including old age and DI) -In the past 12 months, did you [and/or your spouse/parnter] receive any income from the following sources:
+
+# table(shed$SocSec)
+shed.SocSec <- shed %>% filter((SocSec %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+tblSocSec <- aggregate(data=shed.SocSec, Weight ~ SocSec + Race + State + AnyStudentLoans, FUN=sum)
+tblSocSec2 <- aggregate(data=shed.SocSec, Weight ~ SocSec + State + AnyStudentLoans, FUN=sum)
+tblSocSec2$Race <- rep("All", nrow(tblSocSec2))
+tblSocSec <- rbind(tblSocSec, tblSocSec2)
+tblSocSec <- reshape2::dcast(data=tblSocSec, Race + State + AnyStudentLoans ~ SocSec, value.var="Weight")
+tblSocSec$`Share` <- tblSocSec$Yes / (tblSocSec$Yes + tblSocSec$No)
+tblSocSec$Group <- rep(NA, nrow(tblSocSec))
+tblSocSec$Group[tblSocSec$State=="CA" & tblSocSec$AnyStudentLoans=="Yes"] <- "California student loan borrowers"
+tblSocSec$Group[tblSocSec$State=="Rest of U.S." & tblSocSec$AnyStudentLoans=="Yes"] <- "Rest of U.S. student loan borrowers"
+tblSocSec$Group[tblSocSec$State=="CA" & tblSocSec$AnyStudentLoans=="No"] <- "California non-borrowers"
+tblSocSec <- tblSocSec %>% filter(is.na(Group)==FALSE)
+tblSocSec$Group <- factor(tblSocSec$Group, levels=c("California non-borrowers", "California student loan borrowers", "Rest of U.S. student loan borrowers"))
+```
+##### Responses to "In the past 12 months, have you [and/or your spouse/ parnter] received Social Security (including old age and DI)?"
+```{r figure27A}
+g27A <- ggplot(data=tblSocSec, mapping=aes(y=Race, x=`Share`, fill=Group)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who received Social Security") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
+
+ggplotly(g27A, width=800, height=350)
+```
+#### Figure 27: Cash assistance
+```{r Welfare}
+# Welfare: # Supplemental Security Income (SSI), TANF, or cash assistance from a welfare program - In the past 12 months, did you [and/or your spouse/parnter] receive any income from the following sources: 
+
+# table(shed$Welfare)
+shed.Welfare <- shed %>% filter((Welfare %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+tblWelfare <- aggregate(data=shed.Welfare, Weight ~ Welfare + Race + State + AnyStudentLoans, FUN=sum)
+tblWelfare2 <- aggregate(data=shed.Welfare, Weight ~ Welfare + State + AnyStudentLoans, FUN=sum)
+tblWelfare2$Race <- rep("All", nrow(tblWelfare2))
+tblWelfare <- rbind(tblWelfare, tblWelfare2)
+tblWelfare <- reshape2::dcast(data=tblWelfare, Race + State + AnyStudentLoans ~ Welfare, value.var="Weight")
+tblWelfare$`Share` <- tblWelfare$Yes / (tblWelfare$Yes + tblWelfare$No)
+tblWelfare$Group <- rep(NA, nrow(tblWelfare))
+tblWelfare$Group[tblWelfare$State=="CA" & tblWelfare$AnyStudentLoans=="Yes"] <- "California student loan borrowers"
+tblWelfare$Group[tblWelfare$State=="Rest of U.S." & tblWelfare$AnyStudentLoans=="Yes"] <- "Rest of U.S. student loan borrowers"
+tblWelfare$Group[tblWelfare$State=="CA" & tblWelfare$AnyStudentLoans=="No"] <- "California non-borrowers"
+tblWelfare <- tblWelfare %>% filter(is.na(Group)==FALSE)
+tblWelfare$Group <- factor(tblWelfare$Group, levels=c("California non-borrowers", "California student loan borrowers", "Rest of U.S. student loan borrowers"))
+```
+##### Responses to "In the past 12 months, have you [and/or your spouse/ parnter] received Supplemental Security Income (SSI), TANF, or cash assistance from a welfare program?"
+```{r figure27B}
+g27B <- ggplot(data=tblWelfare, mapping=aes(y=Race, x=`Share`, fill=Group)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who received cash assistance (TANF, SSI, etc.)") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
+
+ggplotly(g27B, width=800, height=350)
+```
+#### Figure 27: EITC
+```{r EITC}
+# EITC: # Earned Income Tax Credit (EITC) - In the past 12 months, have you [and/or your spouse/parnter] received any of the following?
+
+# table(shed$EITC)
+shed.EITC <- shed %>% filter((EITC %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+tblEITC <- aggregate(data=shed.EITC, Weight ~ EITC + Race + State + AnyStudentLoans, FUN=sum)
+tblEITC2 <- aggregate(data=shed.EITC, Weight ~ EITC + State + AnyStudentLoans, FUN=sum)
+tblEITC2$Race <- rep("All", nrow(tblEITC2))
+tblEITC <- rbind(tblEITC, tblEITC2)
+tblEITC <- reshape2::dcast(data=tblEITC, Race + State + AnyStudentLoans ~ EITC, value.var="Weight")
+tblEITC$`Share` <- tblEITC$Yes / (tblEITC$Yes + tblEITC$No)
+tblEITC$Group <- rep(NA, nrow(tblEITC))
+tblEITC$Group[tblEITC$State=="CA" & tblEITC$AnyStudentLoans=="Yes"] <- "California student loan borrowers"
+tblEITC$Group[tblEITC$State=="Rest of U.S." & tblEITC$AnyStudentLoans=="Yes"] <- "Rest of U.S. student loan borrowers"
+tblEITC$Group[tblEITC$State=="CA" & tblEITC$AnyStudentLoans=="No"] <- "California non-borrowers"
+tblEITC <- tblEITC %>% filter(is.na(Group)==FALSE)
+tblEITC$Group <- factor(tblEITC$Group, levels=c("California non-borrowers", "California student loan borrowers", "Rest of U.S. student loan borrowers"))
+```
+##### Responses to "In the past 12 months, have you [and/or your spouse/ parnter] received the Earned Income Tax Credit (EITC)?"
+```{r figure27C}
+g27C <- ggplot(data=tblEITC, mapping=aes(y=Race, x=`Share`, fill=Group)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who received the Earned Income Tax Credit") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
+
+ggplotly(g27C, width=800, height=350)
+```
+#### Figure 27: SNAP
+```{r SNAP}
+# SNAP: # Supplemental Nutrition Assistance Program (SNAP or food stamps) - In the past 12 months, have you [and/or your spouse/parnter] received any of the following? 
+
+# table(shed$SNAP)
+shed.SNAP <- shed %>% filter((SNAP %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+tblSNAP <- aggregate(data=shed.SNAP, Weight ~ SNAP + Race + State + AnyStudentLoans, FUN=sum)
+tblSNAP2 <- aggregate(data=shed.SNAP, Weight ~ SNAP + State + AnyStudentLoans, FUN=sum)
+tblSNAP2$Race <- rep("All", nrow(tblSNAP2))
+tblSNAP <- rbind(tblSNAP, tblSNAP2)
+tblSNAP <- reshape2::dcast(data=tblSNAP, Race + State + AnyStudentLoans ~ SNAP, value.var="Weight")
+tblSNAP$`Share` <- tblSNAP$Yes / (tblSNAP$Yes + tblSNAP$No)
+tblSNAP$Group <- rep(NA, nrow(tblSNAP))
+tblSNAP$Group[tblSNAP$State=="CA" & tblSNAP$AnyStudentLoans=="Yes"] <- "California student loan borrowers"
+tblSNAP$Group[tblSNAP$State=="Rest of U.S." & tblSNAP$AnyStudentLoans=="Yes"] <- "Rest of U.S. student loan borrowers"
+tblSNAP$Group[tblSNAP$State=="CA" & tblSNAP$AnyStudentLoans=="No"] <- "California non-borrowers"
+tblSNAP <- tblSNAP %>% filter(is.na(Group)==FALSE)
+tblSNAP$Group <- factor(tblSNAP$Group, levels=c("California non-borrowers", "California student loan borrowers", "Rest of U.S. student loan borrowers"))
+```
+##### Responses to "In the past 12 months, have you [and/or your spouse/ parnter] received Supplemental Nutrition Assistance Program (SNAP or food stamps)?"
+```{r figure27D}
+g27D <- ggplot(data=tblSNAP, mapping=aes(y=Race, x=`Share`, fill=Group)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who received SNAP") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
+
+ggplotly(g27D, width=800, height=350)
+```
+#### Figure 27: Housing assistance
+```{r HouseAssit}
+# HouseAssist: # Housing assistance from government program - In the past 12 months, have you [and/or your spouse/parnter] received any of the following? 
+
+# table(shed$HouseAssist)
+shed.HouseAssist <- shed %>% filter((HouseAssist %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+tblHouseAssist <- aggregate(data=shed.HouseAssist, Weight ~ HouseAssist + Race + State + AnyStudentLoans, FUN=sum)
+tblHouseAssist2 <- aggregate(data=shed.HouseAssist, Weight ~ HouseAssist + State + AnyStudentLoans, FUN=sum)
+tblHouseAssist2$Race <- rep("All", nrow(tblHouseAssist2))
+tblHouseAssist <- rbind(tblHouseAssist, tblHouseAssist2)
+tblHouseAssist <- reshape2::dcast(data=tblHouseAssist, Race + State + AnyStudentLoans ~ HouseAssist, value.var="Weight")
+tblHouseAssist$`Share` <- tblHouseAssist$Yes / (tblHouseAssist$Yes + tblHouseAssist$No)
+tblHouseAssist$Group <- rep(NA, nrow(tblHouseAssist))
+tblHouseAssist$Group[tblHouseAssist$State=="CA" & tblHouseAssist$AnyStudentLoans=="Yes"] <- "California student loan borrowers"
+tblHouseAssist$Group[tblHouseAssist$State=="Rest of U.S." & tblHouseAssist$AnyStudentLoans=="Yes"] <- "Rest of U.S. student loan borrowers"
+tblHouseAssist$Group[tblHouseAssist$State=="CA" & tblHouseAssist$AnyStudentLoans=="No"] <- "California non-borrowers"
+tblHouseAssist <- tblHouseAssist %>% filter(is.na(Group)==FALSE)
+tblHouseAssist$Group <- factor(tblHouseAssist$Group, levels=c("California non-borrowers", "California student loan borrowers", "Rest of U.S. student loan borrowers"))
+```
+##### Responses to "In the past 12 months, have you [and/or your spouse/ parnter] received housing assistance from a government program?"
+```{r figure27E}
+g27E <- ggplot(data=tblHouseAssist, mapping=aes(y=Race, x=`Share`, fill=Group)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who received housing assistance") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
+
+ggplotly(g27E, width=800, height=350)
+```
+#### Figure 27: FRPL
+```{r FRPL}
+# FRPL: # Free or reduced price school lunches - In the past 12 months, have you [and/or your spouse/ parnter] received any of the following? 
+
+# table(shed$FRPL)
+shed.FRPL <- shed %>% filter((FRPL %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) %>% filter(ChildrenUnder18=="Yes")
+tblFRPL <- aggregate(data=shed.FRPL, Weight ~ FRPL + Race + State + AnyStudentLoans, FUN=sum)
+tblFRPL2 <- aggregate(data=shed.FRPL, Weight ~ FRPL + State + AnyStudentLoans, FUN=sum)
+tblFRPL2$Race <- rep("All", nrow(tblFRPL2))
+tblFRPL <- rbind(tblFRPL, tblFRPL2)
+tblFRPL <- reshape2::dcast(data=tblFRPL, Race + State + AnyStudentLoans ~ FRPL, value.var="Weight")
+tblFRPL$`Share` <- tblFRPL$Yes / (tblFRPL$Yes + tblFRPL$No)
+tblFRPL$Group <- rep(NA, nrow(tblFRPL))
+tblFRPL$Group[tblFRPL$State=="CA" & tblFRPL$AnyStudentLoans=="Yes"] <- "California student loan borrowers"
+tblFRPL$Group[tblFRPL$State=="Rest of U.S." & tblFRPL$AnyStudentLoans=="Yes"] <- "Rest of U.S. student loan borrowers"
+tblFRPL$Group[tblFRPL$State=="CA" & tblFRPL$AnyStudentLoans=="No"] <- "California non-borrowers"
+tblFRPL <- tblFRPL %>% filter(is.na(Group)==FALSE)
+tblFRPL$Group <- factor(tblFRPL$Group, levels=c("California non-borrowers", "California student loan borrowers", "Rest of U.S. student loan borrowers"))
+```
+##### Responses to "In the past 12 months, have you [and/or your spouse/ parnter] received free or reduced price school lunches?"
+```{r figure27F}
+g27F <- ggplot(data=tblFRPL, mapping=aes(y=Race, x=`Share`, fill=Group)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who received free or reduced price lunch") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
+
+ggplotly(g27F, width=800, height=350)
+```
+#### Data source and notes
+***
+### {-}
+
+It's weird that the "Cover expenses with savings" bars are lower than the "Cover expenses by any means" bars. 
+
+### {.tabset}
+#### Figure 28: Cover expenses with savings
+```{r ThreeMonSave}
+# ThreeMonSave: # Have you set aside emergency or rainy day funds that would cover your expenses for 3 months in case of sickness, job loss, economic downturn, or other emergencies? 
+
+# table(shed$ThreeMonSave)
+shed.ThreeMonSave <- shed %>% filter((ThreeMonSave %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+tblThreeMonSave <- aggregate(data=shed.ThreeMonSave, Weight ~ ThreeMonSave + Race + State + AnyStudentLoans, FUN=sum)
+tblThreeMonSave2 <- aggregate(data=shed.ThreeMonSave, Weight ~ ThreeMonSave + State + AnyStudentLoans, FUN=sum)
+tblThreeMonSave2$Race <- rep("All", nrow(tblThreeMonSave2))
+tblThreeMonSave <- rbind(tblThreeMonSave, tblThreeMonSave2)
+tblThreeMonSave <- reshape2::dcast(data=tblThreeMonSave, Race + State + AnyStudentLoans ~ ThreeMonSave, value.var="Weight")
+tblThreeMonSave$`Share` <- tblThreeMonSave$Yes / (tblThreeMonSave$Yes + tblThreeMonSave$No)
+tblThreeMonSave$Group <- rep(NA, nrow(tblThreeMonSave))
+tblThreeMonSave$Group[tblThreeMonSave$State=="CA" & tblThreeMonSave$AnyStudentLoans=="Yes"] <- "California student loan borrowers"
+tblThreeMonSave$Group[tblThreeMonSave$State=="Rest of U.S." & tblThreeMonSave$AnyStudentLoans=="Yes"] <- "Rest of U.S. student loan borrowers"
+tblThreeMonSave$Group[tblThreeMonSave$State=="CA" & tblThreeMonSave$AnyStudentLoans=="No"] <- "California non-borrowers"
+tblThreeMonSave <- tblThreeMonSave %>% filter(is.na(Group)==FALSE)
+tblThreeMonSave$Group <- factor(tblThreeMonSave$Group, levels=c("California non-borrowers", "California student loan borrowers", "Rest of U.S. student loan borrowers"))
+```
+##### Responses to "Have you set aside emergency or rainy day funds that would cover your expenses for 3 months in case of sickness, job loss, economic downturn, or other emergencies?"
+```{r figure28A}
+g28A <- ggplot(data=tblThreeMonSave, mapping=aes(y=Race, x=`Share`, fill=Group)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share with sufficient funds set aside") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
+
+ggplotly(g28A, width=800, height=350)
+```
+#### Figure 28: Cover expenses by any means
+```{r ThreeMonCover}
+# ThreeMonCover: # If you were to lose your main source of income (for example, job or government benefits), could you cover your expenses for 3 months by borrowing money, using savings, or selling assets?
+
+# table(shed$ThreeMonCover)
+shed.ThreeMonCover <- shed %>% filter((ThreeMonCover %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+tblThreeMonCover <- aggregate(data=shed.ThreeMonCover, Weight ~ ThreeMonCover + Race + State + AnyStudentLoans, FUN=sum)
+tblThreeMonCover2 <- aggregate(data=shed.ThreeMonCover, Weight ~ ThreeMonCover + State + AnyStudentLoans, FUN=sum)
+tblThreeMonCover2$Race <- rep("All", nrow(tblThreeMonCover2))
+tblThreeMonCover <- rbind(tblThreeMonCover, tblThreeMonCover2)
+tblThreeMonCover <- reshape2::dcast(data=tblThreeMonCover, Race + State + AnyStudentLoans ~ ThreeMonCover, value.var="Weight")
+tblThreeMonCover$`Share` <- tblThreeMonCover$Yes / (tblThreeMonCover$Yes + tblThreeMonCover$No)
+tblThreeMonCover$Group <- rep(NA, nrow(tblThreeMonCover))
+tblThreeMonCover$Group[tblThreeMonCover$State=="CA" & tblThreeMonCover$AnyStudentLoans=="Yes"] <- "California student loan borrowers"
+tblThreeMonCover$Group[tblThreeMonCover$State=="Rest of U.S." & tblThreeMonCover$AnyStudentLoans=="Yes"] <- "Rest of U.S. student loan borrowers"
+tblThreeMonCover$Group[tblThreeMonCover$State=="CA" & tblThreeMonCover$AnyStudentLoans=="No"] <- "California non-borrowers"
+tblThreeMonCover <- tblThreeMonCover %>% filter(is.na(Group)==FALSE)
+tblThreeMonCover$Group <- factor(tblThreeMonCover$Group, levels=c("California non-borrowers", "California student loan borrowers", "Rest of U.S. student loan borrowers"))
+```
+##### Responses to "If you were to lose your main source of income (for example, job or government benefits), could you cover your expenses for 3 months by borrowing money, using savings, or selling assets?" 
+```{r figure28B}
+g28B <- ggplot(data=tblThreeMonCover, mapping=aes(y=Race, x=`Share`, fill=Group)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who could cover three months' expenses") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
+
+ggplotly(g28B, width=800, height=350)
+```
+#### Data source and notes
+***
+### {-}
+
+xxx 
+
+### {.tabset}
+#### Figure 29: Pay $400 with credit card (no interest)
+```{r CCA400}
+# CCA400: # Put it on my credit card and pay it off in full at the next statement ‐ Suppose that you have an emergency expense that costs $400. Based on your current financial situation, how would you pay for this expense? 
+
+# table(shed$CCA400)
+shed.CCA400 <- shed %>% filter((CCA400 %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+tblCCA400 <- aggregate(data=shed.CCA400, Weight ~ CCA400 + Race + State + AnyStudentLoans, FUN=sum)
+tblCCA4002 <- aggregate(data=shed.CCA400, Weight ~ CCA400 + State + AnyStudentLoans, FUN=sum)
+tblCCA4002$Race <- rep("All", nrow(tblCCA4002))
+tblCCA400 <- rbind(tblCCA400, tblCCA4002)
+tblCCA400 <- reshape2::dcast(data=tblCCA400, Race + State + AnyStudentLoans ~ CCA400, value.var="Weight")
+tblCCA400$`Share` <- tblCCA400$Yes / (tblCCA400$Yes + tblCCA400$No)
+
+tblCCA400$Group <- rep(NA, nrow(tblCCA400))
+tblCCA400$Group[tblCCA400$State=="CA" & tblCCA400$AnyStudentLoans=="Yes"] <- "California student loan borrowers"
+tblCCA400$Group[tblCCA400$State=="Rest of U.S." & tblCCA400$AnyStudentLoans=="Yes"] <- "Rest of U.S. student loan borrowers"
+tblCCA400$Group[tblCCA400$State=="CA" & tblCCA400$AnyStudentLoans=="No"] <- "California non-borrowers"
+tblCCA400 <- tblCCA400 %>% filter(is.na(Group)==FALSE)
+tblCCA400$Group <- factor(tblCCA400$Group, levels=c("California non-borrowers", "California student loan borrowers", "Rest of U.S. student loan borrowers"))
+```
+##### Responses to "Suppose that you have an emergency expense that costs $400. Based on your current financial situation, how would you pay for this expense? [Put it on my credit card and pay it off in full at the next statement]"
+```{r figure29A}
+g29A <- ggplot(data=tblCCA400, mapping=aes(y=Race, x=`Share`, fill=Group)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who would put it on a credit card and pay it off immediately") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
+
+ggplotly(g29A, width=800, height=350)
+```
+#### Figure 29: Pay $400 with credit card (with interest)
+```{r CCB400}
+# CCB400: # Put it on my credit card and pay it off over time ‐ Suppose that you have an emergency expense that costs $400. Based on your current financial situation, how would you pay for this expense?
+
+# table(shed$CCB400)
+shed.CCB400 <- shed %>% filter((CCB400 %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+tblCCB400 <- aggregate(data=shed.CCB400, Weight ~ CCB400 + Race + State + AnyStudentLoans, FUN=sum)
+tblCCB4002 <- aggregate(data=shed.CCB400, Weight ~ CCB400 + State + AnyStudentLoans, FUN=sum)
+tblCCB4002$Race <- rep("All", nrow(tblCCB4002))
+tblCCB400 <- rbind(tblCCB400, tblCCB4002)
+tblCCB400 <- reshape2::dcast(data=tblCCB400, Race + State + AnyStudentLoans ~ CCB400, value.var="Weight")
+tblCCB400$`Share` <- tblCCB400$Yes / (tblCCB400$Yes + tblCCB400$No)
+
+tblCCB400$Group <- rep(NA, nrow(tblCCB400))
+tblCCB400$Group[tblCCB400$State=="CA" & tblCCB400$AnyStudentLoans=="Yes"] <- "California student loan borrowers"
+tblCCB400$Group[tblCCB400$State=="Rest of U.S." & tblCCB400$AnyStudentLoans=="Yes"] <- "Rest of U.S. student loan borrowers"
+tblCCB400$Group[tblCCB400$State=="CA" & tblCCB400$AnyStudentLoans=="No"] <- "California non-borrowers"
+tblCCB400 <- tblCCB400 %>% filter(is.na(Group)==FALSE)
+tblCCB400$Group <- factor(tblCCB400$Group, levels=c("California non-borrowers", "California student loan borrowers", "Rest of U.S. student loan borrowers"))
+```
+##### Responses to "Suppose that you have an emergency expense that costs $400. Based on your current financial situation, how would you pay for this expense? [Put it on my credit card and pay it off over time]"
+```{r figure29B}
+g29B <- ggplot(data=tblCCB400, mapping=aes(y=Race, x=`Share`, fill=Group)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who would put it on a credit card and pay it off over time") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
+
+ggplotly(g29B, width=800, height=350)
+```
+#### Figure 29: Pay $400 with cash or savings
+```{r Cash400}
+# Cash400: # With the money currently in my checking/savings account or with cash ‐ Suppose that you have an emergency expense that costs $400. Based on your current financial situation, how would you pay for this expense? 
+
+# table(shed$Cash400)
+shed.Cash400 <- shed %>% filter((Cash400 %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+tblCash400 <- aggregate(data=shed.Cash400, Weight ~ Cash400 + Race + State + AnyStudentLoans, FUN=sum)
+tblCash4002 <- aggregate(data=shed.Cash400, Weight ~ Cash400 + State + AnyStudentLoans, FUN=sum)
+tblCash4002$Race <- rep("All", nrow(tblCash4002))
+tblCash400 <- rbind(tblCash400, tblCash4002)
+tblCash400 <- reshape2::dcast(data=tblCash400, Race + State + AnyStudentLoans ~ Cash400, value.var="Weight")
+tblCash400$`Share` <- tblCash400$Yes / (tblCash400$Yes + tblCash400$No)
+
+tblCash400$Group <- rep(NA, nrow(tblCash400))
+tblCash400$Group[tblCash400$State=="CA" & tblCash400$AnyStudentLoans=="Yes"] <- "California student loan borrowers"
+tblCash400$Group[tblCash400$State=="Rest of U.S." & tblCash400$AnyStudentLoans=="Yes"] <- "Rest of U.S. student loan borrowers"
+tblCash400$Group[tblCash400$State=="CA" & tblCash400$AnyStudentLoans=="No"] <- "California non-borrowers"
+tblCash400 <- tblCash400 %>% filter(is.na(Group)==FALSE)
+tblCash400$Group <- factor(tblCash400$Group, levels=c("California non-borrowers", "California student loan borrowers", "Rest of U.S. student loan borrowers"))
+```
+##### Responses to "Suppose that you have an emergency expense that costs $400. Based on your current financial situation, how would you pay for this expense? [With the money currently in my checking/savings account or with cash]"
+```{r figure29C}
+g29C <- ggplot(data=tblCash400, mapping=aes(y=Race, x=`Share`, fill=Group)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who would pay with cash or money in checking or savings") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
+
+ggplotly(g29C, width=800, height=350)
+```
+#### Figure 29: Pay $400 with a bank loan
+```{r Loan400}
+# Loan400: #  Using money from a bank loan or line of credit ‐ Suppose that you have an emergency expense that costs $400. Based on your current financial situation, how would you pay for this expense?
+
+# table(shed$Loan400)
+shed.Loan400 <- shed %>% filter((Loan400 %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+tblLoan400 <- aggregate(data=shed.Loan400, Weight ~ Loan400 + Race + State + AnyStudentLoans, FUN=sum)
+tblLoan4002 <- aggregate(data=shed.Loan400, Weight ~ Loan400 + State + AnyStudentLoans, FUN=sum)
+tblLoan4002$Race <- rep("All", nrow(tblLoan4002))
+tblLoan400 <- rbind(tblLoan400, tblLoan4002)
+tblLoan400 <- reshape2::dcast(data=tblLoan400, Race + State + AnyStudentLoans ~ Loan400, value.var="Weight")
+tblLoan400$`Share` <- tblLoan400$Yes / (tblLoan400$Yes + tblLoan400$No)
+
+tblLoan400$Group <- rep(NA, nrow(tblLoan400))
+tblLoan400$Group[tblLoan400$State=="CA" & tblLoan400$AnyStudentLoans=="Yes"] <- "California student loan borrowers"
+tblLoan400$Group[tblLoan400$State=="Rest of U.S." & tblLoan400$AnyStudentLoans=="Yes"] <- "Rest of U.S. student loan borrowers"
+tblLoan400$Group[tblLoan400$State=="CA" & tblLoan400$AnyStudentLoans=="No"] <- "California non-borrowers"
+tblLoan400 <- tblLoan400 %>% filter(is.na(Group)==FALSE)
+tblLoan400$Group <- factor(tblLoan400$Group, levels=c("California non-borrowers", "California student loan borrowers", "Rest of U.S. student loan borrowers"))
+```
+##### Responses to "Suppose that you have an emergency expense that costs $400. Based on your current financial situation, how would you pay for this expense? [Using money from a bank loan or line of credit]"
+```{r figure29D}
+g29D <- ggplot(data=tblLoan400, mapping=aes(y=Race, x=`Share`, fill=Group)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who would pay with a bank loan") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
+
+ggplotly(g29D, width=800, height=350)
+```
+#### Figure 29: Pay $400 by borrowing from a friend
+```{r Friend400}
+# Friend400: # By borrowing from a friend or family member ‐ Suppose that you have an emergency that costs $400. Based on your current financial situation, how would you pay for this expense?
+
+# table(shed$Friend400)
+shed.Friend400 <- shed %>% filter((Friend400 %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+tblFriend400 <- aggregate(data=shed.Friend400, Weight ~ Friend400 + Race + State + AnyStudentLoans, FUN=sum)
+tblFriend4002 <- aggregate(data=shed.Friend400, Weight ~ Friend400 + State + AnyStudentLoans, FUN=sum)
+tblFriend4002$Race <- rep("All", nrow(tblFriend4002))
+tblFriend400 <- rbind(tblFriend400, tblFriend4002)
+tblFriend400 <- reshape2::dcast(data=tblFriend400, Race + State + AnyStudentLoans ~ Friend400, value.var="Weight")
+tblFriend400$`Share` <- tblFriend400$Yes / (tblFriend400$Yes + tblFriend400$No)
+
+tblFriend400$Group <- rep(NA, nrow(tblFriend400))
+tblFriend400$Group[tblFriend400$State=="CA" & tblFriend400$AnyStudentLoans=="Yes"] <- "California student loan borrowers"
+tblFriend400$Group[tblFriend400$State=="Rest of U.S." & tblFriend400$AnyStudentLoans=="Yes"] <- "Rest of U.S. student loan borrowers"
+tblFriend400$Group[tblFriend400$State=="CA" & tblFriend400$AnyStudentLoans=="No"] <- "California non-borrowers"
+tblFriend400 <- tblFriend400 %>% filter(is.na(Group)==FALSE)
+tblFriend400$Group <- factor(tblFriend400$Group, levels=c("California non-borrowers", "California student loan borrowers", "Rest of U.S. student loan borrowers"))
+```
+##### Responses to "Suppose that you have an emergency expense that costs $400. Based on your current financial situation, how would you pay for this expense? [By borrowing from a friend or family member]"
+```{r figure29E}
+g29E <- ggplot(data=tblFriend400, mapping=aes(y=Race, x=`Share`, fill=Group)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who would borrow from family or a friend") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
+
+ggplotly(g29E, width=800, height=350)
+```
+#### Figure 29: Pay $400 with a payday loan
+```{r Payday400}
+# Payday400: # Using a payday loan, deposit advance, or overdraft ‐ Suppose that you have an emergency expense that costs $400. Based on your current financial situation, how would you pay for this expense?
+
+# table(shed$Payday400)
+shed.Payday400 <- shed %>% filter((Payday400 %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+tblPayday400 <- aggregate(data=shed.Payday400, Weight ~ Payday400 + Race + State + AnyStudentLoans, FUN=sum)
+tblPayday4002 <- aggregate(data=shed.Payday400, Weight ~ Payday400 + State + AnyStudentLoans, FUN=sum)
+tblPayday4002$Race <- rep("All", nrow(tblPayday4002))
+tblPayday400 <- rbind(tblPayday400, tblPayday4002)
+tblPayday400 <- reshape2::dcast(data=tblPayday400, Race + State + AnyStudentLoans ~ Payday400, value.var="Weight")
+tblPayday400$`Share` <- tblPayday400$Yes / (tblPayday400$Yes + tblPayday400$No)
+
+tblPayday400$Group <- rep(NA, nrow(tblPayday400))
+tblPayday400$Group[tblPayday400$State=="CA" & tblPayday400$AnyStudentLoans=="Yes"] <- "California student loan borrowers"
+tblPayday400$Group[tblPayday400$State=="Rest of U.S." & tblPayday400$AnyStudentLoans=="Yes"] <- "Rest of U.S. student loan borrowers"
+tblPayday400$Group[tblPayday400$State=="CA" & tblPayday400$AnyStudentLoans=="No"] <- "California non-borrowers"
+tblPayday400 <- tblPayday400 %>% filter(is.na(Group)==FALSE)
+tblPayday400$Group <- factor(tblPayday400$Group, levels=c("California non-borrowers", "California student loan borrowers", "Rest of U.S. student loan borrowers"))
+```
+##### Responses to "Suppose that you have an emergency expense that costs $400. Based on your current financial situation, how would you pay for this expense? [Using a payday loan, deposit advance, or overdraft]"
+```{r figure29F}
+g29F <- ggplot(data=tblPayday400, mapping=aes(y=Race, x=`Share`, fill=Group)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who would use a payday loan, deposit advance, or overdraft") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
+
+ggplotly(g29F, width=800, height=350)
+```
+#### Figure 29: Pay $400 by selling something
+```{r Sell400}
+# Sell400: # By selling something ‐ Suppose that you have an emergency expense that costs $400. Based on your current financial situation, how would you pay for this expense? 
+
+# table(shed$Sell400)
+shed.Sell400 <- shed %>% filter((Sell400 %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+tblSell400 <- aggregate(data=shed.Sell400, Weight ~ Sell400 + Race + State + AnyStudentLoans, FUN=sum)
+tblSell4002 <- aggregate(data=shed.Sell400, Weight ~ Sell400 + State + AnyStudentLoans, FUN=sum)
+tblSell4002$Race <- rep("All", nrow(tblSell4002))
+tblSell400 <- rbind(tblSell400, tblSell4002)
+tblSell400 <- reshape2::dcast(data=tblSell400, Race + State + AnyStudentLoans ~ Sell400, value.var="Weight")
+tblSell400$`Share` <- tblSell400$Yes / (tblSell400$Yes + tblSell400$No)
+
+tblSell400$Group <- rep(NA, nrow(tblSell400))
+tblSell400$Group[tblSell400$State=="CA" & tblSell400$AnyStudentLoans=="Yes"] <- "California student loan borrowers"
+tblSell400$Group[tblSell400$State=="Rest of U.S." & tblSell400$AnyStudentLoans=="Yes"] <- "Rest of U.S. student loan borrowers"
+tblSell400$Group[tblSell400$State=="CA" & tblSell400$AnyStudentLoans=="No"] <- "California non-borrowers"
+tblSell400 <- tblSell400 %>% filter(is.na(Group)==FALSE)
+tblSell400$Group <- factor(tblSell400$Group, levels=c("California non-borrowers", "California student loan borrowers", "Rest of U.S. student loan borrowers"))
+```
+##### Responses to "Suppose that you have an emergency expense that costs $400. Based on your current financial situation, how would you pay for this expense? [By selling something]"
+```{r figure29G}
+g29G <- ggplot(data=tblSell400, mapping=aes(y=Race, x=`Share`, fill=Group)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who would pay by selling something") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
+
+ggplotly(g29G, width=800, height=350)
+```
+#### Figure 29: Unable to pay $400
+```{r None400}
+# None400: # I wouldn't be able to pay for the expense right now ‐ Suppose that you have an emergency expense that costs $400. Based on your current financial situation, how would you pay for this expense?
+
+# table(shed$None400)
+shed.None400 <- shed %>% filter((None400 %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+tblNone400 <- aggregate(data=shed.None400, Weight ~ None400 + Race + State + AnyStudentLoans, FUN=sum)
+tblNone4002 <- aggregate(data=shed.None400, Weight ~ None400 + State + AnyStudentLoans, FUN=sum)
+tblNone4002$Race <- rep("All", nrow(tblNone4002))
+tblNone400 <- rbind(tblNone400, tblNone4002)
+tblNone400 <- reshape2::dcast(data=tblNone400, Race + State + AnyStudentLoans ~ None400, value.var="Weight")
+tblNone400$`Share` <- tblNone400$Yes / (tblNone400$Yes + tblNone400$No)
+
+tblNone400$Group <- rep(NA, nrow(tblNone400))
+tblNone400$Group[tblNone400$State=="CA" & tblNone400$AnyStudentLoans=="Yes"] <- "California student loan borrowers"
+tblNone400$Group[tblNone400$State=="Rest of U.S." & tblNone400$AnyStudentLoans=="Yes"] <- "Rest of U.S. student loan borrowers"
+tblNone400$Group[tblNone400$State=="CA" & tblNone400$AnyStudentLoans=="No"] <- "California non-borrowers"
+tblNone400 <- tblNone400 %>% filter(is.na(Group)==FALSE)
+tblNone400$Group <- factor(tblNone400$Group, levels=c("California non-borrowers", "California student loan borrowers", "Rest of U.S. student loan borrowers"))
+```
+##### Responses to "Suppose that you have an emergency expense that costs $400. Based on your current financial situation, how would you pay for this expense? [I wouldn't be able to pay for the expense right now]"
+```{r figure29H}
+g29H <- ggplot(data=tblNone400, mapping=aes(y=Race, x=`Share`, fill=Group)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who could not cover the expense") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
+
+ggplotly(g29H, width=800, height=350)
+```
+#### Data source and notes
+Responses are not exclusive to each other. For an example, a respondent could say that they would sell belongings and use a payday loan. Because of this, groups' bars cannot be stacked on top of each other in one chart and are instead presented here in a series of charts. 
+***
+### {-}
+
+xxx 
+
+### {.tabset}
+```{r EdPayoff1}
+# EdPayoff1: # Overall, how would you say the lifetime financial benefits of your [current/most recent] educational program compare to its financial costs? 
+
+# table(shed$EdPayoff1)
+shed.EdPayoff1 <- shed %>% filter(is.na(EdPayoff1)==FALSE) %>% filter((EdPayoff1 %in% c("Refused", "", "Don't know", "Not In Universe (not asked)")==FALSE)) 
+tblEdPayoff1 <- aggregate(data=shed.EdPayoff1, Weight ~ EdPayoff1 + Race + State + AnyStudentLoans, FUN=sum)
+tblEdPayoff12 <- aggregate(data=shed.EdPayoff1, Weight ~ EdPayoff1 + State + AnyStudentLoans, FUN=sum)
+tblEdPayoff12$Race <- rep("All", nrow(tblEdPayoff12))
+tblEdPayoff1 <- rbind(tblEdPayoff1, tblEdPayoff12)
+tblEdPayoff1 <- reshape2::dcast(data=tblEdPayoff1, Race + State + AnyStudentLoans ~ EdPayoff1, value.var="Weight")
+tblEdPayoff1$`Total weight` <- tblEdPayoff1$`Financial benefits are much larger` + tblEdPayoff1$`Financial costs are somewhat larger` + tblEdPayoff1$`About the same` + tblEdPayoff1$`Financial benefits are somewhat larger` + tblEdPayoff1$`Financial costs are much larger`
+tblEdPayoff1$`Financial benefits are much larger` <- tblEdPayoff1$`Financial benefits are much larger` / tblEdPayoff1$`Total weight`
+tblEdPayoff1$`Financial benefits are somewhat larger` <- tblEdPayoff1$`Financial benefits are somewhat larger` / tblEdPayoff1$`Total weight`
+tblEdPayoff1$`About the same` <- tblEdPayoff1$`About the same` / tblEdPayoff1$`Total weight`
+tblEdPayoff1$`Financial costs are somewhat larger` <- tblEdPayoff1$`Financial costs are somewhat larger` / tblEdPayoff1$`Total weight`
+tblEdPayoff1$`Financial costs are much larger` <- tblEdPayoff1$`Financial costs are much larger` / tblEdPayoff1$`Total weight`
+tblEdPayoff1 <- reshape2::melt(data=tblEdPayoff1, id.vars = c("Race", "State"), value.name="Share of borrowers") %>% filter(variable != "Total weight")
+tblEdPayoff1$variable <- factor(tblEdPayoff1$variable, levels = c("Financial costs are much larger", "Financial costs are somewhat larger", "About the same", "Financial benefits are somewhat larger", "Financial benefits are much larger"))
+```
+#### Figure 30: CA borrowers
+##### Responses to 
+#### Figure 30: Rest of U.S. borrowers
+##### Responses to 
+#### Figure 30: CA non-borrowers
 ##### Responses to 
 #### Data source and notes
 ***
@@ -2494,11 +3338,11 @@ xxx
 xxx 
 
 ### {.tabset}
-#### Figure 22: CA borrowers
+#### Figure 31: CA borrowers
 ##### Responses to 
-#### Figure 22: Rest of U.S. borrowers
+#### Figure 31: Rest of U.S. borrowers
 ##### Responses to 
-#### Figure 22: CA non-borrowers
+#### Figure 31: CA non-borrowers
 ##### Responses to 
 #### Data source and notes
 ***
@@ -2507,11 +3351,11 @@ xxx
 xxx 
 
 ### {.tabset}
-#### Figure 22: CA borrowers
+#### Figure 32: CA borrowers
 ##### Responses to 
-#### Figure 22: Rest of U.S. borrowers
+#### Figure 32: Rest of U.S. borrowers
 ##### Responses to 
-#### Figure 22: CA non-borrowers
+#### Figure 32: CA non-borrowers
 ##### Responses to 
 #### Data source and notes
 ***
@@ -2519,6 +3363,18 @@ xxx
 
 xxx 
 
+### {.tabset}
+#### Figure 33: CA borrowers
+##### Responses to 
+#### Figure 33: Rest of U.S. borrowers
+##### Responses to 
+#### Figure 33: CA non-borrowers
+##### Responses to 
+#### Data source and notes
+***
+### {-}
+
+xxx 
 
 
 
@@ -2527,3 +3383,5 @@ xxx
 
 ## Remaining Gaps
 
+* Influx and outflux of student loan borrowers into California
+* List more brainstorming items here?
