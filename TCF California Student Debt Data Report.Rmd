@@ -21,6 +21,7 @@ library(stringr)
 library(ggplot2)
 library(reshape2)
 library(data.table)
+library(kableExtra)
 ```
 
 ## Introduction
@@ -4412,7 +4413,45 @@ CSP$CONTROL[CSP$CONTROL==2] <- "Non-profit"
 CSP$CONTROL[CSP$CONTROL==3] <- "For-profit"
 ```
 
+```{r TotalOutstandingDebt, warning=FALSE}
+Q6 <- CSI %>% select(UNITID, OPEID, OPEID6, INSTNM, CONTROL, STABBR, MAIN, LPSTAFFORD_CNT, LPSTAFFORD_AMT, LPPPLUS_CNT, LPPPLUS_AMT, LPGPLUS_CNT, LPGPLUS_AMT) %>% filter(STABBR=="CA") %>% filter(MAIN==1) %>% filter(duplicated(OPEID6)==FALSE)
 
+Q6$LPSTAFFORD_CNT <- as.numeric(Q6$LPSTAFFORD_CNT)
+Q6$LPSTAFFORD_AMT <- as.numeric(Q6$LPSTAFFORD_AMT)
+Q6$LPPPLUS_CNT <- as.numeric(Q6$LPPPLUS_CNT)
+Q6$LPPPLUS_AMT <- as.numeric(Q6$LPPPLUS_AMT)
+Q6$LPGPLUS_CNT <- as.numeric(Q6$LPGPLUS_CNT)
+Q6$LPGPLUS_AMT <- as.numeric(Q6$LPGPLUS_AMT)
+
+Q6$`Total outstanding debt` <- Q6$LPSTAFFORD_AMT + Q6$LPPPLUS_AMT + Q6$LPGPLUS_AMT
+Q6$`Average outstanding Stafford debt` <- Q6$LPSTAFFORD_AMT / Q6$LPSTAFFORD_CNT
+Q6$`Average outstanding Parent PLUS debt` <- Q6$LPPPLUS_AMT / Q6$LPPPLUS_CNT
+Q6$`Average outstanding Grad PLUS debt` <- Q6$LPGPLUS_AMT / Q6$LPGPLUS_CNT
+
+Q6.TotalStaffordDebt <- Q6 %>% arrange(desc(`Average outstanding Stafford debt`)) %>% filter(LPSTAFFORD_CNT >= 500) %>% select(INSTNM, CONTROL, LPSTAFFORD_AMT, LPSTAFFORD_CNT, `Average outstanding Stafford debt`)
+Q6.TotalParentDebt <- Q6 %>% arrange(desc(`Average outstanding Parent PLUS debt`)) %>% filter(LPPPLUS_CNT >= 500) %>% select(INSTNM, CONTROL, LPPPLUS_AMT, LPPPLUS_CNT, `Average outstanding Parent PLUS debt`)
+Q6.TotalGradDebt <- Q6 %>% arrange(desc(`Average outstanding Grad PLUS debt`)) %>% filter(LPGPLUS_CNT >= 500) %>% select(INSTNM, CONTROL, LPGPLUS_AMT, LPGPLUS_CNT, `Average outstanding Grad PLUS debt`)
+Q6.TotalDebt <- Q6 %>% filter((OPEID6 %in% Institutions.Based.At.Least.Partially.Outside.CA)==FALSE) %>% arrange(desc(`Total outstanding debt`)) %>% select(INSTNM, CONTROL, `Total outstanding debt`)
+
+Q6.TotalStaffordDebt$`Average outstanding Stafford debt` <- comma(round((Q6.TotalStaffordDebt$`Average outstanding Stafford debt`), -2))
+Q6.TotalParentDebt$`Average outstanding Parent PLUS debt` <- comma(round((Q6.TotalParentDebt$`Average outstanding Parent PLUS debt`), -2))
+Q6.TotalGradDebt$`Average outstanding Grad PLUS debt` <- comma(round((Q6.TotalGradDebt$`Average outstanding Grad PLUS debt`), -2))
+
+Q6.TotalStaffordDebt$LPSTAFFORD_AMT <- comma(round((Q6.TotalStaffordDebt$LPSTAFFORD_AMT), -3))
+Q6.TotalParentDebt$LPPPLUS_AMT <- comma(round((Q6.TotalParentDebt$LPPPLUS_AMT), -3))
+Q6.TotalGradDebt$LPGPLUS_AMT <- comma(round((Q6.TotalGradDebt$LPGPLUS_AMT), -3))
+Q6.TotalDebt$`Total outstanding debt` <- comma(round((Q6.TotalDebt$`Total outstanding debt`), -3))
+
+Q6.TotalStaffordDebt$LPSTAFFORD_CNT <- comma((Q6.TotalStaffordDebt$LPSTAFFORD_CNT))
+Q6.TotalParentDebt$LPPPLUS_CNT <- comma((Q6.TotalParentDebt$LPPPLUS_CNT))
+Q6.TotalGradDebt$LPGPLUS_CNT <- comma((Q6.TotalGradDebt$LPGPLUS_CNT))
+```
+
+```{r kable4, results='asis'}
+kable4 <- Q6.TotalStaffordDebt %>% select(INSTNM, CONTROL, LPSTAFFORD_AMT, LPSTAFFORD_CNT, `Average outstanding Stafford debt`)
+names(kable4) <- c("Institution name", "Control of institution", "Total outstanding Stafford loan debt", "Total Stafford loan borrowers", "Average outstanding Stafford debt")
+kable(kable4, caption="Top California institutions by average outstanding Stafford balance") %>% kable_paper("hover", full_width = F) %>% scroll_box(width = "100%", height = "400px")
+```
 
 ## Remaining Gaps
 
