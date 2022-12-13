@@ -2626,7 +2626,7 @@ kable(N.HomeOwn, caption="N size by group for Figure 14") %>% kable_paper("hover
 # UnpaidCC: # Do you currently have any outstanding unpaid credit card debt?
 
 # table(shed$UnpaidCC)
-shed.UnpaidCC <- shed %>% filter((UnpaidCC %in% c("Refused", "Not In Universe (not asked)")==FALSE)) 
+shed.UnpaidCC <- shed %>% filter((UnpaidCC %in% c("Refused", "Not In Universe (not asked)", NA)==FALSE)) 
 tblUnpaidCC <- aggregate(data=shed.UnpaidCC, Weight ~ UnpaidCC + Race + State + AnyStudentLoans, FUN=sum)
 tblUnpaidCC2 <- aggregate(data=shed.UnpaidCC, Weight ~ UnpaidCC + State + AnyStudentLoans, FUN=sum)
 tblUnpaidCC2$Race <- rep("All", nrow(tblUnpaidCC2))
@@ -3267,7 +3267,7 @@ kable(N.PayBills, caption="N size by group for Figure 22") %>% kable_paper("hove
 # PartialSL: # Student loan ‐ Are you expecting to be unable to pay or only make a partial payment on each of the following bills this month? 
 
 # table(shed$PartialSL)
-shed.PartialSL <- shed %>% filter((PartialSL %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) %>% filter(SurveyYear %in% c(2015, 2016, 2017, 2018, 2019)) 
+shed.PartialSL <- shed %>% filter((PartialSL %in% c("Refused", "Not In Universe (not asked)", "", NA)==FALSE)) %>% filter(SurveyYear %in% c(2015, 2016, 2017, 2018, 2019)) 
 tblPartialSL <- aggregate(data=shed.PartialSL, Weight ~ PartialSL + Race + State + AnyStudentLoans, FUN=sum)
 tblPartialSL2 <- aggregate(data=shed.PartialSL, Weight ~ PartialSL + State + AnyStudentLoans, FUN=sum)
 tblPartialSL2$Race <- rep("All", nrow(tblPartialSL2))
@@ -3299,7 +3299,7 @@ ggplotly(g23A, width=800, height=350)
 # PartialRent: # Rent or mortgage ‐ Are you expecting to be unable to pay or only make a partial payment on each of the following bills this month? 
 
 # table(shed$PartialRent)
-shed.PartialRent <- shed %>% filter((PartialRent %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+shed.PartialRent <- shed %>% filter((PartialRent %in% c("Refused", "Not In Universe (not asked)", "", NA)==FALSE)) 
 tblPartialRent <- aggregate(data=shed.PartialRent, Weight ~ PartialRent + Race + State + AnyStudentLoans, FUN=sum)
 tblPartialRent2 <- aggregate(data=shed.PartialRent, Weight ~ PartialRent + State + AnyStudentLoans, FUN=sum)
 tblPartialRent2$Race <- rep("All", nrow(tblPartialRent2))
@@ -3332,7 +3332,7 @@ ggplotly(g23B, width=800, height=350)
 # PartialCC: # Credit card ‐ Are you expecting to be unable to pay or only make a partial payment on each of the following bills this month?
 
 # table(shed$PartialCC)
-shed.PartialCC <- shed %>% filter((PartialCC %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+shed.PartialCC <- shed %>% filter((PartialCC %in% c("Refused", "Not In Universe (not asked)", "", NA)==FALSE)) 
 tblPartialCC <- aggregate(data=shed.PartialCC, Weight ~ PartialCC + Race + State + AnyStudentLoans, FUN=sum)
 tblPartialCC2 <- aggregate(data=shed.PartialCC, Weight ~ PartialCC + State + AnyStudentLoans, FUN=sum)
 tblPartialCC2$Race <- rep("All", nrow(tblPartialCC2))
@@ -3397,7 +3397,7 @@ kable(N.PartialCC, caption="N size by group for Figure 23: Ability to pay credit
 # PartialSL400: # Student loan ‐ Which of the following bills would you likely skip paying, or make only a partial payment on, if you had a $400 emergency expense that you had to pay?
 
 # table(shed$PartialSL400)
-shed.PartialSL400 <- shed %>% filter((PartialSL400 %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) %>% filter(SurveyYear %in% c(2015, 2016, 2017, 2018, 2019)) 
+shed.PartialSL400 <- shed %>% filter((PartialSL400 %in% c("Refused", "Not In Universe (not asked)", "", NA)==FALSE)) %>% filter(SurveyYear %in% c(2015, 2016, 2017, 2018, 2019)) 
 tblPartialSL400 <- aggregate(data=shed.PartialSL400, Weight ~ PartialSL400 + Race + State, FUN=sum)
 tblPartialSL4002 <- aggregate(data=shed.PartialSL400, Weight ~ PartialSL400 + State, FUN=sum)
 tblPartialSL4002$Race <- rep("All", nrow(tblPartialSL4002))
@@ -3607,7 +3607,7 @@ kable(N.CCApprov, caption="N size by group for Figure 26") %>% kable_paper("hove
 # CreditDeny: # Turned down for credit ‐ In the past 12 months, has each of the following happened to you or your spouse/partner: 
 
 # table(shed$CreditDeny)
-shed.CreditDeny <- shed %>% filter((CreditDeny %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+shed.CreditDeny <- shed %>% filter((CreditDeny %in% c("Refused", "Not In Universe (not asked)", "", NA)==FALSE)) 
 tblCreditDeny <- aggregate(data=shed.CreditDeny, Weight ~ CreditDeny + Race + State + AnyStudentLoans, FUN=sum)
 tblCreditDeny2 <- aggregate(data=shed.CreditDeny, Weight ~ CreditDeny + State + AnyStudentLoans, FUN=sum)
 tblCreditDeny2$Race <- rep("All", nrow(tblCreditDeny2))
@@ -3657,7 +3657,7 @@ Add a lot of caveats before this next section.
 # SocSec: # Social Security (including old age and DI) -In the past 12 months, did you [and/or your spouse/parnter] receive any income from the following sources:
 
 # table(shed$SocSec)
-shed.SocSec <- shed %>% filter((SocSec %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+shed.SocSec <- shed %>% filter((SocSec %in% c("Refused", "Not In Universe (not asked)", "", NA)==FALSE)) 
 tblSocSec <- aggregate(data=shed.SocSec, Weight ~ SocSec + Race + State + AnyStudentLoans, FUN=sum)
 tblSocSec2 <- aggregate(data=shed.SocSec, Weight ~ SocSec + State + AnyStudentLoans, FUN=sum)
 tblSocSec2$Race <- rep("All", nrow(tblSocSec2))
@@ -3690,7 +3690,7 @@ ggplotly(g28A, width=800, height=350)
 # Welfare: # Supplemental Security Income (SSI), TANF, or cash assistance from a welfare program - In the past 12 months, did you [and/or your spouse/parnter] receive any income from the following sources: 
 
 # table(shed$Welfare)
-shed.Welfare <- shed %>% filter((Welfare %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+shed.Welfare <- shed %>% filter((Welfare %in% c("Refused", "Not In Universe (not asked)", "", NA)==FALSE)) 
 tblWelfare <- aggregate(data=shed.Welfare, Weight ~ Welfare + Race + State + AnyStudentLoans, FUN=sum)
 tblWelfare2 <- aggregate(data=shed.Welfare, Weight ~ Welfare + State + AnyStudentLoans, FUN=sum)
 tblWelfare2$Race <- rep("All", nrow(tblWelfare2))
@@ -3723,7 +3723,7 @@ ggplotly(g28B, width=800, height=350)
 # EITC: # Earned Income Tax Credit (EITC) - In the past 12 months, have you [and/or your spouse/parnter] received any of the following?
 
 # table(shed$EITC)
-shed.EITC <- shed %>% filter((EITC %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+shed.EITC <- shed %>% filter((EITC %in% c("Refused", "Not In Universe (not asked)", "", NA)==FALSE)) 
 tblEITC <- aggregate(data=shed.EITC, Weight ~ EITC + Race + State + AnyStudentLoans, FUN=sum)
 tblEITC2 <- aggregate(data=shed.EITC, Weight ~ EITC + State + AnyStudentLoans, FUN=sum)
 tblEITC2$Race <- rep("All", nrow(tblEITC2))
@@ -3756,7 +3756,7 @@ ggplotly(g28C, width=800, height=350)
 # SNAP: # Supplemental Nutrition Assistance Program (SNAP or food stamps) - In the past 12 months, have you [and/or your spouse/parnter] received any of the following? 
 
 # table(shed$SNAP)
-shed.SNAP <- shed %>% filter((SNAP %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+shed.SNAP <- shed %>% filter((SNAP %in% c("Refused", "Not In Universe (not asked)", "", NA)==FALSE)) 
 tblSNAP <- aggregate(data=shed.SNAP, Weight ~ SNAP + Race + State + AnyStudentLoans, FUN=sum)
 tblSNAP2 <- aggregate(data=shed.SNAP, Weight ~ SNAP + State + AnyStudentLoans, FUN=sum)
 tblSNAP2$Race <- rep("All", nrow(tblSNAP2))
@@ -3789,7 +3789,7 @@ ggplotly(g28D, width=800, height=350)
 # HouseAssist: # Housing assistance from government program - In the past 12 months, have you [and/or your spouse/parnter] received any of the following? 
 
 # table(shed$HouseAssist)
-shed.HouseAssist <- shed %>% filter((HouseAssist %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+shed.HouseAssist <- shed %>% filter((HouseAssist %in% c("Refused", "Not In Universe (not asked)", "", NA)==FALSE)) 
 tblHouseAssist <- aggregate(data=shed.HouseAssist, Weight ~ HouseAssist + Race + State + AnyStudentLoans, FUN=sum)
 tblHouseAssist2 <- aggregate(data=shed.HouseAssist, Weight ~ HouseAssist + State + AnyStudentLoans, FUN=sum)
 tblHouseAssist2$Race <- rep("All", nrow(tblHouseAssist2))
@@ -3822,7 +3822,7 @@ ggplotly(g28E, width=800, height=350)
 # FRPL: # Free or reduced price school lunches - In the past 12 months, have you [and/or your spouse/ parnter] received any of the following? 
 
 # table(shed$FRPL)
-shed.FRPL <- shed %>% filter((FRPL %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) %>% filter(ChildrenUnder18=="Yes")
+shed.FRPL <- shed %>% filter((FRPL %in% c("Refused", "Not In Universe (not asked)", "", NA)==FALSE)) %>% filter(ChildrenUnder18=="Yes")
 tblFRPL <- aggregate(data=shed.FRPL, Weight ~ FRPL + Race + State + AnyStudentLoans, FUN=sum)
 tblFRPL2 <- aggregate(data=shed.FRPL, Weight ~ FRPL + State + AnyStudentLoans, FUN=sum)
 tblFRPL2$Race <- rep("All", nrow(tblFRPL2))
@@ -3906,7 +3906,7 @@ It's weird that the "Cover expenses with savings" bars are lower than the "Cover
 # ThreeMonSave: # Have you set aside emergency or rainy day funds that would cover your expenses for 3 months in case of sickness, job loss, economic downturn, or other emergencies? 
 
 # table(shed$ThreeMonSave)
-shed.ThreeMonSave <- shed %>% filter((ThreeMonSave %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+shed.ThreeMonSave <- shed %>% filter((ThreeMonSave %in% c("Refused", "Not In Universe (not asked)", "", NA)==FALSE)) 
 tblThreeMonSave <- aggregate(data=shed.ThreeMonSave, Weight ~ ThreeMonSave + Race + State + AnyStudentLoans, FUN=sum)
 tblThreeMonSave2 <- aggregate(data=shed.ThreeMonSave, Weight ~ ThreeMonSave + State + AnyStudentLoans, FUN=sum)
 tblThreeMonSave2$Race <- rep("All", nrow(tblThreeMonSave2))
@@ -3939,7 +3939,7 @@ ggplotly(g29A, width=800, height=350)
 # ThreeMonCover: # If you were to lose your main source of income (for example, job or government benefits), could you cover your expenses for 3 months by borrowing money, using savings, or selling assets?
 
 # table(shed$ThreeMonCover)
-shed.ThreeMonCover <- shed %>% filter((ThreeMonCover %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+shed.ThreeMonCover <- shed %>% filter((ThreeMonCover %in% c("Refused", "Not In Universe (not asked)", "", NA)==FALSE)) 
 tblThreeMonCover <- aggregate(data=shed.ThreeMonCover, Weight ~ ThreeMonCover + Race + State + AnyStudentLoans, FUN=sum)
 tblThreeMonCover2 <- aggregate(data=shed.ThreeMonCover, Weight ~ ThreeMonCover + State + AnyStudentLoans, FUN=sum)
 tblThreeMonCover2$Race <- rep("All", nrow(tblThreeMonCover2))
@@ -3995,7 +3995,7 @@ kable(N.ThreeMonCover, caption="N size by group for Figure 29: Cover expenses by
 # CCA400: # Put it on my credit card and pay it off in full at the next statement ‐ Suppose that you have an emergency expense that costs $400. Based on your current financial situation, how would you pay for this expense? 
 
 # table(shed$CCA400)
-shed.CCA400 <- shed %>% filter((CCA400 %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+shed.CCA400 <- shed %>% filter((CCA400 %in% c("Refused", "Not In Universe (not asked)", "", NA)==FALSE)) 
 tblCCA400 <- aggregate(data=shed.CCA400, Weight ~ CCA400 + Race + State + AnyStudentLoans, FUN=sum)
 tblCCA4002 <- aggregate(data=shed.CCA400, Weight ~ CCA400 + State + AnyStudentLoans, FUN=sum)
 tblCCA4002$Race <- rep("All", nrow(tblCCA4002))
@@ -4029,7 +4029,7 @@ ggplotly(g30A, width=800, height=350)
 # CCB400: # Put it on my credit card and pay it off over time ‐ Suppose that you have an emergency expense that costs $400. Based on your current financial situation, how would you pay for this expense?
 
 # table(shed$CCB400)
-shed.CCB400 <- shed %>% filter((CCB400 %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+shed.CCB400 <- shed %>% filter((CCB400 %in% c("Refused", "Not In Universe (not asked)", "", NA)==FALSE)) 
 tblCCB400 <- aggregate(data=shed.CCB400, Weight ~ CCB400 + Race + State + AnyStudentLoans, FUN=sum)
 tblCCB4002 <- aggregate(data=shed.CCB400, Weight ~ CCB400 + State + AnyStudentLoans, FUN=sum)
 tblCCB4002$Race <- rep("All", nrow(tblCCB4002))
@@ -4063,7 +4063,7 @@ ggplotly(g30B, width=800, height=350)
 # Cash400: # With the money currently in my checking/savings account or with cash ‐ Suppose that you have an emergency expense that costs $400. Based on your current financial situation, how would you pay for this expense? 
 
 # table(shed$Cash400)
-shed.Cash400 <- shed %>% filter((Cash400 %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+shed.Cash400 <- shed %>% filter((Cash400 %in% c("Refused", "Not In Universe (not asked)", "", NA)==FALSE)) 
 tblCash400 <- aggregate(data=shed.Cash400, Weight ~ Cash400 + Race + State + AnyStudentLoans, FUN=sum)
 tblCash4002 <- aggregate(data=shed.Cash400, Weight ~ Cash400 + State + AnyStudentLoans, FUN=sum)
 tblCash4002$Race <- rep("All", nrow(tblCash4002))
@@ -4097,7 +4097,7 @@ ggplotly(g30C, width=800, height=350)
 # Loan400: #  Using money from a bank loan or line of credit ‐ Suppose that you have an emergency expense that costs $400. Based on your current financial situation, how would you pay for this expense?
 
 # table(shed$Loan400)
-shed.Loan400 <- shed %>% filter((Loan400 %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+shed.Loan400 <- shed %>% filter((Loan400 %in% c("Refused", "Not In Universe (not asked)", "", NA)==FALSE)) 
 tblLoan400 <- aggregate(data=shed.Loan400, Weight ~ Loan400 + Race + State + AnyStudentLoans, FUN=sum)
 tblLoan4002 <- aggregate(data=shed.Loan400, Weight ~ Loan400 + State + AnyStudentLoans, FUN=sum)
 tblLoan4002$Race <- rep("All", nrow(tblLoan4002))
@@ -4131,7 +4131,7 @@ ggplotly(g30D, width=800, height=350)
 # Friend400: # By borrowing from a friend or family member ‐ Suppose that you have an emergency that costs $400. Based on your current financial situation, how would you pay for this expense?
 
 # table(shed$Friend400)
-shed.Friend400 <- shed %>% filter((Friend400 %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+shed.Friend400 <- shed %>% filter((Friend400 %in% c("Refused", "Not In Universe (not asked)", "", NA)==FALSE)) 
 tblFriend400 <- aggregate(data=shed.Friend400, Weight ~ Friend400 + Race + State + AnyStudentLoans, FUN=sum)
 tblFriend4002 <- aggregate(data=shed.Friend400, Weight ~ Friend400 + State + AnyStudentLoans, FUN=sum)
 tblFriend4002$Race <- rep("All", nrow(tblFriend4002))
@@ -4165,7 +4165,7 @@ ggplotly(g30E, width=800, height=350)
 # Payday400: # Using a payday loan, deposit advance, or overdraft ‐ Suppose that you have an emergency expense that costs $400. Based on your current financial situation, how would you pay for this expense?
 
 # table(shed$Payday400)
-shed.Payday400 <- shed %>% filter((Payday400 %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+shed.Payday400 <- shed %>% filter((Payday400 %in% c("Refused", "Not In Universe (not asked)", "", NA)==FALSE)) 
 tblPayday400 <- aggregate(data=shed.Payday400, Weight ~ Payday400 + Race + State + AnyStudentLoans, FUN=sum)
 tblPayday4002 <- aggregate(data=shed.Payday400, Weight ~ Payday400 + State + AnyStudentLoans, FUN=sum)
 tblPayday4002$Race <- rep("All", nrow(tblPayday4002))
@@ -4199,7 +4199,7 @@ ggplotly(g30F, width=800, height=350)
 # Sell400: # By selling something ‐ Suppose that you have an emergency expense that costs $400. Based on your current financial situation, how would you pay for this expense? 
 
 # table(shed$Sell400)
-shed.Sell400 <- shed %>% filter((Sell400 %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+shed.Sell400 <- shed %>% filter((Sell400 %in% c("Refused", "Not In Universe (not asked)", "", NA)==FALSE)) 
 tblSell400 <- aggregate(data=shed.Sell400, Weight ~ Sell400 + Race + State + AnyStudentLoans, FUN=sum)
 tblSell4002 <- aggregate(data=shed.Sell400, Weight ~ Sell400 + State + AnyStudentLoans, FUN=sum)
 tblSell4002$Race <- rep("All", nrow(tblSell4002))
@@ -4233,7 +4233,7 @@ ggplotly(g30G, width=800, height=350)
 # None400: # I wouldn't be able to pay for the expense right now ‐ Suppose that you have an emergency expense that costs $400. Based on your current financial situation, how would you pay for this expense?
 
 # table(shed$None400)
-shed.None400 <- shed %>% filter((None400 %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+shed.None400 <- shed %>% filter((None400 %in% c("Refused", "Not In Universe (not asked)", "", NA)==FALSE)) 
 tblNone400 <- aggregate(data=shed.None400, Weight ~ None400 + Race + State + AnyStudentLoans, FUN=sum)
 tblNone4002 <- aggregate(data=shed.None400, Weight ~ None400 + State + AnyStudentLoans, FUN=sum)
 tblNone4002$Race <- rep("All", nrow(tblNone4002))
@@ -4368,7 +4368,7 @@ kable(N.EdPayoff1, caption="N size by group for Figure 31") %>% kable_paper("hov
 # DiffField1: # Chosen a different field of study - If you could go back and make your education decisions again, would you have done any of these things: 
 
 # table(shed$DiffField1)
-shed.DiffField1 <- shed %>% filter((DiffField1 %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+shed.DiffField1 <- shed %>% filter((DiffField1 %in% c("Refused", "Not In Universe (not asked)", "", NA)==FALSE)) 
 tblDiffField1 <- aggregate(data=shed.DiffField1, Weight ~ DiffField1 + Race + State + AnyStudentLoans, FUN=sum)
 tblDiffField12 <- aggregate(data=shed.DiffField1, Weight ~ DiffField1 + State + AnyStudentLoans, FUN=sum)
 tblDiffField12$Race <- rep("All", nrow(tblDiffField12))
@@ -4402,7 +4402,7 @@ ggplotly(g32A, width=800, height=350)
 # DiffSchool1: # Attended a different school - If you could go back and make your education decisions again, would you have done any of these things: 
 
 # table(shed$DiffSchool1)
-shed.DiffSchool1 <- shed %>% filter((DiffSchool1 %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+shed.DiffSchool1 <- shed %>% filter((DiffSchool1 %in% c("Refused", "Not In Universe (not asked)", "", NA)==FALSE)) 
 tblDiffSchool1 <- aggregate(data=shed.DiffSchool1, Weight ~ DiffSchool1 + Race + State + AnyStudentLoans, FUN=sum)
 tblDiffSchool12 <- aggregate(data=shed.DiffSchool1, Weight ~ DiffSchool1 + State + AnyStudentLoans, FUN=sum)
 tblDiffSchool12$Race <- rep("All", nrow(tblDiffSchool12))
@@ -4436,7 +4436,7 @@ ggplotly(g32B, width=800, height=350)
 # LessEd1: # Not attended college or completed less education - If you could go back and make your education decisions again, would have done any of these things: 
 
 # table(shed$LessEd1)
-shed.LessEd1 <- shed %>% filter((LessEd1 %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+shed.LessEd1 <- shed %>% filter((LessEd1 %in% c("Refused", "Not In Universe (not asked)", "", NA)==FALSE)) 
 tblLessEd1 <- aggregate(data=shed.LessEd1, Weight ~ LessEd1 + Race + State + AnyStudentLoans, FUN=sum)
 tblLessEd12 <- aggregate(data=shed.LessEd1, Weight ~ LessEd1 + State + AnyStudentLoans, FUN=sum)
 tblLessEd12$Race <- rep("All", nrow(tblLessEd12))
@@ -4470,7 +4470,7 @@ ggplotly(g32C, width=800, height=350)
 # MoreEd1: # Completed more education - If you could go back and make your education decisions again, would you have done any of these things:
 
 # table(shed$MoreEd1)
-shed.MoreEd1 <- shed %>% filter((MoreEd1 %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) 
+shed.MoreEd1 <- shed %>% filter((MoreEd1 %in% c("Refused", "Not In Universe (not asked)", "", NA)==FALSE)) 
 tblMoreEd1 <- aggregate(data=shed.MoreEd1, Weight ~ MoreEd1 + Race + State + AnyStudentLoans, FUN=sum)
 tblMoreEd12 <- aggregate(data=shed.MoreEd1, Weight ~ MoreEd1 + State + AnyStudentLoans, FUN=sum)
 tblMoreEd12$Race <- rep("All", nrow(tblMoreEd12))
@@ -4502,19 +4502,46 @@ ggplotly(g32D, width=800, height=350)
 #### Data source and notes
 
 
+The survey years included for DiffSchool1 are
+```{r DiffSchool1.SY, results = 'asis'}
+allYears <- rev(unique(shed.DiffSchool1$SurveyYear))
+numYears <- length(allYears)
+if(numYears==2){cat(allYears[1], " and ", allYears[2], ".", sep="")}
+if(numYears==3){cat(allYears[1], ", ", allYears[2], ", and ", allYears[3], ".", sep="")}
+if(numYears==4){cat(allYears[1], ", ", allYears[2], ", ", allYears[3], ", and ", allYears[4], ".", sep="")}
+if(numYears==5){cat(allYears[1], ", ", allYears[2], ", ", allYears[3], ", ", allYears[4], ", and ", allYears[5], ".", sep="")}
+if(numYears==6){cat(allYears[1], ", ", allYears[2], ", ", allYears[3], ", ", allYears[4], ", ", allYears[5], ", and ", allYears[6], ".", sep="")}
+if(numYears==7){cat(allYears[1], ", ", allYears[2], ", ", allYears[3], ", ", allYears[4], ", ", allYears[5], ", ", allYears[6], ", and ", allYears[7], ".", sep="")}
+```
+
+Interpret the "California student loan borrowers" results with caution due to small sample size. 
+
 ```{r DiffField.N}
 N.DiffField <- aggregate(data=shed.DiffField1, Count ~ Race + State + AnyStudentLoans, FUN=sum)
 N.DiffField <- N.DiffField %>% filter(State=="CA" | AnyStudentLoans=="Yes")
 names(N.DiffField) <- c("Group", "State", "Student loan borrower", "Survey respondents")
-kable(N.DiffField, caption="N size by group for Figure 31") %>% kable_paper("hover", full_width = F)
+kable(N.DiffField, caption="N size by group for Figure 32: Different field") %>% kable_paper("hover", full_width = F)
 ```
-
 
 ```{r DiffSchool.N}
 N.DiffSchool <- aggregate(data=shed.DiffSchool1, Count ~ Race + State + AnyStudentLoans, FUN=sum)
 N.DiffSchool <- N.DiffSchool %>% filter(State=="CA" | AnyStudentLoans=="Yes")
 names(N.DiffSchool) <- c("Group", "State", "Student loan borrower", "Survey respondents")
-kable(N.DiffSchool, caption="N size by group for Figure 31") %>% kable_paper("hover", full_width = F)
+kable(N.DiffSchool, caption="N size by group for Figure 32: Different school") %>% kable_paper("hover", full_width = F)
+```
+
+```{r LessEd.N}
+N.LessEd <- aggregate(data=shed.LessEd1, Count ~ Race + State + AnyStudentLoans, FUN=sum)
+N.LessEd <- N.LessEd %>% filter(State=="CA" | AnyStudentLoans=="Yes")
+names(N.LessEd) <- c("Group", "State", "Student loan borrower", "Survey respondents")
+kable(N.LessEd, caption="N size by group for Figure 32: Less education") %>% kable_paper("hover", full_width = F)
+```
+
+```{r MoreEd.N}
+N.MoreEd <- aggregate(data=shed.MoreEd1, Count ~ Race + State + AnyStudentLoans, FUN=sum)
+N.MoreEd <- N.MoreEd %>% filter(State=="CA" | AnyStudentLoans=="Yes")
+names(N.MoreEd) <- c("Group", "State", "Student loan borrower", "Survey respondents")
+kable(N.MoreEd, caption="N size by group for Figure 32: More education") %>% kable_paper("hover", full_width = F)
 ```
 
 ***
@@ -4529,7 +4556,7 @@ kable(N.DiffSchool, caption="N size by group for Figure 31") %>% kable_paper("ho
 # Gender: # Gender 
 
 # table(shed$Gender)
-shed.Gender <- shed %>% filter((Gender %in% c("Refused", "Don't know", "Not In Universe (not asked)", "")==FALSE)) 
+shed.Gender <- shed %>% filter((Gender %in% c("Refused", "Don't know", "Not In Universe (not asked)", "", NA)==FALSE)) 
 tblGender <- aggregate(data=shed.Gender, Weight ~ Gender + Race + State + AnyStudentLoans, FUN=sum)
 tblGender2 <- aggregate(data=shed.Gender, Weight ~ Gender + State + AnyStudentLoans, FUN=sum)
 tblGender2$Race <- rep("All", nrow(tblGender2))
@@ -4561,6 +4588,13 @@ ggplotly(g33, width=800, height=350)
 #### Data source and notes
 
 The gender variable, as collected and reported by SHED, only has "male" and "female" values. 
+
+```{r Gender.N}
+N.Gender <- aggregate(data=shed.Gender, Count ~ Race + State + AnyStudentLoans, FUN=sum)
+N.Gender <- N.Gender %>% filter(State=="CA" | AnyStudentLoans=="Yes")
+names(N.Gender) <- c("Group", "State", "Student loan borrower", "Survey respondents")
+kable(N.Gender, caption="N size by group for Figure 33") %>% kable_paper("hover", full_width = F)
+```
 
 ***
 
@@ -4638,6 +4672,13 @@ ggplotly(g34C, width=800, height=350)
 
 Only includes those who have college experience. 
 
+```{r InstLevel.N}
+N.InstLevel <- aggregate(data=shed.InstLevel, Count ~ Race + State + AnyStudentLoans, FUN=sum)
+N.InstLevel <- N.InstLevel %>% filter(State=="CA" | AnyStudentLoans=="Yes")
+names(N.InstLevel) <- c("Group", "State", "Student loan borrower", "Survey respondents")
+kable(N.InstLevel, caption="N size by group for Figure 34") %>% kable_paper("hover", full_width = F)
+```
+
 ***
 
 ### {-}
@@ -4713,6 +4754,13 @@ ggplotly(g35C, width=800, height=350)
 #### Data source and notes
 
 Only includes those who have college experience. 
+
+```{r InstControl.N}
+N.InstControl <- aggregate(data=shed.InstControl, Count ~ Race + State + AnyStudentLoans, FUN=sum)
+N.InstControl <- N.InstControl %>% filter(State=="CA" | AnyStudentLoans=="Yes")
+names(N.InstControl) <- c("Group", "State", "Student loan borrower", "Survey respondents")
+kable(N.InstControl, caption="N size by group for Figure 34") %>% kable_paper("hover", full_width = F)
+```
 
 ***
 
