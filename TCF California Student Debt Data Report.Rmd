@@ -3386,8 +3386,6 @@ names(N.PartialCC) <- c("Group", "State", "Student loan borrower", "Survey respo
 kable(N.PartialCC, caption="N size by group for Figure 23: Ability to pay credit card bill") %>% kable_paper("hover", full_width = F)
 ```
 
-
-
 ***
 
 ### {-}
@@ -3427,6 +3425,12 @@ ggplotly(g24, height=350)
 Limited to those who have student loans. 
 
 Survey years 2020 and 2021 not included.
+
+```{r PartialSL400.N}
+N.PartialSL400 <- aggregate(data=shed.PartialSL400, Count ~ Race + State, FUN=sum)
+names(N.PartialSL400) <- c("Group", "State", "Survey respondents")
+kable(N.PartialSL400, caption="N size by group for Figure 24") %>% kable_paper("hover", full_width = F)
+```
 
 ***
 
@@ -3503,6 +3507,13 @@ ggplotly(g25C, width=800, height=350)
 ```
 #### Data source and notes
 
+```{r PayBills400.N}
+N.PayBills400 <- aggregate(data=shed.PayBills400, Count ~ Race + State + AnyStudentLoans, FUN=sum)
+N.PayBills400 <- N.PayBills400 %>% filter(State=="CA" | AnyStudentLoans=="Yes")
+names(N.PayBills400) <- c("Group", "State", "Student loan borrower", "Survey respondents")
+kable(N.PayBills400, caption="N size by group for Figure 25") %>% kable_paper("hover", full_width = F)
+```
+
 ***
 
 ### {-}
@@ -3577,6 +3588,14 @@ ggplotly(g26C, width=800, height=350)
 ```
 #### Data source and notes
 
+```{r CCApprov.N}
+N.CCApprov <- aggregate(data=shed.CCApprov, Count ~ Race + State + AnyStudentLoans, FUN=sum)
+N.CCApprov <- N.CCApprov %>% filter(State=="CA" | AnyStudentLoans=="Yes")
+names(N.CCApprov) <- c("Group", "State", "Student loan borrower", "Survey respondents")
+kable(N.CCApprov, caption="N size by group for Figure 26") %>% kable_paper("hover", full_width = F)
+```
+
+
 ***
 
 ### {-}
@@ -3618,6 +3637,13 @@ ggplotly(g27, width=800, height=350)
 # , tooltip="text"
 ```
 #### Data source and notes
+
+```{r CreditDeny.N}
+N.CreditDeny <- aggregate(data=shed.CreditDeny, Count ~ Race + State + AnyStudentLoans, FUN=sum)
+N.CreditDeny <- N.CreditDeny %>% filter(State=="CA" | AnyStudentLoans=="Yes")
+names(N.CreditDeny) <- c("Group", "State", "Student loan borrower", "Survey respondents")
+kable(N.CreditDeny, caption="N size by group for Figure 27") %>% kable_paper("hover", full_width = F)
+```
 
 ***
 
@@ -3759,7 +3785,7 @@ ggplotly(g28D, width=800, height=350)
 # , tooltip="text"
 ```
 #### Figure 28: Housing assistance
-```{r HouseAssit}
+```{r HouseAssist}
 # HouseAssist: # Housing assistance from government program - In the past 12 months, have you [and/or your spouse/parnter] received any of the following? 
 
 # table(shed$HouseAssist)
@@ -3825,6 +3851,48 @@ ggplotly(g28F, width=800, height=350)
 # , tooltip="text"
 ```
 #### Data source and notes
+
+```{r SocSec.N}
+N.SocSec <- aggregate(data=shed.SocSec, Count ~ Race + State + AnyStudentLoans, FUN=sum)
+N.SocSec <- N.SocSec %>% filter(State=="CA" | AnyStudentLoans=="Yes")
+names(N.SocSec) <- c("Group", "State", "Student loan borrower", "Survey respondents")
+kable(N.SocSec, caption="N size by group for Figure 28: Social Security") %>% kable_paper("hover", full_width = F)
+```
+
+```{r Welfare.N}
+N.Welfare <- aggregate(data=shed.Welfare, Count ~ Race + State + AnyStudentLoans, FUN=sum)
+N.Welfare <- N.Welfare %>% filter(State=="CA" | AnyStudentLoans=="Yes")
+names(N.Welfare) <- c("Group", "State", "Student loan borrower", "Survey respondents")
+kable(N.Welfare, caption="N size by group for Figure 28: Cash assistance") %>% kable_paper("hover", full_width = F)
+```
+
+```{r EITC.N}
+N.EITC <- aggregate(data=shed.EITC, Count ~ Race + State + AnyStudentLoans, FUN=sum)
+N.EITC <- N.EITC %>% filter(State=="CA" | AnyStudentLoans=="Yes")
+names(N.EITC) <- c("Group", "State", "Student loan borrower", "Survey respondents")
+kable(N.EITC, caption="N size by group for Figure 28: EITC") %>% kable_paper("hover", full_width = F)
+```
+
+```{r SNAP.N}
+N.SNAP <- aggregate(data=shed.SNAP, Count ~ Race + State + AnyStudentLoans, FUN=sum)
+N.SNAP <- N.SNAP %>% filter(State=="CA" | AnyStudentLoans=="Yes")
+names(N.SNAP) <- c("Group", "State", "Student loan borrower", "Survey respondents")
+kable(N.SNAP, caption="N size by group for Figure 28: SNAP") %>% kable_paper("hover", full_width = F)
+```
+
+```{r HouseAssist.N}
+N.HouseAssist <- aggregate(data=shed.HouseAssist, Count ~ Race + State + AnyStudentLoans, FUN=sum)
+N.HouseAssist <- N.HouseAssist %>% filter(State=="CA" | AnyStudentLoans=="Yes")
+names(N.HouseAssist) <- c("Group", "State", "Student loan borrower", "Survey respondents")
+kable(N.HouseAssist, caption="N size by group for Figure 28: Housing Assistance") %>% kable_paper("hover", full_width = F)
+```
+
+```{r FRPL.N}
+N.FRPL <- aggregate(data=shed.FRPL, Count ~ Race + State + AnyStudentLoans, FUN=sum)
+N.FRPL <- N.FRPL %>% filter(State=="CA" | AnyStudentLoans=="Yes")
+names(N.FRPL) <- c("Group", "State", "Student loan borrower", "Survey respondents")
+kable(N.FRPL, caption="N size by group for Figure 28: FRPL") %>% kable_paper("hover", full_width = F)
+```
 
 ***
 
@@ -3900,6 +3968,20 @@ ggplotly(g29B, width=800, height=350)
 # , tooltip="text"
 ```
 #### Data source and notes
+
+```{r ThreeMonSave.N}
+N.ThreeMonSave <- aggregate(data=shed.ThreeMonSave, Count ~ Race + State + AnyStudentLoans, FUN=sum)
+N.ThreeMonSave <- N.ThreeMonSave %>% filter(State=="CA" | AnyStudentLoans=="Yes")
+names(N.ThreeMonSave) <- c("Group", "State", "Student loan borrower", "Survey respondents")
+kable(N.ThreeMonSave, caption="N size by group for Figure 29: Cover expenses with savings") %>% kable_paper("hover", full_width = F)
+```
+
+```{r ThreeMonCover.N}
+N.ThreeMonCover <- aggregate(data=shed.ThreeMonCover, Count ~ Race + State + AnyStudentLoans, FUN=sum)
+N.ThreeMonCover <- N.ThreeMonCover %>% filter(State=="CA" | AnyStudentLoans=="Yes")
+names(N.ThreeMonCover) <- c("Group", "State", "Student loan borrower", "Survey respondents")
+kable(N.ThreeMonCover, caption="N size by group for Figure 29: Cover expenses by any means") %>% kable_paper("hover", full_width = F)
+```
 
 ***
 
@@ -4182,7 +4264,14 @@ ggplotly(g30H, width=800, height=350)
 ```
 #### Data source and notes
 
-Responses are not exclusive to each other. For an example, a respondent could say that they would sell belongings and use a payday loan. Because of this, groups' bars cannot be stacked on top of each other in one chart and are instead presented here in a series of charts. 
+Responses are not exclusive to one another. For an example, a respondent could say that they would sell belongings and use a payday loan. Because of this, groups' bars cannot be stacked on top of each other in one chart and are instead presented here in a series of charts. 
+
+```{r CCA400.N}
+N.CCA400 <- aggregate(data=shed.CCA400, Count ~ Race + State + AnyStudentLoans, FUN=sum)
+N.CCA400 <- N.CCA400 %>% filter(State=="CA" | AnyStudentLoans=="Yes")
+names(N.CCA400) <- c("Group", "State", "Student loan borrower", "Survey respondents")
+kable(N.CCA400, caption="N size by group for Figure 30") %>% kable_paper("hover", full_width = F)
+```
 
 ***
 
@@ -4259,6 +4348,13 @@ ggplotly(g31C, width=800, height=350)
 # , tooltip="text"
 ```
 #### Data source and notes
+
+```{r EdPayoff1.N}
+N.EdPayoff1 <- aggregate(data=shed.EdPayoff1, Count ~ Race + State + AnyStudentLoans, FUN=sum)
+N.EdPayoff1 <- N.EdPayoff1 %>% filter(State=="CA" | AnyStudentLoans=="Yes")
+names(N.EdPayoff1) <- c("Group", "State", "Student loan borrower", "Survey respondents")
+kable(N.EdPayoff1, caption="N size by group for Figure 31") %>% kable_paper("hover", full_width = F)
+```
 
 ***
 
@@ -4404,6 +4500,22 @@ ggplotly(g32D, width=800, height=350)
 # , tooltip="text"
 ```
 #### Data source and notes
+
+
+```{r DiffField.N}
+N.DiffField <- aggregate(data=shed.DiffField1, Count ~ Race + State + AnyStudentLoans, FUN=sum)
+N.DiffField <- N.DiffField %>% filter(State=="CA" | AnyStudentLoans=="Yes")
+names(N.DiffField) <- c("Group", "State", "Student loan borrower", "Survey respondents")
+kable(N.DiffField, caption="N size by group for Figure 31") %>% kable_paper("hover", full_width = F)
+```
+
+
+```{r DiffSchool.N}
+N.DiffSchool <- aggregate(data=shed.DiffSchool1, Count ~ Race + State + AnyStudentLoans, FUN=sum)
+N.DiffSchool <- N.DiffSchool %>% filter(State=="CA" | AnyStudentLoans=="Yes")
+names(N.DiffSchool) <- c("Group", "State", "Student loan borrower", "Survey respondents")
+kable(N.DiffSchool, caption="N size by group for Figure 31") %>% kable_paper("hover", full_width = F)
+```
 
 ***
 
