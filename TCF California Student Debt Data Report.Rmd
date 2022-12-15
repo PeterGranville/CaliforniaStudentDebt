@@ -681,17 +681,18 @@ table4.1$Control <- factor(table4.1$Control, levels = rev(c("For-profit", "Non-p
 #### {.tabset}
 ##### Figure 1
 ```{r figure1}
-g1 <- ggplot(data=table4.1, mapping=aes(x=State, y=`Average Loan`, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.4) + labs(title="Average annual loan by type and sector: California vs. Rest of U.S.") + scale_y_continuous(labels=scales::dollar_format()) + facet_grid(Control ~ variable) + scale_fill_brewer(palette="Dark2") + theme(text=element_text(family="Optima")) 
+table4.1$`For Tooltip` <- paste(
+  "State: ", table4.1$State, '\n',
+  "Group: ", table4.1$Group, '\n',
+  "Loan type: ", table4.1$variable, '\n',
+  "Control: ", table4.1$Control, '\n', 
+  "Average annual loan: ", dollar(table4.1$`Average Loan`, accuracy=1),
+  sep=""
+)
 
-ggplotly(g1, width=850, height=500)
+g1 <- ggplot(data=table4.1, mapping=aes(x=State, y=`Average Loan`, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.4) + labs(title="Average annual loans by type and sector: California vs. Rest of U.S.") + scale_y_continuous(labels=scales::dollar_format()) + facet_grid(Control ~ variable) + scale_fill_brewer(palette="Dark2") + theme(text=element_text(family="Optima")) 
 
-# dataset$`For Tooltip` <- paste(
-#   "var1: ", dataset$variable, '\n', 
-#   "var2: ", dataset$variable, 
-#   sep=""
-# )
-# , text=`For Tooltip`
-# , tooltip="text"
+ggplotly(g1, width=850, height=500, tooltip="text")
 ```
 ##### Data source and notes
 
@@ -760,10 +761,10 @@ npsas1$`For Tooltip` <- paste(
   "State: ", npsas1$State, '\n', 
   "Loan type: ", npsas1$variable, '\n',
   "Group: ", npsas1$Group, '\n', 
-  "Average loan: ", dollar(npsas1$`Average Loan`, accuracy=1), 
+  "Average annual loans: ", dollar(npsas1$`Average Loan`, accuracy=1), 
   sep="")
 
-g2 <- ggplot(data=npsas1, mapping=aes(x=State, y=`Average Loan`, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.4) + labs(title="Average undergraduate loans at public 4-years by group: CA vs U.S.") + facet_grid(variable ~ Group) + scale_y_continuous(labels=scales::dollar_format()) + scale_fill_brewer(palette="Dark2") + theme(legend.position="none", text=element_text(family="Optima"))
+g2 <- ggplot(data=npsas1, mapping=aes(x=State, y=`Average Loan`, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.4) + labs(title="Average annual undergrad. loans at public 4-years by group: CA vs U.S.") + facet_grid(variable ~ Group) + scale_y_continuous(labels=scales::dollar_format()) + scale_fill_brewer(palette="Dark2") + theme(legend.position="none", text=element_text(family="Optima"))
 
 ggplotly(g2, tooltip="text")
 ```
@@ -808,17 +809,16 @@ npsas2$`Total federal loans` <- as.numeric(npsas2$`Total federal loans`)
 #### {.tabset}
 ##### Figure 3
 ```{r figure3}
-g3 <- ggplot(data=npsas2, mapping=aes(x=State, y=`Total federal loans`, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.6) + labs(title="Average annual fed. student loans for graduate students, by group: CA vs U.S.", caption="Groups not shown lacked sufficient samples.") + facet_grid(. ~ Group) + scale_y_continuous(labels=scales::dollar_format()) + scale_fill_brewer(palette="Dark2") + theme(legend.position="none", text=element_text(family="Optima"))
+npsas2$`For Tooltip` <- paste(
+  "State: ", npsas2$State, '\n',
+  "Group: ", npsas2$Group, '\n',
+  "Average annual federal loans: ", dollar(npsas2$`Total federal loans`, accuracy=1),
+  sep=""
+)
 
-ggplotly(g3, height=350)
+g3 <- ggplot(data=npsas2, mapping=aes(x=State, y=`Total federal loans`, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.6) + labs(title="Average annual fed. student loans for graduate students, by group: CA vs U.S.", caption="Groups not shown lacked sufficient samples.") + facet_grid(. ~ Group) + scale_y_continuous(labels=scales::dollar_format()) + scale_fill_brewer(palette="Dark2") + theme(legend.position="none", text=element_text(family="Optima"))
 
-# dataset$`For Tooltip` <- paste(
-#   "var1: ", dataset$variable, '\n', 
-#   "var2: ", dataset$variable, 
-#   sep=""
-# )
-# , text=`For Tooltip`
-# , tooltip="text"
+ggplotly(g3, height=350, tooltip="text")
 ```
 ##### Data source and notes 
 
@@ -876,17 +876,17 @@ npsas4$`Total federal loans` <- as.numeric(npsas4$`Total federal loans`)
 #### {.tabset}
 ##### Figure 4
 ```{r figure4}
-g4 <- ggplot(data=npsas4, mapping=aes(x=Group, y=`Total federal loans`, fill=Group)) + geom_bar(stat="identity", position="dodge", width=0.6) + labs(title="Average annual fed. loans for graduate students by group and level: U.S. only", caption="Groups not shown lacked sufficient samples.") + facet_grid(. ~ Level) + scale_y_continuous(labels=scales::dollar_format()) + scale_fill_brewer(palette="Dark2") + theme(legend.position="none", text=element_text(family="Optima"))
+npsas4$`For Tooltip` <- paste(
+  "State: ", npsas4$State, '\n',
+  "Group: ", npsas4$Group, '\n',
+  "Level: ", npsas4$Level, '\n',
+  "Average annual federal loans: ", dollar(npsas4$`Total federal loans`, accuracy=1),
+  sep=""
+)
 
-ggplotly(g4, width=800, height=350)
+g4 <- ggplot(data=npsas4, mapping=aes(x=Group, y=`Total federal loans`, fill=Group, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.6) + labs(title="Average annual fed. loans for graduate students by group and level: U.S. only", caption="Groups not shown lacked sufficient samples.") + facet_grid(. ~ Level) + scale_y_continuous(labels=scales::dollar_format()) + scale_fill_brewer(palette="Dark2") + theme(legend.position="none", text=element_text(family="Optima"))
 
-# dataset$`For Tooltip` <- paste(
-#   "var1: ", dataset$variable, '\n', 
-#   "var2: ", dataset$variable, 
-#   sep=""
-# )
-# , text=`For Tooltip`
-# , tooltip="text"
+ggplotly(g4, width=800, height=350, tooltip="text")
 ```
 ##### Data source and notes
 
@@ -899,9 +899,6 @@ Notes: Due to limitations of NPSAS:16, this only applies to in-state students.
 ***
 
 #### {-}
-
-
-*Editorial note:* I added this figure late, so when I have more time I will rename it Figure 5 and rename the figures that follow. 
 
 #### {.tabset}
 ```{r npsas4.1, warning=FALSE}
@@ -929,17 +926,16 @@ npsas4.1$Group <- factor(npsas4.1$Group, levels = c("White", "Latino/a", "Black"
 ```
 ##### Figure 5
 ```{r figure5}
-g5 <- ggplot(data=npsas4.1, mapping=aes(x=State, y=`Average cumulative federal loans`, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.6) + facet_grid(. ~ Group) + scale_y_continuous(label=scales::dollar) + labs(x="State", title="Average cumulative federal loans: Graduating undergraduates", y="Average cumulative loans") + scale_fill_brewer(palette="Dark2") + theme(legend.position="none", text=element_text(family="Optima"))
+npsas4.1$`For Tooltip` <- paste(
+  "State: ", npsas4.1$State, '\n',
+  "Group: ", npsas4.1$Group, '\n',
+  "Average cumulative federal loans: ", dollar(npsas4.1$`Average cumulative federal loans`, accuracy=1),
+  sep=""
+)
 
-ggplotly(g5, width=800, height=350)
+g5 <- ggplot(data=npsas4.1, mapping=aes(x=State, y=`Average cumulative federal loans`, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.6) + facet_grid(. ~ Group) + scale_y_continuous(label=scales::dollar) + labs(x="State", title="Average cumulative federal loans: Graduating undergraduates", y="Average cumulative loans") + scale_fill_brewer(palette="Dark2") + theme(legend.position="none", text=element_text(family="Optima"))
 
-# dataset$`For Tooltip` <- paste(
-#   "var1: ", dataset$variable, '\n', 
-#   "var2: ", dataset$variable, 
-#   sep=""
-# )
-# , text=`For Tooltip`
-# , tooltip="text"
+ggplotly(g5, width=800, height=350, tooltip="text")
 ```
 ##### Data source and notes
 
@@ -992,31 +988,29 @@ npsas5.HSP$Group[npsas5.HSP$Group=="Other Spanish, Hispanic, or Latino descent"]
 ```
 
 ```{r figure6A}
-g6A <- ggplot(data=npsas5.ASN, mapping=aes(y=Group, x=`Total federal loans`, fill=Group)) + geom_bar(stat="identity", position="dodge") + labs(title="Average federal student loans by Asian ethinicity: U.S. vs CA", x="Average federal student loans") + facet_grid(State ~ .) + scale_x_continuous(labels=scales::dollar_format()) + scale_fill_brewer(palette="Set3") + theme(legend.position="none", text=element_text(family="Optima"))
+npsas5.ASN$`For Tooltip` <- paste(
+  "State: ", npsas5.ASN$State, '\n',
+  "Group: ", npsas5.ASN$Group, '\n',
+  "Average annual federal loans: ", dollar(npsas5.ASN$`Total federal loans`, accuracy=1), 
+  sep=""
+)
 
-ggplotly(g6A, width=800, height=500)
+g6A <- ggplot(data=npsas5.ASN, mapping=aes(y=Group, x=`Total federal loans`, fill=Group, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge") + labs(title="Average annual federal student loans by Asian ethinicity: U.S. vs CA", x="Average federal student loans") + facet_grid(State ~ .) + scale_x_continuous(labels=scales::dollar_format()) + scale_fill_brewer(palette="Set3") + theme(legend.position="none", text=element_text(family="Optima"))
 
-# dataset$`For Tooltip` <- paste(
-#   "var1: ", dataset$variable, '\n', 
-#   "var2: ", dataset$variable, 
-#   sep=""
-# )
-# , text=`For Tooltip`
-# , tooltip="text"
+ggplotly(g6A, width=800, height=500, tooltip="text")
 ```
 ##### Figure 6: Hispanic ethnicities
 ```{r figure6B}
-g6B <- ggplot(data=npsas5.HSP, mapping=aes(y=Group, x=`Total federal loans`, fill=Group)) + geom_bar(stat="identity", position="dodge") + labs(title="Average federal student loans by Hispanic ethinicity: U.S. vs CA", x="Average federal student loans") + facet_grid(State ~ .) + scale_x_continuous(labels=scales::dollar_format()) + scale_fill_brewer(palette="Set3") + theme(legend.position="none", text=element_text(family="Optima"))
+npsas5.HSP$`For Tooltip` <- paste(
+  "State: ", npsas5.HSP$State, '\n',
+  "Group: ", npsas5.HSP$Group, '\n',
+  "Average annual federal loans: ", dollar(npsas5.HSP$`Total federal loans`, accuracy=1), 
+  sep=""
+)
 
-ggplotly(g6B, width=800, height=500)
+g6B <- ggplot(data=npsas5.HSP, mapping=aes(y=Group, x=`Total federal loans`, fill=Group, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge") + labs(title="Average federal student loans by Hispanic ethinicity: U.S. vs CA", x="Average federal student loans") + facet_grid(State ~ .) + scale_x_continuous(labels=scales::dollar_format()) + scale_fill_brewer(palette="Set3") + theme(legend.position="none", text=element_text(family="Optima"))
 
-# dataset$`For Tooltip` <- paste(
-#   "var1: ", dataset$variable, '\n', 
-#   "var2: ", dataset$variable, 
-#   sep=""
-# )
-# , text=`For Tooltip`
-# , tooltip="text"
+ggplotly(g6B, width=800, height=500, tooltip="text")
 ```
 ##### Data source and notes
 
@@ -2033,6 +2027,20 @@ shed$Count <- rep(1, nrow(shed))
 
 ```
 
+```{r SurveyYearFunction}
+survey_years <- function(surveyYearVector) {
+  allYears <- rev(unique(surveyYearVector))
+  numYears <- length(allYears)
+  if(numYears==1){cat(allYears[1])}
+  if(numYears==2){cat(allYears[1], " and ", allYears[2], ".", sep="")}
+  if(numYears==3){cat(allYears[1], ", ", allYears[2], ", and ", allYears[3], ".", sep="")}
+  if(numYears==4){cat(allYears[1], ", ", allYears[2], ", ", allYears[3], ", and ", allYears[4], ".", sep="")}
+  if(numYears==5){cat(allYears[1], ", ", allYears[2], ", ", allYears[3], ", ", allYears[4], ", and ", allYears[5], ".", sep="")}
+  if(numYears==6){cat(allYears[1], ", ", allYears[2], ", ", allYears[3], ", ", allYears[4], ", ", allYears[5], ", and ", allYears[6], ".", sep="")}
+  if(numYears==7){cat(allYears[1], ", ", allYears[2], ", ", allYears[3], ", ", allYears[4], ", ", allYears[5], ", ", allYears[6], ", and ", allYears[7], ".", sep="")}
+}
+```
+
 ### {.tabset}
 ```{r ownDebt}
 # OwnDebt: # Do you currently have student loan debt or owe any money used to pay for your own education? 
@@ -2049,19 +2057,23 @@ tblOwnDebt$`Share with debt` <- tblOwnDebt$Yes / (tblOwnDebt$Yes + tblOwnDebt$No
 #### Figure 7
 ##### Responses to "Do you currently have student loan debt or owe any money used to pay for your own education?" 
 ```{r figure7}
-g7 <- ggplot(data=tblOwnDebt, mapping=aes(y=Race, x=`Share with debt`, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(y="", title="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2")
+tblOwnDebt$`For Tooltip` <- paste(
+  "State: ", tblOwnDebt$State, '\n',
+  "Group: ", tblOwnDebt$Race, '\n',
+  "Share with debt: ", percent(tblOwnDebt$`Share with debt`, accuracy=0.1), 
+  sep=""
+)
 
-ggplotly(g7, width=800, height=350)
+g7 <- ggplot(data=tblOwnDebt, mapping=aes(y=Race, x=`Share with debt`, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(y="", title="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2")
 
-# dataset$`For Tooltip` <- paste(
-#   "var1: ", dataset$variable, '\n', 
-#   "var2: ", dataset$variable, 
-#   sep=""
-# )
-# , text=`For Tooltip`
-# , tooltip="text"
+ggplotly(g7, width=800, height=350, tooltip="text")
 ```
 #### Data source and notes
+
+The survey years included for Figure 7 are
+```{r ownDebt.SY, results = 'asis'}
+survey_years(shed.OwnDebt$SurveyYear)
+```
 
 ```{r ownDebt.N}
 N.OwnDebt <- aggregate(data=shed.OwnDebt, Count ~ Race + State, FUN=sum)
@@ -2091,17 +2103,16 @@ tblOwnDebtSL$`Share of borrowers whose debt includes a student loan` <- tblOwnDe
 ```
 ##### Responses to "Think about the money you currently owe for your own education. Is the money you owe for that education a student loan?"
 ```{r figure8A}
-g8A <- ggplot(data=tblOwnDebtSL, mapping=aes(y=Race, x=`Share of borrowers whose debt includes a student loan`, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2")
+tblOwnDebtSL$`For Tooltip` <- paste(
+  "State: ", tblOwnDebtSL$State, '\n',
+  "Group: ", tblOwnDebtSL$Race, '\n',
+  "Share whose debt includes a student loan: ", percent(tblOwnDebtSL$`Share of borrowers whose debt includes a student loan`, accuracy=0.1),
+  sep=""
+)
 
-ggplotly(g8A, width=800, height=350)
+g8A <- ggplot(data=tblOwnDebtSL, mapping=aes(y=Race, x=`Share of borrowers whose debt includes a student loan`, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2")
 
-# dataset$`For Tooltip` <- paste(
-#   "var1: ", dataset$variable, '\n', 
-#   "var2: ", dataset$variable, 
-#   sep=""
-# )
-# , text=`For Tooltip`
-# , tooltip="text"
+ggplotly(g8A, width=800, height=350, tooltip="text")
 ```
 #### Figure 8: Home equity
 ```{r OwnDebtHE}
@@ -2118,17 +2129,16 @@ tblOwnDebtHE$`Share of borrowers whose debt includes home equity` <- tblOwnDebtH
 ```
 ##### Responses to "Think about the money you currently owe for your own education. Is the money you owe for that education home equity?
 ```{r figure8B}
-g8B <- ggplot(data=tblOwnDebtHE, mapping=aes(y=Race, x=`Share of borrowers whose debt includes home equity`, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2")
+tblOwnDebtHE$`For Tooltip` <- paste(
+  "State: ", tblOwnDebtHE$State, '\n',
+  "Group: ", tblOwnDebtHE$Race, '\n',
+  "Share whose debt includes home equity: ", percent(tblOwnDebtHE$`Share of borrowers whose debt includes home equity`, accuracy=0.1),
+  sep=""
+)
 
-ggplotly(g8B, width=800, height=350)
+g8B <- ggplot(data=tblOwnDebtHE, mapping=aes(y=Race, x=`Share of borrowers whose debt includes home equity`, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2")
 
-# dataset$`For Tooltip` <- paste(
-#   "var1: ", dataset$variable, '\n', 
-#   "var2: ", dataset$variable, 
-#   sep=""
-# )
-# , text=`For Tooltip`
-# , tooltip="text"
+ggplotly(g8B, width=800, height=350, tooltip="text")
 ```
 #### Figure 8: Credit card debt
 ```{r OwnDebtCC}
@@ -2145,19 +2155,33 @@ tblOwnDebtCC$`Share of borrowers whose debt includes credit card debt` <- tblOwn
 ```
 ##### Responses to "Think about the money you currently owe for your own education. Is the money you owe for that education credit card debt?"
 ```{r figure8C}
-g8C <- ggplot(data=tblOwnDebtCC, mapping=aes(y=Race, x=`Share of borrowers whose debt includes credit card debt`, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
+tblOwnDebtCC$`For Tooltip` <- paste(
+  "State: ", tblOwnDebtCC$State, '\n',
+  "Group: ", tblOwnDebtCC$Race, '\n',
+  "Share whose debt includes credit card debt: ", percent(tblOwnDebtCC$`Share of borrowers whose debt includes credit card debt`, accuracy=0.1),
+  sep=""
+)
 
-ggplotly(g8C, width=800, height=350)
+g8C <- ggplot(data=tblOwnDebtCC, mapping=aes(y=Race, x=`Share of borrowers whose debt includes credit card debt`, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
 
-# dataset$`For Tooltip` <- paste(
-#   "var1: ", dataset$variable, '\n', 
-#   "var2: ", dataset$variable, 
-#   sep=""
-# )
-# , text=`For Tooltip`
-# , tooltip="text"
+ggplotly(g8C, width=800, height=350, tooltip="text")
 ```
 #### Data source and notes
+
+The survey years included for "Figure 8: Student loans" are
+```{r OwnDebtSL.SY, results = 'asis'}
+survey_years(shed.OwnDebtSL$SurveyYear)
+```
+
+The survey years included for "Figure 8: Home equity" are
+```{r OwnDebtHE.SY, results = 'asis'}
+survey_years(shed.OwnDebtHE$SurveyYear)
+```
+
+The survey years included for "Figure 8: Credit card debt" are
+```{r OwnDebtCC.SY, results = 'asis'}
+survey_years(shed.OwnDebtCC$SurveyYear)
+```
 
 ```{r OwnDebtSL.N}
 N.OwnDebtSL <- aggregate(data=shed.OwnDebtSL, Count ~ Race + State, FUN=sum)
@@ -2243,6 +2267,11 @@ ggplotly(g9B, height=350)
 ```
 #### Data source and notes
 
+The survey years included for Figure 9 are
+```{r OwnDebtTotal.SY, results = 'asis'}
+survey_years(shed.OwnDebtTot3$SurveyYear)
+```
+
 ```{r OwnDebtTotal.N}
 N.OwnDebtTotal <- aggregate(data=shed.OwnDebtTot3, Count ~ Race + State, FUN=sum)
 names(N.OwnDebtTotal) <- c("Group", "State", "Survey respondents")
@@ -2314,6 +2343,11 @@ ggplotly(g10A, width=800, height=350)
 ```
 #### Data source and notes
 
+The survey years included for Figure 10 are
+```{r OwnDebtMon3.SY, results = 'asis'}
+survey_years(shed.OwnDebtMon3$SurveyYear)
+```
+
 Survey responses collected in 2020 and 2021 are not included due to the federal student loan payment pause in place that started in March 2020 and continued through all of 2021. Due to smaller sample size, interpret results with caution.
 
 ```{r OwnDebtMon3.N}
@@ -2357,6 +2391,11 @@ ggplotly(g11, height=350)
 # , tooltip="text"
 ```
 #### Data source and notes
+
+The survey years included for Figure 11 are
+```{r OwnDebtBehind.SY, results = 'asis'}
+survey_years(shed.OwnDebtBehind$SurveyYear)
+```
 
 Survey responses collected in 2020 and 2021 are not included due to the federal student loan payment pause in place that started in March 2020 and continued through all of 2021. Due to smaller sample size, interpret results with caution.
 
@@ -2432,6 +2471,16 @@ ggplotly(g12B, height=350)
 Figure 12 includes all respondents, not just those who have student debt for their own education. 
 "Figure 12: Debt for spouse's or partner's education" does not include survey respondents without a spouse or partner. 
 "Figure 12: Debt for child or grandchild's education" does not include survey respondents without children or grandchildren. 
+
+The survey years included for "Figure 12: Debt for spouse's or partner's education" are
+```{r SpouseDebt.SY, results = 'asis'}
+survey_years(shed.SpouseDebt$SurveyYear)
+```
+
+The survey years included for "Figure 12: Debt for child's or grandchild's education" are
+```{r ChildDebt.SY, results = 'asis'}
+survey_years(shed.ChildDebt$SurveyYear)
+```
 
 ```{r SpouseDebt.N}
 N.SpouseDebt <- aggregate(data=shed.SpouseDebt, Count ~ Race + State, FUN=sum)
@@ -2524,6 +2573,11 @@ ggplotly(g13C, width=800, height=350)
 ```
 #### Data source and notes
 
+The survey years included for Figure 13 are
+```{r EdAttain.SY, results = 'asis'}
+survey_years(shed.EdAttain$SurveyYear)
+```
+
 ```{r EdAttain.N}
 N.EdAttain <- aggregate(data=shed.EdAttain, Count ~ Race + State + AnyStudentLoans, FUN=sum)
 N.EdAttain <- N.EdAttain %>% filter(State=="CA" | AnyStudentLoans=="Yes")
@@ -2608,6 +2662,12 @@ ggplotly(g14C, width=800, height=350)
 ```
 #### Data source and notes
 
+The survey years included for Figure 14 are
+```{r HomeOwn.SY, results = 'asis'}
+survey_years(shed.HomeOwn$SurveyYear)
+```
+
+
 ```{r HomeOwn.N}
 N.HomeOwn <- aggregate(data=shed.HomeOwn, Count ~ Race + State + AnyStudentLoans, FUN=sum)
 N.HomeOwn <- N.HomeOwn %>% filter(State=="CA" | AnyStudentLoans=="Yes")
@@ -2656,6 +2716,11 @@ ggplotly(g15, width=800, height=350)
 # , tooltip="text"
 ```
 #### Data source and notes
+
+The survey years included for Figure 15 are
+```{r UnpaidCC.SY, results = 'asis'}
+survey_years(shed.UnpaidCC$SurveyYear)
+```
 
 ```{r UnpaidCC.N}
 N.UnpaidCC <- aggregate(data=shed.UnpaidCC, Count ~ Race + State + AnyStudentLoans, FUN=sum)
@@ -2739,6 +2804,11 @@ ggplotly(g16C, width=800, height=350)
 # , tooltip="text"
 ```
 #### Data source and notes
+
+The survey years included for Figure 16 are
+```{r CCBalance.SY, results = 'asis'}
+survey_years(shed.CCBalance$SurveyYear)
+```
 
 ```{r CCBalance.N}
 N.CCBalance <- aggregate(data=shed.CCBalance, Count ~ Race + State + AnyStudentLoans, FUN=sum)
@@ -2827,6 +2897,11 @@ ggplotly(g17C, width=800, height=350)
 # , tooltip="text"
 ```
 #### Data source and notes
+
+The survey years included for Figure 17 are
+```{r Savings.SY, results = 'asis'}
+survey_years(shed.Savings$SurveyYear)
+```
 
 ```{r Savings.N}
 N.Savings <- aggregate(data=shed.Savings, Count ~ Race + State + AnyStudentLoans, FUN=sum)
@@ -2917,6 +2992,11 @@ ggplotly(g18C, width=800, height=350)
 ```
 #### Data source and notes
 
+The survey years included for Figure 18 are
+```{r TotalInc.SY, results = 'asis'}
+survey_years(shed.TotalInc$SurveyYear)
+```
+
 ```{r TotalInc.N}
 N.TotalInc <- aggregate(data=shed.TotalInc, Count ~ Race + State + AnyStudentLoans, FUN=sum)
 N.TotalInc <- N.TotalInc %>% filter(State=="CA" | AnyStudentLoans=="Yes")
@@ -2999,6 +3079,11 @@ ggplotly(g19C, width=800, height=350)
 # , tooltip="text"
 ```
 #### Data source and notes
+
+The survey years included for Figure 19 are
+```{r FinManage.SY, results = 'asis'}
+survey_years(shed.FinManage$SurveyYear)
+```
 
 ```{r FinManage.N}
 N.FinManage <- aggregate(data=shed.FinManage, Count ~ Race + State + AnyStudentLoans, FUN=sum)
@@ -3083,6 +3168,11 @@ ggplotly(g20C, width=800, height=350)
 ```
 #### Data source and notes
 
+The survey years included for Figure 20 are
+```{r ParComp.SY, results = 'asis'}
+survey_years(shed.ParComp$SurveyYear)
+```
+
 ```{r ParComp.N}
 N.ParComp <- aggregate(data=shed.ParComp, Count ~ Race + State + AnyStudentLoans, FUN=sum)
 N.ParComp <- N.ParComp %>% filter(State=="CA" | AnyStudentLoans=="Yes")
@@ -3166,6 +3256,11 @@ ggplotly(g21C, width=800, height=350)
 ```
 #### Data source and notes
 
+The survey years included for Figure 21 are
+```{r CreditScore.SY, results = 'asis'}
+survey_years(shed.CreditScore$SurveyYear)
+```
+
 ```{r CreditScore.N}
 N.CreditScore <- aggregate(data=shed.CreditScore, Count ~ Race + State + AnyStudentLoans, FUN=sum)
 N.CreditScore <- N.CreditScore %>% filter(State=="CA" | AnyStudentLoans=="Yes")
@@ -3246,6 +3341,11 @@ ggplotly(g22C, width=800, height=350)
 # , tooltip="text"
 ```
 #### Data source and notes
+
+The survey years included for Figure 22 are
+```{r PayBills.SY, results = 'asis'}
+survey_years(shed.PayBills$SurveyYear)
+```
 
 ```{r PayBills.N}
 N.PayBills <- aggregate(data=shed.PayBills, Count ~ Race + State + AnyStudentLoans, FUN=sum)
@@ -3362,6 +3462,21 @@ ggplotly(g23C, width=800, height=350)
 ```
 #### Data source and notes
 
+The survey years included for "Figure 23: Ability to pay student loan bill" are
+```{r PartialSL.SY, results = 'asis'}
+survey_years(shed.PartialSL$SurveyYear)
+```
+
+The survey years included for "Figure 23: Ability to pay rent or mortgage bill" are
+```{r PartialRent.SY, results = 'asis'}
+survey_years(shed.PartialRent$SurveyYear)
+```
+
+The survey years included for "Figure 23: Ability to pay credit card bill" are
+```{r PartialCC.SY, results = 'asis'}
+survey_years(shed.PartialCC$SurveyYear)
+```
+
 Survey years 2020 and 2021 not included in "Figure 23: Ability to pay student loan bill" due to the federal student loan repayment pause. 
 
 Note that each of these analyses are limited to those who have each of these bills. Interpret results for groups with small Ns with caution. 
@@ -3422,9 +3537,12 @@ ggplotly(g24, height=350)
 ```
 #### Data source and notes
 
-Limited to those who have student loans. 
+The survey years included for Figure 24 are
+```{r PartialSL400.SY, results = 'asis'}
+survey_years(shed.PartialSL400$SurveyYear)
+```
 
-Survey years 2020 and 2021 not included.
+Limited to those who have student loans. Survey years 2020 and 2021 not included due to the federal student loan repayment pause. 
 
 ```{r PartialSL400.N}
 N.PartialSL400 <- aggregate(data=shed.PartialSL400, Count ~ Race + State, FUN=sum)
@@ -3507,6 +3625,11 @@ ggplotly(g25C, width=800, height=350)
 ```
 #### Data source and notes
 
+The survey years included for Figure 25 are
+```{r PayBills400.SY, results = 'asis'}
+survey_years(shed.PayBills400$SurveyYear)
+```
+
 ```{r PayBills400.N}
 N.PayBills400 <- aggregate(data=shed.PayBills400, Count ~ Race + State + AnyStudentLoans, FUN=sum)
 N.PayBills400 <- N.PayBills400 %>% filter(State=="CA" | AnyStudentLoans=="Yes")
@@ -3588,6 +3711,11 @@ ggplotly(g26C, width=800, height=350)
 ```
 #### Data source and notes
 
+The survey years included for Figure 26 are
+```{r CCApprov.SY, results = 'asis'}
+survey_years(shed.CCApprov$SurveyYear)
+```
+
 ```{r CCApprov.N}
 N.CCApprov <- aggregate(data=shed.CCApprov, Count ~ Race + State + AnyStudentLoans, FUN=sum)
 N.CCApprov <- N.CCApprov %>% filter(State=="CA" | AnyStudentLoans=="Yes")
@@ -3637,6 +3765,11 @@ ggplotly(g27, width=800, height=350)
 # , tooltip="text"
 ```
 #### Data source and notes
+
+The survey years included for Figure 27 are
+```{r CreditDeny.SY, results = 'asis'}
+survey_years(shed.CreditDeny$SurveyYear)
+```
 
 ```{r CreditDeny.N}
 N.CreditDeny <- aggregate(data=shed.CreditDeny, Count ~ Race + State + AnyStudentLoans, FUN=sum)
@@ -3817,7 +3950,7 @@ ggplotly(g28E, width=800, height=350)
 # , text=`For Tooltip`
 # , tooltip="text"
 ```
-#### Figure 28: FRPL
+#### Figure 28: Free or reduced price lunch
 ```{r FRPL}
 # FRPL: # Free or reduced price school lunches - In the past 12 months, have you [and/or your spouse/ parnter] received any of the following? 
 
@@ -3851,6 +3984,36 @@ ggplotly(g28F, width=800, height=350)
 # , tooltip="text"
 ```
 #### Data source and notes
+
+The survey years included for "Figure 28: Social Security" are
+```{r SocSec.SY, results = 'asis'}
+survey_years(shed.SocSec$SurveyYear)
+```
+
+The survey years included for "Figure 28: Cash assistance" are
+```{r Welfare.SY, results = 'asis'}
+survey_years(shed.Welfare$SurveyYear)
+```
+
+The survey years included for "Figure 28: EITC" are
+```{r EITC.SY, results = 'asis'}
+survey_years(shed.EITC$SurveyYear)
+```
+
+The survey years included for "Figure 28: SNAP" are
+```{r SNAP.SY, results = 'asis'}
+survey_years(shed.SNAP$SurveyYear)
+```
+
+The survey years included for "Figure 28: Housing assistance" are
+```{r HouseAssist.SY, results = 'asis'}
+survey_years(shed.HouseAssist$SurveyYear)
+```
+
+The survey years included for "Figure 28: Free or reduced price lunch" are
+```{r FRPL.SY, results = 'asis'}
+survey_years(shed.FRPL$SurveyYear)
+```
 
 ```{r SocSec.N}
 N.SocSec <- aggregate(data=shed.SocSec, Count ~ Race + State + AnyStudentLoans, FUN=sum)
@@ -3968,6 +4131,16 @@ ggplotly(g29B, width=800, height=350)
 # , tooltip="text"
 ```
 #### Data source and notes
+
+The survey years included for "Figure 29: Cover expenses with savings" are
+```{r ThreeMonSave.SY, results = 'asis'}
+survey_years(shed.ThreeMonSave$SurveyYear)
+```
+
+The survey years included for "Figure 29: Cover expenses by any means" are
+```{r ThreeMonCover.SY, results = 'asis'}
+survey_years(shed.ThreeMonCover$SurveyYear)
+```
 
 ```{r ThreeMonSave.N}
 N.ThreeMonSave <- aggregate(data=shed.ThreeMonSave, Count ~ Race + State + AnyStudentLoans, FUN=sum)
@@ -4266,11 +4439,18 @@ ggplotly(g30H, width=800, height=350)
 
 Responses are not exclusive to one another. For an example, a respondent could say that they would sell belongings and use a payday loan. Because of this, groups' bars cannot be stacked on top of each other in one chart and are instead presented here in a series of charts. 
 
+The survey years included for Figure 30 are
+```{r CCA400.SY, results = 'asis'}
+survey_years(shed.CCA400$SurveyYear)
+# Running survey_years for just one of these variables is sufficient. I have checked and verified that the survey years are the same for all of these variables.
+```
+
 ```{r CCA400.N}
 N.CCA400 <- aggregate(data=shed.CCA400, Count ~ Race + State + AnyStudentLoans, FUN=sum)
 N.CCA400 <- N.CCA400 %>% filter(State=="CA" | AnyStudentLoans=="Yes")
 names(N.CCA400) <- c("Group", "State", "Student loan borrower", "Survey respondents")
 kable(N.CCA400, caption="N size by group for Figure 30") %>% kable_paper("hover", full_width = F)
+# I have checked and verified that these variables all have Ns that are all roughly equal. 
 ```
 
 ***
@@ -4348,6 +4528,11 @@ ggplotly(g31C, width=800, height=350)
 # , tooltip="text"
 ```
 #### Data source and notes
+
+The survey years included for Figure 31 are
+```{r EdPayoff1.SY, results = 'asis'}
+survey_years(shed.EdPayoff1$SurveyYear)
+```
 
 ```{r EdPayoff1.N}
 N.EdPayoff1 <- aggregate(data=shed.EdPayoff1, Count ~ Race + State + AnyStudentLoans, FUN=sum)
@@ -4501,17 +4686,24 @@ ggplotly(g32D, width=800, height=350)
 ```
 #### Data source and notes
 
+The survey years included for "Figure 32: Different field" are
+```{r DiffField1.SY, results = 'asis'}
+survey_years(shed.DiffField1$SurveyYear)
+```
 
-The survey years included for DiffSchool1 are
+The survey years included for "Figure 32: Different school" are
 ```{r DiffSchool1.SY, results = 'asis'}
-allYears <- rev(unique(shed.DiffSchool1$SurveyYear))
-numYears <- length(allYears)
-if(numYears==2){cat(allYears[1], " and ", allYears[2], ".", sep="")}
-if(numYears==3){cat(allYears[1], ", ", allYears[2], ", and ", allYears[3], ".", sep="")}
-if(numYears==4){cat(allYears[1], ", ", allYears[2], ", ", allYears[3], ", and ", allYears[4], ".", sep="")}
-if(numYears==5){cat(allYears[1], ", ", allYears[2], ", ", allYears[3], ", ", allYears[4], ", and ", allYears[5], ".", sep="")}
-if(numYears==6){cat(allYears[1], ", ", allYears[2], ", ", allYears[3], ", ", allYears[4], ", ", allYears[5], ", and ", allYears[6], ".", sep="")}
-if(numYears==7){cat(allYears[1], ", ", allYears[2], ", ", allYears[3], ", ", allYears[4], ", ", allYears[5], ", ", allYears[6], ", and ", allYears[7], ".", sep="")}
+survey_years(shed.DiffSchool1$SurveyYear)
+```
+
+The survey years included for "Figure 32: Less education" are
+```{r LessEd1.SY, results = 'asis'}
+survey_years(shed.LessEd1$SurveyYear)
+```
+
+The survey years included for "Figure 32: More education" are
+```{r MoreEd1.SY, results = 'asis'}
+survey_years(shed.MoreEd1$SurveyYear)
 ```
 
 Interpret the "California student loan borrowers" results with caution due to small sample size. 
@@ -4586,6 +4778,11 @@ ggplotly(g33, width=800, height=350)
 # , tooltip="text"
 ```
 #### Data source and notes
+
+The survey years included for Figure 33 are
+```{r Gender.SY, results = 'asis'}
+survey_years(shed.Gender$SurveyYear)
+```
 
 The gender variable, as collected and reported by SHED, only has "male" and "female" values. 
 
@@ -4670,6 +4867,11 @@ ggplotly(g34C, width=800, height=350)
 ```
 #### Data source and notes
 
+The survey years included for Figure 34 are
+```{r InstLevel.SY, results = 'asis'}
+survey_years(shed.InstLevel$SurveyYear)
+```
+
 Only includes those who have college experience. 
 
 ```{r InstLevel.N}
@@ -4752,6 +4954,11 @@ ggplotly(g35C, width=800, height=350)
 # , tooltip="text"
 ```
 #### Data source and notes
+
+The survey years included for Figure 35 are
+```{r InstControl.SY, results = 'asis'}
+survey_years(shed.InstControl$SurveyYear)
+```
 
 Only includes those who have college experience. 
 
