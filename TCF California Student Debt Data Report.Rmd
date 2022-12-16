@@ -4527,49 +4527,52 @@ tblEdPayoff1$variable <- factor(tblEdPayoff1$variable, levels = c("Financial cos
 ##### Responses to "Overall, how would you say the lifetime financial benefits of your [current/most recent] educational program compare to its financial costs?"
 ```{r figure31A}
 tblEdPayoff1.CA.Borrow <- tblEdPayoff1 %>% filter(State=="CA") %>% filter(AnyStudentLoans=="Yes")
-g31A <- ggplot(data=tblEdPayoff1.CA.Borrow, mapping=aes(y=Race, x=`Share`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of student loan borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
 
-ggplotly(g31A, width=800, height=350)
+tblEdPayoff1.CA.Borrow$`For Tooltip` <- paste(
+  "State: ", tblEdPayoff1.CA.Borrow$State, '\n',
+  "Group: ", tblEdPayoff1.CA.Borrow$Race, '\n',
+  "Opinion: ", tblEdPayoff1.CA.Borrow$variable, '\n',
+  "Share: ", percent(tblEdPayoff1.CA.Borrow$`Share`, accuracy=0.1), 
+  sep=""
+)
 
-# dataset$`For Tooltip` <- paste(
-#   "var1: ", dataset$variable, '\n', 
-#   "var2: ", dataset$variable, 
-#   sep=""
-# )
-# , text=`For Tooltip`
-# , tooltip="text"
+g31A <- ggplot(data=tblEdPayoff1.CA.Borrow, mapping=aes(y=Race, x=`Share`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of student loan borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+
+ggplotly(g31A, width=800, height=350, tooltip="text")
 ```
 #### Figure 31: Rest of U.S. borrowers
 ##### Responses to "Overall, how would you say the lifetime financial benefits of your [current/most recent] educational program compare to its financial costs?"
 ```{r figure31B}
 tblEdPayoff1.US.Borrow <- tblEdPayoff1 %>% filter(State=="Rest of U.S.") %>% filter(AnyStudentLoans=="Yes")
-g31B <- ggplot(data=tblEdPayoff1.US.Borrow, mapping=aes(y=Race, x=`Share`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of student loan borrowers in rest of U.S.", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
 
-ggplotly(g31B, width=800, height=350)
+tblEdPayoff1.US.Borrow$`For Tooltip` <- paste(
+  "State: ", tblEdPayoff1.US.Borrow$State, '\n',
+  "Group: ", tblEdPayoff1.US.Borrow$Race, '\n',
+  "Opinion: ", tblEdPayoff1.US.Borrow$variable, '\n',
+  "Share: ", percent(tblEdPayoff1.US.Borrow$`Share`, accuracy=0.1), 
+  sep=""
+)
 
-# dataset$`For Tooltip` <- paste(
-#   "var1: ", dataset$variable, '\n', 
-#   "var2: ", dataset$variable, 
-#   sep=""
-# )
-# , text=`For Tooltip`
-# , tooltip="text"
+g31B <- ggplot(data=tblEdPayoff1.US.Borrow, mapping=aes(y=Race, x=`Share`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of student loan borrowers in rest of U.S.", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+
+ggplotly(g31B, width=800, height=350, tooltip="text")
 ```
 #### Figure 31: CA non-borrowers
 ##### Responses to "Overall, how would you say the lifetime financial benefits of your [current/most recent] educational program compare to its financial costs?"
 ```{r figure31C}
 tblEdPayoff1.CA.Nonborrow <- tblEdPayoff1 %>% filter(State=="CA") %>% filter(AnyStudentLoans=="No")
-g31C <- ggplot(data=tblEdPayoff1.CA.Nonborrow, mapping=aes(y=Race, x=`Share`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of non-borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
 
-ggplotly(g31C, width=800, height=350)
+tblEdPayoff1.CA.Nonborrow$`For Tooltip` <- paste(
+  "State: ", tblEdPayoff1.CA.Nonborrow$State, '\n',
+  "Group: ", tblEdPayoff1.CA.Nonborrow$Race, '\n',
+  "Opinion: ", tblEdPayoff1.CA.Nonborrow$variable, '\n',
+  "Share: ", percent(tblEdPayoff1.CA.Nonborrow$`Share`, accuracy=0.1), 
+  sep=""
+)
 
-# dataset$`For Tooltip` <- paste(
-#   "var1: ", dataset$variable, '\n', 
-#   "var2: ", dataset$variable, 
-#   sep=""
-# )
-# , text=`For Tooltip`
-# , tooltip="text"
+g31C <- ggplot(data=tblEdPayoff1.CA.Nonborrow, mapping=aes(y=Race, x=`Share`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of non-borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+
+ggplotly(g31C, width=800, height=350, tooltip="text")
 ```
 #### Data source and notes
 
@@ -4614,17 +4617,17 @@ tblDiffField1$Group <- factor(tblDiffField1$Group, levels=c("California non-borr
 ```
 ##### Responses to "If you could go back and make your education decisions again, would you have chosen a different field of study?"
 ```{r figure32A}
-g32A <- ggplot(data=tblDiffField1, mapping=aes(y=Race, x=`Share`, fill=Group)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who would have chosen a different field of study") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
+tblDiffField1$`For Tooltip` <- paste(
+  "State: ", tblDiffField1$State, '\n',
+  "Student loan borrowers: ", tblDiffField1$AnyStudentLoans, '\n',
+  "Group: ", tblDiffField1$Race, '\n',
+  "Share: ", percent(tblDiffField1$Share, accuracy=0.1),
+  sep=""
+)
 
-ggplotly(g32A, width=800, height=350)
+g32A <- ggplot(data=tblDiffField1, mapping=aes(y=Race, x=`Share`, fill=Group, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who would have chosen a different field of study", fill="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
 
-# dataset$`For Tooltip` <- paste(
-#   "var1: ", dataset$variable, '\n', 
-#   "var2: ", dataset$variable, 
-#   sep=""
-# )
-# , text=`For Tooltip`
-# , tooltip="text"
+ggplotly(g32A, width=800, height=350, tooltip="text")
 ```
 #### Figure 32: Different school
 ```{r DiffSchool}
@@ -4648,17 +4651,17 @@ tblDiffSchool1$Group <- factor(tblDiffSchool1$Group, levels=c("California non-bo
 ```
 ##### Responses to "If you could go back and make your education decisions again, would you have attended a different school?"
 ```{r figure32B}
-g32B <- ggplot(data=tblDiffSchool1, mapping=aes(y=Race, x=`Share`, fill=Group)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who would have chosen a different school") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
+tblDiffSchool1$`For Tooltip` <- paste(
+  "State: ", tblDiffSchool1$State, '\n',
+  "Student loan borrowers: ", tblDiffSchool1$AnyStudentLoans, '\n',
+  "Group: ", tblDiffSchool1$Race, '\n',
+  "Share: ", percent(tblDiffSchool1$Share, accuracy=0.1),
+  sep=""
+)
 
-ggplotly(g32B, width=800, height=350)
+g32B <- ggplot(data=tblDiffSchool1, mapping=aes(y=Race, x=`Share`, fill=Group, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who would have chosen a different school", fill="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
 
-# dataset$`For Tooltip` <- paste(
-#   "var1: ", dataset$variable, '\n', 
-#   "var2: ", dataset$variable, 
-#   sep=""
-# )
-# , text=`For Tooltip`
-# , tooltip="text"
+ggplotly(g32B, width=800, height=350, tooltip="text")
 ```
 #### Figure 32: Less education
 ```{r LessEd}
@@ -4682,17 +4685,17 @@ tblLessEd1$Group <- factor(tblLessEd1$Group, levels=c("California non-borrowers"
 ```
 ##### Responses to "If you could go back and make your education decisions again, would have not attended college or completed less education?" 
 ```{r figure32C}
-g32C <- ggplot(data=tblLessEd1, mapping=aes(y=Race, x=`Share`, fill=Group)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who would have completed less education") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
+tblLessEd1$`For Tooltip` <- paste(
+  "State: ", tblLessEd1$State, '\n',
+  "Student loan borrowers: ", tblLessEd1$AnyStudentLoans, '\n',
+  "Group: ", tblLessEd1$Race, '\n',
+  "Share: ", percent(tblLessEd1$Share, accuracy=0.1),
+  sep=""
+)
 
-ggplotly(g32C, width=800, height=350)
+g32C <- ggplot(data=tblLessEd1, mapping=aes(y=Race, x=`Share`, fill=Group, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who would have completed less education", fill="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
 
-# dataset$`For Tooltip` <- paste(
-#   "var1: ", dataset$variable, '\n', 
-#   "var2: ", dataset$variable, 
-#   sep=""
-# )
-# , text=`For Tooltip`
-# , tooltip="text"
+ggplotly(g32C, width=800, height=350, tooltip="text")
 ```
 #### Figure 32: More education
 ```{r MoreEd}
@@ -4716,17 +4719,17 @@ tblMoreEd1$Group <- factor(tblMoreEd1$Group, levels=c("California non-borrowers"
 ```
 ##### Responses to "If you could go back and make your education decisions again, would you have completed more education?"
 ```{r figure32D}
-g32D <- ggplot(data=tblMoreEd1, mapping=aes(y=Race, x=`Share`, fill=Group)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who would have completed more education") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
+tblMoreEd1$`For Tooltip` <- paste(
+  "State: ", tblMoreEd1$State, '\n',
+  "Student loan borrowers: ", tblMoreEd1$AnyStudentLoans, '\n',
+  "Group: ", tblMoreEd1$Race, '\n',
+  "Share: ", percent(tblMoreEd1$Share, accuracy=0.1),
+  sep=""
+)
 
-ggplotly(g32D, width=800, height=350)
+g32D <- ggplot(data=tblMoreEd1, mapping=aes(y=Race, x=`Share`, fill=Group, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who would have completed more education", fill="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
 
-# dataset$`For Tooltip` <- paste(
-#   "var1: ", dataset$variable, '\n', 
-#   "var2: ", dataset$variable, 
-#   sep=""
-# )
-# , text=`For Tooltip`
-# , tooltip="text"
+ggplotly(g32D, width=800, height=350, tooltip="text")
 ```
 #### Data source and notes
 
@@ -4809,17 +4812,17 @@ tblGender$Group <- factor(tblGender$Group, levels=c("California non-borrowers", 
 ```
 ##### Share who are male: 
 ```{r figure33}
-g33 <- ggplot(data=tblGender, mapping=aes(y=Race, x=`Share of borrowers who are male`, fill=Group)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who are male") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
+tblGender$`For Tooltip` <- paste(
+  "State: ", tblGender$State, '\n',
+  "Student loan borrowers: ", tblGender$AnyStudentLoans, '\n',
+  "Group: ", tblGender$Race, '\n',
+  "Share who are male: ", percent(tblGender$`Share of borrowers who are male`, accuracy=0.1),
+  sep=""
+)
 
-ggplotly(g33, width=800, height=350)
+g33 <- ggplot(data=tblGender, mapping=aes(y=Race, x=`Share of borrowers who are male`, fill=Group)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who are male", fill="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Dark2") 
 
-# dataset$`For Tooltip` <- paste(
-#   "var1: ", dataset$variable, '\n', 
-#   "var2: ", dataset$variable, 
-#   sep=""
-# )
-# , text=`For Tooltip`
-# , tooltip="text"
+ggplotly(g33, width=800, height=350, tooltip="text")
 ```
 #### Data source and notes
 
@@ -4865,49 +4868,55 @@ tblInstLevel$variable <- factor(tblInstLevel$variable, levels = c("Less than two
 ##### Level of higher education institution
 ```{r figure34A}
 tblInstLevel.CA.Borrow <- tblInstLevel %>% filter(State=="CA") %>% filter(AnyStudentLoans=="Yes")
-g34A <- ggplot(data=tblInstLevel.CA.Borrow, mapping=aes(y=Race, x=`Share`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of student loan borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Set2") 
 
-ggplotly(g34A, width=800, height=350)
+tblInstLevel.CA.Borrow$`For Tooltip` <- paste(
+  "State: ", tblInstLevel.CA.Borrow$State, '\n',
+  "Student loan borrowers: ", tblInstLevel.CA.Borrow$AnyStudentLoans, '\n',
+  "Group: ", tblInstLevel.CA.Borrow$Race, '\n',
+  "Level of higher education institution: ", tblInstLevel.CA.Borrow$variable, '\n',
+  "Share: ", percent(tblInstLevel.CA.Borrow$Share, accuracy=0.1), 
+  sep=""
+)
 
-# dataset$`For Tooltip` <- paste(
-#   "var1: ", dataset$variable, '\n', 
-#   "var2: ", dataset$variable, 
-#   sep=""
-# )
-# , text=`For Tooltip`
-# , tooltip="text"
+g34A <- ggplot(data=tblInstLevel.CA.Borrow, mapping=aes(y=Race, x=`Share`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of student loan borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Set2") 
+
+ggplotly(g34A, width=800, height=350, tooltip="text")
 ```
 #### Figure 34: Rest of U.S. borrowers
 ##### Level of higher education institution
 ```{r figure34B}
 tblInstLevel.US.Borrow <- tblInstLevel %>% filter(State=="Rest of U.S.") %>% filter(AnyStudentLoans=="Yes")
-g34B <- ggplot(data=tblInstLevel.US.Borrow, mapping=aes(y=Race, x=`Share`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of student loan borrowers in rest of U.S.", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Set2") 
 
-ggplotly(g34B, width=800, height=350)
+tblInstLevel.US.Borrow$`For Tooltip` <- paste(
+  "State: ", tblInstLevel.US.Borrow$State, '\n',
+  "Student loan borrowers: ", tblInstLevel.US.Borrow$AnyStudentLoans, '\n',
+  "Group: ", tblInstLevel.US.Borrow$Race, '\n',
+  "Level of higher education institution: ", tblInstLevel.US.Borrow$variable, '\n',
+  "Share: ", percent(tblInstLevel.US.Borrow$Share, accuracy=0.1), 
+  sep=""
+)
 
-# dataset$`For Tooltip` <- paste(
-#   "var1: ", dataset$variable, '\n', 
-#   "var2: ", dataset$variable, 
-#   sep=""
-# )
-# , text=`For Tooltip`
-# , tooltip="text"
+g34B <- ggplot(data=tblInstLevel.US.Borrow, mapping=aes(y=Race, x=`Share`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of student loan borrowers in rest of U.S.", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Set2") 
+
+ggplotly(g34B, width=800, height=350, tooltip="text")
 ```
 #### Figure 34: CA non-borrowers
 ##### Level of higher education institution
 ```{r figure34C}
 tblInstLevel.CA.Nonborrow <- tblInstLevel %>% filter(State=="CA") %>% filter(AnyStudentLoans=="No")
-g34C <- ggplot(data=tblInstLevel.CA.Nonborrow, mapping=aes(y=Race, x=`Share`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of non-borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Set2") 
 
-ggplotly(g34C, width=800, height=350)
+tblInstLevel.CA.Nonborrow$`For Tooltip` <- paste(
+  "State: ", tblInstLevel.CA.Nonborrow$State, '\n',
+  "Student loan borrowers: ", tblInstLevel.CA.Nonborrow$AnyStudentLoans, '\n',
+  "Group: ", tblInstLevel.CA.Nonborrow$Race, '\n',
+  "Level of higher education institution: ", tblInstLevel.CA.Nonborrow$variable, '\n',
+  "Share: ", percent(tblInstLevel.CA.Nonborrow$Share, accuracy=0.1), 
+  sep=""
+)
 
-# dataset$`For Tooltip` <- paste(
-#   "var1: ", dataset$variable, '\n', 
-#   "var2: ", dataset$variable, 
-#   sep=""
-# )
-# , text=`For Tooltip`
-# , tooltip="text"
+g34C <- ggplot(data=tblInstLevel.CA.Nonborrow, mapping=aes(y=Race, x=`Share`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of non-borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Set2") 
+
+ggplotly(g34C, width=800, height=350, tooltip="text")
 ```
 #### Data source and notes
 
@@ -4953,49 +4962,55 @@ tblInstControl$variable <- factor(tblInstControl$variable, levels = c("Private f
 ##### Control of higher education institution
 ```{r figure35A}
 tblInstControl.CA.Borrow <- tblInstControl %>% filter(State=="CA") %>% filter(AnyStudentLoans=="Yes")
-g35A <- ggplot(data=tblInstControl.CA.Borrow, mapping=aes(y=Race, x=`Share`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of student loan borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Set2") 
 
-ggplotly(g35A, width=800, height=350)
+tblInstControl.CA.Borrow$`For Tooltip` <- paste(
+  "State: ", tblInstControl.CA.Borrow$State, '\n',
+  "Student loan borrowers: ", tblInstControl.CA.Borrow$AnyStudentLoans, '\n',
+  "Group: ", tblInstControl.CA.Borrow$Race, '\n',
+  "Control of higher education institution: ", tblInstControl.CA.Borrow$variable, '\n',
+  "Share: ", percent(tblInstControl.CA.Borrow$Share, accuracy=0.1), 
+  sep=""
+)
 
-# dataset$`For Tooltip` <- paste(
-#   "var1: ", dataset$variable, '\n', 
-#   "var2: ", dataset$variable, 
-#   sep=""
-# )
-# , text=`For Tooltip`
-# , tooltip="text"
+g35A <- ggplot(data=tblInstControl.CA.Borrow, mapping=aes(y=Race, x=`Share`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of student loan borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Set2") 
+
+ggplotly(g35A, width=800, height=350, tooltip="text")
 ```
 #### Figure 35: Rest of U.S. borrowers
 ##### Control of higher education institution
 ```{r figure35B}
 tblInstControl.US.Borrow <- tblInstControl %>% filter(State=="Rest of U.S.") %>% filter(AnyStudentLoans=="Yes")
-g35B <- ggplot(data=tblInstControl.US.Borrow, mapping=aes(y=Race, x=`Share`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of student loan borrowers in rest of U.S.", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Set2") 
 
-ggplotly(g35B, width=800, height=350)
+tblInstControl.US.Borrow$`For Tooltip` <- paste(
+  "State: ", tblInstControl.US.Borrow$State, '\n',
+  "Student loan borrowers: ", tblInstControl.US.Borrow$AnyStudentLoans, '\n',
+  "Group: ", tblInstControl.US.Borrow$Race, '\n',
+  "Control of higher education institution: ", tblInstControl.US.Borrow$variable, '\n',
+  "Share: ", percent(tblInstControl.US.Borrow$Share, accuracy=0.1), 
+  sep=""
+)
 
-# dataset$`For Tooltip` <- paste(
-#   "var1: ", dataset$variable, '\n', 
-#   "var2: ", dataset$variable, 
-#   sep=""
-# )
-# , text=`For Tooltip`
-# , tooltip="text"
+g35B <- ggplot(data=tblInstControl.US.Borrow, mapping=aes(y=Race, x=`Share`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of student loan borrowers in rest of U.S.", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Set2") 
+
+ggplotly(g35B, width=800, height=350, tooltip="text")
 ```
 #### Figure 35: CA non-borrowers
 ##### Control of higher education institution
 ```{r figure35C}
 tblInstControl.CA.Nonborrow <- tblInstControl %>% filter(State=="CA") %>% filter(AnyStudentLoans=="No")
-g35C <- ggplot(data=tblInstControl.CA.Nonborrow, mapping=aes(y=Race, x=`Share`, fill=variable)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of non-borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Set2") 
 
-ggplotly(g35C, width=800, height=350)
+tblInstControl.CA.Nonborrow$`For Tooltip` <- paste(
+  "State: ", tblInstControl.CA.Nonborrow$State, '\n',
+  "Student loan borrowers: ", tblInstControl.CA.Nonborrow$AnyStudentLoans, '\n',
+  "Group: ", tblInstControl.CA.Nonborrow$Race, '\n',
+  "Control of higher education institution: ", tblInstControl.CA.Nonborrow$variable, '\n',
+  "Share: ", percent(tblInstControl.CA.Nonborrow$Share, accuracy=0.1), 
+  sep=""
+)
 
-# dataset$`For Tooltip` <- paste(
-#   "var1: ", dataset$variable, '\n', 
-#   "var2: ", dataset$variable, 
-#   sep=""
-# )
-# , text=`For Tooltip`
-# , tooltip="text"
+g35C <- ggplot(data=tblInstControl.CA.Nonborrow, mapping=aes(y=Race, x=`Share`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of non-borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Set2") 
+
+ggplotly(g35C, width=800, height=350, tooltip="text")
 ```
 #### Data source and notes
 
@@ -6642,33 +6657,33 @@ Q26 <- inner_join(x=Q26.2, y=Q26.1, by=c("CIPCODE", "CREDDESC"))
 Q26.Bplot <- Q26 %>% filter(`Share who are BKAA` != 0)
 Q26.Hplot <- Q26 %>% filter(`Share who are HISP` != 0)
 ```
-#### California programs by average earnings and Black/African-American enrollment
+#### Figure 36: California programs by average earnings and Black/African-American enrollment
 ```{r figure36A}
-g36A <- ggplot(data=Q26.Bplot, mapping=aes(x=`Rank of BKAA share`, y=`Rank of weighted earnings`)) + geom_point(stat="identity") + facet_wrap(`CREDDESC` ~ .) + labs(x="Rank of Black share of completers", y="Rank of earnings among completers") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Set2") 
+Q26.Bplot$`For Tooltip` <- paste(
+  "Program name: ", Q26.Bplot$CIPDESC, '\n',
+  "Credential level: ", Q26.Bplot$CREDDESC, '\n',
+  "Rank of Black share of completers: ", as.integer(Q26.Bplot$`Rank of BKAA share`), '\n',
+  "Rank of earnings among completers: ", as.integer(Q26.Bplot$`Rank of weighted earnings`), 
+  sep=""
+)
 
-ggplotly(g36A, width=800, height=600)
+g36A <- ggplot(data=Q26.Bplot, mapping=aes(x=`Rank of BKAA share`, y=`Rank of weighted earnings`, fill=CREDDESC, text=`For Tooltip`)) + geom_point(stat="identity") + facet_wrap(`CREDDESC` ~ .) + labs(x="Rank of Black share of completers", y="Rank of earnings among completers") + theme(text=element_text(family="Optima"), legend.position="none") + scale_fill_brewer(palette="Set2") 
 
-# dataset$`For Tooltip` <- paste(
-#   "var1: ", dataset$variable, '\n', 
-#   "var2: ", dataset$variable, 
-#   sep=""
-# )
-# , text=`For Tooltip`
-# , tooltip="text"
+ggplotly(g36A, width=800, height=600, tooltip="text")
 ```
-#### California programs by average earnings and Hispanic/Latino enrollment
+#### Figure 36: California programs by average earnings and Hispanic/Latino enrollment
 ```{r figure36B}
-g36B <- ggplot(data=Q26.Hplot, mapping=aes(x=`Rank of HISP share`, y=`Rank of weighted earnings`)) + geom_point(stat="identity") + facet_wrap(`CREDDESC` ~ .) + labs(x="Rank of Hispanic share of completers", y="Rank of earnings among completers") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Set2") 
+Q26.Hplot$`For Tooltip` <- paste(
+  "Program name: ", Q26.Hplot$CIPDESC, '\n',
+  "Credential level: ", Q26.Hplot$CREDDESC, '\n',
+  "Rank of Hispanic share of completers: ", as.integer(Q26.Hplot$`Rank of HISP share`), '\n',
+  "Rank of earnings among completers: ", as.integer(Q26.Hplot$`Rank of weighted earnings`), 
+  sep=""
+)
 
-ggplotly(g36B, width=800, height=600)
+g36B <- ggplot(data=Q26.Hplot, mapping=aes(x=`Rank of HISP share`, y=`Rank of weighted earnings`, fill=CREDDESC, text=`For Tooltip`)) + geom_point(stat="identity") + facet_wrap(`CREDDESC` ~ .) + labs(x="Rank of Hispanic share of completers", y="Rank of earnings among completers") + theme(text=element_text(family="Optima"), legend.position="none") + scale_fill_brewer(palette="Set2") 
 
-# dataset$`For Tooltip` <- paste(
-#   "var1: ", dataset$variable, '\n', 
-#   "var2: ", dataset$variable, 
-#   sep=""
-# )
-# , text=`For Tooltip`
-# , tooltip="text"
+ggplotly(g36B, width=800, height=600, tooltip="text")
 ```
 #### Data source and notes
 
@@ -6723,34 +6738,33 @@ Q27 <- inner_join(x=Q27, y=Q26.1, by=c("CIPCODE", "CREDDESC"))
 Q27.Bplot <- Q27 %>% filter(`Share who are BKAA` != 0)
 Q27.Hplot <- Q27 %>% filter(`Share who are HISP` != 0)
 ```
-#### California programs by average debt and Black/African-American enrollment
+#### Figure 37: California programs by average debt and Black/African-American enrollment
 ```{r figure37A}
-g37A <- ggplot(data=Q27.Bplot, mapping=aes(x=`Rank of BKAA share`, y=`Rank of weighted debt`)) + geom_point(stat="identity") + facet_wrap(`CREDDESC` ~ .) + labs(x="Rank of Black share of completers", y="Rank of debt among completers") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Set2") 
+Q27.Bplot$`For Tooltip` <- paste(
+  "Program name: ", Q27.Bplot$CIPDESC, '\n',
+  "Credential level: ", Q27.Bplot$CREDDESC, '\n',
+  "Rank of Black share of completers: ", as.integer(Q27.Bplot$`Rank of BKAA share`), '\n',
+  "Rank of debt among completers: ", as.integer(Q27.Bplot$`Rank of weighted debt`), 
+  sep=""
+)
 
-ggplotly(g37A, width=800, height=600)
+g37A <- ggplot(data=Q27.Bplot, mapping=aes(x=`Rank of BKAA share`, y=`Rank of weighted debt`, fill=CREDDESC, text=`For Tooltip`)) + geom_point(stat="identity") + facet_wrap(`CREDDESC` ~ .) + labs(x="Rank of Black share of completers", y="Rank of debt among completers") + theme(text=element_text(family="Optima"), legend.position="none") + scale_fill_brewer(palette="Set2") 
 
-# dataset$`For Tooltip` <- paste(
-#   "var1: ", dataset$variable, '\n', 
-#   "var2: ", dataset$variable, 
-#   sep=""
-# )
-# , text=`For Tooltip`
-# , tooltip="text"
+ggplotly(g37A, width=800, height=600, tooltip="text")
 ```
-#### California programs by average debt and Hispanic/Latino enrollment
+#### Figure 37: California programs by average debt and Hispanic/Latino enrollment
 ```{r figure37B}
+Q27.Hplot$`For Tooltip` <- paste(
+  "Program name: ", Q27.Hplot$CIPDESC, '\n',
+  "Credential level: ", Q27.Hplot$CREDDESC, '\n',
+  "Rank of Hispanic share of completers: ", as.integer(Q27.Hplot$`Rank of HISP share`), '\n',
+  "Rank of debt among completers: ", as.integer(Q27.Hplot$`Rank of weighted debt`), 
+  sep=""
+)
 
-g36B <- ggplot(data=Q27.Hplot, mapping=aes(x=`Rank of HISP share`, y=`Rank of weighted debt`, fill=CREDDESC)) + geom_point(stat="identity") + facet_wrap(`CREDDESC` ~ .) + labs(x="Rank of Hispanic share of completers", y="Rank of debt among completers") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Set2") 
+g36B <- ggplot(data=Q27.Hplot, mapping=aes(x=`Rank of HISP share`, y=`Rank of weighted debt`, fill=CREDDESC, text=`For Tooltip`)) + geom_point(stat="identity") + facet_wrap(`CREDDESC` ~ .) + labs(x="Rank of Hispanic share of completers", y="Rank of debt among completers") + theme(text=element_text(family="Optima"), legend.position="none") + scale_fill_brewer(palette="Set2") 
 
-ggplotly(g36B, width=800, height=600)
-
-# dataset$`For Tooltip` <- paste(
-#   "var1: ", dataset$variable, '\n', 
-#   "var2: ", dataset$variable, 
-#   sep=""
-# )
-# , text=`For Tooltip`
-# , tooltip="text"
+ggplotly(g36B, width=800, height=600, tooltip="text")
 ```
 #### Data source and notes
 
