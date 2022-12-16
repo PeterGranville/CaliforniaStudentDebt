@@ -2531,6 +2531,7 @@ tblEdAttain.CA.Borrow <- tblEdAttain %>% filter(State=="CA") %>% filter(AnyStude
 
 tblEdAttain.CA.Borrow$`For Tooltip` <- paste(
   "State: ", tblEdAttain.CA.Borrow$State, '\n',
+  "Student loan borrowers: ", tblEdAttain.CA.Borrow$AnyStudentLoans, '\n',
   "Group: ", tblEdAttain.CA.Borrow$Group, '\n',
   "Highest level of education: ", tblEdAttain.CA.Borrow$variable, '\n',
   "Share: ", percent(tblEdAttain.CA.Borrow$`Share of borrowers`, accuracy=0.1),
@@ -2548,6 +2549,7 @@ tblEdAttain.US.Borrow <- tblEdAttain %>% filter(State=="Rest of U.S.") %>% filte
 
 tblEdAttain.US.Borrow$`For Tooltip` <- paste(
   "State: ", tblEdAttain.US.Borrow$State, '\n',
+  "Student loan borrowers: ", tblEdAttain.US.Borrow$AnyStudentLoans, '\n',
   "Group: ", tblEdAttain.US.Borrow$Group, '\n',
   "Highest level of education: ", tblEdAttain.US.Borrow$variable, '\n',
   "Share: ", percent(tblEdAttain.US.Borrow$`Share of borrowers`, accuracy=0.1),
@@ -2565,6 +2567,7 @@ tblEdAttain.CA.Nonborrow <- tblEdAttain %>% filter(State=="CA") %>% filter(AnySt
 
 tblEdAttain.CA.Nonborrow$`For Tooltip` <- paste(
   "State: ", tblEdAttain.CA.Nonborrow$State, '\n',
+  "Student loan borrowers: ", tblEdAttain.CA.Nonborrow$AnyStudentLoans, '\n',
   "Group: ", tblEdAttain.CA.Nonborrow$Group, '\n',
   "Highest level of education: ", tblEdAttain.CA.Nonborrow$variable, '\n',
   "Share: ", percent(tblEdAttain.CA.Nonborrow$`Share of borrowers`, accuracy=0.1),
@@ -2621,6 +2624,7 @@ tblHomeOwn.CA.Borrow <- tblHomeOwn %>% filter(State=="CA") %>% filter(AnyStudent
 
 tblHomeOwn.CA.Borrow$`For Tooltip` <- paste(
   "State: ", tblHomeOwn.CA.Borrow$State, '\n',
+  "Student loan borrowers: ", tblHomeOwn.CA.Borrow$AnyStudentLoans, '\n',
   "Group: ", tblHomeOwn.CA.Borrow$Race, '\n',
   "Home ownership status: ", tblHomeOwn.CA.Borrow$variable, '\n',
   "Share: ", percent(tblHomeOwn.CA.Borrow$`Share of borrowers`, accuracy=0.1), 
@@ -2638,6 +2642,7 @@ tblHomeOwn.US.Borrow <- tblHomeOwn %>% filter(State=="Rest of U.S.") %>% filter(
 
 tblHomeOwn.US.Borrow$`For Tooltip` <- paste(
   "State: ", tblHomeOwn.US.Borrow$State, '\n',
+  "Student loan borrowers: ", tblHomeOwn.US.Borrow$AnyStudentLoans, '\n',
   "Group: ", tblHomeOwn.US.Borrow$Race, '\n',
   "Home ownership status: ", tblHomeOwn.US.Borrow$variable, '\n',
   "Share: ", percent(tblHomeOwn.US.Borrow$`Share of borrowers`, accuracy=0.1), 
@@ -2655,6 +2660,7 @@ tblHomeOwn.CA.Nonborrow <- tblHomeOwn %>% filter(State=="CA") %>% filter(AnyStud
 
 tblHomeOwn.CA.Nonborrow$`For Tooltip` <- paste(
   "State: ", tblHomeOwn.CA.Nonborrow$State, '\n',
+  "Student loan borrowers: ", tblHomeOwn.CA.Nonborrow$AnyStudentLoans, '\n',
   "Group: ", tblHomeOwn.CA.Nonborrow$Race, '\n',
   "Home ownership status: ", tblHomeOwn.CA.Nonborrow$variable, '\n',
   "Share: ", percent(tblHomeOwn.CA.Nonborrow$`Share of borrowers`, accuracy=0.1), 
@@ -2710,7 +2716,7 @@ tblUnpaidCC$Group <- factor(tblUnpaidCC$Group, levels=c("California non-borrower
 ```{r figure15A}
 tblUnpaidCC$`For Tooltip` <- paste(
   "State: ", tblUnpaidCC$State, '\n',
-  "Student loan borrower: ", tblUnpaidCC$AnyStudentLoans, '\n',
+  "Student loan borrowers: ", tblUnpaidCC$AnyStudentLoans, '\n',
   "Group: ", tblUnpaidCC$Race, '\n',
   "Share with unpaid credit card debt: ", percent(tblUnpaidCC$`Share with unpaid credit card debt`, accuracy=0.1),
   sep=""
@@ -2767,6 +2773,7 @@ tblCCBalance.CA.Borrow <- tblCCBalance %>% filter(State=="CA") %>% filter(AnyStu
 
 tblCCBalance.CA.Borrow$`For Tooltip` <- paste(
   "State: ", tblCCBalance.CA.Borrow$State, '\n',
+  "Student loan borrowers: ", tblCCBalance.CA.Borrow$AnyStudentLoans, '\n',
   "Group: ", tblCCBalance.CA.Borrow$Race, '\n',
   "Frequency of unpaid balance: ", tblCCBalance.CA.Borrow$variable, '\n',
   "Share: ", percent(tblCCBalance.CA.Borrow$`Share of borrowers`, accuracy=0.1),
@@ -2784,6 +2791,7 @@ tblCCBalance.US.Borrow <- tblCCBalance %>% filter(State=="Rest of U.S.") %>% fil
 
 tblCCBalance.US.Borrow$`For Tooltip` <- paste(
   "State: ", tblCCBalance.US.Borrow$State, '\n',
+  "Student loan borrowers: ", tblCCBalance.US.Borrow$AnyStudentLoans, '\n',
   "Group: ", tblCCBalance.US.Borrow$Race, '\n',
   "Frequency of unpaid balance: ", tblCCBalance.US.Borrow$variable, '\n',
   "Share: ", percent(tblCCBalance.US.Borrow$`Share of borrowers`, accuracy=0.1),
@@ -2801,6 +2809,7 @@ tblCCBalance.CA.Nonborrow <- tblCCBalance %>% filter(State=="CA") %>% filter(Any
 
 tblCCBalance.CA.Nonborrow$`For Tooltip` <- paste(
   "State: ", tblCCBalance.CA.Nonborrow$State, '\n',
+  "Student loan borrowers: ", tblCCBalance.CA.Nonborrow$AnyStudentLoans, '\n',
   "Group: ", tblCCBalance.CA.Nonborrow$Race, '\n',
   "Frequency of unpaid balance: ", tblCCBalance.CA.Nonborrow$variable, '\n',
   "Share: ", percent(tblCCBalance.CA.Nonborrow$`Share of borrowers`, accuracy=0.1),
@@ -2863,6 +2872,7 @@ tblSavings.CA.Borrow <- tblSavings %>% filter(State=="CA") %>% filter(AnyStudent
 
 tblSavings.CA.Borrow$`For Tooltip` <- paste(
   "State: ", tblSavings.CA.Borrow$State, '\n',
+  "Student loan borrowers: ", tblSavings.CA.Borrow$AnyStudentLoans, '\n',
   "Group: ", tblSavings.CA.Borrow$Race, '\n',
   "Savings and investments: ", tblSavings.CA.Borrow$variable, '\n',
   "Share: ", percent(tblSavings.CA.Borrow$`Share of borrowers`, accuracy=0.1),
@@ -2880,6 +2890,7 @@ tblSavings.US.Borrow <- tblSavings %>% filter(State=="Rest of U.S.") %>% filter(
 
 tblSavings.US.Borrow$`For Tooltip` <- paste(
   "State: ", tblSavings.US.Borrow$State, '\n',
+  "Student loan borrowers: ", tblSavings.US.Borrow$AnyStudentLoans, '\n',
   "Group: ", tblSavings.US.Borrow$Race, '\n',
   "Savings and investments: ", tblSavings.US.Borrow$variable, '\n',
   "Share: ", percent(tblSavings.US.Borrow$`Share of borrowers`, accuracy=0.1),
@@ -2897,6 +2908,7 @@ tblSavings.CA.Nonborrow <- tblSavings %>% filter(State=="CA") %>% filter(AnyStud
 
 tblSavings.CA.Nonborrow$`For Tooltip` <- paste(
   "State: ", tblSavings.CA.Nonborrow$State, '\n',
+  "Student loan borrowers: ", tblSavings.CA.Nonborrow$AnyStudentLoans, '\n',
   "Group: ", tblSavings.CA.Nonborrow$Race, '\n',
   "Savings and investments: ", tblSavings.CA.Nonborrow$variable, '\n',
   "Share: ", percent(tblSavings.CA.Nonborrow$`Share of borrowers`, accuracy=0.1),
@@ -2960,6 +2972,7 @@ tblTotalInc.CA.Borrow <- tblTotalInc %>% filter(State=="CA") %>% filter(AnyStude
 
 tblTotalInc.CA.Borrow$`For Tooltip` <- paste(
   "State: ", tblTotalInc.CA.Borrow$State, '\n',
+  "Student loan borrowers: ", tblTotalInc.CA.Borrow$AnyStudentLoans, '\n',
   "Group: ", tblTotalInc.CA.Borrow$Race, '\n',
   "Total income: ", tblTotalInc.CA.Borrow$variable, '\n',
   "Share: ", percent(tblTotalInc.CA.Borrow$`Share of borrowers`, accuracy=0.1),
@@ -2977,6 +2990,7 @@ tblTotalInc.US.Borrow <- tblTotalInc %>% filter(State=="Rest of U.S.") %>% filte
 
 tblTotalInc.US.Borrow$`For Tooltip` <- paste(
   "State: ", tblTotalInc.US.Borrow$State, '\n',
+  "Student loan borrowers: ", tblTotalInc.US.Borrow$AnyStudentLoans, '\n',
   "Group: ", tblTotalInc.US.Borrow$Race, '\n',
   "Total income: ", tblTotalInc.US.Borrow$variable, '\n',
   "Share: ", percent(tblTotalInc.US.Borrow$`Share of borrowers`, accuracy=0.1),
@@ -2994,6 +3008,7 @@ tblTotalInc.CA.Nonborrow <- tblTotalInc %>% filter(State=="CA") %>% filter(AnySt
 
 tblTotalInc.CA.Nonborrow$`For Tooltip` <- paste(
   "State: ", tblTotalInc.CA.Nonborrow$State, '\n',
+  "Student loan borrowers: ", tblTotalInc.CA.Nonborrow$AnyStudentLoans, '\n',
   "Group: ", tblTotalInc.CA.Nonborrow$Race, '\n',
   "Total income: ", tblTotalInc.CA.Nonborrow$variable, '\n',
   "Share: ", percent(tblTotalInc.CA.Nonborrow$`Share of borrowers`, accuracy=0.1),
@@ -3051,6 +3066,7 @@ tblFinManage.CA.Borrow <- tblFinManage %>% filter(State=="CA") %>% filter(AnyStu
 
 tblFinManage.CA.Borrow$`For Tooltip` <- paste(
   "State: ", tblFinManage.CA.Borrow$State, '\n',
+  "Student loan borrowers: ", tblFinManage.CA.Borrow$AnyStudentLoans, '\n',
   "Group: ", tblFinManage.CA.Borrow$Race, '\n',
   "Response: ", tblFinManage.CA.Borrow$variable, '\n',
   "Share: ", percent(tblFinManage.CA.Borrow$`Share of borrowers`, accuracy=0.1),
@@ -3068,6 +3084,7 @@ tblFinManage.US.Borrow <- tblFinManage %>% filter(State=="Rest of U.S.") %>% fil
 
 tblFinManage.US.Borrow$`For Tooltip` <- paste(
   "State: ", tblFinManage.US.Borrow$State, '\n',
+  "Student loan borrowers: ", tblFinManage.US.Borrow$AnyStudentLoans, '\n',
   "Group: ", tblFinManage.US.Borrow$Race, '\n',
   "Response: ", tblFinManage.US.Borrow$variable, '\n',
   "Share: ", percent(tblFinManage.US.Borrow$`Share of borrowers`, accuracy=0.1),
@@ -3085,6 +3102,7 @@ tblFinManage.CA.Nonborrow <- tblFinManage %>% filter(State=="CA") %>% filter(Any
 
 tblFinManage.CA.Nonborrow$`For Tooltip` <- paste(
   "State: ", tblFinManage.CA.Nonborrow$State, '\n',
+  "Student loan borrowers: ", tblFinManage.CA.Nonborrow$AnyStudentLoans, '\n',
   "Group: ", tblFinManage.CA.Nonborrow$Race, '\n',
   "Response: ", tblFinManage.CA.Nonborrow$variable, '\n',
   "Share: ", percent(tblFinManage.CA.Nonborrow$`Share of borrowers`, accuracy=0.1),
@@ -3142,6 +3160,7 @@ tblParComp.CA.Borrow <- tblParComp %>% filter(State=="CA") %>% filter(AnyStudent
 
 tblParComp.CA.Borrow$`For Tooltip` <- paste(
   "State: ", tblParComp.CA.Borrow$State, '\n',
+  "Student loan borrowers: ", tblParComp.CA.Borrow$AnyStudentLoans, '\n',
   "Group: ", tblParComp.CA.Borrow$Race, '\n',
   "Comparison to parents: ", tblParComp.CA.Borrow$variable, '\n',
   "Share: ", percent(tblParComp.CA.Borrow$`Share of borrowers`, accuracy=0.1),
@@ -3159,6 +3178,7 @@ tblParComp.US.Borrow <- tblParComp %>% filter(State=="Rest of U.S.") %>% filter(
 
 tblParComp.US.Borrow$`For Tooltip` <- paste(
   "State: ", tblParComp.US.Borrow$State, '\n',
+  "Student loan borrowers: ", tblParComp.US.Borrow$AnyStudentLoans, '\n',
   "Group: ", tblParComp.US.Borrow$Race, '\n',
   "Comparison to parents: ", tblParComp.US.Borrow$variable, '\n',
   "Share: ", percent(tblParComp.US.Borrow$`Share of borrowers`, accuracy=0.1),
@@ -3176,6 +3196,7 @@ tblParComp.CA.Nonborrow <- tblParComp %>% filter(State=="CA") %>% filter(AnyStud
 
 tblParComp.CA.Nonborrow$`For Tooltip` <- paste(
   "State: ", tblParComp.CA.Nonborrow$State, '\n',
+  "Student loan borrowers: ", tblParComp.CA.Nonborrow$AnyStudentLoans, '\n',
   "Group: ", tblParComp.CA.Nonborrow$Race, '\n',
   "Comparison to parents: ", tblParComp.CA.Nonborrow$variable, '\n',
   "Share: ", percent(tblParComp.CA.Nonborrow$`Share of borrowers`, accuracy=0.1),
@@ -3233,6 +3254,7 @@ tblCreditScore.CA.Borrow <- tblCreditScore %>% filter(State=="CA") %>% filter(An
 
 tblCreditScore.CA.Borrow$`For Tooltip` <- paste(
   "State: ", tblCreditScore.CA.Borrow$State, '\n',
+  "Student loan borrowers: ", tblCreditScore.CA.Borrow$AnyStudentLoans, '\n',
   "Group: ", tblCreditScore.CA.Borrow$Race, '\n',
   "Credit score: ", tblCreditScore.CA.Borrow$variable, '\n',
   "Share: ", percent(tblCreditScore.CA.Borrow$`Share`, accuracy=0.1),
@@ -3250,6 +3272,7 @@ tblCreditScore.US.Borrow <- tblCreditScore %>% filter(State=="Rest of U.S.") %>%
 
 tblCreditScore.US.Borrow$`For Tooltip` <- paste(
   "State: ", tblCreditScore.US.Borrow$State, '\n',
+  "Student loan borrowers: ", tblCreditScore.US.Borrow$AnyStudentLoans, '\n',
   "Group: ", tblCreditScore.US.Borrow$Race, '\n',
   "Credit score: ", tblCreditScore.US.Borrow$variable, '\n',
   "Share: ", percent(tblCreditScore.US.Borrow$`Share`, accuracy=0.1),
@@ -3267,6 +3290,7 @@ tblCreditScore.CA.Nonborrow <- tblCreditScore %>% filter(State=="CA") %>% filter
 
 tblCreditScore.CA.Nonborrow$`For Tooltip` <- paste(
   "State: ", tblCreditScore.CA.Nonborrow$State, '\n',
+  "Student loan borrowers: ", tblCreditScore.CA.Nonborrow$AnyStudentLoans, '\n',
   "Group: ", tblCreditScore.CA.Nonborrow$Race, '\n',
   "Credit score: ", tblCreditScore.CA.Nonborrow$variable, '\n',
   "Share: ", percent(tblCreditScore.CA.Nonborrow$`Share`, accuracy=0.1),
@@ -3322,6 +3346,7 @@ tblPayBills.CA.Borrow <- tblPayBills %>% filter(State=="CA") %>% filter(AnyStude
 
 tblPayBills.CA.Borrow$`For Tooltip` <- paste(
   "State: ", tblPayBills.CA.Borrow$State, '\n',
+  "Student loan borrowers: ", tblPayBills.CA.Borrow$AnyStudentLoans, '\n',
   "Group: ", tblPayBills.CA.Borrow$Race, '\n',
   "Ability to pay: ", tblPayBills.CA.Borrow$variable, '\n',
   "Share: ", percent(tblPayBills.CA.Borrow$`Share`, accuracy=0.1),
@@ -3339,6 +3364,7 @@ tblPayBills.US.Borrow <- tblPayBills %>% filter(State=="Rest of U.S.") %>% filte
 
 tblPayBills.US.Borrow$`For Tooltip` <- paste(
   "State: ", tblPayBills.US.Borrow$State, '\n',
+  "Student loan borrowers: ", tblPayBills.US.Borrow$AnyStudentLoans, '\n',
   "Group: ", tblPayBills.US.Borrow$Race, '\n',
   "Ability to pay: ", tblPayBills.US.Borrow$variable, '\n',
   "Share: ", percent(tblPayBills.US.Borrow$`Share`, accuracy=0.1),
@@ -3356,6 +3382,7 @@ tblPayBills.CA.Nonborrow <- tblPayBills %>% filter(State=="CA") %>% filter(AnySt
 
 tblPayBills.CA.Nonborrow$`For Tooltip` <- paste(
   "State: ", tblPayBills.CA.Nonborrow$State, '\n',
+  "Student loan borrowers: ", tblPayBills.CA.Nonborrow$AnyStudentLoans, '\n',
   "Group: ", tblPayBills.CA.Nonborrow$Race, '\n',
   "Ability to pay: ", tblPayBills.CA.Nonborrow$variable, '\n',
   "Share: ", percent(tblPayBills.CA.Nonborrow$`Share`, accuracy=0.1),
@@ -3606,7 +3633,7 @@ tblPayBills400.CA.Borrow <- tblPayBills400 %>% filter(State=="CA") %>% filter(An
 
 tblPayBills400.CA.Borrow$`For Tooltip` <- paste(
   "State: ", tblPayBills400.CA.Borrow$State, '\n',
-  "Student loan borrower: ", tblPayBills400.CA.Borrow$AnyStudentLoans, '\n',
+  "Student loan borrowers: ", tblPayBills400.CA.Borrow$AnyStudentLoans, '\n',
   "Group: ", tblPayBills400.CA.Borrow$Race, '\n',
   "Impact of emergency expense: ", tblPayBills400.CA.Borrow$variable, '\n',
   "Share: ", percent(tblPayBills400.CA.Borrow$Share, accuracy=0.1),
@@ -3624,7 +3651,7 @@ tblPayBills400.US.Borrow <- tblPayBills400 %>% filter(State=="Rest of U.S.") %>%
 
 tblPayBills400.US.Borrow$`For Tooltip` <- paste(
   "State: ", tblPayBills400.US.Borrow$State, '\n',
-  "Student loan borrower: ", tblPayBills400.US.Borrow$AnyStudentLoans, '\n',
+  "Student loan borrowers: ", tblPayBills400.US.Borrow$AnyStudentLoans, '\n',
   "Group: ", tblPayBills400.US.Borrow$Race, '\n',
   "Impact of emergency expense: ", tblPayBills400.US.Borrow$variable, '\n',
   "Share: ", percent(tblPayBills400.US.Borrow$Share, accuracy=0.1),
@@ -3642,7 +3669,7 @@ tblPayBills400.CA.Nonborrow <- tblPayBills400 %>% filter(State=="CA") %>% filter
 
 tblPayBills400.CA.Nonborrow$`For Tooltip` <- paste(
   "State: ", tblPayBills400.CA.Nonborrow$State, '\n',
-  "Student loan borrower: ", tblPayBills400.CA.Nonborrow$AnyStudentLoans, '\n',
+  "Student loan borrowers: ", tblPayBills400.CA.Nonborrow$AnyStudentLoans, '\n',
   "Group: ", tblPayBills400.CA.Nonborrow$Race, '\n',
   "Impact of emergency expense: ", tblPayBills400.CA.Nonborrow$variable, '\n',
   "Share: ", percent(tblPayBills400.CA.Nonborrow$Share, accuracy=0.1),
@@ -4530,6 +4557,7 @@ tblEdPayoff1.CA.Borrow <- tblEdPayoff1 %>% filter(State=="CA") %>% filter(AnyStu
 
 tblEdPayoff1.CA.Borrow$`For Tooltip` <- paste(
   "State: ", tblEdPayoff1.CA.Borrow$State, '\n',
+  "Student loan borrowers: ", tblEdPayoff1.CA.Borrow$AnyStudentLoans, '\n',
   "Group: ", tblEdPayoff1.CA.Borrow$Race, '\n',
   "Opinion: ", tblEdPayoff1.CA.Borrow$variable, '\n',
   "Share: ", percent(tblEdPayoff1.CA.Borrow$`Share`, accuracy=0.1), 
@@ -4547,6 +4575,7 @@ tblEdPayoff1.US.Borrow <- tblEdPayoff1 %>% filter(State=="Rest of U.S.") %>% fil
 
 tblEdPayoff1.US.Borrow$`For Tooltip` <- paste(
   "State: ", tblEdPayoff1.US.Borrow$State, '\n',
+  "Student loan borrowers: ", tblEdPayoff1.US.Borrow$AnyStudentLoans, '\n',
   "Group: ", tblEdPayoff1.US.Borrow$Race, '\n',
   "Opinion: ", tblEdPayoff1.US.Borrow$variable, '\n',
   "Share: ", percent(tblEdPayoff1.US.Borrow$`Share`, accuracy=0.1), 
@@ -4564,6 +4593,7 @@ tblEdPayoff1.CA.Nonborrow <- tblEdPayoff1 %>% filter(State=="CA") %>% filter(Any
 
 tblEdPayoff1.CA.Nonborrow$`For Tooltip` <- paste(
   "State: ", tblEdPayoff1.CA.Nonborrow$State, '\n',
+  "Student loan borrowers: ", tblEdPayoff1.CA.Nonborrow$AnyStudentLoans, '\n',
   "Group: ", tblEdPayoff1.CA.Nonborrow$Race, '\n',
   "Opinion: ", tblEdPayoff1.CA.Nonborrow$variable, '\n',
   "Share: ", percent(tblEdPayoff1.CA.Nonborrow$`Share`, accuracy=0.1), 
@@ -6599,6 +6629,8 @@ Q26.1$CIPCODE <-ifelse(nchar(Q26.1$CIPCODE)==6, paste(Q26.1$CIPCODE, "0", sep=""
 Q26.1$CIPCODE <- paste(substr(Q26.1$CIPCODE, 1, 2), substr(Q26.1$CIPCODE, 4, 5), sep="")
 Q26.1 <- aggregate(data=Q26.1, cbind(CTOTALT, CBKAAT, CHISPT) ~ CIPCODE + AWLEVEL, FUN=sum)
 
+Q26.1 <- Q26.1 %>% filter(CTOTALT > 50)
+
 Q26.1$CREDDESC <- rep(NA, nrow(Q26.1))
 Q26.1$CREDDESC[Q26.1$AWLEVEL %in% c(2, 4, 20, 21)] <- "Undergraduate Certificate or Diploma"
 Q26.1$CREDDESC[Q26.1$AWLEVEL==3] <- "Associate's Degree"
@@ -6610,10 +6642,6 @@ Q26.1$CREDDESC[Q26.1$AWLEVEL %in% c(18, 19)] <- "First Professional Degree"
 
 Q26.1$`Share who are BKAA` <- Q26.1$CBKAAT / Q26.1$CTOTALT
 Q26.1$`Share who are HISP` <- Q26.1$CHISPT / Q26.1$CTOTALT
-Q26.1$`Share who are BKAA or HISP` <- (Q26.1$CBKAAT + Q26.1$CHISPT) / Q26.1$CTOTALT
-Q26.1$`Rank of BKAA share` <- rank(-(Q26.1$`Share who are BKAA`), ties.method="average")
-Q26.1$`Rank of HISP share` <- rank(-(Q26.1$`Share who are HISP`), ties.method="average")
-Q26.1$`Rank of BKAA/HISP share` <- rank(-(Q26.1$`Share who are BKAA or HISP`), ties.method="average")
 
 Q26.2 <- CSP %>% select(
   UNITID,       # Unit ID for institution
@@ -6641,6 +6669,8 @@ Q26.2 <- Q26.2 %>% filter(duplicated(`Unique combination of OPEID, CIP, and CRED
 Q26.2$EARN_MDN_HI_1YR <- as.numeric(Q26.2$EARN_MDN_HI_1YR)
 Q26.2$EARN_COUNT_WNE_HI_1YR <- as.numeric(Q26.2$EARN_COUNT_WNE_HI_1YR)
 
+cipNames.26 <- Q26.2 %>% select(CIPCODE, CIPDESC) %>% filter(duplicated(CIPCODE)==FALSE)
+
 Q26.3 <- aggregate(data=Q26.2, EARN_COUNT_WNE_HI_1YR ~ CIPCODE + CREDDESC, FUN=sum)
 names(Q26.3) <- c("CIPCODE", "CREDDESC", "Total earner count")
 Q26.2 <- left_join(x=Q26.2, y=Q26.3, by=c("CIPCODE", "CREDDESC"))
@@ -6648,6 +6678,8 @@ Q26.2 <- left_join(x=Q26.2, y=Q26.3, by=c("CIPCODE", "CREDDESC"))
 Q26.2$`Share of all earners` <- Q26.2$EARN_COUNT_WNE_HI_1YR / Q26.2$`Total earner count`
 Q26.2$`Weighted earnings median` <- Q26.2$`Share of all earners` * Q26.2$EARN_MDN_HI_1YR
 Q26.2 <- aggregate(data=Q26.2, `Weighted earnings median` ~ CIPCODE + CREDDESC, FUN=sum)
+Q26.2 <- left_join(x=Q26.2, y=cipNames.26, by="CIPCODE")
+
 Q26.2$`Rank of weighted earnings` <- rank(-(Q26.2$`Weighted earnings median`), ties.method="average")
 Q26.2$CIPCODE <- as.character(Q26.2$CIPCODE)
 Q26.2$CIPCODE <- ifelse(nchar(Q26.2$CIPCODE)==3, paste("0", Q26.2$CIPCODE, sep=""), Q26.2$CIPCODE)
@@ -6656,13 +6688,18 @@ Q26 <- inner_join(x=Q26.2, y=Q26.1, by=c("CIPCODE", "CREDDESC"))
 
 Q26.Bplot <- Q26 %>% filter(`Share who are BKAA` != 0)
 Q26.Hplot <- Q26 %>% filter(`Share who are HISP` != 0)
+
+Q26.Bplot$`Rank of BKAA share` <- rank(-(Q26.Bplot$`Share who are BKAA`), ties.method="average")
+Q26.Hplot$`Rank of HISP share` <- rank(-(Q26.Hplot$`Share who are HISP`), ties.method="average")
 ```
 #### Figure 36: California programs by average earnings and Black/African-American enrollment
 ```{r figure36A}
 Q26.Bplot$`For Tooltip` <- paste(
   "Program name: ", Q26.Bplot$CIPDESC, '\n',
   "Credential level: ", Q26.Bplot$CREDDESC, '\n',
+  "Black share of completers: ", percent(Q26.Bplot$`Share who are BKAA`, accuracy=0.1), '\n',
   "Rank of Black share of completers: ", as.integer(Q26.Bplot$`Rank of BKAA share`), '\n',
+  "Estimated average earnings: ", dollar(Q26.Bplot$`Weighted earnings median`, accuracy=1), '\n',
   "Rank of earnings among completers: ", as.integer(Q26.Bplot$`Rank of weighted earnings`), 
   sep=""
 )
@@ -6676,7 +6713,9 @@ ggplotly(g36A, width=800, height=600, tooltip="text")
 Q26.Hplot$`For Tooltip` <- paste(
   "Program name: ", Q26.Hplot$CIPDESC, '\n',
   "Credential level: ", Q26.Hplot$CREDDESC, '\n',
+  "Hispanic share of completers: ", percent(Q26.Hplot$`Share who are HISP`, accuracy=0.1), '\n',
   "Rank of Hispanic share of completers: ", as.integer(Q26.Hplot$`Rank of HISP share`), '\n',
+  "Estimated average earnings: ", dollar(Q26.Hplot$`Weighted earnings median`, accuracy=1), '\n',
   "Rank of earnings among completers: ", as.integer(Q26.Hplot$`Rank of weighted earnings`), 
   sep=""
 )
@@ -6695,7 +6734,6 @@ ggplotly(g36B, width=800, height=600, tooltip="text")
 
 ### {.tabset}
 ```{r DebtDemographics}
-
 Q27 <- CSP %>% select(
   UNITID,       # Unit ID for institution
   OPEID6,       # 6-digit OPE ID for institution
@@ -6722,6 +6760,8 @@ Q27 <- Q27 %>% filter(duplicated(`Unique combination of OPEID, CIP, and CREDLEV`
 Q27$DEBT_ALL_STGP_EVAL_MDN <- as.numeric(Q27$DEBT_ALL_STGP_EVAL_MDN)
 Q27$DEBT_ALL_STGP_EVAL_N <- as.numeric(Q27$DEBT_ALL_STGP_EVAL_N)
 
+cipNames.27 <- Q27 %>% select(CIPCODE, CIPDESC) %>% filter(duplicated(CIPCODE)==FALSE)
+
 Q27.1 <- aggregate(data=Q27, DEBT_ALL_STGP_EVAL_N ~ CIPCODE + CREDDESC, FUN=sum)
 names(Q27.1) <- c("CIPCODE", "CREDDESC", "Total borrower count")
 Q27 <- left_join(x=Q27, y=Q27.1, by=c("CIPCODE", "CREDDESC"))
@@ -6729,6 +6769,8 @@ Q27 <- left_join(x=Q27, y=Q27.1, by=c("CIPCODE", "CREDDESC"))
 Q27$`Share of all borrowers` <- Q27$DEBT_ALL_STGP_EVAL_N / Q27$`Total borrower count`
 Q27$`Weighted debt median` <- Q27$`Share of all borrowers` * Q27$DEBT_ALL_STGP_EVAL_MDN
 Q27 <- aggregate(data=Q27, `Weighted debt median` ~ CIPCODE + CREDDESC, FUN=sum)
+Q27 <- left_join(x=Q27, y=cipNames.27, by="CIPCODE")
+
 Q27$`Rank of weighted debt` <- rank(-(Q27$`Weighted debt median`), ties.method="average")
 Q27$CIPCODE <- as.character(Q27$CIPCODE)
 Q27$CIPCODE <- ifelse(nchar(Q27$CIPCODE)==3, paste("0", Q27$CIPCODE, sep=""), Q27$CIPCODE)
@@ -6737,13 +6779,18 @@ Q27 <- inner_join(x=Q27, y=Q26.1, by=c("CIPCODE", "CREDDESC"))
 
 Q27.Bplot <- Q27 %>% filter(`Share who are BKAA` != 0)
 Q27.Hplot <- Q27 %>% filter(`Share who are HISP` != 0)
+
+Q27.Bplot$`Rank of BKAA share` <- rank(-(Q27.Bplot$`Share who are BKAA`), ties.method="average")
+Q27.Hplot$`Rank of HISP share` <- rank(-(Q27.Hplot$`Share who are HISP`), ties.method="average")
 ```
 #### Figure 37: California programs by average debt and Black/African-American enrollment
 ```{r figure37A}
 Q27.Bplot$`For Tooltip` <- paste(
   "Program name: ", Q27.Bplot$CIPDESC, '\n',
   "Credential level: ", Q27.Bplot$CREDDESC, '\n',
+  "Black share of completers: ", percent(Q27.Bplot$`Share who are BKAA`, accuracy=0.1), '\n',
   "Rank of Black share of completers: ", as.integer(Q27.Bplot$`Rank of BKAA share`), '\n',
+  "Estimated average debt: ", dollar(Q27.Bplot$`Weighted debt median`, accuracy=1), '\n',
   "Rank of debt among completers: ", as.integer(Q27.Bplot$`Rank of weighted debt`), 
   sep=""
 )
@@ -6757,7 +6804,9 @@ ggplotly(g37A, width=800, height=600, tooltip="text")
 Q27.Hplot$`For Tooltip` <- paste(
   "Program name: ", Q27.Hplot$CIPDESC, '\n',
   "Credential level: ", Q27.Hplot$CREDDESC, '\n',
+  "Hispanic share of completers: ", percent(Q27.Hplot$`Share who are HISP`, accuracy=0.1), '\n',
   "Rank of Hispanic share of completers: ", as.integer(Q27.Hplot$`Rank of HISP share`), '\n',
+  "Estimated average debt: ", dollar(Q27.Hplot$`Weighted debt median`, accuracy=1), '\n',
   "Rank of debt among completers: ", as.integer(Q27.Hplot$`Rank of weighted debt`), 
   sep=""
 )
