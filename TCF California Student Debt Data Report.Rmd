@@ -5581,7 +5581,7 @@ effy3yr$`Share who are BKAA or HISP` <- (effy3yr$EFYBKAAT + effy3yr$EFYHISPT) / 
 ```
 
 ```{r c2yr}
-# We pool completion data from the latest 3 years available: 2018-19, 2019-20, and 2020-21.
+# We pool completion data from 2019-20 and 2020-21. We do not go back further in order to use consistent CIP code schemes. 
 
 c2021 <- fread("c2021_a.csv", header=TRUE, select=c(
   "UNITID",   # Unique identification number of the institution
@@ -6189,6 +6189,7 @@ CSP$CONTROL[CSP$CONTROL==2] <- "Non-profit"
 CSP$CONTROL[CSP$CONTROL==3] <- "For-profit"
 ```
 
+### {.tabset}
 ```{r TotalOutstandingDebt, warning=FALSE}
 Q6 <- CSI %>% select(UNITID, OPEID, OPEID6, INSTNM, CONTROL, STABBR, MAIN, LPSTAFFORD_CNT, LPSTAFFORD_AMT, LPPPLUS_CNT, LPPPLUS_AMT, LPGPLUS_CNT, LPGPLUS_AMT) %>% filter(STABBR=="CA") %>% filter(MAIN==1) %>% filter(duplicated(OPEID6)==FALSE)
 
@@ -6222,8 +6223,6 @@ Q6.TotalStaffordDebt$LPSTAFFORD_CNT <- comma(round(Q6.TotalStaffordDebt$LPSTAFFO
 Q6.TotalParentDebt$LPPPLUS_CNT <- comma(round(Q6.TotalParentDebt$LPPPLUS_CNT, -1))
 Q6.TotalGradDebt$LPGPLUS_CNT <- comma(round(Q6.TotalGradDebt$LPGPLUS_CNT, -1))
 ```
-
-### {.tabset}
 #### Table 4: Stafford debt
 ```{r kable4A, results='asis'}
 kable4A <- Q6.TotalStaffordDebt[1:100, ] %>% select(INSTNM, CONTROL, LPSTAFFORD_AMT, LPSTAFFORD_CNT, `Average outstanding Stafford debt`)
@@ -6252,7 +6251,7 @@ kable(kable4D, caption="Top 100 California institutions by total outstanding loa
 
 **Data source:** College Scorecard institution dataset, accessed November 2022, available through the U.S. Department of Education [here](https://collegescorecard.ed.gov/data/). 
 
-**Timeframe reflected:**
+**Timeframe reflected:** Loan data in this table reflect borrowers' balances as measured in the National Student Loan Data System on June 30, 2021. 
 
 Only 73 institutions have at least 500 borrowers with outstanding Grad PLUS debt. 
 
@@ -6354,16 +6353,17 @@ kable(kable5, caption="Top 100 institutions based outside California, by estimat
 ```
 #### Data source and notes
 
-**Data source:** College Scorecard institution dataset, accessed November 2022, available through the U.S. Department of Education [here](https://collegescorecard.ed.gov/data/). 
+**Data source:** The figures in this table were calculated using data from two sources. First is the College Scorecard institution dataset, accessed November 2022, available through the U.S. Department of Education [here](https://collegescorecard.ed.gov/data/). Second is the IPEDS Fall Enrollment survey, accessed December 2022, available through NCES [here](https://nces.ed.gov/ipeds/use-the-data).
 
-Estimated enrollment is based on 2018 data. Estimated debt is based on data as of 2022. 
+**Timeframe reflected:** Loan data used for this table reflect borrowers' balances as measured in the National Student Loan Data System on June 30, 2021. Enrollment data on distance education reflect Fall 2018. I use this enrollment data as a proxy for current enrollment. 
+
 
 ***
 
 ### {-}
 
 ### {.tabset}
-#### California public segments
+#### Table 6: California public segments
 ```{r segments, warning=FALSE}
 Q18 <- CSI %>% select(OPEID6, INSTNM, STABBR, CONTROL, LPSTAFFORD_AMT, LPPPLUS_AMT, LPGPLUS_AMT) %>% filter(STABBR=="CA") %>% filter(CONTROL=="Public") %>% filter(duplicated(OPEID6)==FALSE)
 
@@ -6557,7 +6557,7 @@ kable6A <- Q18.1
 names(kable6A) <- c("Segment", "Outstanding Stafford debt", "Outstanding Parent PLUS debt", "Outstanding Grad PLUS debt", "Total debt")
 kable(kable6A, caption="Public segments of California higher education by outstanding federal student loan debt") %>% kable_paper("hover", full_width = F) %>% scroll_box(width = "100%")
 ```
-#### All California sectors
+#### Table 6: All California sectors
 ```{r sectors, warning=FALSE}
 Q19 <- CSI %>% select(OPEID6, INSTNM, STABBR, MAIN, CONTROL, LPSTAFFORD_AMT, LPPPLUS_AMT, LPGPLUS_AMT) %>% filter(STABBR=="CA") %>% filter(MAIN==1) %>% filter(duplicated(OPEID6)==FALSE)
 
@@ -6597,6 +6597,8 @@ kable(kable6B, caption="Sectors of California higher education by outstanding fe
 
 **Data source:** College Scorecard institution dataset, accessed November 2022, available through the U.S. Department of Education [here](https://collegescorecard.ed.gov/data/). 
 
+**Timeframe reflected:** Loan data in this table reflect borrowers' balances as measured in the National Student Loan Data System on June 30, 2021. 
+
 ***
 
 ### {-}
@@ -6604,7 +6606,6 @@ kable(kable6B, caption="Sectors of California higher education by outstanding fe
 
 ### {.tabset}
 ```{r highestBorrowingRates, warning=FALSE}
-
 Q20 <- CSI %>% select(INSTNM,              # Institution name
                       OPEID6,              # 6-digit OPEID 
                       STABBR,              # State abbreviation
@@ -6642,6 +6643,8 @@ kable(kable7, caption="California institutions with the highest shares of underg
 #### Data source and notes 
 
 **Data source:** College Scorecard institution dataset, accessed November 2022, available through the U.S. Department of Education [here](https://collegescorecard.ed.gov/data/). 
+
+**Timeframe reflected:** Data in the "Percent of undergraduates who received federal student loans" column reflect students enrolled in academic year 2019-20. Data in the "Median debt at graduation" reflect pooled cohorts of students who graduated in fiscal year 2019 or fiscal year 2020. 
 
 ***
 
@@ -6725,6 +6728,8 @@ kable(kable8C, caption="California institutions by ratio of Grad PLUS borrowers'
 #### Data source and notes
 
 **Data source:** College Scorecard institution dataset, accessed November 2022, available through the U.S. Department of Education [here](https://collegescorecard.ed.gov/data/). 
+
+**Timeframe reflected:** Loan balance data in this table reflect borrowers who entered repayment in either award year 2007-08 or award year 2008-09, with outstanding debt measured 10 years after entering repayment. 
 
 ***
 
@@ -6825,6 +6830,8 @@ kable(kable9C, caption="California institutions by share of Grad PLUS borrowers 
 #### Data source and notes
 
 **Data source:** College Scorecard institution dataset, accessed November 2022, available through the U.S. Department of Education [here](https://collegescorecard.ed.gov/data/). 
+
+**Timeframe reflected:** Borrower status data reflect borrowers who entered repayment in award year 2015-16 or 2016-17, at the time when the borrower had been in repayment for three years. 
 
 Minimum 200 borrowers per institution in the ten-year repayment cohort. This does not include those in forbearance or deferment.
 
@@ -6950,6 +6957,8 @@ kable(kable10B, caption="4-digit CIPs and award levels by debt compared to earni
 #### Data source and notes 
 
 **Data source:** College Scorecard field-of-study dataset, accessed November 2022, available through the U.S. Department of Education [here](https://collegescorecard.ed.gov/data/). 
+
+**Timeframe reflected:** Data in the "Estimated median debt" column are author's calculations using data reflecting borrowers who entered repayment in award year 2017-18 or 2018-19. Data in the "Estimated median earnings, 1 year after completing program" column are author's calculations using data reflecting the calendar year 2018 or 2019 earnings of students who received federal student aid and graduated from their program in academic year 2016-17 or 2017-18. Earnings data were adjusted by the Department of Education to 2020 dollars. 
 
 ***
 
@@ -7083,6 +7092,8 @@ ggplotly(g36B, width=800, height=600, tooltip="text")
 #### Data source and notes
 
 **Data source:** College Scorecard field-of-study dataset, accessed November 2022, available through the U.S. Department of Education [here](https://collegescorecard.ed.gov/data/). 
+
+**Timeframe reflected:** Ranked earnings are author's calculations using data reflecting the calendar year 2018 or 2019 earnings of students who received federal student aid and graduated from their program in academic year 2016-17 or 2017-18. Ranked shares of completers by race are author's calculations using data from the IPEDS Completion Surveys reflecting 2019-20 and 2020-21. 
 
 ***
 
