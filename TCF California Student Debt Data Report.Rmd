@@ -47,14 +47,14 @@ This report accompanies The Century Foundation's report "Exact Title TBD: Studen
 
 Though California lawmakers rightly draw on national research on student debt and race, state-specific insights can be gleaned from national data sets. TCF's state-level analyses here can help guide state policy that accounts for the distinct patterns of borrowing in California. 
 
-This report draws from the best sources of Califoria-specific data on student debt to explain in depth what we know (and do not know) about student debt in California. It relies primarily on four sources:
+This report draws from the best available sources of Califoria-specific data on student debt to explain in depth what we know (and do not know) about student debt in California. It relies primarily on four sources:
 
 * The Federal Student Aid (FSA) Data Center
 * The National Postsecondary Student Aid Study (NPSAS)
 * The Survey of Household Economics and Decisionmaking (SHED)
 * The College Scorecard
 
-We also draw from the Integrated Postsecondary Education Data System (IPEDS) and the American Community Survey (ACS) to lesser extents. 
+I also draw from the Integrated Postsecondary Education Data System (IPEDS) and the American Community Survey (ACS) to lesser extents. 
 
 The structure of this data-focused report mirrors that of the policy-focused report: the charts and tables in the policy report draw from our four primary data sources in the same order that they are presented here. The first figures in both reports draw from the FSA Data Center, they are followed by figures that draw from NPSAS, and so on. 
 
@@ -62,16 +62,21 @@ This document is more descriptive than prescriptive. Even data queries did not s
 
 This report is not a static PDF: you can toggle between different versions of charts and hover over barcharts to reveal the exact statistics. The code used to produce this document and its charts and tables can be found at [this GitHub repository](https://github.com/PeterGranville/CaliforniaStudentDebt). All data sets used in this report are publicly available, courtesy of the U.S. Department of Education, the U.S. Federal Reserve, and the U.S. Census Bureau. 
 
-If you have any questions, please email Peter Granville at [granville@tcf.org](granville@tcf.org).
+Consider each of the following when interpreting the data presented in this report: 
+
+* Whether an average contains zero values or not. For example, in a measure of the average loan taken out by students, are students with no loans counted? If yes, the average will be lower than if those students were not counted. This will be noted in the "Data source and notes" tab of any figure containing an average. 
+* Whether a measure of California student debt includes borrowers who may have left California after separating from their college, and whether it includes borrowers who enroll in a California institution but who do not permanently reside in California. This will be noted in the "Data source and notes" tab of a figure where this question is relevant. 
+
+If you have any questions, please email me (Peter Granville) at [granville@tcf.org](granville@tcf.org).
 
 ## Federal Student Aid Data Center
 
 #### About the data
 
-The FSA Data Center is a repository of data and statistics on federal student aid, including spreadsheets on student loans reported directly from the National Student Loan Data System. For this analysis we use two files from the FSA Data Center: 
+The FSA Data Center is a repository of data and statistics on federal student aid, including spreadsheets on student loans reported directly from the National Student Loan Data System. For this analysis I draw from two files from the FSA Data Center: 
 
 * Quarterly reports on the federal student loan portfolio by borrower location, [available here](https://studentaid.gov/data-center/student/portfolio). 
-* Quarterly reports on Direct Loan disbursements and borrowers by program at the level of the institution, [available here](https://studentaid.gov/data-center/student/title-iv). 
+* Quarterly reports on Direct Loan disbursements and borrowers at the level of the institution, disaggregated by loan program, [available here](https://studentaid.gov/data-center/student/title-iv). 
 
 For "per capita" measures of student debt and borrowing in Table 1, the population for comparison is the estimated total of all California adults aged 18 to 50. I estimate these population totals using American Community Survey data reflecting calendar year 2021, [available here](https://www.census.gov/programs-surveys/acs/microdata/access.html). 
 
@@ -207,6 +212,10 @@ pusm <- rbind(pusa, pusb)
 rm("pusa", "pusb")
 ```
 
+Table 1 below shows how California compares to other states in its federal student loan debt per capita, its number of borrowers per capita, and its average federal student loan balance. California ranks well in the firs two measures due to a smaller percentage of its population holding debt than in other states. However, California's borrowers exceed other states' borrowers in their average balance. Californians who hold federal student loan debt averaged roughly $37,000 in June 2022. 
+
+
+#### {.tabset}
 ```{r interstateComp}
 
 ######################################################
@@ -344,11 +353,6 @@ scaleCali <- scaleCali %>% add_row(
 interstateComp <- interstateComp %>% filter(is.na(Measure)==FALSE)
 scaleCali <- scaleCali %>% filter(is.na(Measure)==FALSE)
 ```
-
-Table 1 below shows how California compares to other states in its federal student loan debt per capita, its number of borrowers per capita, and its average federal student loan balance. California ranks well in the firs two measures due to a smaller percentage of its population holding debt than in other states. However, California's borrowers exceed other states' borrowers in their average balance. Californians who hold federal student loan debt averaged roughly $37,000 in June 2022. 
-
-
-#### {.tabset}
 ##### Table 1
 ```{r kable1, results='asis'}
 kable(interstateComp, caption="California's rank on average debt measures") %>% kable_paper("hover", full_width = F)
@@ -359,12 +363,14 @@ kable(interstateComp, caption="California's rank on average debt measures") %>% 
 
 **Timeframe reflected:** Figures in this table reflect the federal student loan portfolio as of June 30, 2022. 
 
+**Notes:** In the "California rank" column, a rank of 1 would indicate the lowest debt, borrowers, or average balance. 
+
 ***
 
 #### {-}
 
 
-Table 2 below shows the size of California's outstanding federal student loan debt. California has the most outstanding federal student loan debt ($142 billion) and borrowers (3.8 million) of any state, amounting to around 9 percent of the nationwide rederal student loan portfolio. 
+Table 2 below shows the size of California's outstanding federal student loan debt. California has the most outstanding federal student loan debt ($142 billion) and borrowers (3.8 million) of any state, amounting to around 9 percent of the nationwide federal student loan portfolio. 
 
 #### {.tabset}
 ##### Table 2
@@ -376,6 +382,8 @@ kable(scaleCali, caption="Size of California borrowers' outstanding debt") %>% k
 **Data source:** Federal Student Aid Data Center, spreadsheet on federal student loan portfolio by borrower location, [available here](https://studentaid.gov/data-center/student/portfolio), accessed December 2022. 
 
 **Timeframe reflected:** Figures in this table reflect the federal student loan portfolio as of June 30, 2022. 
+
+**Notes:** Dollar values in the "Total outstanding federal student loan debt" row are rounded to the nearest $100 million. Values in the "Total federal student loan borrowers" row are rounded to the nearest thousand. 
 
 ***
 
@@ -591,7 +599,7 @@ kable(table3.1, caption="Share of loan dollars disbursed in 2018-19 by loan type
 
 **Timeframe reflected:** Figures in this table reflect the 2018-19 award year. 
 
-We use the data on loan disbursements, not loan originations.
+**Notes:** Here I use the data on loan disbursements, not loan originations.
 
 ***
 
@@ -713,7 +721,7 @@ ggplotly(g1, width=850, height=500, tooltip="text")
 
 **Timeframe reflected:** Figures in this graph reflect the 2018-19 award year. 
 
-We use the data on loan disbursements, not loan originations. These averages do not include students who receive no loans. Only four-year institutions are included. 
+**Notes:** Here I use the data on loan disbursements, not loan originations. These averages do not include students who receive no loans. Only four-year institutions are included. 
 
 ***
 
@@ -731,7 +739,7 @@ The statistics in the previous section are all based on state-level and institut
 
 NPSAS is the largest survey of U.S. college students that has a primary focus on financial aid and college costs. The study has generally been conducted every four years, with the latest published data set reflecting the 2015-16 year (NPSAS:16). With every NPSAS release, separate data sets examine undergraduate and graduate students. 
 
-NPSAS data sets have not traditionally been used for state-level analyses, although the sample size for California students can be large enough to produce reliable estimates depending on the query. This past year, a new edition of NPSAS that was designed for state-representative samples was released. Known as NPSAS:18-AC (Administrative Collection), it draws from student records housed by colleges and the U.S. Department of Education for a sample of 325,000 undergraduates enrolled in 2017-18. Representative samples for public 4-year systems are available in NPSAS-AC for 45 states, and representative samples for public 2-year systems are available for 36 states. Thirty states have representative samples for undergraduate students overall. More information on NPSAS-AC can be found [here](https://nces.ed.gov/pubs2022/2022477.pdf). 
+NPSAS data sets have not traditionally been used for state-level analyses, although the sample size for California students can be large enough to produce reliable estimates depending on the query. This past year, a new edition of NPSAS that was designed for state-representative samples was released. Known as NPSAS:18-AC (Administrative Collection), it draws from student records housed by colleges and the U.S. Department of Education for a sample of 325,000 undergraduates enrolled in 2017-18. Representative samples for public 4-year systems are available in NPSAS-AC for 45 states, and representative samples for public 2-year systems are available for 36 states. Thirty states have representative samples for undergraduate students overall. More information on NPSAS-AC can be found [here](https://nces.ed.gov/pubs2022/2022477.pdf). **EDIT THIS!**
 
 In this section we rely primarily on NPSAS-AC. For analysis of graduate students, we use NPSAS:16 and filter for in-state students in California. The in-state condition is required to run this query in NPSAS:16.
 
@@ -745,21 +753,21 @@ Across all groups, the average federal loan total is lower in California than na
 
 #### {.tabset}
 ```{r npsas1}
-npsas1.US <- read.csv("Powerstats_lounfy.csv", skip=12, nrow=7, header=FALSE)
-npsas1.CA <- read.csv("Powerstats_lounfy.csv", skip=73, nrow=7, header=FALSE)
+npsas1.US <- read.csv("Powerstats opspco.csv", skip=12, nrow=7, header=FALSE)
+npsas1.CA <- read.csv("Powerstats opspco.csv", skip=73, nrow=7, header=FALSE)
 
-names(npsas1.US) <- c("Group", "Federal loans (excl. PLUS)", "Parent PLUS")
-names(npsas1.CA) <- c("Group", "Federal loans (excl. PLUS)", "Parent PLUS")
+names(npsas1.US) <- c("Group", "Average federal loans")
+names(npsas1.CA) <- c("Group", "Average federal loans")
 
 npsas1.US$State <- rep("U.S.", nrow(npsas1.US))
 npsas1.CA$State <- rep("CA", nrow(npsas1.CA))
 npsas1 <- rbind(npsas1.US, npsas1.CA)
 
+npsas1 <- npsas1 %>% filter(Group != "American Indian or Alaska Native")
 npsas1$Group[npsas1$Group=="Black or African American"] <- "Black"
 npsas1$Group[npsas1$Group=="Hispanic or Latino"] <- "Latino/a"
 npsas1$Group[npsas1$Group=="Native Hawaiian/other Pacific Islander"] <- "Pacific Islander"
 npsas1$Group[npsas1$Group=="More than one race"] <- "2+ races"
-npsas1 <- npsas1 %>% filter(Group != "American Indian or Alaska Native")
 
 npsas1 <- reshape2::melt(data=npsas1, id.vars = c("Group", "State"), value.name="Average Loan")
 
@@ -771,25 +779,30 @@ npsas1$`Average Loan` <- gsub(pattern=",", x=npsas1$`Average Loan`, replacement=
 npsas1$`Average Loan` <- gsub(pattern=" ", x=npsas1$`Average Loan`, replacement="")
 npsas1$`Average Loan` <- as.numeric(npsas1$`Average Loan`)
 ```
-##### Figure 2: Race (CA and U.S.)
+##### Figure 2: Race
 ```{r figure2A}
 npsas1$`For Tooltip` <- paste(
   "State: ", npsas1$State, '\n', 
-  "Loan type: ", npsas1$variable, '\n',
   "Group: ", npsas1$Group, '\n', 
   "Average annual loans: ", dollar(npsas1$`Average Loan`, accuracy=1), 
   sep="")
 
-g2A <- ggplot(data=npsas1, mapping=aes(x=State, y=`Average Loan`, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.4) + labs(title="Average annual undergrad. loans at public 4-years by group: CA vs U.S.") + facet_grid(variable ~ Group) + scale_y_continuous(labels=scales::dollar_format()) + scale_fill_manual(values = stateCols) + theme(legend.position="none", text=element_text(family="Optima"))
+g2A <- ggplot(data=npsas1, mapping=aes(x=State, y=`Average Loan`, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.4) + labs(title="Average annual undergraduate loans by group: CA vs U.S.") + facet_grid(. ~ Group) + scale_y_continuous(labels=scales::dollar_format()) + scale_fill_manual(values = stateCols) + theme(legend.position="none", text=element_text(family="Optima"))
 
-ggplotly(g2A, tooltip="text", width=800, height=400)
+ggplotly(g2A, tooltip="text", width=800, height=350)
 ```
-##### Figure 2: Race and Gender (U.S. only)
+##### Figure 2: Race and Gender 
 ```{r npsas1.1}
-npsas1.1 <- read.csv("Powerstats ygpebv.csv", skip=12, nrow=14, header=FALSE)
-names(npsas1.1) <- c("Group", "Federal loans (excl. PLUS)", "Parent PLUS")
+npsas1.1.US <- read.csv("Powerstats ztmgmm.csv", skip=12, nrow=14, header=FALSE)
+npsas1.1.CA <- read.csv("Powerstats ztmgmm.csv", skip=108, nrow=14, header=FALSE)
 
-npsas1.1$State <- rep("U.S.", nrow(npsas1.1))
+names(npsas1.1.US) <- c("Group", "Average federal loans")
+names(npsas1.1.CA) <- c("Group", "Average federal loans")
+
+npsas1.1.US$State <- rep("U.S.", nrow(npsas1.1.US))
+npsas1.1.CA$State <- rep("CA", nrow(npsas1.1.CA))
+
+npsas1.1 <- rbind(npsas1.1.US, npsas1.1.CA)
 npsas1.1$Gender <- rep(NA, nrow(npsas1.1))
 
 npsas1.1$Gender[npsas1.1$Group=="Black or African American male"] <- "Male"
@@ -827,13 +840,15 @@ npsas1.1$Gender[npsas1.1$Group=="Female of more than one race"] <- "Female"
 npsas1.1$Group[npsas1.1$Group=="Male of more than one race"] <- "2+ races"
 npsas1.1$Group[npsas1.1$Group=="Female of more than one race"] <- "2+ races"
 
+npsas1.1 <- npsas1.1 %>% filter(Group %in% c("Native American", "Pacific Islander")==FALSE)
+
 npsas1.1 <- reshape2::melt(data=npsas1.1, id.vars = c("Group", "State", "Gender"), value.name="Average Loan")
 
 npsas1.1$Gender <- as.factor(npsas1.1$Gender)
 npsas1.1$Gender <- factor(npsas1.1$Gender, levels=c("Male", "Female"))
 
 npsas1.1$Group <- as.factor(npsas1.1$Group)
-npsas1.1$Group <- factor(npsas1.1$Group, levels = c("White", "Latino/a", "Black", "Asian", "Pacific Islander", "Native American", "2+ races"))
+npsas1.1$Group <- factor(npsas1.1$Group, levels = c("White", "Latino/a", "Black", "Asian", "2+ races"))
 
 npsas1.1$`Average Loan` <- gsub(pattern="!", x=npsas1.1$`Average Loan`, replacement="")
 npsas1.1$`Average Loan` <- gsub(pattern=",", x=npsas1.1$`Average Loan`, replacement="")
@@ -844,84 +859,73 @@ npsas1.1$`Average Loan` <- as.numeric(npsas1.1$`Average Loan`)
 ```{r figure2B}
 npsas1.1$`For Tooltip` <- paste(
   "State: ", npsas1.1$State, '\n', 
-  "Loan type: ", npsas1.1$variable, '\n',
   "Group: ", npsas1.1$Group, '\n', 
   "Gender: ", npsas1.1$Gender, '\n', 
   "Average annual loans: ", dollar(npsas1.1$`Average Loan`, accuracy=1), 
   sep="")
 
-g2B <- ggplot(data=npsas1.1, mapping=aes(x=Gender, y=`Average Loan`, fill=Gender, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.4) + labs(title="Average annual undergrad. loans at public 4-years by group and gender (U.S. only)") + facet_grid(variable ~ Group) + scale_y_continuous(labels=scales::dollar_format()) + scale_fill_manual(values = flagCols) + theme(legend.position="none", text=element_text(family="Optima"))
+g2B <- ggplot(data=npsas1.1, mapping=aes(x=State, y=`Average Loan`, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.4) + labs(title="Average annual undergraduate loans by group and gender: CA vs. U.S.") + facet_grid(Gender ~ Group) + scale_y_continuous(labels=scales::dollar_format()) + scale_fill_manual(values = flagCols) + theme(legend.position="none", text=element_text(family="Optima"))
 
-ggplotly(g2B, tooltip="text", width=800, height=400)
+ggplotly(g2B, tooltip="text", width=800, height=350)
 ```
 ##### Data source and notes
 
-**Data source:** National Postsecondary Student Aid Study  Administrative Collection, Undergraduate. Datalab interface available [here](https://nces.ed.gov/datalab/) using table retrieval number *lounfy* for "Figure 2: Race (CA and U.S.)" and *ygpebv* for "Figure 2: Race and Gender (U.S. only)."
+**Data source:** National Postsecondary Student Aid Study, Undergraduate. Datalab interface available [here](https://nces.ed.gov/datalab/) using table retrieval number *opspco* for "Figure 2: Race" and *ztmgmm* for "Figure 2: Race and Gender."
 
-**Timeframe reflected:** Figures in this graph reflect students enrolled in the 2017-18 academic year. 
+**Timeframe reflected:** Figures in this graph reflect students enrolled in the 2015-16 academic year. 
 
- Only reflects undergraduate public 4-year institutions.  
-
-Note: Insufficient sample size for Native American / Alaskan Native population in "Figure 2: Race (CA and U.S.). Averages include those who took out no loans. 
+**Notes:** Averages do not include those who took out no loansl only include students enrolled in-state; and includes undergraduate federal student loans to the student *and* Parent PLUS loans to the parent. 
 
 ***
 
 #### {-}
 
-**Say exactly which columns are flagged by NPSAS for low sample size...**
 
-NPSAS:18-AC does not have state-representative samples for graduate students, so we now use NPSAS:16 to compare the average federal loans for graduate students. California's Black graduate students and those of two or more races borrow significantly more than those who identify with other groups, borrowing between \$20,000 and \$25,000 per year. 
-
+#### {.tabset}
 ```{r npsas2}
-npsas2.US <- read.csv("Powerstats_psiqll.csv", skip=12, nrow=7, header=FALSE)
-npsas2.CA <- read.csv("Powerstats_psiqll.csv", skip=73, nrow=7, header=FALSE)
+npsas2.US <- read.csv("Powerstats ozhexe.csv", skip=12, nrow=7, header=FALSE)
+npsas2.CA <- read.csv("Powerstats ozhexe.csv", skip=73, nrow=7, header=FALSE)
 
-names(npsas2.US) <- c("Group", "Total federal loans")
-names(npsas2.CA) <- c("Group", "Total federal loans")
+names(npsas2.US) <- c("Group", "Average loans")
+names(npsas2.CA) <- c("Group", "Average loans")
 
 npsas2.US$State <- rep("U.S.", nrow(npsas2.US))
 npsas2.CA$State <- rep("CA", nrow(npsas2.CA))
 npsas2 <- rbind(npsas2.US, npsas2.CA)
 
+npsas2 <- npsas2 %>% filter((Group %in% c("American Indian or Alaska Native", "Native Hawaiian/other Pacific Islander", "More than one race"))==FALSE)
+
 npsas2$Group[npsas2$Group=="Black or African American"] <- "Black"
 npsas2$Group[npsas2$Group=="Hispanic or Latino"] <- "Latino/a"
-npsas2$Group[npsas2$Group=="More than one race"] <- "2+ races"
-npsas2 <- npsas2 %>% filter((Group %in% c("American Indian or Alaska Native", "Native Hawaiian/other Pacific Islander"))==FALSE)
 
 npsas2$Group <- as.factor(npsas2$Group)
-npsas2$Group <- factor(npsas2$Group, levels = c("White", "Latino/a", "Black", "Asian", "2+ races"))
+npsas2$Group <- factor(npsas2$Group, levels = c("White", "Latino/a", "Black", "Asian"))
 
-npsas2$`Total federal loans` <- gsub(pattern="!", x=npsas2$`Total federal loans`, replacement="")
-npsas2$`Total federal loans` <- gsub(pattern=",", x=npsas2$`Total federal loans`, replacement="")
-npsas2$`Total federal loans` <- gsub(pattern=" ", x=npsas2$`Total federal loans`, replacement="")
-npsas2$`Total federal loans` <- as.numeric(npsas2$`Total federal loans`)
+npsas2$`Average loans` <- gsub(pattern="!", x=npsas2$`Average loans`, replacement="")
+npsas2$`Average loans` <- gsub(pattern=",", x=npsas2$`Average loans`, replacement="")
+npsas2$`Average loans` <- gsub(pattern=" ", x=npsas2$`Average loans`, replacement="")
+npsas2$`Average loans` <- as.numeric(npsas2$`Average loans`)
 ```
-
-#### {.tabset}
 ##### Figure 3: Race
 ```{r figure3A}
 npsas2$`For Tooltip` <- paste(
   "State: ", npsas2$State, '\n',
   "Group: ", npsas2$Group, '\n',
-  "Average annual federal loans: ", dollar(npsas2$`Total federal loans`, accuracy=1),
+  "Average annual federal loans: ", dollar(npsas2$`Average loans`, accuracy=1),
   sep=""
 )
 
-g3 <- ggplot(data=npsas2, mapping=aes(x=State, y=`Total federal loans`, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.6) + labs(title="Average annual fed. student loans for graduate students, by group: CA vs U.S.", y="Average Loan") + facet_grid(. ~ Group) + scale_y_continuous(labels=scales::dollar_format()) + scale_fill_manual(values = stateCols) + theme(legend.position="none", text=element_text(family="Optima"))
+g3 <- ggplot(data=npsas2, mapping=aes(x=State, y=`Average loans`, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.6) + labs(title="Average annual graduate loans by group: CA vs U.S.", y="Average Loan") + facet_grid(. ~ Group) + scale_y_continuous(labels=scales::dollar_format()) + scale_fill_manual(values = stateCols) + theme(legend.position="none", text=element_text(family="Optima"))
 
-ggplotly(g3, height=350, tooltip="text")
+ggplotly(g3, width=800, height=350, tooltip="text")
 ```
-##### Figure 3: Race and Gender
+##### Figure 3: Race and Gender (U.S. only)
 ```{r npsas2.1}
-npsas2.1.US <- read.csv("Powerstats uklsko.csv", skip=12, nrow=14, header=FALSE)
-npsas2.1.CA <- read.csv("Powerstats uklsko.csv", skip=108, nrow=14, header=FALSE)
+npsas2.1 <- read.csv("Powerstats odiegv.csv", skip=12, nrow=14, header=FALSE)
 
-names(npsas2.1.US) <- c("Group", "Total federal loans")
-names(npsas2.1.CA) <- c("Group", "Total federal loans")
+names(npsas2.1) <- c("Group", "Average loans")
 
-npsas2.1.US$State <- rep("U.S.", nrow(npsas2.1.US))
-npsas2.1.CA$State <- rep("CA", nrow(npsas2.1.CA))
-npsas2.1 <- rbind(npsas2.1.US, npsas2.1.CA)
+npsas2.1$State <- rep("U.S.", nrow(npsas2.1.US))
 
 npsas2.1$Gender <- rep(NA, nrow(npsas2.1))
 
@@ -963,12 +967,12 @@ npsas2.1$Group[npsas2.1$Group=="Female of more than one race"] <- "2+ races"
 npsas2.1 <- npsas2.1 %>% filter((Group %in% c("Native American", "Pacific Islander", "2+ races"))==FALSE)
 
 npsas2.1$Group <- as.factor(npsas2.1$Group)
-npsas2.1$Group <- factor(npsas2.1$Group, levels = c("White", "Latino/a", "Black", "Asian"))
+npsas2.1$Group <- factor(npsas2.1$Group, levels = c("White", "Latino/a", "Black", "Asian", "2+ races"))
 
-npsas2.1$`Total federal loans` <- gsub(pattern="!", x=npsas2.1$`Total federal loans`, replacement="")
-npsas2.1$`Total federal loans` <- gsub(pattern=",", x=npsas2.1$`Total federal loans`, replacement="")
-npsas2.1$`Total federal loans` <- gsub(pattern=" ", x=npsas2.1$`Total federal loans`, replacement="")
-npsas2.1$`Total federal loans` <- as.numeric(npsas2.1$`Total federal loans`)
+npsas2.1$`Average loans` <- gsub(pattern="!", x=npsas2.1$`Average loans`, replacement="")
+npsas2.1$`Average loans` <- gsub(pattern=",", x=npsas2.1$`Average loans`, replacement="")
+npsas2.1$`Average loans` <- gsub(pattern=" ", x=npsas2.1$`Average loans`, replacement="")
+npsas2.1$`Average loans` <- as.numeric(npsas2.1$`Average loans`)
 ```
 
 ```{r figure3B}
@@ -979,19 +983,17 @@ npsas2.1$`For Tooltip` <- paste(
   "Average annual loans: ", dollar(npsas2.1$`Total federal loans`, accuracy=1), 
   sep="")
 
-g3B <- ggplot(data=npsas2.1, mapping=aes(x=State, y=`Total federal loans`, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.6) + labs(title="Average annual fed. student loans for graduate students, by group and gender: CA vs U.S.") + facet_grid(Gender ~ Group) + scale_y_continuous(labels=scales::dollar_format()) + scale_fill_manual(values = stateCols) + theme(legend.position="none", text=element_text(family="Optima"))
+g3B <- ggplot(data=npsas2.1, mapping=aes(x=State, y=`Total federal loans`, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.6) + labs(title="Average annual graduate loans by group and gender: CA vs U.S.") + facet_grid(Gender ~ Group) + scale_y_continuous(labels=scales::dollar_format()) + scale_fill_manual(values = stateCols) + theme(legend.position="none", text=element_text(family="Optima"))
 
 ggplotly(g3B, tooltip="text", width=800, height=400)
 ```
 ##### Data source and notes 
 
-**Data source:** National Postsecondary Student Aid Study, Undergraduate. Datalab interface available [here](https://nces.ed.gov/datalab/) using table retrieval number *psiqll* for "Figure 3: Race" and *uklsko* for "Figure 3: Race and Gender."
+**Data source:** National Postsecondary Student Aid Study, Undergraduate. Datalab interface available [here](https://nces.ed.gov/datalab/) using table retrieval number *ozhexe* for "Figure 3: Race" and *odiegv* for "Figure 3: Race and Gender."
 
 **Timeframe reflected:** Figures in this graph reflect students enrolled in the 2015-16 academic year. 
 
-Year(s) of analysis: Reflects students enrolled in the 2015-16 academic year.
-
-Notes: Private loans are also included in NPSAS, but the average loans are so small that Datalab considers the estimates unreliable. Due to limitations of NPSAS:16, this only applies to in-state students. 
+**Notes:** Due to limitations of NPSAS:16, the data in Figure 3 only apply to in-state students. For "Figure 3: Race and Gender," only the U.S. is used due to insufficient sample size for many subgroups in California. 
 
 ***
 
@@ -1003,43 +1005,37 @@ Among California students, the sample is not sufficient for a breakdown by award
 
 In master's programs, research doctorate programs, and professional doctorate programs (e.g. MDs and JDs), Black and Latino/a borrowers borrower more in average federal student loans per year than students from other groups. This demonstrates how professional doctorates show an extreme version of the trends just described. 
 
+#### {.tabset}
 ```{r npsas3}
-npsas3.US.masters <- read.csv("Powerstats_vcbaev.csv", skip=73, nrow=7, header=FALSE)
-npsas3.US.certificate <- read.csv("Powerstats_vcbaev.csv", skip=134, nrow=7, header=FALSE)
-npsas3.US.phd <- read.csv("Powerstats_vcbaev.csv", skip=195, nrow=7, header=FALSE)
-npsas3.US.professional <- read.csv("Powerstats_vcbaev.csv", skip=256, nrow=7, header=FALSE)
+npsas3.US.masters <- read.csv("PowerStats svwuag.csv", skip=73, nrow=7, header=FALSE)
+npsas3.US.phd <- read.csv("PowerStats svwuag.csv", skip=195, nrow=7, header=FALSE)
+npsas3.US.professional <- read.csv("PowerStats svwuag.csv", skip=256, nrow=7, header=FALSE)
 
 names(npsas3.US.masters) <- c("Group", "Total federal loans")
-names(npsas3.US.certificate) <- c("Group", "Total federal loans")
 names(npsas3.US.phd) <- c("Group", "Total federal loans")
 names(npsas3.US.professional) <- c("Group", "Total federal loans")
 
 npsas3.US.masters$Level <- rep("Master's programs", nrow(npsas3.US.masters))
-npsas3.US.certificate$Level <- rep("Post-bac certificates", nrow(npsas3.US.certificate))
 npsas3.US.phd$Level <- rep("Research doctorates", nrow(npsas3.US.phd))
 npsas3.US.professional$Level <- rep("Professional doctorates", nrow(npsas3.US.professional))
 
 npsas3 <- rbind(npsas3.US.masters, 
-                npsas3.US.certificate, 
                 npsas3.US.phd, 
                 npsas3.US.professional)
 
 npsas3$Group[npsas3$Group=="Black or African American"] <- "Black"
 npsas3$Group[npsas3$Group=="Hispanic or Latino"] <- "Latino/a"
-npsas3$Group[npsas3$Group=="More than one race"] <- "2+ races"
-npsas3 <- npsas3 %>% filter((Group %in% c("American Indian or Alaska Native", "Native Hawaiian/other Pacific Islander", "2+ races"))==FALSE)
+npsas3 <- npsas3 %>% filter(Group %in% c("White", "Latino/a", "Black"))
 
 npsas3$Group <- as.factor(npsas3$Group)
-npsas3$Group <- factor(npsas3$Group, levels = c("White", "Latino/a", "Black", "Asian", "Pacific Islander", "2+ races"))
+npsas3$Group <- factor(npsas3$Group, levels = c("White", "Latino/a", "Black"))
 
 npsas3$`Total federal loans` <- gsub(pattern="!", x=npsas3$`Total federal loans`, replacement="")
 npsas3$`Total federal loans` <- gsub(pattern=",", x=npsas3$`Total federal loans`, replacement="")
 npsas3$`Total federal loans` <- gsub(pattern=" ", x=npsas3$`Total federal loans`, replacement="")
 npsas3$`Total federal loans` <- as.numeric(npsas3$`Total federal loans`)
 ```
-
-#### {.tabset}
-##### Figure 4: Race
+##### Figure 4: Race (U.S. only)
 ```{r figure4A}
 npsas3$`For Tooltip` <- paste(
   "State: ", npsas3$State, '\n',
@@ -1053,11 +1049,13 @@ g4A <- ggplot(data=npsas3, mapping=aes(x=Group, y=`Total federal loans`, fill=Gr
 
 ggplotly(g4A, width=800, height=450, tooltip="text")
 ```
-##### Figure 4: Race and Gender
+##### Figure 4: Race and Gender (U.S. only)
 ```{r npsas3.1}
-npsas3.1.US.masters <- read.csv("Powerstats pasqwo.csv", skip=108, nrow=14, header=FALSE)
-npsas3.1.US.phd <- read.csv("Powerstats pasqwo.csv", skip=300, nrow=14, header=FALSE)
-npsas3.1.US.professional <- read.csv("Powerstats pasqwo.csv", skip=396, nrow=14, header=FALSE)
+npsas3.1.US.masters <- read.csv("PowerStats lhslzf.csv", skip=108, nrow=14, header=FALSE)
+npsas3.1.US.phd <- read.csv("PowerStats lhslzf.csv", skip=300, nrow=14, header=FALSE)
+npsas3.1.US.professional <- read.csv("PowerStats lhslzf.csv", skip=396, nrow=14, header=FALSE)
+
+####ProgressMark####
 
 names(npsas3.1.US.masters) <- c("Group", "Total federal loans")
 names(npsas3.1.US.phd) <- c("Group", "Total federal loans")
@@ -1132,109 +1130,115 @@ ggplotly(g4B, width=800, height=450, tooltip="text")
 ```
 ##### Data source and notes
 
-**Data source:** National Postsecondary Student Aid Study, Graduate. Datalab interface available [here](https://nces.ed.gov/datalab/) using table retrieval number *vcbaev* for "Figure 4: Race" and table retrieval number *pasqwo* for "Figure 4: Race and Gender."
+**Data source:** National Postsecondary Student Aid Study, Graduate. Datalab interface available [here](https://nces.ed.gov/datalab/) using table retrieval number *svwuag* for "Figure 4: Race" and table retrieval number *lhslzf* for "Figure 4: Race and Gender."
 
 **Timeframe reflected:** Figures in this graph reflect students enrolled in the 2015-16 academic year. 
 
-Notes: Due to limitations of NPSAS:16, this only applies to in-state students. 
+**Notes:** Due to limitations of NPSAS:16, the data in Figure 4 only apply to in-state students. 
 
 ***
 
 #### {-}
 
 #### {.tabset}
-```{r npsas4.1, warning=FALSE}
-npsas4.1.US <- read.csv("PowerStats upgkeu.csv", skip=12, nrow=7, header=FALSE)
-npsas4.1.CA <- read.csv("PowerStats vsqgcr.csv", skip=12, nrow=7, header=FALSE)
+```{r npsas4, warning=FALSE}
+npsas4.US <- read.csv("PowerStats dxwsoi.csv", skip=12, nrow=7, header=FALSE)
+npsas4.CA <- read.csv("PowerStats dxwsoi", skip=73, nrow=7, header=FALSE)
 
-names(npsas4.1.US) <- c("Group", "Average cumulative federal loans")
-names(npsas4.1.CA) <- c("Group", "Average cumulative federal loans")
+####ProgressMark####
 
-npsas4.1.US$State <- rep("U.S.", nrow(npsas4.1.US))
-npsas4.1.CA$State <- rep("CA", nrow(npsas4.1.CA))
-npsas4.1 <- rbind(npsas4.1.US, npsas4.1.CA)
+names(npsas4.US) <- c("Group", "Average cumulative federal loans")
+names(npsas4.CA) <- c("Group", "Average cumulative federal loans")
 
-npsas4.1 <- npsas4.1 %>% filter(Group != "American Indian or Alaska Native")
+npsas4.US$State <- rep("U.S.", nrow(npsas4.US))
+npsas4.CA$State <- rep("CA", nrow(npsas4.CA))
+npsas4 <- rbind(npsas4.US, npsas4.CA)
 
-npsas4.1$Group[npsas4.1$Group=="Black or African American"] <- "Black"
-npsas4.1$Group[npsas4.1$Group=="More than one race"] <- "2+ races"
-npsas4.1$Group[npsas4.1$Group=="Hispanic or Latino"] <- "Latino/a"
-npsas4.1$Group[npsas4.1$Group=="Native Hawaiian/other Pacific Islander"] <- "Pacific Islander"
+npsas4 <- npsas4 %>% filter(Group != "American Indian or Alaska Native")
 
-npsas4.1$`Average cumulative federal loans` <- as.numeric(npsas4.1$`Average cumulative federal loans`)
+npsas4$Group[npsas4$Group=="Black or African American"] <- "Black"
+npsas4$Group[npsas4$Group=="More than one race"] <- "2+ races"
+npsas4$Group[npsas4$Group=="Hispanic or Latino"] <- "Latino/a"
+npsas4$Group[npsas4$Group=="Native Hawaiian/other Pacific Islander"] <- "Pacific Islander"
 
-npsas4.1$Group <- as.factor(npsas4.1$Group)
-npsas4.1$Group <- factor(npsas4.1$Group, levels = c("White", "Latino/a", "Black", "Asian", "Pacific Islander", "2+ races"))
+npsas4$`Average cumulative federal loans` <- as.numeric(npsas4$`Average cumulative federal loans`)
+
+npsas4$Group <- as.factor(npsas4$Group)
+npsas4$Group <- factor(npsas4$Group, levels = c("White", "Latino/a", "Black", "Asian", "Pacific Islander", "2+ races"))
 ```
 ##### Figure 5: Race
 ```{r figure5A}
+npsas4$`For Tooltip` <- paste(
+  "State: ", npsas4$State, '\n',
+  "Group: ", npsas4$Group, '\n',
+  "Average cumulative federal loans: ", dollar(npsas4$`Average cumulative federal loans`, accuracy=1),
+  sep=""
+)
+
+g5A <- ggplot(data=npsas4, mapping=aes(x=State, y=`Average cumulative federal loans`, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.6) + facet_grid(. ~ Group) + scale_y_continuous(label=scales::dollar) + labs(x="State", title="Average cumulative federal loans: Graduating undergraduates", y="Average cumulative loans") + scale_fill_manual(values = stateCols) + theme(legend.position="none", text=element_text(family="Optima"))
+
+ggplotly(g5A, width=800, height=350, tooltip="text")
+```
+##### Figure 5: Race and Gender
+```{r npsas4.1, warning=FALSE}
+npsas4.1.US <- read.csv("PowerStats gkhfjw.csv", skip=12, nrow=14, header=FALSE)
+npsas4.1.CS <- read.csv("PowerStats gkhfjw.csv", skip=108, nrow=14, header=FALSE)
+
+####ProgressMark####
+
+names(npsas4.1) <- c("Group", "Average cumulative federal loans")
+npsas4.1$State <- rep("U.S.", nrow(npsas4.1))
+npsas4.1$Gender <- rep(NA, nrow(npsas4.1))
+
+npsas4.1$Gender[npsas4.1$Group=="Black or African American male"] <- "Male"
+npsas4.1$Gender[npsas4.1$Group=="Black or African American female"] <- "Female"
+npsas4.1$Group[npsas4.1$Group=="Black or African American male"] <- "Black"
+npsas4.1$Group[npsas4.1$Group=="Black or African American female"] <- "Black"
+
+npsas4.1$Gender[npsas4.1$Group=="Hispanic or Latino male"] <- "Male"
+npsas4.1$Gender[npsas4.1$Group=="Hispanic or Latino female"] <- "Female"
+npsas4.1$Group[npsas4.1$Group=="Hispanic or Latino male"] <- "Latino/a"
+npsas4.1$Group[npsas4.1$Group=="Hispanic or Latino female"] <- "Latino/a"
+
+npsas4.1$Gender[npsas4.1$Group=="Asian male"] <- "Male"
+npsas4.1$Gender[npsas4.1$Group=="Asian female"] <- "Female"
+npsas4.1$Group[npsas4.1$Group=="Asian male"] <- "Asian"
+npsas4.1$Group[npsas4.1$Group=="Asian female"] <- "Asian"
+
+npsas4.1$Gender[npsas4.1$Group=="Pacific Islander/Hawaiian male"] <- "Male"
+npsas4.1$Gender[npsas4.1$Group=="Pacific Islander/Hawaiian female"] <- "Female"
+npsas4.1$Group[npsas4.1$Group=="Pacific Islander/Hawaiian male"] <- "Pacific Islander"
+npsas4.1$Group[npsas4.1$Group=="Pacific Islander/Hawaiian female"] <- "Pacific Islander"
+
+npsas4.1$Gender[npsas4.1$Group=="White male"] <- "Male"
+npsas4.1$Gender[npsas4.1$Group=="White female"] <- "Female"
+npsas4.1$Group[npsas4.1$Group=="White male"] <- "White"
+npsas4.1$Group[npsas4.1$Group=="White female"] <- "White"
+
+npsas4.1$Gender[npsas4.1$Group=="American Indian or Alaska Native male"] <- "Male"
+npsas4.1$Gender[npsas4.1$Group=="American Indian or Alaska Native female"] <- "Female"
+npsas4.1$Group[npsas4.1$Group=="American Indian or Alaska Native male"] <- "Native American"
+npsas4.1$Group[npsas4.1$Group=="American Indian or Alaska Native female"] <- "Native American"
+
+npsas4.1$Gender[npsas4.1$Group=="Male of more than one race"] <- "Male"
+npsas4.1$Gender[npsas4.1$Group=="Female of more than one race"] <- "Female"
+npsas4.1$Group[npsas4.1$Group=="Male of more than one race"] <- "2+ races"
+npsas4.1$Group[npsas4.1$Group=="Female of more than one race"] <- "2+ races"
+
+npsas4.1$Gender <- as.factor(npsas4.1$Gender)
+npsas4.1$Gender <- factor(npsas4.1$Gender, levels=c("Male", "Female"))
+```
+
+```{r figure5B}
 npsas4.1$`For Tooltip` <- paste(
   "State: ", npsas4.1$State, '\n',
   "Group: ", npsas4.1$Group, '\n',
+  "Gender: ", npsas4.1$Gender, '\n',
   "Average cumulative federal loans: ", dollar(npsas4.1$`Average cumulative federal loans`, accuracy=1),
   sep=""
 )
 
-g5A <- ggplot(data=npsas4.1, mapping=aes(x=State, y=`Average cumulative federal loans`, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.6) + facet_grid(. ~ Group) + scale_y_continuous(label=scales::dollar) + labs(x="State", title="Average cumulative federal loans: Graduating undergraduates", y="Average cumulative loans") + scale_fill_manual(values = stateCols) + theme(legend.position="none", text=element_text(family="Optima"))
-
-ggplotly(g5A, width=800, height=350, tooltip="text")
-```
-##### Figure 5: Race and Gender (U.S. only)
-```{r npsas4.2, warning=FALSE}
-npsas4.2 <- read.csv("PowerStats fvvhig.csv", skip=12, nrow=14, header=FALSE)
-names(npsas4.2) <- c("Group", "Average cumulative federal loans")
-npsas4.2$State <- rep("U.S.", nrow(npsas4.2))
-npsas4.2$Gender <- rep(NA, nrow(npsas4.2))
-
-npsas4.2$Gender[npsas4.2$Group=="Black or African American male"] <- "Male"
-npsas4.2$Gender[npsas4.2$Group=="Black or African American female"] <- "Female"
-npsas4.2$Group[npsas4.2$Group=="Black or African American male"] <- "Black"
-npsas4.2$Group[npsas4.2$Group=="Black or African American female"] <- "Black"
-
-npsas4.2$Gender[npsas4.2$Group=="Hispanic or Latino male"] <- "Male"
-npsas4.2$Gender[npsas4.2$Group=="Hispanic or Latino female"] <- "Female"
-npsas4.2$Group[npsas4.2$Group=="Hispanic or Latino male"] <- "Latino/a"
-npsas4.2$Group[npsas4.2$Group=="Hispanic or Latino female"] <- "Latino/a"
-
-npsas4.2$Gender[npsas4.2$Group=="Asian male"] <- "Male"
-npsas4.2$Gender[npsas4.2$Group=="Asian female"] <- "Female"
-npsas4.2$Group[npsas4.2$Group=="Asian male"] <- "Asian"
-npsas4.2$Group[npsas4.2$Group=="Asian female"] <- "Asian"
-
-npsas4.2$Gender[npsas4.2$Group=="Pacific Islander/Hawaiian male"] <- "Male"
-npsas4.2$Gender[npsas4.2$Group=="Pacific Islander/Hawaiian female"] <- "Female"
-npsas4.2$Group[npsas4.2$Group=="Pacific Islander/Hawaiian male"] <- "Pacific Islander"
-npsas4.2$Group[npsas4.2$Group=="Pacific Islander/Hawaiian female"] <- "Pacific Islander"
-
-npsas4.2$Gender[npsas4.2$Group=="White male"] <- "Male"
-npsas4.2$Gender[npsas4.2$Group=="White female"] <- "Female"
-npsas4.2$Group[npsas4.2$Group=="White male"] <- "White"
-npsas4.2$Group[npsas4.2$Group=="White female"] <- "White"
-
-npsas4.2$Gender[npsas4.2$Group=="American Indian or Alaska Native male"] <- "Male"
-npsas4.2$Gender[npsas4.2$Group=="American Indian or Alaska Native female"] <- "Female"
-npsas4.2$Group[npsas4.2$Group=="American Indian or Alaska Native male"] <- "Native American"
-npsas4.2$Group[npsas4.2$Group=="American Indian or Alaska Native female"] <- "Native American"
-
-npsas4.2$Gender[npsas4.2$Group=="Male of more than one race"] <- "Male"
-npsas4.2$Gender[npsas4.2$Group=="Female of more than one race"] <- "Female"
-npsas4.2$Group[npsas4.2$Group=="Male of more than one race"] <- "2+ races"
-npsas4.2$Group[npsas4.2$Group=="Female of more than one race"] <- "2+ races"
-
-npsas4.2$Gender <- as.factor(npsas4.2$Gender)
-npsas4.2$Gender <- factor(npsas4.2$Gender, levels=c("Male", "Female"))
-```
-
-```{r figure5B}
-npsas4.2$`For Tooltip` <- paste(
-  "State: ", npsas4.2$State, '\n',
-  "Group: ", npsas4.2$Group, '\n',
-  "Gender: ", npsas4.2$Gender, '\n',
-  "Average cumulative federal loans: ", dollar(npsas4.2$`Average cumulative federal loans`, accuracy=1),
-  sep=""
-)
-
-g5B <- ggplot(data=npsas4.2, mapping=aes(x=Gender, y=`Average cumulative federal loans`, fill=Gender, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.6) + facet_grid(. ~ Group) + scale_y_continuous(label=scales::dollar) + labs(x="Gender", title="Average cumulative federal loans: Graduating undergraduates (U.S. only)", y="Average cumulative loans") + scale_fill_manual(values = flagCols) + theme(legend.position="none", text=element_text(family="Optima"))
+g5B <- ggplot(data=npsas4.1, mapping=aes(x=Gender, y=`Average cumulative federal loans`, fill=Gender, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.6) + facet_grid(. ~ Group) + scale_y_continuous(label=scales::dollar) + labs(x="Gender", title="Average cumulative federal loans: Graduating undergraduates (U.S. only)", y="Average cumulative loans") + scale_fill_manual(values = flagCols) + theme(legend.position="none", text=element_text(family="Optima"))
 
 ggplotly(g5B, width=800, height=350, tooltip="text")
 ```
@@ -1244,7 +1248,7 @@ ggplotly(g5B, width=800, height=350, tooltip="text")
 
 **Timeframe reflected:** Figures in this graph reflect students enrolled in the 2015-16 academic year. 
 
-The averages here include those with no cumulative federal loans. 
+**Notes:** Due to limitations of NPSAS:16, the data in Figure 5 only apply to in-state students. The averages here include those with no cumulative federal loans. 
 
 ***
 
@@ -1255,11 +1259,13 @@ NPSAS allows us to disaggregate by ethnicity, to a limited extent, for two racia
 #### {.tabset}
 ##### Figure 6: Asian ethnicities
 ```{r npsas5}
-npsas5.US.HSP <- read.csv("Powerstats_tpsawz.csv", skip=11, nrow=6, header=FALSE)
-npsas5.US.ASN <- read.csv("Powerstats_tpsawz.csv", skip=19, nrow=9, header=FALSE)
+npsas5.US.ASN <- read.csv("PowerStats famipl.csv", skip=12, nrow=9, header=FALSE)
+npsas5.US.HSP <- read.csv("PowerStats famipl.csv", skip=23, nrow=6, header=FALSE)
 
-npsas5.CA.HSP <- read.csv("Powerstats_jejvld.csv", skip=11, nrow=6, header=FALSE)
-npsas5.CA.ASN <- read.csv("Powerstats_jejvld.csv", skip=19, nrow=9, header=FALSE)
+npsas5.CA.ASN <- read.csv("PowerStats famipl.csv", skip=123, nrow=9, header=FALSE)
+npsas5.CA.HSP <- read.csv("PowerStats famipl.csv", skip=134, nrow=6, header=FALSE)
+
+####ProgressMark####
 
 names(npsas5.US.HSP) <- c("Group", "Total federal loans")
 names(npsas5.US.ASN) <- c("Group", "Total federal loans")
@@ -1346,7 +1352,7 @@ ggplotly(g6B, width=800, height=500, tooltip="text")
 
 **Timeframe reflected:** Figures in this graph reflect students enrolled in the 2015-16 academic year. 
 
-Note: Filtered for 4-year colleges and U.S. citizenship. Limited to in-state, undergraduate students. "Total federal loans" includes Parent PLUS. No other racial groups besides Hispanic and Asian have breakouts by ethnicity in NPSAS.
+**Notes:** For this analysis, I filtered for 4-year colleges and U.S. citizenship. "Total federal loans" includes Parent PLUS. No other racial groups besides Hispanic and Asian have breakouts by ethnicity in NPSAS. Due to limitations of NPSAS:16, the data in Figure 6 only apply to in-state students. 
 
 ***
 
@@ -2407,6 +2413,7 @@ ggplotly(g7, width=800, height=350, tooltip="text")
 survey_years(shed.OwnDebt$SurveyYear)
 ```
 
+**Notes:** See the table below for the survey respondent sample size by subgroup. 
 ```{r ownDebt.N}
 N.OwnDebt <- aggregate(data=shed.OwnDebt, Count ~ Race + State, FUN=sum)
 names(N.OwnDebt) <- c("Group", "State", "Survey respondents")
@@ -2508,6 +2515,7 @@ survey_years(shed.OwnDebtSL$SurveyYear)
 # I have checked and verified that all three versions of Figure 8 use the same survey years. 
 ```
 
+**Notes:** See the tables below for the survey respondent sample size by subgroup. 
 ```{r OwnDebtSL.N}
 N.OwnDebtSL <- aggregate(data=shed.OwnDebtSL, Count ~ Race + State, FUN=sum)
 names(N.OwnDebtSL) <- c("Group", "State", "Survey respondents")
@@ -2601,6 +2609,7 @@ ggplotly(g9B, height=350, tooltip="text")
 survey_years(shed.OwnDebtTot3$SurveyYear)
 ```
 
+**Notes:** See the table below for the survey respondent sample size by subgroup. 
 ```{r OwnDebtTotal.N}
 N.OwnDebtTotal <- aggregate(data=shed.OwnDebtTot3, Count ~ Race + State, FUN=sum)
 names(N.OwnDebtTotal) <- c("Group", "State", "Survey respondents")
@@ -2682,8 +2691,7 @@ survey_years(shed.OwnDebtMon3$SurveyYear)
 ```
 Survey responses collected in 2020 and 2021 are not included due to the federal student loan repayment pause.
 
-Due to smaller sample size, interpret results with caution.
-
+**Notes:** Due to smaller sample size, interpret results with caution. See the table below for the survey respondent sample size by subgroup. 
 ```{r OwnDebtMon3.N}
 N.OwnDebtMon3 <- aggregate(data=shed.OwnDebtMon3, Count ~ Race + State, FUN=sum)
 names(N.OwnDebtMon3) <- c("Group", "State", "Survey respondents")
@@ -2733,8 +2741,7 @@ survey_years(shed.OwnDebtBehind$SurveyYear)
 ```
 Survey responses collected in 2020 and 2021 are not included due to the federal student loan repayment pause. 
 
-Due to smaller sample size, interpret results with caution.
-
+**Notes:** Due to smaller sample size, interpret results with caution. See the table below for the survey respondent sample size by subgroup.
 ```{r OwnDebtBehind.N}
 N.OwnDebtBehind <- aggregate(data=shed.OwnDebtBehind, Count ~ Race + State, FUN=sum)
 names(N.OwnDebtBehind) <- c("Group", "State", "Survey respondents")
@@ -2804,16 +2811,13 @@ ggplotly(g12B, height=350, tooltip="text")
 
 **Data source:** Survey of Household Economics and Decision-making, accessed November 2022, available through the U.S. Federal Reserve [here](https://www.federalreserve.gov/consumerscommunities/shed_data.htm).
 
-Figure 12 includes all respondents, not just those who have student debt for their own education. 
-"Figure 12: Debt for spouse's or partner's education" does not include survey respondents without a spouse or partner. 
-"Figure 12: Debt for child or grandchild's education" does not include survey respondents without children or grandchildren. 
-
 **Timeframe reflected:** The survey years included for Figure 12 are
 ```{r SpouseDebt.SY, results = 'asis'}
 survey_years(shed.SpouseDebt$SurveyYear)
 # I have checked and verified that both verions of Figure 12 use the same survey years. 
 ```
 
+**Notes:** Figure 12 includes all respondents, not just those who have student debt for their own education. "Figure 12: Debt for spouse's or partner's education" does not include survey respondents without a spouse or partner. "Figure 12: Debt for child or grandchild's education" does not include survey respondents without children or grandchildren. See the tables below for the survey respondent sample size by subgroup.
 ```{r SpouseDebt.N}
 N.SpouseDebt <- aggregate(data=shed.SpouseDebt, Count ~ Race + State, FUN=sum)
 names(N.SpouseDebt) <- c("Group", "State", "Survey respondents")
@@ -2918,6 +2922,7 @@ ggplotly(g13C, width=800, height=350, tooltip="text")
 survey_years(shed.EdAttain$SurveyYear)
 ```
 
+**Notes:** See the table below for the survey respondent sample size by subgroup.
 ```{r EdAttain.N}
 N.EdAttain <- aggregate(data=shed.EdAttain, Count ~ Race + State + AnyStudentLoans, FUN=sum)
 N.EdAttain <- N.EdAttain %>% filter(State=="CA" | AnyStudentLoans=="Yes")
@@ -3013,7 +3018,7 @@ ggplotly(g14C, width=800, height=350, tooltip="text")
 survey_years(shed.HomeOwn$SurveyYear)
 ```
 
-
+**Notes:** See the table below for the survey respondent sample size by subgroup.
 ```{r HomeOwn.N}
 N.HomeOwn <- aggregate(data=shed.HomeOwn, Count ~ Race + State + AnyStudentLoans, FUN=sum)
 N.HomeOwn <- N.HomeOwn %>% filter(State=="CA" | AnyStudentLoans=="Yes")
@@ -3070,6 +3075,7 @@ ggplotly(g15, width=800, height=350, tooltip="text")
 survey_years(shed.UnpaidCC$SurveyYear)
 ```
 
+**Notes:** See the table below for the survey respondent sample size by subgroup.
 ```{r UnpaidCC.N}
 N.UnpaidCC <- aggregate(data=shed.UnpaidCC, Count ~ Race + State + AnyStudentLoans, FUN=sum)
 N.UnpaidCC <- N.UnpaidCC %>% filter(State=="CA" | AnyStudentLoans=="Yes")
@@ -3166,6 +3172,7 @@ ggplotly(g16C, width=800, height=350, tooltip="text")
 survey_years(shed.CCBalance$SurveyYear)
 ```
 
+**Notes:** See the table below for the survey respondent sample size by subgroup.
 ```{r CCBalance.N}
 N.CCBalance <- aggregate(data=shed.CCBalance, Count ~ Race + State + AnyStudentLoans, FUN=sum)
 N.CCBalance <- N.CCBalance %>% filter(State=="CA" | AnyStudentLoans=="Yes")
@@ -3267,13 +3274,13 @@ ggplotly(g17C, width=800, height=350, tooltip="text")
 survey_years(shed.Savings$SurveyYear)
 ```
 
+**Notes:** See the table below for the survey respondent sample size by subgroup.
 ```{r Savings.N}
 N.Savings <- aggregate(data=shed.Savings, Count ~ Race + State + AnyStudentLoans, FUN=sum)
 N.Savings <- N.Savings %>% filter(State=="CA" | AnyStudentLoans=="Yes")
 names(N.Savings) <- c("Group", "State", "Student loan borrower", "Survey respondents")
 kable(N.Savings, caption="N size by group for Figure 17") %>% kable_paper("hover", full_width = F)
 ```
-
 
 ***
 
@@ -3369,6 +3376,7 @@ ggplotly(g18C, width=800, height=350, tooltip="text")
 survey_years(shed.TotalInc$SurveyYear)
 ```
 
+**Notes:** See the table below for the survey respondent sample size by subgroup.
 ```{r TotalInc.N}
 N.TotalInc <- aggregate(data=shed.TotalInc, Count ~ Race + State + AnyStudentLoans, FUN=sum)
 N.TotalInc <- N.TotalInc %>% filter(State=="CA" | AnyStudentLoans=="Yes")
@@ -3465,6 +3473,7 @@ ggplotly(g19C, width=800, height=350, tooltip="text")
 survey_years(shed.FinManage$SurveyYear)
 ```
 
+**Notes:** See the table below for the survey respondent sample size by subgroup.
 ```{r FinManage.N}
 N.FinManage <- aggregate(data=shed.FinManage, Count ~ Race + State + AnyStudentLoans, FUN=sum)
 N.FinManage <- N.FinManage %>% filter(State=="CA" | AnyStudentLoans=="Yes")
@@ -3561,6 +3570,7 @@ ggplotly(g20C, width=800, height=350, tooltip="text")
 survey_years(shed.ParComp$SurveyYear)
 ```
 
+**Notes:** See the table below for the survey respondent sample size by subgroup.
 ```{r ParComp.N}
 N.ParComp <- aggregate(data=shed.ParComp, Count ~ Race + State + AnyStudentLoans, FUN=sum)
 N.ParComp <- N.ParComp %>% filter(State=="CA" | AnyStudentLoans=="Yes")
@@ -3657,6 +3667,7 @@ ggplotly(g21C, width=800, height=350, tooltip="text")
 survey_years(shed.CreditScore$SurveyYear)
 ```
 
+**Notes:** See the table below for the survey respondent sample size by subgroup.
 ```{r CreditScore.N}
 N.CreditScore <- aggregate(data=shed.CreditScore, Count ~ Race + State + AnyStudentLoans, FUN=sum)
 N.CreditScore <- N.CreditScore %>% filter(State=="CA" | AnyStudentLoans=="Yes")
@@ -3751,6 +3762,7 @@ ggplotly(g22C, width=800, height=350, tooltip="text")
 survey_years(shed.PayBills$SurveyYear)
 ```
 
+**Notes:** See the table below for the survey respondent sample size by subgroup.
 ```{r PayBills.N}
 N.PayBills <- aggregate(data=shed.PayBills, Count ~ Race + State + AnyStudentLoans, FUN=sum)
 N.PayBills <- N.PayBills %>% filter(State=="CA" | AnyStudentLoans=="Yes")
@@ -3879,8 +3891,7 @@ survey_years(shed.PartialRent$SurveyYear)
 # I have checked and verified that these survey years match those used for the credit card bill analysis. 
 ```
 
-Note that each of these analyses are limited to those who have each of these bills. Interpret results for groups with small Ns with caution. 
-
+**Notes:** Each of these analyses are limited to those who have each of these bills. Interpret results for subgroups with small sample sizes with caution. See the table below for the survey respondent sample size by subgroup.
 ```{r PartialSL.N}
 N.PartialSL <- aggregate(data=shed.PartialSL, Count ~ Race + State, FUN=sum)
 names(N.PartialSL) <- c("Group", "State", "Survey respondents")
@@ -3943,9 +3954,8 @@ ggplotly(g24, height=350, tooltip="text")
 survey_years(shed.PartialSL400$SurveyYear)
 ```
 Survey years 2020 and 2021 not included due to the federal student loan repayment pause.
-
-Limited to those who have student loans.  
-
+ 
+**Notes:** This analysis is limited to those who have student loans. See the table below for the survey respondent sample size by subgroup.
 ```{r PartialSL400.N}
 N.PartialSL400 <- aggregate(data=shed.PartialSL400, Count ~ Race + State, FUN=sum)
 names(N.PartialSL400) <- c("Group", "State", "Survey respondents")
@@ -4040,6 +4050,7 @@ ggplotly(g25C, width=800, height=350, tooltip="text")
 survey_years(shed.PayBills400$SurveyYear)
 ```
 
+**Notes:** See the table below for the survey respondent sample size by subgroup.
 ```{r PayBills400.N}
 N.PayBills400 <- aggregate(data=shed.PayBills400, Count ~ Race + State + AnyStudentLoans, FUN=sum)
 N.PayBills400 <- N.PayBills400 %>% filter(State=="CA" | AnyStudentLoans=="Yes")
@@ -4142,6 +4153,7 @@ ggplotly(g26C, width=800, height=350)
 survey_years(shed.CCApprov$SurveyYear)
 ```
 
+**Notes:** See the table below for the survey respondent sample size by subgroup.
 ```{r CCApprov.N}
 N.CCApprov <- aggregate(data=shed.CCApprov, Count ~ Race + State + AnyStudentLoans, FUN=sum)
 N.CCApprov <- N.CCApprov %>% filter(State=="CA" | AnyStudentLoans=="Yes")
@@ -4199,6 +4211,7 @@ ggplotly(g27, width=800, height=350, tooltip="text")
 survey_years(shed.CreditDeny$SurveyYear)
 ```
 
+**Notes:** See the table below for the survey respondent sample size by subgroup.
 ```{r CreditDeny.N}
 N.CreditDeny <- aggregate(data=shed.CreditDeny, Count ~ Race + State + AnyStudentLoans, FUN=sum)
 N.CreditDeny <- N.CreditDeny %>% filter(State=="CA" | AnyStudentLoans=="Yes")
@@ -4425,7 +4438,7 @@ survey_years(shed.Welfare$SurveyYear)
 # I have checked and verified that the survey years for these analyses are all the same. 
 ```
 
-
+**Notes:** See the tables below for the survey respondent sample size by subgroup.
 ```{r SocSec.N}
 N.SocSec <- aggregate(data=shed.SocSec, Count ~ Race + State + AnyStudentLoans, FUN=sum)
 N.SocSec <- N.SocSec %>% filter(State=="CA" | AnyStudentLoans=="Yes")
@@ -4551,7 +4564,7 @@ survey_years(shed.ThreeMonSave$SurveyYear)
 # I have checked and verified that the survey years for both verisons of Figure 29 match.
 ```
 
-
+**Notes:** See the tables below for the survey respondent sample size by subgroup.
 ```{r ThreeMonSave.N}
 N.ThreeMonSave <- aggregate(data=shed.ThreeMonSave, Count ~ Race + State + AnyStudentLoans, FUN=sum)
 N.ThreeMonSave <- N.ThreeMonSave %>% filter(State=="CA" | AnyStudentLoans=="Yes")
@@ -4855,10 +4868,7 @@ survey_years(shed.CCA400$SurveyYear)
 # Running survey_years for just one of these variables is sufficient. I have checked and verified that the survey years are the same for all of these variables.
 ```
 
-
-Responses are not exclusive to one another. For an example, a respondent could say that they would sell belongings and use a payday loan. Because of this, groups' bars cannot be stacked on top of each other in one chart and are instead presented here in a series of charts. 
-
-
+**Notes:** Responses are not exclusive to one another. For an example, a respondent could say that they would sell belongings and use a payday loan. Because of this, groups' bars cannot be stacked on top of each other in one chart and are instead presented here in a series of charts. See the table below for the survey respondent sample size by subgroup.
 ```{r CCA400.N}
 N.CCA400 <- aggregate(data=shed.CCA400, Count ~ Race + State + AnyStudentLoans, FUN=sum)
 N.CCA400 <- N.CCA400 %>% filter(State=="CA" | AnyStudentLoans=="Yes")
@@ -4956,6 +4966,7 @@ ggplotly(g31C, width=800, height=350, tooltip="text")
 survey_years(shed.EdPayoff1$SurveyYear)
 ```
 
+**Notes:** See the table below for the survey respondent sample size by subgroup.
 ```{r EdPayoff1.N}
 N.EdPayoff1 <- aggregate(data=shed.EdPayoff1, Count ~ Race + State + AnyStudentLoans, FUN=sum)
 N.EdPayoff1 <- N.EdPayoff1 %>% filter(State=="CA" | AnyStudentLoans=="Yes")
@@ -5116,9 +5127,7 @@ survey_years(shed.DiffField1$SurveyYear)
 # I have checked and verified that the survey years for all versions of Figure 32 match.
 ```
 
-
-Interpret the "California student loan borrowers" results with caution due to small sample size. 
-
+**Notes:** Interpret the "California student loan borrowers" results with caution due to small sample size. See the tables below for the survey respondent sample size by subgroup.
 ```{r DiffField.N}
 N.DiffField <- aggregate(data=shed.DiffField1, Count ~ Race + State + AnyStudentLoans, FUN=sum)
 N.DiffField <- N.DiffField %>% filter(State=="CA" | AnyStudentLoans=="Yes")
@@ -5197,8 +5206,7 @@ ggplotly(g33, width=800, height=350, tooltip="text")
 survey_years(shed.Gender$SurveyYear)
 ```
 
-The gender variable, as collected and reported by SHED, only has "male" and "female" values. 
-
+**Notes:** The gender variable, as collected and reported by SHED, only has "male" and "female" values. See the tables below for the survey respondent sample size by subgroup. 
 ```{r Gender.N}
 N.Gender <- aggregate(data=shed.Gender, Count ~ Race + State + AnyStudentLoans, FUN=sum)
 N.Gender <- N.Gender %>% filter(State=="CA" | AnyStudentLoans=="Yes")
@@ -5293,8 +5301,7 @@ ggplotly(g34C, width=800, height=350, tooltip="text")
 survey_years(shed.InstLevel$SurveyYear)
 ```
 
-Only includes those who have college experience. 
-
+**Notes:** This analysis only includes those who have college experience. See the tables below for the survey respondent sample size by subgroup. 
 ```{r InstLevel.N}
 N.InstLevel <- aggregate(data=shed.InstLevel, Count ~ Race + State + AnyStudentLoans, FUN=sum)
 N.InstLevel <- N.InstLevel %>% filter(State=="CA" | AnyStudentLoans=="Yes")
@@ -5389,8 +5396,7 @@ ggplotly(g35C, width=800, height=350, tooltip="text")
 survey_years(shed.InstControl$SurveyYear)
 ```
 
-Only includes those who have college experience. 
-
+**Notes:** This analysis only includes those who have college experience. See the tables below for the survey respondent sample size by subgroup. 
 ```{r InstControl.N}
 N.InstControl <- aggregate(data=shed.InstControl, Count ~ Race + State + AnyStudentLoans, FUN=sum)
 N.InstControl <- N.InstControl %>% filter(State=="CA" | AnyStudentLoans=="Yes")
@@ -5797,7 +5803,7 @@ kable(kable4D, caption="Top 100 California institutions by total outstanding loa
 
 **Timeframe reflected:** Loan data in this table reflect borrowers' balances as measured in the National Student Loan Data System on June 30, 2021. 
 
-Only 73 institutions have at least 500 borrowers with outstanding Grad PLUS debt. 
+**Notes:** Only 73 institutions have at least 500 borrowers with outstanding Grad PLUS debt. 
 
 ***
 
@@ -5901,6 +5907,7 @@ kable(kable5, caption="Top 100 institutions based outside California, by estimat
 
 **Timeframe reflected:** Loan data used for this table reflect borrowers' balances as measured in the National Student Loan Data System on June 30, 2021. Enrollment data on distance education reflect Fall 2018. I use this enrollment data as a proxy for current enrollment. 
 
+**Notes:** 
 
 ***
 
@@ -6143,6 +6150,8 @@ kable(kable6B, caption="Sectors of California higher education by outstanding fe
 
 **Timeframe reflected:** Loan data in this table reflect borrowers' balances as measured in the National Student Loan Data System on June 30, 2021. 
 
+**Notes:** 
+
 ***
 
 ### {-}
@@ -6189,6 +6198,8 @@ kable(kable7, caption="California institutions with the highest shares of underg
 **Data source:** College Scorecard institution dataset, accessed November 2022, available through the U.S. Department of Education [here](https://collegescorecard.ed.gov/data/). 
 
 **Timeframe reflected:** Data in the "Percent of undergraduates who received federal student loans" column reflect students enrolled in academic year 2019-20. Data in the "Median debt at graduation" reflect pooled cohorts of students who graduated in fiscal year 2019 or fiscal year 2020. 
+
+**Notes:** 
 
 ***
 
@@ -6274,6 +6285,8 @@ kable(kable8C, caption="California institutions by ratio of Grad PLUS borrowers'
 **Data source:** College Scorecard institution dataset, accessed November 2022, available through the U.S. Department of Education [here](https://collegescorecard.ed.gov/data/). 
 
 **Timeframe reflected:** Loan balance data in this table reflect borrowers who entered repayment in either award year 2007-08 or award year 2008-09, with outstanding debt measured 10 years after entering repayment. 
+
+**Notes:** 
 
 ***
 
@@ -6377,7 +6390,7 @@ kable(kable9C, caption="California institutions by share of Grad PLUS borrowers 
 
 **Timeframe reflected:** Borrower status data reflect borrowers who entered repayment in award year 2015-16 or 2016-17, at the time when the borrower had been in repayment for three years. 
 
-Minimum 200 borrowers per institution in the ten-year repayment cohort. This does not include those in forbearance or deferment.
+**Notes:** I applied a threshold of minimum 200 borrowers per institution in the ten-year repayment cohort. This does not include those in forbearance or deferment.
 
 ***
 
@@ -6504,11 +6517,13 @@ kable(kable10B, caption="4-digit CIPs and award levels by debt compared to earni
 
 **Timeframe reflected:** Data in the "Estimated median debt" column are author's calculations using data reflecting borrowers who entered repayment in award year 2017-18 or 2018-19. Data in the "Estimated median earnings, 1 year after completing program" column are author's calculations using data reflecting the calendar year 2018 or 2019 earnings of students who received federal student aid and graduated from their program in academic year 2016-17 or 2017-18. Earnings data were adjusted by the Department of Education to 2020 dollars. 
 
+**Notes:**
+
 ***
 
 ### {-}
 
-(Summary text here)
+(Summary text here
 
 ### {.tabset}
 ```{r EarningsDemographics}
@@ -6639,6 +6654,8 @@ ggplotly(g36B, width=800, height=600, tooltip="text")
 
 **Timeframe reflected:** Ranked earnings values are author's calculations using College Scorecard data reflecting the calendar year 2017 or 2018 earnings of students who received federal student aid and graduated from their program in academic year 2014-15 or 2015-16. Ranked shares of completers by race are author's calculations using data from the IPEDS Completion Surveys reflecting 2019-20 and 2020-21. 
 
+**Notes:**
+
 ***
 
 ### {-}
@@ -6734,6 +6751,7 @@ ggplotly(g36B, width=800, height=600, tooltip="text")
 
 **Timeframe reflected:**  Ranked debt values are author's calculations using College Scorecard data reflecting borrowers who entered repayment in award year 2017-18 or 2018-19. Ranked shares of completers by race are author's calculations using data from the IPEDS Completion Surveys reflecting 2019-20 and 2020-21. 
 
+**Notes:**
 
 ***
 
