@@ -1381,6 +1381,8 @@ npsas3.1$Group[npsas3.1$Group=="Male of more than one race"] <- "2+ races"
 npsas3.1$Group[npsas3.1$Group=="Female of more than one race"] <- "2+ races"
 
 npsas3.1 <- npsas3.1 %>% filter(Group %in% c("White",  "Latino/a", "Black", "Asian"))
+npsas3.1$Group <- as.factor(npsas3.1$Group)
+npsas3.1$Group <- factor(npsas3.1$Group, levels = c("White", "Latino/a", "Black", "Asian", "2+ races"))
 
 npsas3.1$`Total federal loans` <- gsub(pattern="!", x=npsas3.1$`Total federal loans`, replacement="")
 npsas3.1$`Total federal loans` <- gsub(pattern=",", x=npsas3.1$`Total federal loans`, replacement="")
@@ -1454,6 +1456,8 @@ npsas3.1P$Group[npsas3.1P$Group=="Male of more than one race"] <- "2+ races"
 npsas3.1P$Group[npsas3.1P$Group=="Female of more than one race"] <- "2+ races"
 
 npsas3.1P <- npsas3.1P %>% filter(Group %in% c("White",  "Latino/a", "Black", "Asian", "2+ races"))
+npsas3.1P$Group <- as.factor(npsas3.1P$Group)
+npsas3.1P$Group <- factor(npsas3.1P$Group, levels = c("White", "Latino/a", "Black", "Asian", "2+ races"))
 
 npsas3.1P$`Share Borrowing Loans` <- gsub(pattern="!", x=npsas3.1P$`Share Borrowing Loans`, replacement="")
 npsas3.1P$`Share Borrowing Loans` <- gsub(pattern=",", x=npsas3.1P$`Share Borrowing Loans`, replacement="")
@@ -1527,10 +1531,40 @@ ggplotly(g5A, width=800, height=350, tooltip="text")
 ```
 
 ```{r percentages.npsas4}
-# dyclij
+npsas4P.US <- read.csv("PowerStats dyclij.csv", skip=14, nrow=7, header=FALSE) %>% select(V1, V3)
+npsas4P.CA <- read.csv("PowerStats dyclij.csv", skip=78, nrow=7, header=FALSE) %>% select(V1, V3)
+
+names(npsas4P.US) <- c("Group", "Share with Cumulative Loans")
+names(npsas4P.CA) <- c("Group", "Share with Cumulative Loans")
+
+npsas4P.US$State <- rep("U.S.", nrow(npsas4P.US))
+npsas4P.CA$State <- rep("CA", nrow(npsas4P.CA))
+npsas4P <- rbind(npsas4P.US, npsas4P.CA)
+
+npsas4P <- npsas4P %>% filter(Group != "American Indian or Alaska Native")
+
+npsas4P$Group[npsas4P$Group=="Black or African American"] <- "Black"
+npsas4P$Group[npsas4P$Group=="More than one race"] <- "2+ races"
+npsas4P$Group[npsas4P$Group=="Hispanic or Latino"] <- "Latino/a"
+npsas4P$Group[npsas4P$Group=="Native Hawaiian/other Pacific Islander"] <- "Pacific Islander"
+
+npsas4P$`Share with Cumulative Loans` <- as.numeric(npsas4P$`Share with Cumulative Loans`) / 100
+
+npsas4P$Group <- as.factor(npsas4P$Group)
+npsas4P$Group <- factor(npsas4P$Group, levels = c("White", "Latino/a", "Black", "Asian", "Pacific Islander", "2+ races"))
 ```
 
 ```{r percentages.figure5A}
+npsas4P$`For Tooltip` <- paste(
+  "State: ", npsas4P$State, '\n',
+  "Group: ", npsas4P$Group, '\n',
+  "Share with cumulative loans: ", percent(npsas4P$`Share with Cumulative Loans`, accuracy=0.1),
+  sep=""
+)
+
+g5AP <- ggplot(data=npsas4P, mapping=aes(x=State, y=`Share with Cumulative Loans`, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.6) + facet_grid(. ~ Group) + scale_y_continuous(label=scales::percent_format(accuracy=1)) + labs(x="State", title="Share of graduating undergraduates with cumulative loans by group", y="Share with Cumulative Loans") + scale_fill_manual(values = stateCols2) + theme(legend.position="none", text=element_text(family="Optima"))
+
+ggplotly(g5AP, width=800, height=350, tooltip="text")
 ```
 ##### Figure 5: Average Undergraduate Loans at Graduation by Race and Gender
 ```{r npsas4.1, warning=FALSE}
@@ -1582,6 +1616,9 @@ npsas4.1$Group[npsas4.1$Group=="Female of more than one race"] <- "2+ races"
 
 npsas4.1 <- npsas4.1 %>% filter(Group %in% c("Native American", "Pacific Islander")==FALSE)
 
+npsas4.1$Group <- as.factor(npsas4.1$Group)
+npsas4.1$Group <- factor(npsas4.1$Group, levels = c("White", "Latino/a", "Black", "Asian", "2+ races"))
+
 npsas4.1$Gender <- as.factor(npsas4.1$Gender)
 npsas4.1$Gender <- factor(npsas4.1$Gender, levels=c("Male", "Female"))
 npsas4.1$`Average cumulative federal loans` <- as.numeric(npsas4.1$`Average cumulative federal loans`)
@@ -1596,16 +1633,79 @@ npsas4.1$`For Tooltip` <- paste(
   sep=""
 )
 
-g5B <- ggplot(data=npsas4.1, mapping=aes(x=Gender, y=`Average cumulative federal loans`, fill=Gender, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.6) + facet_grid(. ~ Group) + scale_y_continuous(label=scales::dollar) + labs(x="Gender", title="Graduating undergraduates' average cumulative loans by group and gender", y="Average cumulative loans") + scale_fill_manual(values = flagCols) + theme(legend.position="none", text=element_text(family="Optima"))
+g5B <- ggplot(data=npsas4.1, mapping=aes(x=State, y=`Average cumulative federal loans`, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.6) + facet_grid(Gender ~ Group) + scale_y_continuous(label=scales::dollar) + labs(title="Graduating undergraduates' average cumulative loans by group and gender", y="Average Cumulative Loans") + scale_fill_manual(values = flagCols) + theme(legend.position="none", text=element_text(family="Optima"))
 
 ggplotly(g5B, width=800, height=350, tooltip="text")
 ```
 
 ```{r percentages.npsas4.1}
-# vylupp
+npsas4.1P.US <- read.csv("PowerStats vylupp.csv", skip=14, nrow=14, header=FALSE) %>% select(V1, V3)
+npsas4.1P.CA <- read.csv("PowerStats vylupp.csv", skip=113, nrow=14, header=FALSE) %>% select(V1, V3)
+
+names(npsas4.1P.US) <- c("Group", "Share with Cumulative Loans")
+names(npsas4.1P.CA) <- c("Group", "Share with Cumulative Loans")
+npsas4.1P.US$State <- rep("U.S.", nrow(npsas4.1P.US))
+npsas4.1P.CA$State <- rep("CA", nrow(npsas4.1P.CA))
+
+npsas4.1P <- rbind(npsas4.1P.US, npsas4.1P.CA)
+npsas4.1P$Gender <- rep(NA, nrow(npsas4.1P))
+
+npsas4.1P$Gender[npsas4.1P$Group=="Black or African American male"] <- "Male"
+npsas4.1P$Gender[npsas4.1P$Group=="Black or African American female"] <- "Female"
+npsas4.1P$Group[npsas4.1P$Group=="Black or African American male"] <- "Black"
+npsas4.1P$Group[npsas4.1P$Group=="Black or African American female"] <- "Black"
+
+npsas4.1P$Gender[npsas4.1P$Group=="Hispanic or Latino male"] <- "Male"
+npsas4.1P$Gender[npsas4.1P$Group=="Hispanic or Latino female"] <- "Female"
+npsas4.1P$Group[npsas4.1P$Group=="Hispanic or Latino male"] <- "Latino/a"
+npsas4.1P$Group[npsas4.1P$Group=="Hispanic or Latino female"] <- "Latino/a"
+
+npsas4.1P$Gender[npsas4.1P$Group=="Asian male"] <- "Male"
+npsas4.1P$Gender[npsas4.1P$Group=="Asian female"] <- "Female"
+npsas4.1P$Group[npsas4.1P$Group=="Asian male"] <- "Asian"
+npsas4.1P$Group[npsas4.1P$Group=="Asian female"] <- "Asian"
+
+npsas4.1P$Gender[npsas4.1P$Group=="Pacific Islander/Hawaiian male"] <- "Male"
+npsas4.1P$Gender[npsas4.1P$Group=="Pacific Islander/Hawaiian female"] <- "Female"
+npsas4.1P$Group[npsas4.1P$Group=="Pacific Islander/Hawaiian male"] <- "Pacific Islander"
+npsas4.1P$Group[npsas4.1P$Group=="Pacific Islander/Hawaiian female"] <- "Pacific Islander"
+
+npsas4.1P$Gender[npsas4.1P$Group=="White male"] <- "Male"
+npsas4.1P$Gender[npsas4.1P$Group=="White female"] <- "Female"
+npsas4.1P$Group[npsas4.1P$Group=="White male"] <- "White"
+npsas4.1P$Group[npsas4.1P$Group=="White female"] <- "White"
+
+npsas4.1P$Gender[npsas4.1P$Group=="American Indian or Alaska Native male"] <- "Male"
+npsas4.1P$Gender[npsas4.1P$Group=="American Indian or Alaska Native female"] <- "Female"
+npsas4.1P$Group[npsas4.1P$Group=="American Indian or Alaska Native male"] <- "Native American"
+npsas4.1P$Group[npsas4.1P$Group=="American Indian or Alaska Native female"] <- "Native American"
+
+npsas4.1P$Gender[npsas4.1P$Group=="Male of more than one race"] <- "Male"
+npsas4.1P$Gender[npsas4.1P$Group=="Female of more than one race"] <- "Female"
+npsas4.1P$Group[npsas4.1P$Group=="Male of more than one race"] <- "2+ races"
+npsas4.1P$Group[npsas4.1P$Group=="Female of more than one race"] <- "2+ races"
+
+npsas4.1P <- npsas4.1P %>% filter(Group %in% c("Native American", "Pacific Islander")==FALSE)
+npsas4.1P$Group <- as.factor(npsas4.1P$Group)
+npsas4.1P$Group <- factor(npsas4.1P$Group, levels = c("White", "Latino/a", "Black", "Asian", "2+ races"))
+
+npsas4.1P$Gender <- as.factor(npsas4.1P$Gender)
+npsas4.1P$Gender <- factor(npsas4.1P$Gender, levels=c("Male", "Female"))
+npsas4.1P$`Share with Cumulative Loans` <- as.numeric(npsas4.1P$`Share with Cumulative Loans`) / 100
 ```
 
 ```{r percentages.figure5B}
+npsas4.1P$`For Tooltip` <- paste(
+  "State: ", npsas4.1P$State, '\n',
+  "Group: ", npsas4.1P$Group, '\n',
+  "Gender: ", npsas4.1P$Gender, '\n',
+  "Share with cumulative loans: ", percent(npsas4.1P$`Share with Cumulative Loans`, accuracy=0.1),
+  sep=""
+)
+
+g5BP <- ggplot(data=npsas4.1P, mapping=aes(x=State, y=`Share with Cumulative Loans`, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.6) + facet_grid(Gender ~ Group) + scale_y_continuous(label=scales::percent_format(accuracy=1)) + labs(title="Share of graduating undergraduates with cumulative loans by group and gender", y="Share with Cumulative Loans") + scale_fill_manual(values = flagCols2) + theme(legend.position="none", text=element_text(family="Optima"))
+
+ggplotly(g5BP, width=800, height=350, tooltip="text")
 ```
 ##### Data Source and Notes
 
@@ -1658,33 +1758,96 @@ npsas5.ASN <- npsas5 %>% filter(Race=="Asian") %>% filter(Group != "Not of Asian
 npsas5.HSP <- npsas5 %>% filter(Race=="Hispanic") %>% filter(Group != "Not Hispanic or Latino origin")
 
 npsas5.ASN$Group[npsas5.ASN$Group=="Asian Indian"] <- "Indian"
-npsas5.HSP$Group[npsas5.HSP$Group=="Mexican, Mexican-American, or Chicano descent"] <- "Mexican or Chicano descent"
-npsas5.HSP$Group[npsas5.HSP$Group=="Other Spanish, Hispanic, or Latino descent"] <- "Other Hispanic or Latino descent"
+npsas5.ASN$Group[npsas5.ASN$Group=="Other Asian origin"] <- "Other Asian"
+npsas5.ASN$Group[npsas5.ASN$Group=="Mixed Asian origin"] <- "Mixed Asian"
+
+npsas5.HSP$Group[npsas5.HSP$Group=="Mexican, Mexican-American, or Chicano descent"] <- "Mexican/Chicano"
+npsas5.HSP$Group[npsas5.HSP$Group=="Other Spanish, Hispanic, or Latino descent"] <- "Other Hispanic descent"
 
 npsas5.HSP$Group <- as.factor(npsas5.HSP$Group)
-npsas5.HSP$Group <- factor(npsas5.HSP$Group, levels=rev(c(
-  "Mexican or Chicano descent", 
+npsas5.HSP$Group <- factor(npsas5.HSP$Group, levels=c(
+  "Mexican/Chicano", 
   "Cuban descent", 
   "Puerto Rican descent",
-  "Other Hispanic or Latino descent", 
+  "Other Hispanic descent", 
   "Mixed Hispanic origin"
-)))
+))
 
 npsas5.ASN$Group <- as.factor(npsas5.ASN$Group)
-npsas5.ASN$Group <- factor(npsas5.ASN$Group, levels=rev(c(
+npsas5.ASN$Group <- factor(npsas5.ASN$Group, levels=c(
   "Chinese", 
   "Indian", 
   "Japanese", 
   "Korean", 
   "Filipino", 
   "Vietnamese", 
-  "Other Asian origin", 
-  "Mixed Asian origin"
-)))
+  "Other Asian", 
+  "Mixed Asian"
+))
 ```
 
 ```{r percentages.npsas5}
-# dzalav
+npsas5P.US.ASN <- read.csv("PowerStats dzalav.csv", skip=14, nrow=9, header=FALSE) %>% select(V1, V3)
+npsas5P.US.HSP <- read.csv("PowerStats dzalav.csv", skip=25, nrow=6, header=FALSE) %>% select(V1, V3)
+
+npsas5P.CA.ASN <- read.csv("PowerStats dzalav.csv", skip=128, nrow=9, header=FALSE) %>% select(V1, V3)
+npsas5P.CA.HSP <- read.csv("PowerStats dzalav.csv", skip=139, nrow=6, header=FALSE) %>% select(V1, V3)
+
+names(npsas5P.US.HSP) <- c("Group", "Share Borrowing Loans")
+names(npsas5P.US.ASN) <- c("Group", "Share Borrowing Loans")
+names(npsas5P.CA.HSP) <- c("Group", "Share Borrowing Loans")
+names(npsas5P.CA.ASN) <- c("Group", "Share Borrowing Loans")
+
+npsas5P.US.HSP$Race <- rep("Hispanic", nrow(npsas5P.US.HSP))
+npsas5P.US.ASN$Race <- rep("Asian", nrow(npsas5P.US.ASN))
+npsas5P.CA.HSP$Race <- rep("Hispanic", nrow(npsas5P.CA.HSP))
+npsas5P.CA.ASN$Race <- rep("Asian", nrow(npsas5P.CA.ASN))
+
+npsas5P.US.HSP$State <- rep("U.S.", nrow(npsas5P.US.HSP))
+npsas5P.US.ASN$State <- rep("U.S.", nrow(npsas5P.US.ASN))
+npsas5P.CA.HSP$State <- rep("CA", nrow(npsas5P.CA.HSP))
+npsas5P.CA.ASN$State <- rep("CA", nrow(npsas5P.CA.ASN))
+
+npsas5P <- rbind(npsas5P.US.HSP, 
+                npsas5P.US.ASN, 
+                npsas5P.CA.HSP, 
+                npsas5P.CA.ASN)
+
+npsas5P$`Share Borrowing Loans` <- gsub(pattern="!", x=npsas5P$`Share Borrowing Loans`, replacement="")
+npsas5P$`Share Borrowing Loans` <- gsub(pattern=",", x=npsas5P$`Share Borrowing Loans`, replacement="")
+npsas5P$`Share Borrowing Loans` <- gsub(pattern=" ", x=npsas5P$`Share Borrowing Loans`, replacement="")
+npsas5P$`Share Borrowing Loans` <- as.numeric(npsas5P$`Share Borrowing Loans`) / 100
+
+npsas5P.ASN <- npsas5P %>% filter(Race=="Asian") %>% filter(Group != "Not of Asian origin")
+npsas5P.HSP <- npsas5P %>% filter(Race=="Hispanic") %>% filter(Group != "Not Hispanic or Latino origin")
+
+npsas5P.ASN$Group[npsas5P.ASN$Group=="Asian Indian"] <- "Indian"
+npsas5P.ASN$Group[npsas5P.ASN$Group=="Other Asian origin"] <- "Other Asian"
+npsas5P.ASN$Group[npsas5P.ASN$Group=="Mixed Asian origin"] <- "Mixed Asian"
+
+npsas5P.HSP$Group[npsas5P.HSP$Group=="Mexican, Mexican-American, or Chicano descent"] <- "Mexican/Chicano"
+npsas5P.HSP$Group[npsas5P.HSP$Group=="Other Spanish, Hispanic, or Latino descent"] <- "Other Hispanic descent"
+
+npsas5P.HSP$Group <- as.factor(npsas5P.HSP$Group)
+npsas5P.HSP$Group <- factor(npsas5P.HSP$Group, levels=c(
+  "Mexican/Chicano", 
+  "Cuban descent", 
+  "Puerto Rican descent",
+  "Other Hispanic descent", 
+  "Mixed Hispanic origin"
+))
+
+npsas5P.ASN$Group <- as.factor(npsas5P.ASN$Group)
+npsas5P.ASN$Group <- factor(npsas5P.ASN$Group, levels=c(
+  "Chinese", 
+  "Indian", 
+  "Japanese", 
+  "Korean", 
+  "Filipino", 
+  "Vietnamese", 
+  "Other Asian", 
+  "Mixed Asian"
+))
 ```
 ##### Figure 6: Average Undergraduate Loans by Asian Ethnicity
 ```{r figure6A}
@@ -1695,12 +1858,22 @@ npsas5.ASN$`For Tooltip` <- paste(
   sep=""
 )
 
-g6A <- ggplot(data=npsas5.ASN, mapping=aes(y=Group, x=`Total federal loans`, fill=Group, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge") + labs(title="Average annual undergraduate loans by Asian ethinicity: U.S. vs CA", x="Average Loans") + facet_grid(State ~ .) + scale_x_continuous(labels=scales::dollar_format()) + scale_fill_brewer(palette="Set3") + theme(legend.position="none", text=element_text(family="Optima"))
+g6A <- ggplot(data=npsas5.ASN, mapping=aes(x=State, y=`Total federal loans`, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.6) + labs(title="Average annual undergraduate loans by Asian ethinicity: U.S. vs CA", y="Average Loans") + facet_grid(. ~ Group) +  scale_y_continuous(labels=scales::dollar_format()) + scale_fill_manual(values=stateCols) + theme(legend.position="none", text=element_text(family="Optima"))
 
-ggplotly(g6A, width=800, height=500, tooltip="text")
+ggplotly(g6A, width=800, height=350, tooltip="text")
 ```
 
-```{r percentages.figure5A}
+```{r percentages.figure6A}
+npsas5P.ASN$`For Tooltip` <- paste(
+  "State: ", npsas5P.ASN$State, '\n',
+  "Group: ", npsas5P.ASN$Group, '\n',
+  "Share borrowing loans: ", percent(npsas5P.ASN$`Share Borrowing Loans`, accuracy=0.1), 
+  sep=""
+)
+
+g6AP <- ggplot(data=npsas5P.ASN, mapping=aes(x=State, y=`Share Borrowing Loans`, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.6) + labs(title="Share borrowing undergraduate loans by Asian ethinicity: U.S. vs CA", y="Share Borrowing Loans") + facet_grid(. ~ Group) + scale_y_continuous(labels=scales::percent_format(accuracy=1)) + scale_fill_manual(values=stateCols2) + theme(legend.position="none", text=element_text(family="Optima"))
+
+ggplotly(g6AP, width=800, height=350, tooltip="text")
 ```
 ##### Figure 6: Average Undergraduate Loans by Hispanic Ethnicity
 ```{r figure6B}
@@ -1711,12 +1884,22 @@ npsas5.HSP$`For Tooltip` <- paste(
   sep=""
 )
 
-g6B <- ggplot(data=npsas5.HSP, mapping=aes(y=Group, x=`Total federal loans`, fill=Group, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge") + labs(title="Average annual undergraduate loans by Hispanic ethinicity: U.S. vs CA", x="Average Loans") + facet_grid(State ~ .) + scale_x_continuous(labels=scales::dollar_format()) + scale_fill_brewer(palette="Set3") + theme(legend.position="none", text=element_text(family="Optima"))
+g6B <- ggplot(data=npsas5.HSP, mapping=aes(x=State, y=`Total federal loans`, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.6) + labs(title="Average annual undergraduate loans by Hispanic ethinicity: U.S. vs CA", y="Average Loans") + facet_grid(. ~ Group) +  scale_y_continuous(labels=scales::dollar_format()) + scale_fill_manual(values=stateCols) + theme(legend.position="none", text=element_text(family="Optima"))
 
-ggplotly(g6B, width=800, height=500, tooltip="text")
+ggplotly(g6B, width=800, height=350, tooltip="text")
 ```
 
-```{r percentages.figure5B}
+```{r percentages.figure6B}
+npsas5P.HSP$`For Tooltip` <- paste(
+  "State: ", npsas5P.HSP$State, '\n',
+  "Group: ", npsas5P.HSP$Group, '\n',
+  "Share borrowing loans: ", percent(npsas5P.HSP$`Share Borrowing Loans`, accuracy=0.1), 
+  sep=""
+)
+
+g6BP <- ggplot(data=npsas5P.HSP, mapping=aes(x=State, y=`Share Borrowing Loans`, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.6) + labs(title="Share borrowing undergraduate loans by Hispanic ethinicity: U.S. vs CA", y="Share Borrowing Loans") + facet_grid(. ~ Group) +  scale_y_continuous(labels=scales::percent_format(accuracy=1)) + scale_fill_manual(values=stateCols2) + theme(legend.position="none", text=element_text(family="Optima"))
+
+ggplotly(g6BP, width=800, height=350, tooltip="text")
 ```
 ##### Data Source and Notes
 
