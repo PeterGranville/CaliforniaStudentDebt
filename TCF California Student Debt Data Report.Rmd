@@ -60,11 +60,11 @@ flagCols2 <- c(
 
 ## Introduction
 
-This report accompanies The Century Foundation's report "Exact Title TBD: Student Debt and Race in California," which examines how student debt puts outsized financial burdens on Black and Latino families in California, especially for graduate borrowers and parents. 
+This report accompanies The Century Foundation (TCF)'s report "Student Debt and Race in California," which examines how student debt puts outsized financial burdens on Black and Latino families in California. 
 
 Though California lawmakers rightly draw on national research on student debt and race, state-specific insights can be gleaned from national data sets. TCF's state-level analyses here can help guide state policy that accounts for the distinct patterns of borrowing in California. 
 
-This report draws from the best available sources of Califoria-specific data on student debt to explain in depth what we know (and do not know) about student debt in California. It relies primarily on four sources:
+This report draws from the best available sources of California-specific data on student debt to explain in depth what we know (and still do not know) about student debt in California. In my analysis I rely primarily on four sources:
 
 * The Federal Student Aid (FSA) Data Center
 * The National Postsecondary Student Aid Study (NPSAS)
@@ -73,18 +73,18 @@ This report draws from the best available sources of Califoria-specific data on 
 
 I also draw from the Integrated Postsecondary Education Data System (IPEDS) and the American Community Survey (ACS) to lesser extents. 
 
-The structure of this data-focused report mirrors that of the policy-focused report: the charts and tables in the policy report draw from our four primary data sources in the same order that they are presented here. The first figures in both reports draw from the FSA Data Center, they are followed by figures that draw from NPSAS, and so on. 
+In contrast to the policy report, this data-focused document is more descriptive than prescriptive. Even data queries did not show striking contrasts between groups are included for full transparency, so long as they are relevant to the examination of student loan debt's burden on California borrowers. 
 
-This document is more descriptive than prescriptive. Even data queries did not show striking contrasts between groups are included for full transparency, so long as they are relevant to the examination of student loan debt's burden on California borrowers. 
-
-This report is not a static PDF: you can toggle between different versions of charts and hover over barcharts to reveal the exact statistics. The code used to produce this document and its charts and tables can be found at [this GitHub repository](https://github.com/PeterGranville/CaliforniaStudentDebt). All data sets used in this report are publicly available, courtesy of the U.S. Department of Education, the U.S. Federal Reserve, and the U.S. Census Bureau. 
+This report is not a static PDF: you can toggle between different versions of charts and hover over graphs to reveal the exact statistics. The code used to produce this document and its charts and tables can be found at [this GitHub repository](https://github.com/PeterGranville/CaliforniaStudentDebt). All data sets used in this report are publicly available, courtesy of the U.S. Department of Education, the U.S. Federal Reserve, and the U.S. Census Bureau. 
 
 Consider each of the following when interpreting the data presented in this report: 
 
 * Whether an average contains zero values or not. For example, in a measure of the average loan taken out by students, are students with no loans counted? If yes, the average will be lower than if those students were not counted. This will be noted in the "Data Source and Notes" tab of any figure containing an average. 
-* Whether a measure of California student debt includes borrowers who may have left California after separating from their college, and whether it includes borrowers who enroll in a California institution but who do not permanently reside in California. This will be noted in the "Data Source and Notes" tab of a figure where this question is relevant. 
+* Whether a measure of California student debt includes borrowers who may have left California after separating from their college, and whether a measure of borrowers includes those who enroll in a California institution but who do not permanently reside in California. This will be noted in the "Data Source and Notes" tab of a figure where this question is relevant. 
+* Whether statistics on the U.S. overall, used as comparison points for California's statistics, include California or not. When you see "Rest of U.S.," California is not included. However, the section drawing from NPSAS data will compare California with the U.S. overall, including California. 
+* Whether Parent PLUS loans are included or not in measures of undergraduate student loan borrowing. In the sections that draw from the Federal Student Aid Data Center and the College Scorecard, which are definitive reports from the National Student Loan Data System, we are able to break out Parent PLUS from other undergraduate loans. In the sections that draw from NPSAS and SHED, separating out parent borrowing can lead to subsamples that are too small to use, and in those sections I use measures of total student loans which include parent loans. 
 
-Much of the data for this research comes from surveys and disaggregates results by race and/or gender. In many cases, the survey sample will not be large enough to provide a reliable estimate for a certain group. In the tables and graphs in this report, I have included all groups for which there is a sufficient sample. If you see a group not listed, it is because the sample was not sufficient to produce a result for that group. 
+Much of the data for this research comes from surveys, which enables us to disaggregate results by race and/or gender, revealing how these factors are associated with greater or lesser borrowing and other long-term outcomes. However, in many cases, the survey sample will not be large enough to provide a reliable estimate for a certain group. In the tables and graphs in this report, I have included all groups for which there is a sufficient sample. If you see that a group is not listed, I excluded it because the sample was not sufficient to produce a result for that group. 
 
 If you have any questions, please email me (Peter Granville) at [granville@tcf.org](granville@tcf.org).
 
@@ -232,7 +232,6 @@ rm("pusa", "pusb")
 ```
 
 Table 1 below shows how California compares to other states in its federal student loan debt per capita, its number of borrowers per capita, and its average federal student loan balance. California ranks well in the firs two measures due to a smaller percentage of its population holding debt than in other states. However, California's borrowers exceed other states' borrowers in their average balance. Californians who hold federal student loan debt averaged roughly $37,000 in June 2022. 
-
 
 #### {.tabset}
 ```{r interstateComp}
@@ -382,14 +381,14 @@ kable(interstateComp, caption="California's rank on average debt measures") %>% 
 
 **Timeframe reflected:** Figures in this table reflect the federal student loan portfolio as of June 30, 2022. 
 
-**Notes:** In the "California rank" column, a rank of 1 would indicate the lowest debt, borrowers, or average balance. 
+**Notes:** In the "California rank" column, a rank of 1 would indicate the lowest debt, borrowers, or average balance. The universe of borrowers is all those with an outstanding balance. 
 
 ***
 
 #### {-}
 
 
-Table 2 below shows the size of California's outstanding federal student loan debt. California has the most outstanding federal student loan debt ($142 billion) and borrowers (3.8 million) of any state, amounting to around 9 percent of the nationwide federal student loan portfolio. 
+Table 2 below shows the size of California's outstanding federal student loan debt. California has the most outstanding federal student loan debt ($142 billion) and borrowers (3.8 million) of any state, amounting to around 9 percent of the nationwide federal student loan portfolio. Given that California has a slightly higher average federal student loan balance than most states (see Table 1 above), California has a slightly greater share of nationwide debt than its share of nationwide borrowers. 
 
 #### {.tabset}
 ##### Table 2
@@ -408,9 +407,9 @@ kable(scaleCali, caption="Size of California borrowers' outstanding debt") %>% k
 
 #### {-}
 
-These may come as no surprise given that California has the nation's largest populace, but it also means that California's lawmakers can do more to change the course of the nation's student debt crisis than any other state's leaders. 
+For California's borrowers to have the most debt likely comes as no surprise given that California has the nation's largest populace. But it also means that California's lawmakers can do more to change the course of the nation's student debt crisis than virtually any other state's leaders. 
 
-Table 3 below draws from the FSA Data Center's quarterly data on disbursements. To minimize any impact from the COVID-19 pandemic on our results, we examine data from the 2018-19 award year. 
+Table 3 below draws from the FSA Data Center's quarterly data on disbursements. To minimize any impact from the COVID-19 pandemic on our results, we examine data from the last fully pre-pandemic award year, 2018-19. 
 
 ```{r loanPrep1, warning=FALSE}
 
@@ -611,7 +610,7 @@ table3.1$`Grad PLUS` <- percent(table3.1$`Grad PLUS`)
 #### {.tabset}
 ##### Table 3
 ```{r kable3}
-kable(table3.1, caption="Share of loan dollars disbursed in 2018-19 by loan type, California vs. U.S.") %>% kable_paper("hover", full_width = F)
+kable(table3.1, caption="Share of loan dollars disbursed in 2018-19 by loan type, California vs. Rest of U.S.") %>% kable_paper("hover", full_width = F)
 ```
 ##### Data Source and Notes
 
@@ -629,11 +628,11 @@ Comparing California to the rest of the U.S., we find that:
 
 * California's federal student loan dollars are less concentrated in the Subsidized loan program and the Unsubsidized undergraduate loan program. 
 * California's federal student loan dollars are slightly more concentrated in the Unsubsidized graduate loan program and slightly less concentrated in the Parent PLUS loan program. 
-* California's federal student loan dollars are much more concentrated in the Grad PLUS loan program, at 19.4% versus 11.0% across the rest of the country.
+* California's federal student loan dollars are *much* more concentrated in the Grad PLUS loan program, at 19.4% versus 11.0% across the rest of the country.
 
-A major public policy emphasis for state lawmakers, in California as anywhere, is the affordability of undergraduate programs. One sign of California's success in that respect is the lower degree of undergraduate borrowing compared to across the rest of the country. (Of course, even small loan balances can strain a borrower's financial life.)
+A major public policy emphasis for state lawmakers, in California as anywhere, is the affordability of undergraduate programs. One sign of California's success in that respect is the lower amount of undergraduate borrowing compared to the rest of the country. (Of course, even small loan balances can strain a borrower's financial life.) The significantly greater use of Grad PLUS, however, is a cause for concern. 
 
-By contrast, the average Grad PLUS and Parent PLUS loans in California are higher than in the rest of the U.S., as shown in Figure 1 below. 
+Figure 1 below shows that the average Grad PLUS and Parent PLUS loans in California are higher than in the rest of the U.S. 
 
 #### {.tabset}
 ```{r sectorLoans}
@@ -730,9 +729,9 @@ table4.1$`For Tooltip` <- paste(
   sep=""
 )
 
-g1 <- ggplot(data=table4.1, mapping=aes(x=State, y=`Average Loan`, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.4) + labs(title="Average annual loans by type and sector: California vs. Rest of U.S.") + scale_y_continuous(labels=scales::dollar_format()) + facet_grid(Control ~ variable) + scale_fill_manual(values = stateCols) + theme(text=element_text(family="Optima")) 
+g1 <- ggplot(data=table4.1, mapping=aes(x=State, y=`Average Loan`, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.4) + labs(title="Average annual loans at four-year colleges by loan type and sector: California vs. Rest of U.S.") + scale_y_continuous(labels=scales::dollar_format()) + facet_grid(Control ~ variable) + scale_fill_manual(values = stateCols) + theme(legend.position='none', text=element_text(family="Optima")) 
 
-ggplotly(g1, width=850, height=500, tooltip="text")
+ggplotly(g1, width=800, height=500, tooltip="text")
 ```
 ##### Data Source and Notes
 
@@ -748,7 +747,9 @@ ggplotly(g1, width=850, height=500, tooltip="text")
 
 Across all three institutional control categories, California exceeds the rest of the U.S. in the average Parent PLUS loan and the average Grad PLUS loan. Unlike Stafford loans, Parent PLUS and Grad PLUS are both uncapped, meaning a borrower can take out as much as they would like any year. At California nonprofit and for-profit four-years, the average Parent PLUS loan *per year* is north of \$20,000, and the average Grad PLUS loan per year is around \$30,000. In both cases, the averages are lower at public institutions. 
 
-Not every graduate student borrows Grad PLUS, and not every parent who sends their child to college borrows Parent PLUS. However, high averages mean that the lasting burden between those who do borrow and those who do not is greater. These programs are two driving reasons why California has a higher average student loan balance than most other states (per Table 1).
+Not every graduate student borrows Grad PLUS, and not every parent who sends their child to college borrows Parent PLUS. However, high averages mean that the lasting burden between those who do borrow and those who do not is greater. These programs are two driving reasons why California has a higher average student loan balance than most other states.
+
+As for Stafford loans for undergraduates, California hews closely to the rest of the U.S. in average annual borrowing, across all levels of institutional control. 
 
 ## National Postsecondary Student Aid Study
 
@@ -758,17 +759,21 @@ The statistics in the previous section are all based on state-level and institut
 
 NPSAS is the largest survey of U.S. college students that has a primary focus on financial aid and college costs. The study has generally been conducted every four years, with the latest published data set reflecting the 2015-16 year (NPSAS:16). With every NPSAS release, separate data sets examine undergraduate and graduate students. 
 
-NPSAS data sets have not traditionally been used for state-level analyses, although the sample size for California students can be large enough to produce reliable estimates depending on the query. This past year, a new edition of NPSAS that was designed for state-representative samples was released. Known as NPSAS:18-AC (Administrative Collection), it draws from student records housed by colleges and the U.S. Department of Education for a sample of 325,000 undergraduates enrolled in 2017-18. Representative samples for public 4-year systems are available in NPSAS-AC for 45 states, and representative samples for public 2-year systems are available for 36 states. Thirty states have representative samples for undergraduate students overall. More information on NPSAS-AC can be found [here](https://nces.ed.gov/pubs2022/2022477.pdf). **EDIT THIS!**
+For this analysis I use NPSAS:16 and focus the universe on in-state students. This enables us to compare California's in-state students with those across the country. 
 
-In this section we rely primarily on NPSAS-AC. For analysis of graduate students, we use NPSAS:16 and filter for in-state students in California. The in-state condition is required to run this query in NPSAS:16.
+It is worth noting here that an edition of NPSAS known as NPSAS-AC (NPSAS Administrative Collection) was released by NCES earlier this year and allows for state-representative samples at the public four-year and community college sector level. In NPSAS-AC, California is one of dozens of states a researcher could examine. By contrast, in NPSAS:16, California is one of the only states large enough to support state-specific queries. 
 
-These data are accessed using the National Center on Education Statistics' (NCES) [Datalab tool](https://nces.ed.gov/datalab/). Every query has a unique table retrieval number that can be used by any user to run the query in Datalab. These table retrieval numbers are included in the "Data Source and Notes" tabs of every chart. 
+For information on another state's public four-year students or community college students, we would turn to NPSAS-AC. However, estimates on California's students are actually more robust in NPSAS:16, and I found that NPSAS:16 allowed for more breakdowns across subgroups than NPSAS-AC did. For that reason, I use NPSAS:16 in this section. However, I would recommend NPSAS-AC for examinations of almost any other state, as well as any analyses that seek to rank states based on a certain metric. 
+
+NPSAS data are accessed using the National Center on Education Statistics' (NCES) [Datalab tool](https://nces.ed.gov/datalab/). Every query has a unique table retrieval number that can be used by any user to run the query in Datalab. These table retrieval numbers are included in the "Data Source and Notes" tabs of every chart. 
 
 #### Findings
 
-This research is primarily interested in examining how factors like the racial wealth gap shape the lasting burdens of student debt among California borrowers. Figure 2 below compares average undergraduate borrowing by racial group at California public four-years, compared to U.S. public four-years. 
+This research is primarily interested in examining how factors like the racial wealth gap shape the lasting burdens of student debt among California borrowers. Figure 2 below compares average undergraduate borrowing by racial group among California's students compared to the U.S. overall, and below that, the corresponding shares of students who borrow any loans. 
 
-Across all groups, the average federal loan total is lower in California than nationwide. However, California resembles the U.S. in that Black undergraduates and their families borrow more than their peers. California differs from the U.S. in that Latino/a undergraduates in the state borrow more than white undergraduates, though this is only the case for direct loans to the students and not Parent PLUS.   
+It is important to look at both the average loan amounts and the percentages who borrow. In California, undergraduates who *do* borrow must borrow *more* than undergraduate borrowers nationwide. However, a smaller share of families borrow in California than in the nation overall.  
+
+Within California, 28 percent of Black undergraduates receive student loans, the most of any group, and this rises to 31 percent for Black women specifically. 
 
 #### {.tabset}
 ##### Figure 2: Undergraduate Loans by Race
@@ -1008,12 +1013,13 @@ ggplotly(g2BP, tooltip="text", width=800, height=350)
 
 **Timeframe reflected:** Figures in this graph reflect students enrolled in the 2015-16 academic year. 
 
-**Notes:** Averages do not include those who took out no loansl only include students enrolled in-state; and includes undergraduate federal student loans to the student *and* Parent PLUS loans to the parent. 
+**Notes:** Due to limitations of NPSAS:16, the data in Figure 2 only apply to in-state students. The averages here do not include those who did not borrow federal loans. These measures include all federal student loans (including Parent PLUS) and do not include any private or institutional loans. 
 
 ***
 
 #### {-}
 
+Figure 3 shows that key differences at the graduate level. The average annual loans are significantly larger than at the undergraduate level, and California more sharply exceeds the nation in the average loan. In addition, the share of California students who borrow is much higher at the graduate level than the undergraduate level. 
 
 #### {.tabset}
 ##### Figure 3: Average Graduate Loans by Race
@@ -1230,17 +1236,19 @@ ggplotly(g3BP, tooltip="text", width=800, height=350)
 
 **Timeframe reflected:** Figures in this graph reflect students enrolled in the 2015-16 academic year. 
 
-**Notes:** Due to limitations of NPSAS:16, the data in Figure 3 only apply to in-state students. For "Figure 3: Race and Gender," only the U.S. is used due to insufficient sample size for many subgroups in California. 
+**Notes:** Due to limitations of NPSAS:16, the data in Figure 3 only apply to in-state students. For "Figure 3: Race and Gender," only the U.S. is used due to insufficient sample size for many subgroups in California. The averages here do not include those who did not borrow federal loans. These measures include all federal student loans and do not include any private or institutional loans. 
 
 ***
 
 #### {-}
 
-It is striking how Black graduate students in California borrow an average that is roughly two-thirds higher than both the average for Black graduate students nationwide and the average for white graduate students in California.
+Differences by group within California are also concerning. More than 75 percent of Black California graduate students and 62 percent of Latino/a California graduate students must borrow student loans, compared to 42 percent of white California graduate students. Although the share who borrow is roughly the same in California as in the U.S. overall, Black students are the exception, borrowing loans at a rate that is 13 percentage points higher. 
 
-Among California students, the sample is not sufficient for a breakdown by award level. For context, Figure 4 below shows a breakdown of gaps in average loans across all graduate program levels, reflecting the national sample in NPSAS-16. 
+At the graduate level in California, Asian students borrow the most, exceeding $30,000 per year, which is slightly above the national average for Asian graduate students. However, Asian graduate students borrow the least frequently of these four groups, in California and in the U.S. overall. (Recall that this is limited to in-state students, so international enrollment is not a factor.)
 
-In master's programs, research doctorate programs, and professional doctorate programs (e.g. MDs and JDs), Black and Latino/a borrowers borrower more in average federal student loans per year than students from other groups. This demonstrates how professional doctorates show an extreme version of the trends just described. 
+The NPSAS sample size is not sufficient to add a breakdown by gender and still compare California to the U.S., so we provide the breakdown by race and gender for the U.S. only. Within all groups, graduate students who are women more frequently borrow, but their male peers who borrow tend to borrow slightly more. 
+
+Among California graduate students, the NPSAS sample is not sufficient for a complete breakdown by program level. For context, Figure 4 below uses the national sample in NPSAS:16 to measure borrowing in the graduate program level for which there is sufficient data: namely, master's programs and professional doctorates (e.g. JDs, MDs). Unlike with other charts in this section, these are not limited to in-state students.
 
 #### {.tabset}
 ##### Figure 4: Average Graduate Loans by Program and Race
@@ -1284,7 +1292,7 @@ npsas3$`For Tooltip` <- paste(
 
 g4A <- ggplot(data=npsas3, mapping=aes(x=Group, y=`Total federal loans`, fill=Group, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.6) + labs(title="Average annual graduate loans by program level and group: U.S. only", y="Average Loans") + facet_grid(. ~ Level) + scale_y_continuous(labels=scales::dollar_format()) + scale_fill_manual(values = stateCols) + theme(legend.position="none", text=element_text(family="Optima"))
 
-ggplotly(g4A, width=800, height=450, tooltip="text")
+ggplotly(g4A, width=800, height=350, tooltip="text")
 ```
 
 ```{r percentages.npsas3}
@@ -1327,7 +1335,7 @@ npsas3P$`For Tooltip` <- paste(
 
 g4AP <- ggplot(data=npsas3P, mapping=aes(x=Group, y=`Share Borrowing Loans`, fill=Group, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.6) + labs(title="Share borrowing graduate loans by program level and group: U.S. only", y="Share Borrowing Loans") + facet_grid(. ~ Level) + scale_y_continuous(labels=scales::percent_format(accuracy=1)) + scale_fill_manual(values = stateCols2) + theme(legend.position="none", text=element_text(family="Optima"))
 
-ggplotly(g4AP, width=800, height=450, tooltip="text")
+ggplotly(g4AP, width=800, height=350, tooltip="text")
 ```
 ##### Figure 4: Average Graduate Loans by Program, Race, and Gender
 ```{r npsas3.1}
@@ -1485,11 +1493,17 @@ ggplotly(g4BP, width=800, height=450, tooltip="text")
 
 **Timeframe reflected:** Figures in this graph reflect students enrolled in the 2015-16 academic year. 
 
-**Notes:** Due to limitations of NPSAS:16, the data in Figure 4 only apply to in-state students. 
+**Notes:** The averages here do not include those who did not borrow federal loans. These measures include all federal student loans and do not include any private or institutional loans. In contrast to other charts in this section, Figure 4 is not limited to in-state students, since it does not have California-only statistics. 
 
 ***
 
 #### {-}
+
+Black and Latino/a students in master's programs and professional doctorate programs, as well as those who identify with more than one race, borrow more frequently than do their white or Asian peers. There is less variation when it comes to their average annual loan amount.
+
+At the professional doctorate level, gender does not appear to play a large role. However, it is clear that female master's students borrow more frequently than male master's students. Combining the trends by race and gender, we observe that Black women in master's programs borrow almost threefold more often than do white men in master's programs. (Again, recall that this reflects the U.S. overall and not California specifically.)
+
+Figure 5 returns to the undergraduate level and considers how much debt undergraduate students earn by the time they are about to earn their bachelor's degree. Specifically, I examine here undergraduate students who are in their 4th or 5th undergraduate year in terms of credit accumulation.  
 
 #### {.tabset}
 ##### Figure 5: Average Undergraduate Loans at Graduation by Race
@@ -1713,13 +1727,19 @@ ggplotly(g5BP, width=800, height=350, tooltip="text")
 
 **Timeframe reflected:** Figures in this graph reflect students enrolled in the 2015-16 academic year. 
 
-**Notes:** Due to limitations of NPSAS:16, the data in Figure 5 only apply to in-state students. The averages here do not include those with no cumulative federal loans. 
+**Notes:** Due to limitations of NPSAS:16, the data in Figure 5 only apply to in-state students. The averages here do not include those with no cumulative federal loans. These measures include all federal student loans (including Parent PLUS) and do not include any private or institutional loans. 
 
 ***
 
 #### {-}
 
-NPSAS allows us to disaggregate by ethnicity, to a limited extent, for two racial groups (Hispanic and Asian). In California, average federal loans among Filipino undergraduates are higher than other Asian groups, matching a trend seen nationwide. Among Hispanic ethnicities in California, average loans are greatest among those of Puerto Rican descent. 
+California students fare better here than students nationwide, in terms of the share who borrow and the cumulative loans of those who do. One exception is that California Pacific Islander borrowers average more than those nationwide, almost \$34,000 by graduation. 
+
+Nearly 85 percent of Black California undergraduates borrow student loans by graduation, which is slightly lower than the national rate for Black undergraduates but still exceeds all other groups by a concerning margin. Latino/a California undergraduates have the second-highest frequency at 67 percent. Notably, all groups are above 50 percent in California as in the U.S. overall. 
+
+The trend of pronounced borrowing among women, and especially Black women, extends here as well. Nine in ten Black California undergraduate women borrow by the time they graduate, on par with the national rate but well above other groups. 
+
+NPSAS allows us to disaggregate by ethnicity (to a limited extent) for two racial groups, Hispanic and Asian. No individual Asian ethnic group stands out from the rest along these measures, although Indian, Korean, Filipino, and Mixed Asian California undergraduates all average more loans than other groups and exceed the corresponding national averages. Fewer distinct groups are available in the Hispanic variable; Puerto Rican California undergraduates show the highest average loans. 
 
 #### {.tabset}
 ```{r npsas5}
@@ -1907,7 +1927,7 @@ ggplotly(g6BP, width=800, height=350, tooltip="text")
 
 **Timeframe reflected:** Figures in this graph reflect students enrolled in the 2015-16 academic year. 
 
-**Notes:** "Total federal loans" includes Parent PLUS. No other racial groups besides Hispanic and Asian have breakouts by ethnicity in NPSAS. Due to limitations of NPSAS:16, the data in Figure 6 only apply to in-state students. 
+**Notes:** No other racial groups besides Hispanic and Asian have breakouts by ethnicity in NPSAS. Due to limitations of NPSAS:16, the data in Figure 6 only apply to in-state students. The averages here do not include those who did not borrow federal loans. These measures include all federal student loans (including Parent PLUS) and do not include any private or institutional loans. 
 
 ***
 
@@ -1917,11 +1937,19 @@ ggplotly(g6BP, width=800, height=350, tooltip="text")
 
 #### About the data
 
-(Description here)
+The Survey of Household Economics and Decisionmaking (SHED) is a survey of U.S. households conducted annually by the U.S. Federal Reserve. It asks a battery of questions about income and earnings, savings and financial well-being, and education, including student loans. The respondents are the heads of households and the weights can be used to create estimates of the U.S. adult population. 
+
+The public SHED data files contain information from about 12,000 respondents every year, many of whom are in California and many of whom have student loans. For the analyses in this section, I pooled SHED data from each of the survey years between 2015 and 2021. The result has a sufficient sample for us to examine California student loan borrowers and breakdowns by race. All numeric responses, such as total student loan debt or total savings, are grouped into categories; therefore, I could not make any adjustments to account for inflation. 
+
+Adding more and more filters to the sample reduces the confidence in our estimates. As much as it would be good to know how California student loan borrowers working in the nursing field compared to other California student loan borrowers, the resulting sample size would simply be too small for us to put stock in the results. This is why the charts in this section disaggregate by race and by state of residence but generally do not cut the data further than that. 
+
+Some survey questions were not asked every year between 2015 and 2021, and as a result, some subgroups included here have very small samples. I include in the "Data Source and Notes" tab for every figure in this section the number of respondents whose data lead to the statistics shown, broken down by group. 
+
+Please note when interpreting this data that SHED does not distinguish between federal student loans and private student loans. 
+
+I selected the variables that seemed most likely to help tell the story of how student loan borrowers in California are faring. If you would like to see analysis on variables I did not include, please email me. More information about the SHED data can be found [here](https://www.federalreserve.gov/consumerscommunities/shed_data.htm).  
 
 #### Findings
-
-(Summary text here)
 
 ```{r shedSetup1}
 shed21 <- fread("SHED-2021.csv", header=TRUE, select=c("CaseID", "weight_pop", "ppstaten", "ppethm", "ppgender", "B2", "B6", "GH1", "A6", "A1_a", "C3", "C4A", "ED0", "ED5", "ED6_a", "ED6_b", "ED6_c", "ED6_d", "SL1", "SL2_a", "SL2_b", "SL2_c", "SL2_d", "SL3", "SL4", "SL6", "SL7", "SL8_a", "SL8_b", "SL8_c", "SL8_d", "SL8_e", "SL10", "SL11", "SL12_a", "SL12_b", "SL12_c", "SL12_d", "D1I", "K0", "I0_c", "I0_d", "I40", "I41_a", "I41_b", "I41_c", "I41_d", "I41_e", "EF1", "EF2", "EF3_a", "EF3_b", "EF3_c", "EF3_d", "EF3_e", "EF3_f", "EF3_g", "EF3_h", "EF5A", "EF5B", "EF6A_a", "EF6A_b", "EF6A_f", "EF6B_f", "ppcm0160", "ppfs0596", "ppfs1482", "iclevel", "control", "L0_b"))
@@ -2932,6 +2960,10 @@ survey_years <- function(surveyYearVector) {
 }
 ```
 
+Figure 7 examines which respondents have student loan debt or other debt used for their  educations. Overall, 13.8 percent of California respondents did, slightly below the 15.8 percent share for the rest of the U.S. 
+
+Significantly more than other groups, Black respondents in California and the rest of the U.S. alike reported having education debt (26.3 percent). This is well above the share for white California respondents, just 9.6 percent. 
+
 ### {.tabset}
 ```{r ownDebt}
 # OwnDebt: # Do you currently have student loan debt or owe any money used to pay for your own education? 
@@ -2979,7 +3011,11 @@ kable(N.OwnDebt, caption="N size by group for Figure 7") %>% kable_paper("hover"
 
 ### {-}
 
-(Summary text here) 
+Figure 8 examines the type of debt that borrowers have. For the vast majority of borrowers, at least some of that debt is in the form of a student loan. 
+
+SHED also asks about home equity loans that respondents took out to support their education. These are low percentages overall, but it is notable that Hispanic borrowers report this the most often. 
+
+The share of respondents who say they hold credit card debt for their education is concerning, since credit card debt is the highest-interest of the three types of debt examined here. Around 40 percent of California borrowers have credit card debt for their education, which is 10 percentage points higher than Black borrowers nationwide and well above the share for white borrowers (16.7 percent). Hispanic borrowers are next-highest, with 27 percent of California borrowers holding credit card debt.  
 
 ### {.tabset}
 #### Figure 8: Student loans
@@ -3093,7 +3129,9 @@ kable(N.OwnDebtCC, caption="N size by group for Figure 8: Credit card debt") %>%
 
 ### {-}
 
-(Summary text here) 
+SHED also asks about the total amount borrowers owe and reports responses in eleven categories. Hispanic borrowers in California are most likely to carry a balance of $15,000 or below, while Black borrowers in California are the most likely to carry a balance of \$100,000 or more. 
+
+Compared to borrowers in the rest of the U.S., white California borrowers are more likely to report higher amounts of education debt. Hispanic California borrowers and California borrowers of another non-Hispanic race are more likely to report lower amounts of education debt compared to borrowers in the rest of the U.S. 
 
 ### {.tabset}
 #### Figure 9: CA borrowers
@@ -3173,9 +3211,11 @@ kable(N.OwnDebtTotal, caption="N size by group for Figure 9") %>% kable_paper("h
 
 ***
 
-#### {-}
+### {-}
 
-(Summary text here) 
+According to Figure 10, the median California borrower across all groups must make a monthly payment between \$100 and \$199. California borrowers who are white report higher monthly payments on their education loans. 
+
+For Figure 10, I excluded survey responses from 2020 and 2021 due to the federal student loan payment pause. 
 
 ### {.tabset}
 ```{r OwnDebtMon3}
@@ -3257,7 +3297,9 @@ kable(N.OwnDebtMon3, caption="N size by group for Figure 10") %>% kable_paper("h
 
 ### {-}
 
-(Summary text here) 
+Whether or not a borrower is behind on their education loans is one indication of their financial well-being and ability to repay their loans. Figure 11 shows that, compared to the rest of the U.S., more borrowers in California are behind or in collections, at 21.5 percent versus 17.3 percent nationwide. Almost one-third (32.6 percent) of Hispanic California borrowers report being behind, followed by Black California borrowers (26.7 percent). These are double the share for white California borrowers (13.4 percent).
+
+For Figure 11, I excluded survey responses from 2020 and 2021 due to the federal student loan payment pause and forbearance period. 
 
 ### {.tabset}
 #### Figure 11
@@ -3265,7 +3307,7 @@ kable(N.OwnDebtMon3, caption="N size by group for Figure 10") %>% kable_paper("h
 # OwnDebtBehind: # Are you behind on payments or in collections for one or more of the loans from your own education? 
 
 # table(shed$OwnDebtBehind)
-shed.OwnDebtBehind <- shed %>% filter((OwnDebtBehind %in% c("Not In Universe (not asked)", "Refused", "", NA))==FALSE) 
+shed.OwnDebtBehind <- shed %>% filter((OwnDebtBehind %in% c("Not In Universe (not asked)", "Refused", "", NA))==FALSE) %>% filter(SurveyYear %in% c(2015, 2016, 2017, 2018, 2019))
 tblOwnDebtBehind <- aggregate(data=shed.OwnDebtBehind, Weight ~ OwnDebtBehind + Race + State, FUN=sum)
 tblOwnDebtBehind2 <- aggregate(data=shed.OwnDebtBehind, Weight ~ OwnDebtBehind + State, FUN=sum)
 tblOwnDebtBehind2$Race <- rep("All", nrow(tblOwnDebtBehind2))
@@ -3307,7 +3349,11 @@ kable(N.OwnDebtBehind, caption="N size by group for Figure 11") %>% kable_paper(
 
 ### {-}
 
-(Summary text here) 
+A SHED survey respondent can also owe debt that was used for their spouse or partner's education, or for the education of their child or grandchild. Figure 12 shows this with one tab for each type of debt. 
+
+Overall, about 6 percent of respondents had debt for their spouse, in California and the rest of the U.S. alike. The highest share is among Black California respondents at 11 percent, well above all other groups. 
+
+Around 7.5 percent of respondents had debt for a child or grandchild's education, both in California and the rest of the U.S. Hispanic California respondents reported having this debt most often at 10.5 percent. 
 
 ### {.tabset}
 #### Figure 12: Debt for spouse's or partner's education
@@ -3389,7 +3435,11 @@ kable(N.ChildDebt, caption="N size by group for Figure 12: Debt for child's or g
 
 ### {-}
 
-(Summary text here)
+For Figures 13 onward, we focus on respondents who had any student loan debt, be it debt for the respondent's own education, their spouse or partner's, or their child or grandchild's. These graphs will distinguish between borrowers and non-borrowers, except when the variable we are examining is only answered by student loan borrowers (e.g. their confidence in paying their next student loan bill). Most graphs will use borrowers in the rest of the U.S., as well as non-borrowers in California, for comparison against California student loan borrowers. 
+
+Figure 13 examines the educational attainment of borrowers. In California, Hispanic borrowers (53.6 percent) and Black borrowers (43.5 percent) are the most likely to have less than a college degree. For most groups, California's student loan borrowers have a higher educational attainment than those in the rest of the U.S. Predictably, student loan borrowers in California and the rest of the U.S. alike have higher educational attainment than California's non-borrowers. 
+
+Roughly 12 percent of California's student loan borrowers have only a high school degree, GED, or less. This is most commonly true of Hispanic (22 percent) and  Black (10 percent) student loan borrowers. When we discuss issues affecting student loan borrowers, it is important to remember that some borrowers who hold debt for a child's or spouse's education never went to college themselves at all and do not reap the economic rewards of that education.
 
 ### {.tabset}
 ```{r EdAttain}
@@ -3489,7 +3539,9 @@ kable(N.EdAttain, caption="N size by group for Figure 13") %>% kable_paper("hove
 
 ### {-}
 
-(Summary text here) 
+Figure 14 shows a concerning pattern in home ownership among California student loan borrowers. Fewer than 1 in 4 Black California student loan borrowers owns a home, which is well below all other groups in California *or* the rest of the U.S., borrowers and non-borrowers alike. 
+
+In general, student loan borrowers own a home less often than do non-borrowers. In California, 41.3 percent of borrowers own their home compared to 57.0 percent of non-borrowers. The younger average age of student loan borrowers may be a factor, although people may be less inclined to buy a home when they hold outstanding student loans. 
 
 ### {.tabset}
 ```{r HomeOwn}
@@ -3585,7 +3637,9 @@ kable(N.HomeOwn, caption="N size by group for Figure 14") %>% kable_paper("hover
 
 ### {-}
 
-(Summary text here) 
+Long-term credit card debt is a major factor in the financial lives of many student loan borrowers. Figure 8 showed that almost a quarter of Californians with education debt see that debt take the form of credit card debt, most especially for Black borrowers.  
+
+Figure 15 shows that 62.3 percent of California student loan borrowers have outstanding unpaid credit card debt. Black (80.1 percent) and Hispanic (70.3 percent) California student loan borrowers show the highest rates of holding this high-interest, month-over-month debt. When credit card debt hangs over student loan borrowers, it puts yet another obstacle between them and student loan repayment. 
 
 ### {.tabset}
 ```{r UnpaidCC}
@@ -3643,7 +3697,9 @@ kable(N.UnpaidCC, caption="N size by group for Figure 15") %>% kable_paper("hove
 
 ### {-}
 
-(Summary text here) 
+Figure 16 further explores California student loan borrowers' difficulty escaping credit card debt: overall, 40.9 percent say that they carry an unpaid balance "Most or all of the time," which is almost identical to the rate for student loan borrowers in the rest of the U.S. However, this rises to a staggering 62.1 percent for Black California student loan borrowers. The gap between Black borrowers and white borrowers is much smaller (4.8 percentage points) in the rest of the U.S. than in California (26.6 percentage points). 
+
+The Black-white gap is mirrored in the rest of the California population (17.5 percentage points) but is still not as extreme as it is for student loan borrowers in the state. 
 
 ### {.tabset}
 ```{r CCBalance}
@@ -3740,7 +3796,9 @@ kable(N.CCBalance, caption="N size by group for Figure 16") %>% kable_paper("hov
 
 ### {-}
 
-(Summary text here) 
+Figure 17 asks about total household savings and investments. Most California student loan borrowers of all groups report having less than \$50,000 in total savings and investments, but especially Black California borrowers (78.1 percent) and Hispanic California borrowers (74.1 percent). White California borrowers are almost three times as likely (28.3 percent) to have \$100,000 in household wealth compared to Black California borrowers (10.2 percent). 
+
+The distribution of California non-borrowers is much less skewed towards the low-wealth end of the spectrum. 
 
 ### {.tabset}
 ```{r Savings}
@@ -3839,9 +3897,17 @@ kable(N.Savings, caption="N size by group for Figure 17") %>% kable_paper("hover
 
 ***
 
-### {-}
+Figure 18 shows the distribution of California student loan borrowers by income. We observe that: 
 
-(Summary text here) 
+* The median California borrower earns between \$50,000 and \$75,000. 
+* The median white California borrower earns between $75,000 and \$100,000. 
+* The median Hispanic California borrower earns between \$40,000 and \$50,000. 
+* The median Black California borrower earns between \$50,000 and \$75,000. 
+* The median California borrower of another race earns between $75,000 and \$100,000. 
+
+In other words, Hispanic borrowers in California skew the most towards the low-income side, followed next by Black borrowers in California. 
+
+Comparing borrowers in California to borrowers outside California shows interesting trends. Black student loan borrowers across the country skew more low-income than Black borrowers in California, and same for the "Other, non-Hispanic" group. Overall, California has more high-income student loan borrowers (32.4 percent earning \$100,000 or more) than student loan borrowers in the rest of the country (26.7 percent). 
 
 ### {.tabset}
 ```{r TotalInc}
@@ -3944,7 +4010,11 @@ kable(N.TotalInc, caption="N size by group for Figure 18") %>% kable_paper("hove
 
 ### {-}
 
-(Summary text here) 
+Figure 19 examines the first of some questions about subjective experiences. Asked how well they are managing financially, 25.1 percent of all California student loan borrowers reported "living comfortably." This falls to 9.1 percent among Black California student loan borrowers. Among student loan borrowers outside California, the Black-white gap is much smaller (7.6 percentage points) than among borrowers in California (24.3 percentage points). 
+
+On the opposite end of the spectrum, between 9 and 12 percent of all white, Hispanic, and Black California borrowers report "Finding it difficult to get by." 
+
+Across all groups, non-borrowers in California report greater financial well-being than student loan borrowers. 
 
 ### {.tabset}
 ```{r FinManage}
@@ -4040,7 +4110,11 @@ kable(N.FinManage, caption="N size by group for Figure 19") %>% kable_paper("hov
 
 ### {-}
 
-(Summary text here) 
+Figure 20 looks at how respondents think they doing compared to how their parents were doing at their age. In general, student loan borrowers feel positively about their financial standing compared to their parents at the same age, with more than half feeling better off. 
+
+Compared to California student loan borrowers, borrowers in the rest of the U.S. appear slightly less satisfied, as do California non-borrowers. In both cases, the differentials are not large. 
+
+It is difficult to read very much into the responses to this question. A respondent can feel that they are relatively better off than their parents while still dissatisfied with their circumstances, and a respondent from a wealthy background may observe some downward mobility compared to their parents without necessarily experiencing hardship. At the same time, the lack of major differences by race is interesting given the sizable gaps we have observed in previous figures. 
 
 ### {.tabset}
 ```{r ParComp}
@@ -4137,7 +4211,9 @@ kable(N.ParComp, caption="N size by group for Figure 20") %>% kable_paper("hover
 
 ### {-}
 
-(Summary text here) 
+Figure 21 displays where respondents think their credit score falls. The disparities by race are stark: only 32.3 percent of Black California student loan borrowers think their credit score is "excellent" or "good," compared to 75.1 percent of white California student loan borrowers. This Black-white gap (42.8 percentage points) is larger than it is for student loan borrowers in the rest of the U.S. (25.6 percentage points). 
+
+Student loan borrowers in California report having worse credit scores than non-borrowers in California. Looking within California, the disparity between Black borrowers and Black non-borrowers is especially strong: 63.9 percent of Black California non-borrowers say they think their credit score is "excellent" or "good," almost *double* the 32.3 percent among Black California borrowers. In other words, for Black Californians, having student loans is associated with halving the likelihood of having a good or excellent credit score. 
 
 ### {.tabset}
 ```{r CreditScore}
@@ -4235,7 +4311,7 @@ kable(N.CreditScore, caption="N size by group for Figure 21") %>% kable_paper("h
 
 ### {-}
 
-(Summary text here) 
+Figure 22 examines borrower's reported ability to pay off their bills in full in the month they were surveyed. About 6 in 10 Black California borrowers and Hispanic California borrowers report being able to fully pay their monthly bills, versus 7 in 10 among California borrowers overall. By comparison, a slightly higher percentage of student loan borrowers outside California report being able to pay their bills in full. 
 
 ### {.tabset}
 ```{r PayBills}
