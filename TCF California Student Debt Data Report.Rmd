@@ -1,5 +1,5 @@
 ---
-title: "What the Data Do - and Do Not - Tell Us About Student Debt in California"
+title: "What the Data Tell Us About Student Debt and Race in California"
 author: "Peter Granville"
 date: 'December 2022'
 output:
@@ -60,20 +60,16 @@ flagCols2 <- c(
 
 ## Introduction
 
-This report accompanies The Century Foundation (TCF)'s report "Student Debt and Race in California," which examines how student debt puts outsized financial burdens on Black and Latino families in California. 
+Leveraging an array of data sources on student loans, repayment, and financial well-being, this report examines how student debt puts outsized and lasting financial burdens on Black and Latino families in California. Though California lawmakers rightly draw on national research on student debt and race, state-specific insights can be gleaned from national data sets. TCF's state-level analyses here can help guide state policy that accounts for the distinct patterns of borrowing in California. 
 
-Though California lawmakers rightly draw on national research on student debt and race, state-specific insights can be gleaned from national data sets. TCF's state-level analyses here can help guide state policy that accounts for the distinct patterns of borrowing in California. 
-
-This report draws from the best available sources of California-specific data on student debt to explain in depth what we know (and still do not know) about student debt in California. In my analysis I rely primarily on four sources:
+I draw from the best available sources of California-specific data on student debt to explain in depth what we know (and still do not know) about student debt in California. In my analysis I rely primarily on four sources:
 
 * The Federal Student Aid (FSA) Data Center
 * The National Postsecondary Student Aid Study (NPSAS)
 * The Survey of Household Economics and Decisionmaking (SHED)
 * The College Scorecard
 
-I also draw from the Integrated Postsecondary Education Data System (IPEDS) and the American Community Survey (ACS) to lesser extents. 
-
-In contrast to the policy report, this data-focused document is more descriptive than prescriptive. Even data queries did not show striking contrasts between groups are included for full transparency, so long as they are relevant to the examination of student loan debt's burden on California borrowers. 
+To lesser extents, I also use data from the Integrated Postsecondary Education Data System (IPEDS) and the American Community Survey (ACS). 
 
 This report is not a static PDF: you can toggle between different versions of charts and hover over graphs to reveal the exact statistics. The code used to produce this document and its charts and tables can be found at [this GitHub repository](https://github.com/PeterGranville/CaliforniaStudentDebt). All data sets used in this report are publicly available, courtesy of the U.S. Department of Education, the U.S. Federal Reserve, and the U.S. Census Bureau. 
 
@@ -4406,7 +4402,13 @@ kable(N.PayBills, caption="N size by group for Figure 22") %>% kable_paper("hove
 
 ### {-}
 
-(Summary text here) 
+In the first tab of Figure 23, we examine the same question but for monthly student loan bills specifically. Overall, California borrowers (27.2 percent) appear more likely to be able to pay their next student loan bill than those outside California (34.2 percent). The differences across groups are small among California borrowers, but it is actually white California borrowers (33.6 percent) who report being unable to fully pay their next student loan bill the most often, and it is Hispanic California borrowers (22.2 percent) who report that response the least often. 
+
+The next tab applies the same question to rent or mortgage bills. Once again, the differences across groups are small, but Hispanic California borrowers report being unable to pay their next rent or mortgage bill the most often (24.3 percent) and white California borrowers the least often (11.6 percent).
+
+In the next tab, the shares who say that they cannot pay their next credit card bill are much higher than for student loan bills and rent or mortgage bills. More than half (57.2 percent) of California student loan borrowers say that they cannot, though this is not significantly higher than the rates for student loan borrowers outside California (51.9 percent) and California non-borrowers (45.5 percent). 
+
+For "Figure 23: Ability to pay student loan bill," I excluded survey responses from 2020 and 2021 due to the federal student loan payment pause and forbearance period. The sample sizes are smaller for Figure 23 than for others, so interpret with a greater degree of caution.
 
 ### {.tabset}
 #### Figure 23: Ability to pay student loan bill
@@ -4547,7 +4549,9 @@ kable(N.PartialCC, caption="N size by group for Figure 23: Ability to pay credit
 
 ### {-}
 
-(Summary text here) 
+Figure 24 displays the results of the first of a series of questions related to how much respondents' financial circumstances would be affected by a \$400 emergency expense. Overall, about 1 in 4 California borrowers (22.9 percent) would be unable to fully pay their monthly student loan bill if they had to pay a sudden \$400 expense to pay, with white California borrowers (12.7 percent) showing a greater ability to withstand the financial emergency than other groups. 
+
+The California sample sizes for "Black, Non-Hispanic" and "Other, Non-Hispanic" are very small for Figure 24. I include the graph for the sake of transparency but recommend interpreting these results with great caution. 
 
 ### {.tabset}
 ```{r PartialSL400}
@@ -4597,7 +4601,9 @@ kable(N.PartialSL400, caption="N size by group for Figure 24") %>% kable_paper("
 
 ### {-}
 
-(Summary text here) 
+Figure 25 shows results for a question about how a sudden \$400 expense would affect respondents' ability to pay other bills (besides the emergency expense). As with Figure 24, white California borrowers show the least likelihood of being unable fully pay their other bills (7.3 percent), with higher likelihoods for Black (19.5 percent) and Hispanic (24.2 percent) California borrowers. 
+
+The results are not very different for non-borrowers in California. In general, student loan borrowers outside California (19.3 percent) would have more difficulty paying their monthly loans after the emergency expense than student loan borrowers in California (16.5 percent). 
 
 ### {.tabset}
 ```{r PayBills400}
@@ -4693,7 +4699,9 @@ kable(N.PayBills400, caption="N size by group for Figure 25") %>% kable_paper("h
 
 ### {-}
 
-(Summary text here) 
+Figure 26 is the first of two figures that considers the likelihood that respondents would be approved if they applied for a line of credit. Asked about their confidence that they would be approved for a new credit card, about a quarter (25.3 percent) of California borrowers say that they are "not confident," rising to about 4 in 10 (39.1 percent) among Black California borrowers. The majority of white California borrowers (58.1 percent) and those of another race (59.9 percent) say they are "very confident." 
+
+The results are not very different for student loan borrowers outside California. By and large, non-borrowers in California are much more likely to feel confident about being approved for a credit card than student loan borrowers in California. 
 
 ### {.tabset}
 ```{r CCApprov}
@@ -4797,7 +4805,9 @@ kable(N.CCApprov, caption="N size by group for Figure 26") %>% kable_paper("hove
 
 ### {-}
 
-(Summary text here) 
+Figure 27 shows how frequently respondents say that they were turned down for credit in the prior 12 months. In general, student loan borrowers appear more likely to report being turned down than non-borrowers. Almost 1 in 3 student loan borrowers in California (32.1 percent) and the rest of the U.S. (31.6 percent) say they were turned down, compared to fewer than 1 in 5 among California non-borrowers (18.6 percent).  
+
+In general, Black (53.5 percent in California) and Hispanic (37.6 percent in California) student loan borrowers are the most likely to say that they were turned down.  
 
 ### {.tabset}
 ```{r CreditDeny}
@@ -4854,7 +4864,18 @@ kable(N.CreditDeny, caption="N size by group for Figure 27") %>% kable_paper("ho
 
 ### {-}
 
-Add a lot of caveats before this next section. 
+Figure 28 contains six tabs corresponding to different public benefits households can claim: 
+
+* Social Security, including old age and disability insurance
+* Cash assistance, including SSI, TANF, or cash from a welfare program
+* The Earned Income Tax Credit
+* Food benefits through the Supplemental Nutrition Assistance Program (SNAP, formerly food stamps)
+* Housing assistance from a government program 
+* Free or reduced-price school lunch 
+
+Whether it is considered good or bad to have higher rates along these measures is in the eye of the beholder. Taking cash assistance as an example, it is a good thing for the finances of a household in need to receive that benefit, but it is a bad sign of the household's finances if they are eligible. Therefore, I do not comment on the results here but leave it to the reader to explore. 
+
+The sample for "Figure 28: Free or reduced price lunch" is limited to those with children under 18. This cuts the sample size, and as a result, the sample size for for California student loan borrowers in that tab is quite small. Interpret those results with some caution. 
 
 ### {.tabset}
 #### Figure 28: Social Security
@@ -5116,107 +5137,161 @@ kable(N.FRPL, caption="N size by group for Figure 28: FRPL") %>% kable_paper("ho
 
 ### {-}
 
-It's weird that the "Cover expenses with savings" bars are lower than the "Cover expenses by any means" bars. 
+
+Methodologically, Figure 29 requires a little more explaining than other figures in this section. The data shown in Figure 29 are based on two questions in the SHED survey: 
+
+* The first question is, "Have you set aside emergency or rainy day funds that would cover your expenses for 3 months in case of sickness, job loss, economic downturn, or other emergencies?" 
+* The second question is only asked to those who answered "No" to the prior question. The second question is, "If you were to lose your main source of income (for example, job or government benefits), could you cover your expenses for 3 months by borrowing money, using savings, or selling assets?"
+
+I combined the responses to these two questions into one variable that takes three values: "I can cover three months of expenses with my rainy day funds," "I can cover three months of expenses by another means besides rainy day funds," and "I cannot replace the income needed for three months of expenses." 
+
+About 3 in 4 non-borrowers in California (72.9 percent) report being confident that they can replace income for three months through some means, compared to about 6 in 10 student loan borrowers in California (59.6 percent). In California, Black borrowers report having a sufficient rainy day fund much less often (24.0 percent) than do white borrowers (41.6 percent). 
 
 ### {.tabset}
-#### Figure 29: Cover expenses with savings
-```{r ThreeMonSave}
-# ThreeMonSave: # Have you set aside emergency or rainy day funds that would cover your expenses for 3 months in case of sickness, job loss, economic downturn, or other emergencies? 
+```{r ThreeMonExpenses}
+shed$ThreeMonExpenses <- rep(NA, nrow(shed))
+shed$ThreeMonExpenses[shed$ThreeMonSave=="Yes"] <- "I can cover three months of expenses with my rainy day funds"
+shed$ThreeMonExpenses[shed$ThreeMonCover=="Yes"] <- "I can cover three months of expenses by another means (but not with my rainy day funds)"
+shed$ThreeMonExpenses[shed$ThreeMonCover=="No"] <- "I cannot replace the income needed for three months of expenses"
 
-# table(shed$ThreeMonSave)
-shed.ThreeMonSave <- shed %>% filter((ThreeMonSave %in% c("Refused", "Not In Universe (not asked)", "", NA)==FALSE)) 
-tblThreeMonSave <- aggregate(data=shed.ThreeMonSave, Weight ~ ThreeMonSave + Race + State + AnyStudentLoans, FUN=sum)
-tblThreeMonSave2 <- aggregate(data=shed.ThreeMonSave, Weight ~ ThreeMonSave + State + AnyStudentLoans, FUN=sum)
-tblThreeMonSave2$Race <- rep("All", nrow(tblThreeMonSave2))
-tblThreeMonSave <- rbind(tblThreeMonSave, tblThreeMonSave2)
-tblThreeMonSave <- reshape2::dcast(data=tblThreeMonSave, Race + State + AnyStudentLoans ~ ThreeMonSave, value.var="Weight")
-tblThreeMonSave$`Share` <- tblThreeMonSave$Yes / (tblThreeMonSave$Yes + tblThreeMonSave$No)
-tblThreeMonSave$Group <- rep(NA, nrow(tblThreeMonSave))
-tblThreeMonSave$Group[tblThreeMonSave$State=="CA" & tblThreeMonSave$AnyStudentLoans=="Yes"] <- "California student loan borrowers"
-tblThreeMonSave$Group[tblThreeMonSave$State=="Rest of U.S." & tblThreeMonSave$AnyStudentLoans=="Yes"] <- "Rest of U.S. student loan borrowers"
-tblThreeMonSave$Group[tblThreeMonSave$State=="CA" & tblThreeMonSave$AnyStudentLoans=="No"] <- "California non-borrowers"
-tblThreeMonSave <- tblThreeMonSave %>% filter(is.na(Group)==FALSE)
-tblThreeMonSave$Group <- factor(tblThreeMonSave$Group, levels=c("California non-borrowers", "California student loan borrowers", "Rest of U.S. student loan borrowers"))
+shed.ThreeMonExpenses <- shed %>% filter(is.na(ThreeMonExpenses)==FALSE)
+tblThreeMonExpenses <- aggregate(data=shed.ThreeMonExpenses, Weight ~ ThreeMonExpenses + Race + State + AnyStudentLoans, FUN=sum)
+tblThreeMonExpenses2 <- aggregate(data=shed.ThreeMonExpenses, Weight ~ ThreeMonExpenses + State + AnyStudentLoans, FUN=sum)
+tblThreeMonExpenses2$Race <- rep("All", nrow(tblThreeMonExpenses2))
+tblThreeMonExpenses <- rbind(tblThreeMonExpenses, tblThreeMonExpenses2)
+tblThreeMonExpenses <- reshape2::dcast(data=tblThreeMonExpenses, Race + State + AnyStudentLoans ~ ThreeMonExpenses, value.var="Weight")
+tblThreeMonExpenses$`Total weight` <- tblThreeMonExpenses$`I can cover three months of expenses with my rainy day funds` + tblThreeMonExpenses$`I cannot replace the income needed for three months of expenses` + tblThreeMonExpenses$`I can cover three months of expenses by another means (but not with my rainy day funds)`
+tblThreeMonExpenses$`I can cover three months of expenses with my rainy day funds` <- tblThreeMonExpenses$`I can cover three months of expenses with my rainy day funds` / tblThreeMonExpenses$`Total weight`
+tblThreeMonExpenses$`I can cover three months of expenses by another means (but not with my rainy day funds)` <- tblThreeMonExpenses$`I can cover three months of expenses by another means (but not with my rainy day funds)` / tblThreeMonExpenses$`Total weight`
+tblThreeMonExpenses$`I cannot replace the income needed for three months of expenses` <- tblThreeMonExpenses$`I cannot replace the income needed for three months of expenses` / tblThreeMonExpenses$`Total weight`
+tblThreeMonExpenses <- reshape2::melt(data=tblThreeMonExpenses, id.vars = c("Race", "State", "AnyStudentLoans"), value.name="Share") %>% filter(variable != "Total weight")
+tblThreeMonExpenses$variable <- factor(tblThreeMonExpenses$variable, levels = c("I cannot replace the income needed for three months of expenses", "I can cover three months of expenses by another means (but not with my rainy day funds)", "I can cover three months of expenses with my rainy day funds"))
 ```
-##### Responses to "Have you set aside emergency or rainy day funds that would cover your expenses for 3 months in case of sickness, job loss, economic downturn, or other emergencies?"
+#### Figure 29: CA borrowers
+##### Ability to cover three months of expenses using rainy day funds or another source
 ```{r figure29A}
-tblThreeMonSave$`For Tooltip` <- paste(
-  "State: ", tblThreeMonSave$State, '\n',
-  "Student loan borrowers: ", tblThreeMonSave$AnyStudentLoans, '\n',
-  "Group: ", tblThreeMonSave$Race, '\n',
-  "Share with sufficient funds set aside: ", percent(tblThreeMonSave$Share, accuracy=0.1), 
+tblThreeMonExpenses.CA.Borrow <- tblThreeMonExpenses %>% filter(State=="CA") %>% filter(AnyStudentLoans=="Yes")
+
+tblThreeMonExpenses.CA.Borrow$`For Tooltip` <- paste(
+  "State: ", tblThreeMonExpenses.CA.Borrow$State, '\n',
+  "Student loan borrowers: ", tblThreeMonExpenses.CA.Borrow$AnyStudentLoans, '\n',
+  "Group: ", tblThreeMonExpenses.CA.Borrow$Race, '\n',
+  "Response: ", tblThreeMonExpenses.CA.Borrow$variable, '\n',
+  "Share: ", percent(tblThreeMonExpenses.CA.Borrow$`Share`, accuracy=0.1), 
   sep=""
 )
 
-g29A <- ggplot(data=tblThreeMonSave, mapping=aes(y=Race, x=`Share`, fill=Group, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share with sufficient funds set aside", fill="") + theme(text=element_text(family="Optima")) + scale_fill_manual(values = stateCols)
+g29A <- ggplot(data=tblThreeMonExpenses.CA.Borrow, mapping=aes(y=Race, x=`Share`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
 
-ggplotly(g29A, width=800, height=350, tooltip="text")
+ggplotly(g29A, width=800, height=350, tooltip="text") %>% layout(legend = list(orientation = 'h'))
 ```
-#### Figure 29: Cover expenses by any means
-```{r ThreeMonCover}
-# ThreeMonCover: # If you were to lose your main source of income (for example, job or government benefits), could you cover your expenses for 3 months by borrowing money, using savings, or selling assets?
-
-# table(shed$ThreeMonCover)
-shed.ThreeMonCover <- shed %>% filter((ThreeMonCover %in% c("Refused", "Not In Universe (not asked)", "", NA)==FALSE)) 
-tblThreeMonCover <- aggregate(data=shed.ThreeMonCover, Weight ~ ThreeMonCover + Race + State + AnyStudentLoans, FUN=sum)
-tblThreeMonCover2 <- aggregate(data=shed.ThreeMonCover, Weight ~ ThreeMonCover + State + AnyStudentLoans, FUN=sum)
-tblThreeMonCover2$Race <- rep("All", nrow(tblThreeMonCover2))
-tblThreeMonCover <- rbind(tblThreeMonCover, tblThreeMonCover2)
-tblThreeMonCover <- reshape2::dcast(data=tblThreeMonCover, Race + State + AnyStudentLoans ~ ThreeMonCover, value.var="Weight")
-tblThreeMonCover$`Share` <- tblThreeMonCover$Yes / (tblThreeMonCover$Yes + tblThreeMonCover$No)
-tblThreeMonCover$Group <- rep(NA, nrow(tblThreeMonCover))
-tblThreeMonCover$Group[tblThreeMonCover$State=="CA" & tblThreeMonCover$AnyStudentLoans=="Yes"] <- "California student loan borrowers"
-tblThreeMonCover$Group[tblThreeMonCover$State=="Rest of U.S." & tblThreeMonCover$AnyStudentLoans=="Yes"] <- "Rest of U.S. student loan borrowers"
-tblThreeMonCover$Group[tblThreeMonCover$State=="CA" & tblThreeMonCover$AnyStudentLoans=="No"] <- "California non-borrowers"
-tblThreeMonCover <- tblThreeMonCover %>% filter(is.na(Group)==FALSE)
-tblThreeMonCover$Group <- factor(tblThreeMonCover$Group, levels=c("California non-borrowers", "California student loan borrowers", "Rest of U.S. student loan borrowers"))
-```
-##### Responses to "If you were to lose your main source of income (for example, job or government benefits), could you cover your expenses for 3 months by borrowing money, using savings, or selling assets?" 
+#### Figure 29: Rest of U.S. borrowers
+##### Ability to cover three months of expenses using rainy day funds or another source
 ```{r figure29B}
-tblThreeMonCover$`For Tooltip` <- paste(
-  "State: ", tblThreeMonCover$State, '\n',
-  "Student loan borrowers: ", tblThreeMonCover$AnyStudentLoans, '\n',
-  "Group: ", tblThreeMonCover$Race, '\n',
-  "Share who could cover three months' expenses: ", percent(tblThreeMonCover$Share, accuracy=0.1), 
+tblThreeMonExpenses.US.Borrow <- tblThreeMonExpenses %>% filter(State=="Rest of U.S.") %>% filter(AnyStudentLoans=="Yes")
+
+tblThreeMonExpenses.US.Borrow$`For Tooltip` <- paste(
+  "State: ", tblThreeMonExpenses.US.Borrow$State, '\n',
+  "Student loan borrowers: ", tblThreeMonExpenses.US.Borrow$AnyStudentLoans, '\n',
+  "Group: ", tblThreeMonExpenses.US.Borrow$Race, '\n',
+  "Response: ", tblThreeMonExpenses.US.Borrow$variable, '\n',
+  "Share: ", percent(tblThreeMonExpenses.US.Borrow$`Share`, accuracy=0.1), 
   sep=""
 )
 
-g29B <- ggplot(data=tblThreeMonCover, mapping=aes(y=Race, x=`Share`, fill=Group, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who could cover three months' expenses", fill="") + theme(text=element_text(family="Optima")) + scale_fill_manual(values = stateCols)
+g29B <- ggplot(data=tblThreeMonExpenses.US.Borrow, mapping=aes(y=Race, x=`Share`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
 
-ggplotly(g29B, width=800, height=350, tooltip="text")
+ggplotly(g29B, width=800, height=350, tooltip="text") %>% layout(legend = list(orientation = 'h'))
+```
+#### Figure 29: CA non-borrowers
+##### Ability to cover three months of expenses using rainy day funds or another source
+```{r figure29C}
+tblThreeMonExpenses.CA.Nonborrow <- tblThreeMonExpenses %>% filter(State=="CA") %>% filter(AnyStudentLoans=="No")
+
+tblThreeMonExpenses.CA.Nonborrow$`For Tooltip` <- paste(
+  "State: ", tblThreeMonExpenses.CA.Nonborrow$State, '\n',
+  "Student loan borrowers: ", tblThreeMonExpenses.CA.Nonborrow$AnyStudentLoans, '\n',
+  "Group: ", tblThreeMonExpenses.CA.Nonborrow$Race, '\n',
+  "Response: ", tblThreeMonExpenses.CA.Nonborrow$variable, '\n',
+  "Share: ", percent(tblThreeMonExpenses.CA.Nonborrow$`Share`, accuracy=0.1), 
+  sep=""
+)
+
+g29C <- ggplot(data=tblThreeMonExpenses.CA.Nonborrow, mapping=aes(y=Race, x=`Share`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+
+ggplotly(g29C, width=800, height=350, tooltip="text") %>% layout(legend = list(orientation = 'h'))
 ```
 #### Data Source and Notes
 
 **Data source:** Survey of Household Economics and Decision-making, accessed November 2022, available through the U.S. Federal Reserve [here](https://www.federalreserve.gov/consumerscommunities/shed_data.htm).
 
 **Timeframe reflected:** The survey years included for Figure 29 are
-```{r ThreeMonSave.SY, results = 'asis'}
-survey_years(shed.ThreeMonSave$SurveyYear)
-# I have checked and verified that the survey years for both verisons of Figure 29 match.
+```{r ThreeMonExpenses.SY, results = 'asis'}
+survey_years(shed.ThreeMonExpenses$SurveyYear)
 ```
 
 **Notes:** See the tables below for the survey respondent sample size by subgroup.
-```{r ThreeMonSave.N}
-N.ThreeMonSave <- aggregate(data=shed.ThreeMonSave, Count ~ Race + State + AnyStudentLoans, FUN=sum)
-N.ThreeMonSave <- N.ThreeMonSave %>% filter(State=="CA" | AnyStudentLoans=="Yes")
-names(N.ThreeMonSave) <- c("Group", "State", "Student loan borrower", "Survey respondents")
-kable(N.ThreeMonSave, caption="N size by group for Figure 29: Cover expenses with savings") %>% kable_paper("hover", full_width = F)
-```
-
-```{r ThreeMonCover.N}
-N.ThreeMonCover <- aggregate(data=shed.ThreeMonCover, Count ~ Race + State + AnyStudentLoans, FUN=sum)
-N.ThreeMonCover <- N.ThreeMonCover %>% filter(State=="CA" | AnyStudentLoans=="Yes")
-names(N.ThreeMonCover) <- c("Group", "State", "Student loan borrower", "Survey respondents")
-kable(N.ThreeMonCover, caption="N size by group for Figure 29: Cover expenses by any means") %>% kable_paper("hover", full_width = F)
+```{r ThreeMonExpenses.N}
+N.ThreeMonExpenses <- aggregate(data=shed.ThreeMonExpenses, Count ~ Race + State + AnyStudentLoans, FUN=sum)
+N.ThreeMonExpenses <- N.ThreeMonExpenses %>% filter(State=="CA" | AnyStudentLoans=="Yes")
+names(N.ThreeMonExpenses) <- c("Group", "State", "Student loan borrower", "Survey respondents")
+kable(N.ThreeMonExpenses, caption="N size by group for Figure 29") %>% kable_paper("hover", full_width = F)
 ```
 
 ***
 
 ### {-}
 
-(Summary text here) 
+Figure 30 continues on the theme of how the respondents would financially manage during an unexpected emergency. There are eight tabs, each representing to a different way of paying a \$400 sudden expense. They highly vary in terms of interest rates and the effort required to access that financing: 
+
+* Using cash or savings is the simplest and likely has the least significant long-term consequences, followed next by charging the expense to a credit card and paying it off in full that same month.
+* Letting the credit card expense roll over, or using a bank loan, means there will be accumulated interest and some more effort required. 
+* Borrowing from a friend could be low-risk depending on the circumstance, but it could also add to the risk that the expense causes someone's interpersonal relationships to suffer long-term.
+* Selling one's items requires time and energy, and depending on what is sold, it could mean parting with necessities (such as a car or an amenity) or items with genuine sentimental value. 
+* The typical payday loan has an APR that is [more than 40 times](https://www.cnbc.com/2021/02/16/map-shows-typical-payday-loan-rate-in-each-state.html) the typical credit card interest rate. 
+* Finally, a respondent could say that they simply cannot pay the \$400 emergency expense. 
+
+A respondent can select more than one method of finance: for example, a household might borrow from a friend and use a payday loan. In other words, the sum of the bars for a group adds up to more than 100 percent. 
+
+Around 40 to 50 percent of all groups would pay in cash. White borrowers (41.7 percent among California borrowers) and those in the "Other, Non-Hispanic" (49.5 percent among California borrowers) are the most likely to pay with a credit card and not let the balance roll over. Black and Hispanic respondents are virtually the only respondents to say they would use a payday loan, although it it less than 8 percent across state and borrower categories. Lastly, Black (18.9 percent among California borrowers) and Hispanic (17.6 percent among California borrowers) respondents are more likely to say that they cannot cover the expense. 
+
+In general, the margins between California student loan borrowers, borrowers in the rest of the U.S., and California non-borrowers are all rather small. 
 
 ### {.tabset}
+#### Figure 30: Pay $400 with cash or savings
+```{r Cash400}
+# Cash400: # With the money currently in my checking/savings account or with cash ‐ Suppose that you have an emergency expense that costs $400. Based on your current financial situation, how would you pay for this expense? 
+
+# table(shed$Cash400)
+shed.Cash400 <- shed %>% filter((Cash400 %in% c("Refused", "Not In Universe (not asked)", "", NA)==FALSE)) 
+tblCash400 <- aggregate(data=shed.Cash400, Weight ~ Cash400 + Race + State + AnyStudentLoans, FUN=sum)
+tblCash4002 <- aggregate(data=shed.Cash400, Weight ~ Cash400 + State + AnyStudentLoans, FUN=sum)
+tblCash4002$Race <- rep("All", nrow(tblCash4002))
+tblCash400 <- rbind(tblCash400, tblCash4002)
+tblCash400 <- reshape2::dcast(data=tblCash400, Race + State + AnyStudentLoans ~ Cash400, value.var="Weight")
+tblCash400$`Share` <- tblCash400$Yes / (tblCash400$Yes + tblCash400$No)
+
+tblCash400$Group <- rep(NA, nrow(tblCash400))
+tblCash400$Group[tblCash400$State=="CA" & tblCash400$AnyStudentLoans=="Yes"] <- "California student loan borrowers"
+tblCash400$Group[tblCash400$State=="Rest of U.S." & tblCash400$AnyStudentLoans=="Yes"] <- "Rest of U.S. student loan borrowers"
+tblCash400$Group[tblCash400$State=="CA" & tblCash400$AnyStudentLoans=="No"] <- "California non-borrowers"
+tblCash400 <- tblCash400 %>% filter(is.na(Group)==FALSE)
+tblCash400$Group <- factor(tblCash400$Group, levels=c("California non-borrowers", "California student loan borrowers", "Rest of U.S. student loan borrowers"))
+```
+##### Responses to "Suppose that you have an emergency expense that costs $400. Based on your current financial situation, how would you pay for this expense? [With the money currently in my checking/savings account or with cash]"
+```{r figure30C}
+tblCash400$`For Tooltip` <- paste(
+  "State: ", tblCash400$State, '\n',
+  "Student loan borrowers: ", tblCash400$AnyStudentLoans, '\n',
+  "Group: ", tblCash400$Race, '\n',
+  "Share: ", percent(tblCash400$`Share`, accuracy=0.1),
+  sep=""
+)
+
+g30C <- ggplot(data=tblCash400, mapping=aes(y=Race, x=`Share`, fill=Group, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who would pay with cash or money in checking or savings", fill="") + theme(text=element_text(family="Optima")) + scale_fill_manual(values = stateCols)
+
+ggplotly(g30C, width=800, height=350, tooltip="text")
+```
 #### Figure 30: Pay $400 with credit card (no interest)
 ```{r CCA400}
 # CCA400: # Put it on my credit card and pay it off in full at the next statement ‐ Suppose that you have an emergency expense that costs $400. Based on your current financial situation, how would you pay for this expense? 
@@ -5284,40 +5359,6 @@ tblCCB400$`For Tooltip` <- paste(
 g30B <- ggplot(data=tblCCB400, mapping=aes(y=Race, x=`Share`, fill=Group, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who would put it on a credit card and pay it off over time", fill="") + theme(text=element_text(family="Optima")) + scale_fill_manual(values = stateCols)
 
 ggplotly(g30B, width=800, height=350, tooltip="text")
-```
-#### Figure 30: Pay $400 with cash or savings
-```{r Cash400}
-# Cash400: # With the money currently in my checking/savings account or with cash ‐ Suppose that you have an emergency expense that costs $400. Based on your current financial situation, how would you pay for this expense? 
-
-# table(shed$Cash400)
-shed.Cash400 <- shed %>% filter((Cash400 %in% c("Refused", "Not In Universe (not asked)", "", NA)==FALSE)) 
-tblCash400 <- aggregate(data=shed.Cash400, Weight ~ Cash400 + Race + State + AnyStudentLoans, FUN=sum)
-tblCash4002 <- aggregate(data=shed.Cash400, Weight ~ Cash400 + State + AnyStudentLoans, FUN=sum)
-tblCash4002$Race <- rep("All", nrow(tblCash4002))
-tblCash400 <- rbind(tblCash400, tblCash4002)
-tblCash400 <- reshape2::dcast(data=tblCash400, Race + State + AnyStudentLoans ~ Cash400, value.var="Weight")
-tblCash400$`Share` <- tblCash400$Yes / (tblCash400$Yes + tblCash400$No)
-
-tblCash400$Group <- rep(NA, nrow(tblCash400))
-tblCash400$Group[tblCash400$State=="CA" & tblCash400$AnyStudentLoans=="Yes"] <- "California student loan borrowers"
-tblCash400$Group[tblCash400$State=="Rest of U.S." & tblCash400$AnyStudentLoans=="Yes"] <- "Rest of U.S. student loan borrowers"
-tblCash400$Group[tblCash400$State=="CA" & tblCash400$AnyStudentLoans=="No"] <- "California non-borrowers"
-tblCash400 <- tblCash400 %>% filter(is.na(Group)==FALSE)
-tblCash400$Group <- factor(tblCash400$Group, levels=c("California non-borrowers", "California student loan borrowers", "Rest of U.S. student loan borrowers"))
-```
-##### Responses to "Suppose that you have an emergency expense that costs $400. Based on your current financial situation, how would you pay for this expense? [With the money currently in my checking/savings account or with cash]"
-```{r figure30C}
-tblCash400$`For Tooltip` <- paste(
-  "State: ", tblCash400$State, '\n',
-  "Student loan borrowers: ", tblCash400$AnyStudentLoans, '\n',
-  "Group: ", tblCash400$Race, '\n',
-  "Share: ", percent(tblCash400$`Share`, accuracy=0.1),
-  sep=""
-)
-
-g30C <- ggplot(data=tblCash400, mapping=aes(y=Race, x=`Share`, fill=Group, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who would pay with cash or money in checking or savings", fill="") + theme(text=element_text(family="Optima")) + scale_fill_manual(values = stateCols)
-
-ggplotly(g30C, width=800, height=350, tooltip="text")
 ```
 #### Figure 30: Pay $400 with a bank loan
 ```{r Loan400}
@@ -5512,7 +5553,11 @@ kable(N.CCA400, caption="N size by group for Figure 30") %>% kable_paper("hover"
 
 ### {-}
 
-(Summary text here) 
+Figures 31 and 32 consider how respondents think about their own education. Figure 31 shows respondents' opinions about whether they think the financial benefits or costs of their most recent educational program are larger. 
+
+The most common response is that the costs and benefits are the same. Overall, non-borrowers in California are less likely to say that they find the costs greater than the benefits (21.7 percent) compared to California student loan borrowers (38.0 percent). 
+
+Among California borrowers, Black respondents appear more likely than other groups to say that the costs are "much larger." However, the sample sizes for California student loan borrowers in the "Black, Non-Hispanic" and "Other, Non-Hispanic" categories are very small, meaning those rows of results should be interpreted with caution. 
 
 ### {.tabset}
 ```{r EdPayoff1}
@@ -5609,7 +5654,11 @@ kable(N.EdPayoff1, caption="N size by group for Figure 31") %>% kable_paper("hov
 
 ### {-}
 
-(Summary text here) 
+Figure 32 examines what respondents say they would do differently if they could go back and make their educational decisions again. Around half of California student loan borrowers say they would choose a different field, and the same share say they would choose a different school. Student loan borrowers outside California responded similarly. 
+
+Only 1 in 8 California student loan borrowers said they would have completed less education if they could do it over again, and almost 3 in 4 said that they would complete more education. 
+
+As with Figure 31, the sample sizes for California student loan borrowers in the "Black, Non-Hispanic" and "Other, Non-Hispanic" categories are very small, meaning those rows of results should be interpreted with caution. 
 
 ### {.tabset}
 #### Figure 32: Different field
@@ -5791,7 +5840,9 @@ kable(N.MoreEd, caption="N size by group for Figure 32: More education") %>% kab
 
 ### {-}
 
-(Summary text here) 
+Figures 33, 34, and 35 provide some breakdowns of respondents using basic information that is relevant for the discussion of student loans. Figure 33 shows the breakdown by gender. The gender variable uses here only provides two values, male and female. 
+
+A slight majority of student loan borrowers are female, closer to two-thirds among Black student loan borrowers. 
 
 ### {.tabset}
 #### Figure 33: Gender
@@ -5824,7 +5875,7 @@ tblGender$`For Tooltip` <- paste(
   sep=""
 )
 
-g33 <- ggplot(data=tblGender, mapping=aes(y=Race, x=`Share of borrowers who are male`, fill=Group)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who are male", fill="") + theme(text=element_text(family="Optima")) + scale_fill_manual(values = stateCols)
+g33 <- ggplot(data=tblGender, mapping=aes(y=Race, x=`Share of borrowers who are male`, fill=Group, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_x_continuous(labels=scales::percent_format(accuracy=1), limits=c(0, 1)) + labs(y="", title="", x="Share who are male", fill="") + theme(text=element_text(family="Optima")) + scale_fill_manual(values = stateCols)
 
 ggplotly(g33, width=800, height=350, tooltip="text")
 ```
@@ -5849,7 +5900,9 @@ kable(N.Gender, caption="N size by group for Figure 33") %>% kable_paper("hover"
 
 ### {-}
 
-(Summary text here) 
+In Figure 34, we see a breakdown by the level of higher education institution that the respondents attended. Around three-quarters of all student loan borrowers attended four-year institutions, compared to about 5 in 8 non-borrowers in California. Among California borrowers, white respondents (82.6 percent) were more likely to have attended a four-year college than Black (70.4 percent) or Hispanic (66.6 percent) respondents. 
+
+Those who did not attend any college are not included in this figure.
 
 ### {.tabset}
 ```{r InstLevel}
@@ -5944,7 +5997,12 @@ kable(N.InstLevel, caption="N size by group for Figure 34") %>% kable_paper("hov
 
 ### {-}
 
-(Summary text here) 
+Figure 35 shows the distribution of respondents by institutional control. Student loan borrowers in California and the rest of the U.S. are more likely to have attended a private institution than non-borrowers. 
+
+For-profit colleges are particularly represented among student loan borrowers, especially for borrowers of color. Black (21.7 percent) and Hispanic (25.1 percent) California student loan borrowers attended for-profit colleges more frequently than white California student loan borrowers (11.4 percent). By comparison, just 6 percent of non-borrowers in California attended a for-profit college. 
+
+Those who did not attend any college are not included in this figure.
+ 
 
 ### {.tabset}
 ```{r InstControl}
@@ -6039,17 +6097,21 @@ kable(N.InstControl, caption="N size by group for Figure 34") %>% kable_paper("h
 
 ### {-}
 
-(Summary text here)
-
 ## College Scorecard
 
 #### About the data
 
-(Summary text here)x
+We now turn away from survey data and back towards administrative data, this time from the College Scorecard. The College Scorecard is a dataset published and regularly updated by the U.S. Department of Education that combines information on debt and borrowers from the National Student Loan Data System, data on earnings from the U.S. Treasury, institutions' self-reported data from the Integrated Postsecondary Education Data System (IEPDS), and more. 
+
+Scorecard is used as a [consumer-facing tool](https://collegescorecard.ed.gov/) to help families make informed decisions about college, highlighting the post-graduation outcomes of students who attend. The public-facing website contains just a subset of the wealth of variables in its [downloadable data files](https://collegescorecard.ed.gov/data). Scorecard is divided into two datasets, one at the institution level and another at the program level.
+
+For our analysis of student loan debt in California here, I focus on certain variables from Scorecard that tell us about how debt is borrowed and repaid. 
+
+A key limitation of Scorecard for our purposes here is that it does not have many breakdowns by students' race, which is a downstream consequence of the FAFSA's lack of a question about racial identity. Legislative changes to the FAFSA are slated to add that question, but as for now, the best way to consider the racial impacts of institutions' metrics of debt and earnings is to link in IPEDS data on enrollment and completions by race. I will explain below how and when I do this. 
+
+The Department of Education reports debt repayment data in such a way that the federal student loan payment pause and forbearance period do not distort the results. Although data on total outstanding loan balances are current, default rates and repayment variables reflect pre-pandemic borrower outcomes. The Biden Administration's announcement of student loan debt cancellation similarly has no bearing on the data. 
 
 #### Findings
-
-(Summary text here)x
 
 ```{r conversionsDF}
 conversionsDF <- data.frame("Character.Entry" = c("PrivacySuppressed", "NULL"), "Numeric.Entry"=c(NA, NA))
@@ -6370,6 +6432,14 @@ CSP$CONTROL[CSP$CONTROL==2] <- "Non-profit"
 CSP$CONTROL[CSP$CONTROL==3] <- "For-profit"
 ```
 
+Table 4 shows institutions in California by their total outstanding loan debt, total borrowers with outstanding debt, and average debt balance. I included the top 100 by the average outstanding debt amount. There is one tab for each of three loan programs: Stafford, Parent PLUS, and Grad PLUS. 
+
+Some of the top institutions by the average Stafford debt are health sciences schools and law schools. There are only two public institutions in the top 75, and neither confers undergraduate degrees. 
+
+The institutions with the largest average Parent PLUS loan debt balances include art colleges and selective universities. It is not until 33 rows down the table that the first public institution appears. While a Parent PLUS debt balance of \$50,000 or more may be manageable for a very wealthy family, it can spell [long-term financial harship](https://tcf.org/content/report/parent-plus-borrowers-the-hidden-casualties-of-the-student-debt-crisis/) for those with less resources. 
+
+The top institutions by average outstanding Grad PLUS debt include many of the same as the top for average Stafford balance: the top 10 for both includes Palo Alto University, Five Branches University, and Touro University California, to name a few. 
+
 ### {.tabset}
 ```{r TotalOutstandingDebt, warning=FALSE}
 Q6 <- CSI %>% select(UNITID, OPEID, OPEID6, INSTNM, CONTROL, STABBR, MAIN, LPSTAFFORD_CNT, LPSTAFFORD_AMT, LPPPLUS_CNT, LPPPLUS_AMT, LPGPLUS_CNT, LPGPLUS_AMT) %>% filter(STABBR=="CA") %>% filter(MAIN==1) %>% filter(duplicated(OPEID6)==FALSE)
@@ -6440,6 +6510,11 @@ kable(kable4D, caption="Top 100 California institutions by total outstanding loa
 
 ### {-}
 
+Table 4 was limited to institutions headquartered in California. However, institutions based outside of California are also a major source of debt for Californians thanks to online education. 
+
+For Table 5, I use IPEDS data on the share of enrollment that is online and the share of enrollment from California to estimate online enrollment by college students who reside in California. By applying those percentages to measures of outstanding debt, I estimate the share of debt that comes from California students enrolled online. 
+
+Table 5 ranks the top institutions headquartered outside of California by total estimated outstanding debt from California students enrolled online. It is perhaps no surprise to see these institutions listed, as they are the largest universities in the country by online enrollment. However, it is somewhat startling to think about the volume of debt placed on Californians' shoulders from these out-of-state institutions: almost \$5 billion from just the University of Phoenix and Grand Canyon University alone. 
 
 ### {.tabset}
 ```{r outsideDebt, warning=FALSE}
@@ -6529,7 +6604,7 @@ Q17.OutsideCA$`Estimated debt for students from California enrolled online` <- d
 #### Table 5
 ```{r kable5, results='asis'}
 kable5 <- Q17.OutsideCA[1:100, ]
-names(kable5) <- c("Institution name", "State", "Estimated students from California enrolled online", "Estimated outstanding debt from California students enrolled online")
+names(kable5) <- c("Institution name", "State", "Estimated students from California enrolled online, Fall 2018", "Estimated outstanding debt from California students enrolled online")
 kable(kable5, caption="Top 100 institutions based outside California, by estimated outstanding debt from online enrollment by California students") %>% kable_paper("hover", full_width = F) %>% scroll_box(width = "100%", height = "400px")
 ```
 #### Data Source and Notes
@@ -6538,11 +6613,15 @@ kable(kable5, caption="Top 100 institutions based outside California, by estimat
 
 **Timeframe reflected:** Loan data used for this table reflect borrowers' balances as measured in the National Student Loan Data System on June 30, 2021. Enrollment data on distance education reflect Fall 2018. I use this enrollment data as a proxy for current enrollment. 
 
-**Notes:** 
+**Notes:** Estimated outstanding debt is rounded to the nearest $1,000. Estimated online enrollment is rounded to the nearest 10. 
 
 ***
 
 ### {-}
+
+The top institutions by outstanding debt have so far all been private institutions. In the first tab of Table 6, we see the breakdown of loan debt from California's three public sectors. In total, there is \$37 billion in outstanding debt from California's public colleges and universities, with the CSU and UC contributing the vast majority. 
+
+The next tab shows outstanding debt by program and institutional control. Nonprofit institutions contribute the most total debt, \$54 billion, with an outsized share coming from the Grad PLUS program (25.6 percent). Debt from for-profit colleges totals \$24 billion and is almost all in Stafford loans. Meanwhile, public institutions see Parent PLUS contributing the largest share of total sector debt at 8.2 percent.
 
 ### {.tabset}
 #### Table 6: California public segments
@@ -6781,12 +6860,13 @@ kable(kable6B, caption="Sectors of California higher education by outstanding fe
 
 **Timeframe reflected:** Loan data in this table reflect borrowers' balances as measured in the National Student Loan Data System on June 30, 2021. 
 
-**Notes:** 
+**Notes:** Values rounded to the nearest \$1,000. 
 
 ***
 
 ### {-}
 
+Table 7 compares institutions by their share of undergraduates who receive federal student loans. The top 25 are all for-profit colleges, with a few exceptions. Examples like West Coast University-Los Angeles, which have a median debt at graduation north of \$30,000 and see almost 9 out of every 10 undergraduates borrowing loans, are cases where a student who graduates without significant debt is almost a rarity. 
 
 ### {.tabset}
 ```{r highestBorrowingRates, warning=FALSE}
@@ -6822,7 +6902,7 @@ Q20.3$GRAD_DEBT_MDN <- dollar(Q20.3$GRAD_DEBT_MDN, accuracy=1)
 ```{r kable7, results='asis'}
 kable7 <- Q20.3[1:100, ]
 names(kable7) <- c("Institution name", "Control", "Percent of undergraduates who receive federal student loans", "Median debt at graduation")
-kable(kable7, caption="California institutions with the highest shares of undergraduates borrowing loans") %>% kable_paper("hover", full_width = F) %>% scroll_box(width = "100%", height = "400px")
+kable(kable7, caption="Top 100 California institutions by the shares of undergraduates borrowing loans") %>% kable_paper("hover", full_width = F) %>% scroll_box(width = "100%", height = "400px")
 ```
 #### Data Source and Notes 
 
@@ -6836,7 +6916,13 @@ kable(kable7, caption="California institutions with the highest shares of underg
 
 ### {-}
 
-(Summary text here)
+Table 8 is the first to look at long-term debt repayment. When a student borrows, are they able to pay down the balance or do those balances rise as interest accumulates? The data in this table reflect the cohort of borrowers who entered repayment in 2008-09, and it compares the cohort's original total balance with their balance at the ten-year mark of repayment. For example, a ratio of 0.7 would mean that the current total balance is 70 percent of the original total balance. A ratio above 1 indicates that the cohort is struggling to even keep up with interest payments. 
+
+Some colleges near the top of the list for Stafford loans are, in fact, California community colleges. The average outstanding balance 10 years into repayment is less than $15,000, but ratios about 1 indicate that this average is actually greater than the original average balance the borrowers had when they entered repayment. 
+
+With Parent PLUS loans, the ratios for California institutions do not reach as high, but the average balances are higher. Taking La Sierra University as an example, the ratio of 0.85 and average balance of $15,000 means that, after ten years, Parent PLUS borrowers with loans from this school continue to owe \$15,000 and have only successfully paid off 15 percent of their balance. These families are likely to continue struggling to repay, especially as the parents holding these loans approach retirement age. Some of the top institutions on this list are art colleges, which may not bode well for the recipients of those loans to be able to help pay off their parents' PLUS loans. 
+
+The table on Grad PLUS could be taken with a grain of salt since those in the medical and law fields often start with very high debt amounts and take years to build up their incomes to start repaying. However, the fact that some ratios are as high as 1.2 is concerning: this means the typical borrower owes 30 percent more after ten years than they did at the start of repayment. Four schools raise flags for high ratios and high average Grad PLUS debt amounts: Life Chiropractic College West, Southern California University of Health Sciences, American Film Institute Conservatory, and Thomas Jefferson School of Law. 
 
 ### {.tabset}
 ```{r DBBR10, warning=FALSE}
@@ -6923,8 +7009,9 @@ kable(kable8C, caption="California institutions by ratio of Grad PLUS borrowers'
 
 ### {-}
 
-(Summary text here)
+Table 9 uses data on the status of borrowers three years into repayment and asks how many are in default, delinquent, or otherwise not making progress to reduce the principal of those loans. As noted above, the federal student loan payment pause and forbearance period do not affect this measure.
 
+Here we see for-profit trade schools high on the list for Stafford loans, even though the students who attend them often have small loan amounts. At some colleges, half of all Stafford borrowers are behind on payments three years into repayment. The percentages for Parent PLUS are not as high, although some are above one-third. The colleges at the top of the list for Grad PLUS include some arts colleges and health sciences college.
 
 ### {.tabset}
 ```{r DDNP, warning=FALSE}
@@ -7027,8 +7114,15 @@ kable(kable9C, caption="California institutions by share of Grad PLUS borrowers 
 
 ### {-}
 
-(Summary text here)
+With Table 10, we now turn to program-level data. The College Scorecard provides debt and earnings data using an index called the Classification of Instructional Programs (CIP). CIP codes identify college programs so that when we talk about earth science programs or biostatistics programs, for example, we have a foundational basis for what programs those are. There are three levels of CIP codes with varying specificity, and the Scorecard program-level data are reported at the 4-digit CIP code level. 
 
+For this analysis, I aggregated debt and earnings data by area of study and credential level using programs at institutions located in California. I use median earnings 1 year after graduation. While Scorecard also reports earnings at the 2 year mark after graduation, breakouts by Pell are only available at 1 year. The first tab of Table 10 reflects all borrowers and the second tab reflects borrowers who received Pell at some point in their educational careers (not necessarily for the same program). 
+
+I use the ratio of debt to earnings as a barometer for how high debt is compared to earnings, an indication of how the borrower may struggle with repayment. Six of the seven programs with the highest ratios are in medicine, perhaps to little surprise. However, master's degree programs in film/video and drama/theater are also in the top ten, and these borrowers see starting salaries of \$30,000 or less alongside median debts above \$100,000. 
+
+The top programs for this debt-to-earnings ratio among Pell recipients largely match the list for all borrowers. The median debt levels appear slightly higher for Pell recipients, pointing to the role that family resources likely play in financing education. 
+
+In the first tab, the first undergraduate program does not appear until 33 rows down (Bachelor's in Arts, Entertainment, and Media Management). This is one indication of how unmanageable student loan debt can be a particularly significant issue for borrowers from graduate programs in California. 
 
 ### {.tabset}
 ```{r DebtVsEarningsCIPs}
@@ -7080,13 +7174,13 @@ Q24.2$`Weighted debt median` <- dollar(Q24.2$`Weighted debt median`, accuracy=1)
 Q24.2$`Weighted earnings median` <- dollar(Q24.2$`Weighted earnings median`, accuracy=1)
 Q24.2$`Ratio of debt to earnings` <- round(Q24.2$`Ratio of debt to earnings`, 2)
 ```
-#### Debt vs earnings for student loan borrowers 
+#### Table 10: Debt vs earnings for student loan borrowers 
 ```{r kable10A}
 kable10A <- Q24.2 %>% select(CIPDESC, CREDDESC, `Weighted debt median`, `Weighted earnings median`, `Ratio of debt to earnings`)
 names(kable10A) <- c("Area of study", "Credential level", "Estimated median debt", "Estimated median earnings, 1 year after completing program", "Ratio of debt to earnings")
 kable(kable10A, caption="4-digit CIPs and award levels by debt compared to earnings in California") %>% kable_paper("hover", full_width = F) %>% scroll_box(width = "100%", height = "400px")
 ```
-#### Debt vs earnings for for student loan borrowers who received Pell 
+#### Table 10: Debt vs earnings for for student loan borrowers who received Pell 
 ```{r DebtVsEarningsPell}
 Q25 <- CSP %>% select(
   UNITID,       # Unit ID for institution
@@ -7154,10 +7248,12 @@ kable(kable10B, caption="4-digit CIPs and award levels by debt compared to earni
 
 ### {-}
 
-(Summary text here
+With Figure 36, I am interested in whether there is any relationship between the racial demographics of those who complete California programs and their earnings. Starting with the same aggregated program-level earnings data from College Scorecard as I used for Figure 35, I link in data on the demographics of program completers from IPEDS. The first tab in Figure 36 focuses on Black students' share of completers, and it compares the rank of Black students' share of completers by ranked earnings. 
+
+The key question when interpreting this data is whether a high/low rank in one variable seems to correlate with a high/low rank in the other variable. While this is only a cursory analysis, no such patterns emerge. There is perhaps a slight correlation in bachelor's degree programs, where a lower share of Black enrollment is associated with a higher earnings average; however, this seems to be a modest correlation at the most. The same holds true for the tab on the Hispanic share of completers. 
 
 ### {.tabset}
-```{r EarningsDemographics}
+```{r EarningsDemographics, warning=FALSE}
 Q26.1 <- c2yr %>% select(
   `UNITID`, 
   `OPEID`,
@@ -7291,7 +7387,7 @@ ggplotly(g36B, width=800, height=600, tooltip="text")
 
 ### {-}
 
-(Summary text here)
+Figure 37 operates the same as Figure 36, except its focus is average debt instead of average earnings. Once again, there does not appear to be a correlation that provides us useful insights. 
 
 ### {.tabset}
 ```{r DebtDemographics}
@@ -7387,9 +7483,3 @@ ggplotly(g36B, width=800, height=600, tooltip="text")
 ***
 
 ### {-}
-
-## Remaining Gaps
-
-(More to come)
-
-
