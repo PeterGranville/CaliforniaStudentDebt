@@ -5137,7 +5137,6 @@ kable(N.FRPL, caption="N size by group for Figure 28: FRPL") %>% kable_paper("ho
 
 ### {-}
 
-
 Methodologically, Figure 29 requires a little more explaining than other figures in this section. The data shown in Figure 29 are based on two questions in the SHED survey: 
 
 * The first question is, "Have you set aside emergency or rainy day funds that would cover your expenses for 3 months in case of sickness, job loss, economic downturn, or other emergencies?" 
@@ -6003,7 +6002,6 @@ For-profit colleges are particularly represented among student loan borrowers, e
 
 Those who did not attend any college are not included in this figure.
  
-
 ### {.tabset}
 ```{r InstControl}
 # InstControl: # Control of institution
@@ -7377,7 +7375,7 @@ ggplotly(g36B, width=800, height=600, tooltip="text")
 ```
 #### Data Source and Notes
 
-**Data source:** The figures in this table were calculated using data from two sources. First is the College Scorecard field-of-study dataset, accessed November 2022, available through the U.S. Department of Education [here](https://collegescorecard.ed.gov/data/). Second is the IPEDS Completion Surveys, accessed November 2022, available through NCES [here](https://nces.ed.gov/ipeds/use-the-data). 
+**Data source:** These figures were calculated using data from two sources. First is the College Scorecard field-of-study dataset, accessed November 2022, available through the U.S. Department of Education [here](https://collegescorecard.ed.gov/data/). Second is the IPEDS Completion Surveys, accessed November 2022, available through NCES [here](https://nces.ed.gov/ipeds/use-the-data). 
 
 **Timeframe reflected:** Ranked earnings values are author's calculations using College Scorecard data reflecting the calendar year 2017 or 2018 earnings of students who received federal student aid and graduated from their program in academic year 2014-15 or 2015-16. Ranked shares of completers by race are author's calculations using data from the IPEDS Completion Surveys reflecting 2019-20 and 2020-21. 
 
@@ -7474,7 +7472,7 @@ ggplotly(g36B, width=800, height=600, tooltip="text")
 ```
 #### Data Source and Notes
 
-**Data source:** The figures in this table were calculated using data from two sources. First is the College Scorecard field-of-study dataset, accessed November 2022, available through the U.S. Department of Education [here](https://collegescorecard.ed.gov/data/). Second is the IPEDS Completion Surveys, accessed November 2022, available through NCES [here](https://nces.ed.gov/ipeds/use-the-data). 
+**Data source:** These figures were calculated using data from two sources. First is the College Scorecard field-of-study dataset, accessed November 2022, available through the U.S. Department of Education [here](https://collegescorecard.ed.gov/data/). Second is the IPEDS Completion Surveys, accessed November 2022, available through NCES [here](https://nces.ed.gov/ipeds/use-the-data). 
 
 **Timeframe reflected:**  Ranked debt values are author's calculations using College Scorecard data reflecting borrowers who entered repayment in award year 2017-18 or 2018-19. Ranked shares of completers by race are author's calculations using data from the IPEDS Completion Surveys reflecting 2019-20 and 2020-21. 
 
@@ -7483,3 +7481,563 @@ ggplotly(g36B, width=800, height=600, tooltip="text")
 ***
 
 ### {-}
+
+The final analyses of this document will use College Scorecard data to show how federal student loan repayment in California compares to the rest of the U.S. 
+
+Here I examine dollar-based repayment rates, or "DBRR." DBRR data in the College Scorecard measure the total current loan balances for cohorts of federal student loan borrowers, as well as the original amount that the cohort collectively owed when they entered repayment. I use data for cohorts that are 1, 5, 10, and 20 years into repayment. 
+
+We can calculate a cohort's "DBRR ratio" by dividing its original total balance by its current total balance. When the ratio is over 1, the borrowers owe more than they originally borrowed, presumably due to the accumulation of interest outpacing the borrowers' payments. When the ratio is under 1, the borrowers are making progress on repayment. 
+
+To be clear, DBRR does not track the same cohort of borrowers and report their loan balances at 1, 5, 10, and 20 years. Rather, each of these cohorts is a separate group of borrowers. It is also important to note the following: 
+
+* These data reflect pre-pandemic balances. 
+* Not all colleges and universities have DBRR data in the College Scorecard. In Figures 38 and 39, you can hover over the points in the chart to see the count of institution represented in each cohort. For-profit colleges are especially under-represented, with only one California for-profit included. Interpret the charts on for-profits in Figures 38 and 39 with caution. 
+
+DBRR data are reported at the institution level and disaggregated by loan type (Stafford, Parent PLUS, and Grad PLUS). I aggregated the DBRR values across all institutions with sufficient data and compared institutions in California to institutions in the rest of the U.S., with breakouts by institutional control. 
+
+Figure 38 shows the DBRR ratios for the available cohorts of borrowers in repayment. When the blue line (California) is higher than the yellow line (Rest of U.S.), it means that borrowers from California institutions owe a larger share of their original balance than do those from institutions across the rest of the U.S. 
+
+In all three tabs, we see that loan borrowers from California public institutions tend to have better (i.e. lower) DBRR ratios than loan borrowers from public institutions in the rest of the country, regardless of loan type. In the DBRR ratios for borrowers who took out loans for a nonprofit institution, California institutions roughly match institutions nationwide.  
+
+Overall, California performs well along DBRR metrics compared to the rest of the U.S. However, this same data can be used to track cohorts' average loan balances, which reveals some concerning trends for California. I derive the average loan balance by dividing current balances by borrower count. Note that a borrower who has fully paid off their loan is still counted in the average measure.  
+
+### {.tabset}
+```{r CSI.DBRR, warning=FALSE}
+CSI2 <- fread("Most-Recent-Cohorts-Institution.csv", header=TRUE, select=c(
+  
+  # Basic information about institutions: 
+  "UNITID",       # Unit ID for institution
+  "OPEID",        # 8-digit OPEID
+  "OPEID6",       # 6-digit OPEID
+  "INSTNM",       # Institution name
+  "CITY",         # City
+  "STABBR",       # State postcode
+  "MAIN",         # "Flag for main campus (0 Not main campus, 1 Main campus)
+  "PREDDEG",      # Predominant undergraduate degree awarded
+  "CONTROL",      # Control of institution
+  "CCBASIC",      # Carnegie Classification -- basic
+  
+  # DBRR 1-year repayment rates: Undergraduate loans
+  "DBRR1_FED_UG_N",   # Undergraduate federal student loan dollar-based 1-year repayment rate borrower count
+  "DBRR1_FED_UG_NUM", # Undergraduate federal student loan dollar-based 1-year repayment rate numerator
+  "DBRR1_FED_UG_DEN", # Undergraduate federal student loan dollar-based 1-year repayment rate denominator
+  "DBRR1_FED_UG_RT",  # Undergraduate federal student loan dollar-based 1-year repayment rate
+  
+  # DBRR 1-year repayment rates: Graduate loans
+  "DBRR1_FED_GR_N",   # Graduate federal student loan dollar-based 1-year repayment rate borrower count
+  "DBRR1_FED_GR_NUM", # Graduate federal student loan dollar-based 1-year repayment rate numerator
+  "DBRR1_FED_GR_DEN", # Graduate federal student loan dollar-based 1-year repayment rate denominator
+  "DBRR1_FED_GR_RT",  # Graduate federal student loan dollar-based 1-year repayment rate
+  
+  # DBRR 1-year repayment rates: Parent PLUS loans
+  "DBRR1_PP_UG_N",    # Undergraduate Parent PLUS Loan dollar-based 1-year repayment rate borrower count
+  "DBRR1_PP_UG_NUM",  # Undergraduate Parent PLUS Loan dollar-based 1-year repayment rate numerator
+  "DBRR1_PP_UG_DEN",  # Undergraduate Parent PLUS Loan dollar-based 1-year repayment rate denominator
+  "DBRR1_PP_UG_RT",   # Undergraduate Parent PLUS Loan dollar-based 1-year repayment rate
+  
+  # DBRR 4-year repayment rates: Undergraduate loans
+  "DBRR4_FED_UG_N",   # Undergraduate federal student loan dollar-based 4-year repayment rate borrower count
+  "DBRR4_FED_UG_NUM", # Undergraduate federal student loan dollar-based 4-year repayment rate numerator
+  "DBRR4_FED_UG_DEN", # Undergraduate federal student loan dollar-based 4-year repayment rate denominator
+  "DBRR4_FED_UG_RT",  # Undergraduate federal student loan dollar-based 4-year repayment rate
+  
+  # DBRR 4-year repayment rates: Graduate loans
+  "DBRR4_FED_GR_N",   # Graduate federal student loan dollar-based 4-year repayment rate borrower count
+  "DBRR4_FED_GR_NUM", # Graduate federal student loan dollar-based 4-year repayment rate numerator
+  "DBRR4_FED_GR_DEN", # Graduate federal student loan dollar-based 4-year repayment rate denominator
+  "DBRR4_FED_GR_RT",  # Graduate federal student loan dollar-based 4-year repayment rate
+  
+  # DBRR 4-year repayment rates: Parent PLUS loans
+  "DBRR4_PP_UG_N",    # Undergraduate Parent PLUS Loan dollar-based 4-year repayment rate borrower count
+  "DBRR4_PP_UG_NUM",  # Undergraduate Parent PLUS Loan dollar-based 4-year repayment rate numerator
+  "DBRR4_PP_UG_DEN",  # Undergraduate Parent PLUS Loan dollar-based 4-year repayment rate denominator
+  "DBRR4_PP_UG_RT",   # Undergraduate Parent PLUS Loan dollar-based 4-year repayment rate
+
+  # DBRR 5-year repayment rates: Undergraduate loans
+  "DBRR5_FED_UG_N",   # Undergraduate federal student loan dollar-based 5-year repayment rate borrower count
+  "DBRR5_FED_UG_NUM", # Undergraduate federal student loan dollar-based 5-year repayment rate numerator
+  "DBRR5_FED_UG_DEN", # Undergraduate federal student loan dollar-based 5-year repayment rate denominator
+  "DBRR5_FED_UG_RT",  # Undergraduate federal student loan dollar-based 5-year repayment rate
+  
+  # DBRR 5-year repayment rates: Graduate loans
+  "DBRR5_FED_GR_N",   # Graduate federal student loan dollar-based 5-year repayment rate borrower count
+  "DBRR5_FED_GR_NUM", # Graduate federal student loan dollar-based 5-year repayment rate numerator
+  "DBRR5_FED_GR_DEN", # Graduate federal student loan dollar-based 5-year repayment rate denominator
+  "DBRR5_FED_GR_RT",  # Graduate federal student loan dollar-based 5-year repayment rate
+  
+  # DBRR 5-year repayment rates: Parent PLUS loans
+  "DBRR5_PP_UG_N",    # Undergraduate Parent PLUS Loan dollar-based 5-year repayment rate borrower count
+  "DBRR5_PP_UG_NUM",  # Undergraduate Parent PLUS Loan dollar-based 5-year repayment rate numerator
+  "DBRR5_PP_UG_DEN",  # Undergraduate Parent PLUS Loan dollar-based 5-year repayment rate denominator
+  "DBRR5_PP_UG_RT",   # Undergraduate Parent PLUS Loan dollar-based 5-year repayment rate
+  
+  # DBRR 10-year repayment rates: Undergraduate loans
+  "DBRR10_FED_UG_N",   # Undergraduate federal student loan dollar-based 10-year repayment rate borrower count
+  "DBRR10_FED_UG_NUM", # Undergraduate federal student loan dollar-based 10-year repayment rate numerator
+  "DBRR10_FED_UG_DEN", # Undergraduate federal student loan dollar-based 10-year repayment rate denominator
+  "DBRR10_FED_UG_RT",  # Undergraduate federal student loan dollar-based 10-year repayment rate
+  
+  # DBRR 10-year repayment rates: Graduate loans
+  "DBRR10_FED_GR_N",   # Graduate federal student loan dollar-based 10-year repayment rate borrower count
+  "DBRR10_FED_GR_NUM", # Graduate federal student loan dollar-based 10-year repayment rate numerator
+  "DBRR10_FED_GR_DEN", # Graduate federal student loan dollar-based 10-year repayment rate denominator
+  "DBRR10_FED_GR_RT",  # Graduate federal student loan dollar-based 10-year repayment rate
+  
+  # DBRR 10-year repayment rates: Parent PLUS loans
+  "DBRR10_PP_UG_N",    # Undergraduate Parent PLUS Loan dollar-based 10-year repayment rate borrower count
+  "DBRR10_PP_UG_NUM",  # Undergraduate Parent PLUS Loan dollar-based 10-year repayment rate numerator
+  "DBRR10_PP_UG_DEN",  # Undergraduate Parent PLUS Loan dollar-based 10-year repayment rate denominator
+  "DBRR10_PP_UG_RT",   # Undergraduate Parent PLUS Loan dollar-based 10-year repayment rate
+  
+  # DBRR 20-year repayment rates: Undergraduate loans
+  "DBRR20_FED_UG_N",   # Undergraduate federal student loan dollar-based 20-year repayment rate borrower count
+  "DBRR20_FED_UG_NUM", # Undergraduate federal student loan dollar-based 20-year repayment rate numerator
+  "DBRR20_FED_UG_DEN", # Undergraduate federal student loan dollar-based 20-year repayment rate denominator
+  "DBRR20_FED_UG_RT",  # Undergraduate federal student loan dollar-based 20-year repayment rate
+  
+  # DBRR 20-year repayment rates: Graduate loans
+  "DBRR20_FED_GR_N",   # Graduate federal student loan dollar-based 20-year repayment rate borrower count
+  "DBRR20_FED_GR_NUM", # Graduate federal student loan dollar-based 20-year repayment rate numerator
+  "DBRR20_FED_GR_DEN", # Graduate federal student loan dollar-based 20-year repayment rate denominator
+  "DBRR20_FED_GR_RT",  # Graduate federal student loan dollar-based 20-year repayment rate
+  
+  # DBRR 20-year repayment rates: Parent PLUS loans
+  "DBRR20_PP_UG_N",    # Undergraduate Parent PLUS Loan dollar-based 20-year repayment rate borrower count
+  "DBRR20_PP_UG_NUM",  # Undergraduate Parent PLUS Loan dollar-based 20-year repayment rate numerator
+  "DBRR20_PP_UG_DEN",  # Undergraduate Parent PLUS Loan dollar-based 20-year repayment rate denominator
+  "DBRR20_PP_UG_RT"    # Undergraduate Parent PLUS Loan dollar-based 20-year repayment rate
+  ))
+
+CSI2$DBRR1_FED_UG_N   <- as.numeric(CSI2$DBRR1_FED_UG_N)
+CSI2$DBRR1_FED_UG_NUM <- as.numeric(CSI2$DBRR1_FED_UG_NUM)
+CSI2$DBRR1_FED_UG_DEN <- as.numeric(CSI2$DBRR1_FED_UG_DEN)
+CSI2$DBRR1_FED_UG_RT  <- as.numeric(CSI2$DBRR1_FED_UG_RT)
+CSI2$DBRR1_FED_GR_N   <- as.numeric(CSI2$DBRR1_FED_GR_N)
+CSI2$DBRR1_FED_GR_NUM <- as.numeric(CSI2$DBRR1_FED_GR_NUM)
+CSI2$DBRR1_FED_GR_DEN <- as.numeric(CSI2$DBRR1_FED_GR_DEN)
+CSI2$DBRR1_FED_GR_RT  <- as.numeric(CSI2$DBRR1_FED_GR_RT)
+CSI2$DBRR1_PP_UG_N    <- as.numeric(CSI2$DBRR1_PP_UG_N)
+CSI2$DBRR1_PP_UG_NUM  <- as.numeric(CSI2$DBRR1_PP_UG_NUM)
+CSI2$DBRR1_PP_UG_DEN  <- as.numeric(CSI2$DBRR1_PP_UG_DEN)
+CSI2$DBRR1_PP_UG_RT   <- as.numeric(CSI2$DBRR1_PP_UG_RT)
+CSI2$DBRR4_FED_UG_N   <- as.numeric(CSI2$DBRR4_FED_UG_N)
+CSI2$DBRR4_FED_UG_NUM <- as.numeric(CSI2$DBRR4_FED_UG_NUM)
+CSI2$DBRR4_FED_UG_DEN <- as.numeric(CSI2$DBRR4_FED_UG_DEN)
+CSI2$DBRR4_FED_UG_RT  <- as.numeric(CSI2$DBRR4_FED_UG_RT)
+CSI2$DBRR4_FED_GR_N   <- as.numeric(CSI2$DBRR4_FED_GR_N)
+CSI2$DBRR4_FED_GR_NUM <- as.numeric(CSI2$DBRR4_FED_GR_NUM)
+CSI2$DBRR4_FED_GR_DEN <- as.numeric(CSI2$DBRR4_FED_GR_DEN)
+CSI2$DBRR4_FED_GR_RT  <- as.numeric(CSI2$DBRR4_FED_GR_RT)
+CSI2$DBRR4_PP_UG_N    <- as.numeric(CSI2$DBRR4_PP_UG_N)
+CSI2$DBRR4_PP_UG_NUM  <- as.numeric(CSI2$DBRR4_PP_UG_NUM)
+CSI2$DBRR4_PP_UG_DEN  <- as.numeric(CSI2$DBRR4_PP_UG_DEN)
+CSI2$DBRR4_PP_UG_RT   <- as.numeric(CSI2$DBRR4_PP_UG_RT)
+CSI2$DBRR5_FED_UG_N   <- as.numeric(CSI2$DBRR5_FED_UG_N)
+CSI2$DBRR5_FED_UG_NUM <- as.numeric(CSI2$DBRR5_FED_UG_NUM)
+CSI2$DBRR5_FED_UG_DEN <- as.numeric(CSI2$DBRR5_FED_UG_DEN)
+CSI2$DBRR5_FED_UG_RT  <- as.numeric(CSI2$DBRR5_FED_UG_RT)
+CSI2$DBRR5_FED_GR_N   <- as.numeric(CSI2$DBRR5_FED_GR_N)
+CSI2$DBRR5_FED_GR_NUM <- as.numeric(CSI2$DBRR5_FED_GR_NUM)
+CSI2$DBRR5_FED_GR_DEN <- as.numeric(CSI2$DBRR5_FED_GR_DEN)
+CSI2$DBRR5_FED_GR_RT  <- as.numeric(CSI2$DBRR5_FED_GR_RT)
+CSI2$DBRR5_PP_UG_N    <- as.numeric(CSI2$DBRR5_PP_UG_N)
+CSI2$DBRR5_PP_UG_NUM  <- as.numeric(CSI2$DBRR5_PP_UG_NUM)
+CSI2$DBRR5_PP_UG_DEN  <- as.numeric(CSI2$DBRR5_PP_UG_DEN)
+CSI2$DBRR5_PP_UG_RT   <- as.numeric(CSI2$DBRR5_PP_UG_RT)
+CSI2$DBRR10_FED_UG_N   <- as.numeric(CSI2$DBRR10_FED_UG_N)
+CSI2$DBRR10_FED_UG_NUM <- as.numeric(CSI2$DBRR10_FED_UG_NUM)
+CSI2$DBRR10_FED_UG_DEN <- as.numeric(CSI2$DBRR10_FED_UG_DEN)
+CSI2$DBRR10_FED_UG_RT  <- as.numeric(CSI2$DBRR10_FED_UG_RT)
+CSI2$DBRR10_FED_GR_N   <- as.numeric(CSI2$DBRR10_FED_GR_N)
+CSI2$DBRR10_FED_GR_NUM <- as.numeric(CSI2$DBRR10_FED_GR_NUM)
+CSI2$DBRR10_FED_GR_DEN <- as.numeric(CSI2$DBRR10_FED_GR_DEN)
+CSI2$DBRR10_FED_GR_RT  <- as.numeric(CSI2$DBRR10_FED_GR_RT)
+CSI2$DBRR10_PP_UG_N    <- as.numeric(CSI2$DBRR10_PP_UG_N)
+CSI2$DBRR10_PP_UG_NUM  <- as.numeric(CSI2$DBRR10_PP_UG_NUM)
+CSI2$DBRR10_PP_UG_DEN  <- as.numeric(CSI2$DBRR10_PP_UG_DEN)
+CSI2$DBRR10_PP_UG_RT   <- as.numeric(CSI2$DBRR10_PP_UG_RT)
+CSI2$DBRR20_FED_UG_N   <- as.numeric(CSI2$DBRR20_FED_UG_N)
+CSI2$DBRR20_FED_UG_NUM <- as.numeric(CSI2$DBRR20_FED_UG_NUM)
+CSI2$DBRR20_FED_UG_DEN <- as.numeric(CSI2$DBRR20_FED_UG_DEN)
+CSI2$DBRR20_FED_UG_RT  <- as.numeric(CSI2$DBRR20_FED_UG_RT)
+CSI2$DBRR20_FED_GR_N   <- as.numeric(CSI2$DBRR20_FED_GR_N)
+CSI2$DBRR20_FED_GR_NUM <- as.numeric(CSI2$DBRR20_FED_GR_NUM)
+CSI2$DBRR20_FED_GR_DEN <- as.numeric(CSI2$DBRR20_FED_GR_DEN)
+CSI2$DBRR20_FED_GR_RT  <- as.numeric(CSI2$DBRR20_FED_GR_RT)
+CSI2$DBRR20_PP_UG_N    <- as.numeric(CSI2$DBRR20_PP_UG_N)
+CSI2$DBRR20_PP_UG_NUM  <- as.numeric(CSI2$DBRR20_PP_UG_NUM)
+CSI2$DBRR20_PP_UG_DEN  <- as.numeric(CSI2$DBRR20_PP_UG_DEN)
+CSI2$DBRR20_PP_UG_RT   <- as.numeric(CSI2$DBRR20_PP_UG_RT)
+
+CSI2$DBRR1_FED_UG_N[is.na(CSI2$DBRR1_FED_UG_N)] <- 0
+CSI2$DBRR1_FED_UG_NUM[is.na(CSI2$DBRR1_FED_UG_NUM)] <- 0
+CSI2$DBRR1_FED_UG_DEN[is.na(CSI2$DBRR1_FED_UG_DEN)] <- 0
+CSI2$DBRR1_FED_UG_RT[is.na(CSI2$DBRR1_FED_UG_RT)] <- 0
+CSI2$DBRR1_FED_GR_N[is.na(CSI2$DBRR1_FED_GR_N)] <- 0
+CSI2$DBRR1_FED_GR_NUM[is.na(CSI2$DBRR1_FED_GR_NUM)] <- 0
+CSI2$DBRR1_FED_GR_DEN[is.na(CSI2$DBRR1_FED_GR_DEN)] <- 0
+CSI2$DBRR1_FED_GR_RT[is.na(CSI2$DBRR1_FED_GR_RT)] <- 0
+CSI2$DBRR1_PP_UG_N[is.na(CSI2$DBRR1_PP_UG_N)] <- 0
+CSI2$DBRR1_PP_UG_NUM[is.na(CSI2$DBRR1_PP_UG_NUM)] <- 0
+CSI2$DBRR1_PP_UG_DEN[is.na(CSI2$DBRR1_PP_UG_DEN)] <- 0
+CSI2$DBRR1_PP_UG_RT[is.na(CSI2$DBRR1_PP_UG_RT)] <- 0
+CSI2$DBRR4_FED_UG_N[is.na(CSI2$DBRR4_FED_UG_N)] <- 0
+CSI2$DBRR4_FED_UG_NUM[is.na(CSI2$DBRR4_FED_UG_NUM)] <- 0
+CSI2$DBRR4_FED_UG_DEN[is.na(CSI2$DBRR4_FED_UG_DEN)] <- 0
+CSI2$DBRR4_FED_UG_RT[is.na(CSI2$DBRR4_FED_UG_RT)] <- 0
+CSI2$DBRR4_FED_GR_N[is.na(CSI2$DBRR4_FED_GR_N)] <- 0
+CSI2$DBRR4_FED_GR_NUM[is.na(CSI2$DBRR4_FED_GR_NUM)] <- 0
+CSI2$DBRR4_FED_GR_DEN[is.na(CSI2$DBRR4_FED_GR_DEN)] <- 0
+CSI2$DBRR4_FED_GR_RT[is.na(CSI2$DBRR4_FED_GR_RT)] <- 0
+CSI2$DBRR4_PP_UG_N[is.na(CSI2$DBRR4_PP_UG_N)] <- 0
+CSI2$DBRR4_PP_UG_NUM[is.na(CSI2$DBRR4_PP_UG_NUM)] <- 0
+CSI2$DBRR4_PP_UG_DEN[is.na(CSI2$DBRR4_PP_UG_DEN)] <- 0
+CSI2$DBRR4_PP_UG_RT[is.na(CSI2$DBRR4_PP_UG_RT)] <- 0
+CSI2$DBRR5_FED_UG_N[is.na(CSI2$DBRR5_FED_UG_N)] <- 0
+CSI2$DBRR5_FED_UG_NUM[is.na(CSI2$DBRR5_FED_UG_NUM)] <- 0
+CSI2$DBRR5_FED_UG_DEN[is.na(CSI2$DBRR5_FED_UG_DEN)] <- 0
+CSI2$DBRR5_FED_UG_RT[is.na(CSI2$DBRR5_FED_UG_RT)] <- 0
+CSI2$DBRR5_FED_GR_N[is.na(CSI2$DBRR5_FED_GR_N)] <- 0
+CSI2$DBRR5_FED_GR_NUM[is.na(CSI2$DBRR5_FED_GR_NUM)] <- 0
+CSI2$DBRR5_FED_GR_DEN[is.na(CSI2$DBRR5_FED_GR_DEN)] <- 0
+CSI2$DBRR5_FED_GR_RT[is.na(CSI2$DBRR5_FED_GR_RT)] <- 0
+CSI2$DBRR5_PP_UG_N[is.na(CSI2$DBRR5_PP_UG_N)] <- 0
+CSI2$DBRR5_PP_UG_NUM[is.na(CSI2$DBRR5_PP_UG_NUM)] <- 0
+CSI2$DBRR5_PP_UG_DEN[is.na(CSI2$DBRR5_PP_UG_DEN)] <- 0
+CSI2$DBRR5_PP_UG_RT[is.na(CSI2$DBRR5_PP_UG_RT)] <- 0
+CSI2$DBRR10_FED_UG_N[is.na(CSI2$DBRR10_FED_UG_N)] <- 0
+CSI2$DBRR10_FED_UG_NUM[is.na(CSI2$DBRR10_FED_UG_NUM)] <- 0
+CSI2$DBRR10_FED_UG_DEN[is.na(CSI2$DBRR10_FED_UG_DEN)] <- 0
+CSI2$DBRR10_FED_UG_RT[is.na(CSI2$DBRR10_FED_UG_RT)] <- 0
+CSI2$DBRR10_FED_GR_N[is.na(CSI2$DBRR10_FED_GR_N)] <- 0
+CSI2$DBRR10_FED_GR_NUM[is.na(CSI2$DBRR10_FED_GR_NUM)] <- 0
+CSI2$DBRR10_FED_GR_DEN[is.na(CSI2$DBRR10_FED_GR_DEN)] <- 0
+CSI2$DBRR10_FED_GR_RT[is.na(CSI2$DBRR10_FED_GR_RT)] <- 0
+CSI2$DBRR10_PP_UG_N[is.na(CSI2$DBRR10_PP_UG_N)] <- 0
+CSI2$DBRR10_PP_UG_NUM[is.na(CSI2$DBRR10_PP_UG_NUM)] <- 0
+CSI2$DBRR10_PP_UG_DEN[is.na(CSI2$DBRR10_PP_UG_DEN)] <- 0
+CSI2$DBRR10_PP_UG_RT[is.na(CSI2$DBRR10_PP_UG_RT)] <- 0
+CSI2$DBRR20_FED_UG_N[is.na(CSI2$DBRR20_FED_UG_N)] <- 0
+CSI2$DBRR20_FED_UG_NUM[is.na(CSI2$DBRR20_FED_UG_NUM)] <- 0
+CSI2$DBRR20_FED_UG_DEN[is.na(CSI2$DBRR20_FED_UG_DEN)] <- 0
+CSI2$DBRR20_FED_UG_RT[is.na(CSI2$DBRR20_FED_UG_RT)] <- 0
+CSI2$DBRR20_FED_GR_N[is.na(CSI2$DBRR20_FED_GR_N)] <- 0
+CSI2$DBRR20_FED_GR_NUM[is.na(CSI2$DBRR20_FED_GR_NUM)] <- 0
+CSI2$DBRR20_FED_GR_DEN[is.na(CSI2$DBRR20_FED_GR_DEN)] <- 0
+CSI2$DBRR20_FED_GR_RT[is.na(CSI2$DBRR20_FED_GR_RT)] <- 0
+CSI2$DBRR20_PP_UG_N[is.na(CSI2$DBRR20_PP_UG_N)] <- 0
+CSI2$DBRR20_PP_UG_NUM[is.na(CSI2$DBRR20_PP_UG_NUM)] <- 0
+CSI2$DBRR20_PP_UG_DEN[is.na(CSI2$DBRR20_PP_UG_DEN)] <- 0
+CSI2$DBRR20_PP_UG_RT[is.na(CSI2$DBRR20_PP_UG_RT)] <- 0
+```
+
+```{r DBRRx}
+Q28 <- CSI2 %>% arrange(desc(MAIN)) %>% filter(duplicated(OPEID6)==FALSE) 
+
+Q28$State <- rep(NA, nrow(Q28))
+Q28$State[Q28$STABBR == "CA"] <- "California"
+Q28$State[Q28$STABBR != "CA"] <- "Rest of U.S."
+
+Q28$Control <- rep(NA, nrow(Q28))
+Q28$Control[Q28$CONTROL==1] <- "Public"
+Q28$Control[Q28$CONTROL==2] <- "Nonprofit"
+Q28$Control[Q28$CONTROL==3] <- "For-profit"
+
+Q28$DBRR1_FED_UG_INST  <- ifelse(Q28$DBRR1_FED_UG_NUM > 0, 1, 0)
+Q28$DBRR1_FED_GR_INST  <- ifelse(Q28$DBRR1_FED_GR_NUM > 0, 1, 0)
+Q28$DBRR1_PP_UG_INST   <- ifelse(Q28$DBRR1_PP_UG_NUM > 0, 1, 0)
+Q28$DBRR5_FED_UG_INST  <- ifelse(Q28$DBRR5_FED_UG_NUM > 0, 1, 0)
+Q28$DBRR5_FED_GR_INST  <- ifelse(Q28$DBRR5_FED_GR_NUM > 0, 1, 0)
+Q28$DBRR5_PP_UG_INST   <- ifelse(Q28$DBRR5_PP_UG_NUM > 0, 1, 0)
+Q28$DBRR10_FED_UG_INST <- ifelse(Q28$DBRR10_FED_UG_NUM > 0, 1, 0)
+Q28$DBRR10_FED_GR_INST <- ifelse(Q28$DBRR10_FED_GR_NUM > 0, 1, 0)
+Q28$DBRR10_PP_UG_INST  <- ifelse(Q28$DBRR10_PP_UG_NUM > 0, 1, 0)
+Q28$DBRR20_FED_UG_INST <- ifelse(Q28$DBRR20_FED_UG_NUM > 0, 1, 0)
+Q28$DBRR20_FED_GR_INST <- ifelse(Q28$DBRR20_FED_GR_NUM > 0, 1, 0)
+Q28$DBRR20_PP_UG_INST  <- ifelse(Q28$DBRR20_PP_UG_NUM > 0, 1, 0)
+
+Q28.1 <- aggregate(data=Q28, cbind(
+  DBRR1_FED_UG_N,
+  DBRR1_FED_UG_NUM,
+  DBRR1_FED_UG_DEN,
+  DBRR1_FED_GR_N,
+  DBRR1_FED_GR_NUM,
+  DBRR1_FED_GR_DEN,
+  DBRR1_PP_UG_N,
+  DBRR1_PP_UG_NUM,
+  DBRR1_PP_UG_DEN,
+  DBRR5_FED_UG_N,
+  DBRR5_FED_UG_NUM,
+  DBRR5_FED_UG_DEN,
+  DBRR5_FED_GR_N,
+  DBRR5_FED_GR_NUM,
+  DBRR5_FED_GR_DEN,
+  DBRR5_PP_UG_N,
+  DBRR5_PP_UG_NUM,
+  DBRR5_PP_UG_DEN,
+  DBRR10_FED_UG_N,
+  DBRR10_FED_UG_NUM,
+  DBRR10_FED_UG_DEN,
+  DBRR10_FED_GR_N,
+  DBRR10_FED_GR_NUM,
+  DBRR10_FED_GR_DEN,
+  DBRR10_PP_UG_N,
+  DBRR10_PP_UG_NUM,
+  DBRR10_PP_UG_DEN,
+  DBRR20_FED_UG_N,
+  DBRR20_FED_UG_NUM,
+  DBRR20_FED_UG_DEN,
+  DBRR20_FED_GR_N,
+  DBRR20_FED_GR_NUM,
+  DBRR20_FED_GR_DEN,
+  DBRR20_PP_UG_N,
+  DBRR20_PP_UG_NUM,
+  DBRR20_PP_UG_DEN, 
+  DBRR1_FED_UG_INST,
+  DBRR1_FED_GR_INST,
+  DBRR1_PP_UG_INST,
+  DBRR5_FED_UG_INST,
+  DBRR5_FED_GR_INST,
+  DBRR5_PP_UG_INST,
+  DBRR10_FED_UG_INST,
+  DBRR10_FED_GR_INST,
+  DBRR10_PP_UG_INST,
+  DBRR20_FED_UG_INST,
+  DBRR20_FED_GR_INST,
+  DBRR20_PP_UG_INST
+) ~ State + Control, FUN=sum)
+
+
+Q28.2 <- aggregate(data=Q28, cbind(
+  DBRR1_FED_UG_N,
+  DBRR1_FED_UG_NUM,
+  DBRR1_FED_UG_DEN,
+  DBRR1_FED_GR_N,
+  DBRR1_FED_GR_NUM,
+  DBRR1_FED_GR_DEN,
+  DBRR1_PP_UG_N,
+  DBRR1_PP_UG_NUM,
+  DBRR1_PP_UG_DEN,
+  DBRR5_FED_UG_N,
+  DBRR5_FED_UG_NUM,
+  DBRR5_FED_UG_DEN,
+  DBRR5_FED_GR_N,
+  DBRR5_FED_GR_NUM,
+  DBRR5_FED_GR_DEN,
+  DBRR5_PP_UG_N,
+  DBRR5_PP_UG_NUM,
+  DBRR5_PP_UG_DEN,
+  DBRR10_FED_UG_N,
+  DBRR10_FED_UG_NUM,
+  DBRR10_FED_UG_DEN,
+  DBRR10_FED_GR_N,
+  DBRR10_FED_GR_NUM,
+  DBRR10_FED_GR_DEN,
+  DBRR10_PP_UG_N,
+  DBRR10_PP_UG_NUM,
+  DBRR10_PP_UG_DEN,
+  DBRR20_FED_UG_N,
+  DBRR20_FED_UG_NUM,
+  DBRR20_FED_UG_DEN,
+  DBRR20_FED_GR_N,
+  DBRR20_FED_GR_NUM,
+  DBRR20_FED_GR_DEN,
+  DBRR20_PP_UG_N,
+  DBRR20_PP_UG_NUM,
+  DBRR20_PP_UG_DEN, 
+  DBRR1_FED_UG_INST,
+  DBRR1_FED_GR_INST,
+  DBRR1_PP_UG_INST,
+  DBRR5_FED_UG_INST,
+  DBRR5_FED_GR_INST,
+  DBRR5_PP_UG_INST,
+  DBRR10_FED_UG_INST,
+  DBRR10_FED_GR_INST,
+  DBRR10_PP_UG_INST,
+  DBRR20_FED_UG_INST,
+  DBRR20_FED_GR_INST,
+  DBRR20_PP_UG_INST
+) ~ State, FUN=sum)
+Q28.2$Control <- rep("All controls", nrow(Q28.2))
+
+Q28 <- rbind(Q28.1, Q28.2)
+Q28 <- reshape2::melt(data=Q28, id.vars = c("State", "Control"))
+
+Q28$Year <- rep(NA, nrow(Q28))
+Q28$Year[grepl("DBRR1_", Q28$variable)] <- 1
+Q28$Year[grepl("DBRR5_", Q28$variable)] <- 5
+Q28$Year[grepl("DBRR10_", Q28$variable)] <- 10
+Q28$Year[grepl("DBRR20_", Q28$variable)] <- 20
+
+Q28$Program <- rep(NA, nrow(Q28))
+Q28$Program[grepl("_FED_UG_", Q28$variable)] <- "Stafford"
+Q28$Program[grepl("_FED_GR_", Q28$variable)] <- "Grad PLUS"
+Q28$Program[grepl("_PP_UG_", Q28$variable)] <- "Parent PLUS"
+
+Q28$Measure <- rep(NA, nrow(Q28))
+Q28$Measure[grepl("_N", Q28$variable)] <- "Borrower count"
+Q28$Measure[grepl("_NUM", Q28$variable)] <- "Balance at repayment year X" 
+Q28$Measure[grepl("_DEN", Q28$variable)] <- "Original balance"
+Q28$Measure[grepl("_INST", Q28$variable)] <- "Institution count"
+
+Q28 <- reshape2::dcast(data=Q28, State + Control + Program + Year ~ Measure)
+Q28$Ratio <- Q28$`Balance at repayment year X` / Q28$`Original balance`
+
+placehold.DF <- data.frame("State"=c(rep("California", 12), rep("Rest of U.S.", 12)), 
+                           "Control"=rep(c(rep("Public", 3), rep("Nonprofit", 3), rep("For-profit", 3), rep("All controls", 3)), 2), 
+                           "Program"=rep(c("Stafford", "Grad PLUS", "Parent PLUS"), 8), 
+                           "Year"=rep(0, 24), 
+                           "Balance at repayment year X"=rep(NA, 24), 
+                           "Borrower count"=rep(NA, 24), 
+                           "Original balance"=rep(NA, 24),
+                           "Institution count"=rep(NA, 24),
+                           "Ratio"=rep(1, 24))
+names(placehold.DF) <- names(Q28)
+Q28 <- rbind(Q28, placehold.DF)
+
+Q28.S <- Q28 %>% filter(Program=="Stafford")
+Q28.G <- Q28 %>% filter(Program=="Grad PLUS")
+Q28.P <- Q28 %>% filter(Program=="Parent PLUS")
+```
+#### Figure 38: Stafford
+```{r figure38A}
+Q28.S$`For Tooltip` <- paste(
+  "State: ", Q28.S$State, '\n',
+  "Control: ", Q28.S$Control, '\n',
+  "Loan program: ", Q28.S$Program, '\n',
+  "Years into repayment: ", Q28.S$Year, '\n',
+  "Original balance: ", dollar(round(Q28.S$`Original balance`, -3), accuracy=1), '\n',
+  "Balance X years into repayment: ", dollar(round(Q28.S$`Balance at repayment year X`, -3), accuracy=1), '\n',
+  "Ratio: ", round(Q28.S$Ratio, 2), '\n',
+  "Institution count: ", Q28.S$`Institution count`, 
+  sep=""
+)
+
+g38A <- ggplot(data=Q28.S, mapping=aes(x=Year, y=Ratio, group=State, text=`For Tooltip`)) + geom_point(aes(color=State)) + geom_line(aes(color=State)) + facet_wrap(Control ~ ., nrow=2) + scale_y_continuous(limits=c(0, 1.4)) + labs(x="Years into repayment", y="Ratio of current balance to original balance") + theme(text=element_text(family="Optima"), legend.position="right") + scale_color_manual(values = stateCols)
+
+ggplotly(g38A, width=800, height=600, tooltip="text")
+```
+#### Figure 38: Parent PLUS
+```{r figure38B}
+Q28.P$`For Tooltip` <- paste(
+  "State: ", Q28.P$State, '\n',
+  "Control: ", Q28.P$Control, '\n',
+  "Loan program: ", Q28.P$Program, '\n',
+  "Years into repayment: ", Q28.P$Year, '\n',
+  "Original balance: ", dollar(round(Q28.P$`Original balance`, -3), accuracy=1), '\n',
+  "Balance X years into repayment: ", dollar(round(Q28.P$`Balance at repayment year X`, -3), accuracy=1), '\n',
+  "Ratio: ", round(Q28.P$Ratio, 2), '\n',
+  "Institution count: ", Q28.P$`Institution count`,
+  sep=""
+)
+
+g38B <- ggplot(data=Q28.P, mapping=aes(x=Year, y=Ratio, group=State, text=`For Tooltip`)) + geom_point(aes(color=State)) + geom_line(aes(color=State)) + facet_wrap(Control ~ ., nrow=2) + scale_y_continuous(limits=c(0, 1.4)) + labs(x="Years into repayment", y="Ratio of current balance to original balance") + theme(text=element_text(family="Optima"), legend.position="right") + scale_color_manual(values = stateCols)
+
+ggplotly(g38B, width=800, height=600, tooltip="text")
+```
+#### Figure 38: Grad PLUS
+```{r figure38C}
+Q28.G$`For Tooltip` <- paste(
+  "State: ", Q28.G$State, '\n',
+  "Control: ", Q28.G$Control, '\n',
+  "Loan program: ", Q28.G$Program, '\n',
+  "Years into repayment: ", Q28.G$Year, '\n',
+  "Original balance: ", dollar(round(Q28.G$`Original balance`, -3), accuracy=1), '\n',
+  "Balance X years into repayment: ", dollar(round(Q28.G$`Balance at repayment year X`, -3), accuracy=1), '\n',
+  "Ratio: ", round(Q28.G$Ratio, 2), '\n',
+  "Institution count: ", Q28.G$`Institution count`,
+  sep=""
+)
+
+g38C <- ggplot(data=Q28.G, mapping=aes(x=Year, y=Ratio, group=State, text=`For Tooltip`)) + geom_point(aes(color=State)) + geom_line(aes(color=State)) + facet_wrap(Control ~ ., nrow=2) + scale_y_continuous(limits=c(0, 1.4)) + labs(x="Years into repayment", y="Ratio of current balance to original balance") + theme(text=element_text(family="Optima"), legend.position="right") + scale_color_manual(values = stateCols)
+
+ggplotly(g38C, width=800, height=600, tooltip="text")
+```
+#### Data Source and Notes
+
+**Data source:** College Scorecard institution dataset, accessed November 2022, available through the U.S. Department of Education [here](https://collegescorecard.ed.gov/data/). 
+
+**Timeframe reflected:**   
+
+**Notes:**
+
+***
+
+### {-}
+
+Figure 39 shows the average current loan amount by institutional control and loan type, comparing California institutions to those in the rest of the U.S. Average Stafford loan amounts are lower among borrowers from California institutions than those from institutions across the rest of the U.S., driven by lower average loans at California's public institutions. 
+
+
+### {.tabset}
+```{r average.DBRR, warning=FALSE}
+Q29.S <- Q28.S
+Q29.P <- Q28.P
+Q29.G <- Q28.G
+
+Q29.S$`Average loan balance at year X` <- Q29.S$`Balance at repayment year X` / Q29.S$`Borrower count`
+Q29.P$`Average loan balance at year X` <- Q29.P$`Balance at repayment year X` / Q29.P$`Borrower count`
+Q29.G$`Average loan balance at year X` <- Q29.G$`Balance at repayment year X` / Q29.G$`Borrower count`
+```
+#### Figure 39: Stafford
+```{r figure39A}
+Q29.S$`For Tooltip` <- paste(
+  "State: ", Q29.S$State, '\n',
+  "Control: ", Q29.S$Control, '\n',
+  "Loan program: ", Q29.S$Program, '\n',
+  "Years into repayment: ", Q29.S$Year, '\n',
+  "Average loan balance X years into repayment: ", dollar(round(Q29.S$`Average loan balance at year X`), accuracy=1), '\n',
+  "Number of borrowers in cohort: ", comma(Q29.S$`Borrower count`, accuracy=10), '\n',
+  "Institution count: ", Q29.S$`Institution count`,
+  sep=""
+)
+
+g39A <- ggplot(data=Q29.S, mapping=aes(x=Year, y=`Average loan balance at year X`, group=State, text=`For Tooltip`)) + geom_point(aes(color=State)) + geom_line(aes(color=State)) + facet_wrap(Control ~ ., nrow=2) + scale_y_continuous(labels=scales::dollar_format(), limits=c(0, (max(Q29.S$`Average loan balance at year X`)+2500))) + labs(x="Years into repayment", y="Average loan balance at year X") + theme(text=element_text(family="Optima"), legend.position="right") + scale_color_manual(values = stateCols)
+
+ggplotly(g39A, width=800, height=600, tooltip="text")
+```
+#### Figure 39: Parent PLUS
+```{r figure39B}
+Q29.P$`For Tooltip` <- paste(
+  "State: ", Q29.P$State, '\n',
+  "Control: ", Q29.P$Control, '\n',
+  "Loan program: ", Q29.P$Program, '\n',
+  "Years into repayment: ", Q29.P$Year, '\n',
+  "Average loan balance X years into repayment: ", dollar(round(Q29.P$`Average loan balance at year X`), accuracy=1), '\n',
+  "Number of borrowers in cohort: ", comma(Q29.P$`Borrower count`, accuracy=10), '\n',
+  "Institution count: ", Q29.P$`Institution count`,
+  sep=""
+)
+
+g39B <- ggplot(data=Q29.P, mapping=aes(x=Year, y=`Average loan balance at year X`, group=State, text=`For Tooltip`)) + geom_point(aes(color=State)) + geom_line(aes(color=State)) + facet_wrap(Control ~ ., nrow=2) + scale_y_continuous(labels=scales::dollar_format(), limits=c(0, (max(Q29.P$`Average loan balance at year X`)+2500))) + labs(x="Years into repayment", y="Average loan balance at year X") + theme(text=element_text(family="Optima"), legend.position="right") + scale_color_manual(values = stateCols)
+
+ggplotly(g39B, width=800, height=600, tooltip="text")
+```
+#### Figure 39: Grad PLUS
+```{r figure39C}
+Q29.G$`For Tooltip` <- paste(
+  "State: ", Q29.G$State, '\n',
+  "Control: ", Q29.G$Control, '\n',
+  "Loan program: ", Q29.G$Program, '\n',
+  "Years into repayment: ", Q29.G$Year, '\n',
+  "Average loan balance X years into repayment: ", dollar(round(Q29.G$`Average loan balance at year X`), accuracy=1), '\n',
+  "Number of borrowers in cohort: ", comma(Q29.G$`Borrower count`, accuracy=10), '\n',
+  "Institution count: ", Q29.G$`Institution count`,
+  sep=""
+)
+
+g39C <- ggplot(data=Q29.G, mapping=aes(x=Year, y=`Average loan balance at year X`, group=State, text=`For Tooltip`)) + geom_point(aes(color=State)) + geom_line(aes(color=State)) + facet_wrap(Control ~ ., nrow=2) + scale_y_continuous(labels=scales::dollar_format(), limits=c(0, (max(Q29.G$`Average loan balance at year X`)+2500))) + labs(x="Years into repayment", y="Average loan balance at year X") + theme(text=element_text(family="Optima"), legend.position="right") + scale_color_manual(values = stateCols)
+
+ggplotly(g39C, width=800, height=600, tooltip="text")
+```
+#### Data Source and Notes
+
+**Data source:** College Scorecard institution dataset, accessed November 2022, available through the U.S. Department of Education [here](https://collegescorecard.ed.gov/data/). 
+
+**Timeframe reflected:**   
+
+**Notes:**
+
+***
+
+### {-}
+
