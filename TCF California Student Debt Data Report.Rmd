@@ -743,7 +743,7 @@ ggplotly(g1, width=800, height=500, tooltip="text")
 
 Across all three institutional control categories, California exceeds the rest of the U.S. in the average Parent PLUS loan and the average Grad PLUS loan. Unlike Stafford loans, Parent PLUS and Grad PLUS are both uncapped, meaning a borrower can take out as much as they would like any year. At California nonprofit and for-profit four-years, the average Parent PLUS loan *per year* is north of \$20,000, and the average Grad PLUS loan per year is around \$30,000. In both cases, the averages are lower at public institutions. 
 
-Not every graduate student borrows Grad PLUS, and not every parent who sends their child to college borrows Parent PLUS. However, high averages mean that the lasting burden between those who do borrow and those who do not is greater. These programs are two driving reasons why California has a higher average student loan balance than most other states.
+Not every graduate student borrows Grad PLUS, and not every parent who sends their child to college borrows Parent PLUS. However, high averages mean that the lasting gap between those who do borrow and those who do not is greater. These programs are two driving reasons why California has a higher average student loan balance than most other states.
 
 As for Stafford loans for undergraduates, California hews closely to the rest of the U.S. in average annual borrowing, across all levels of institutional control. 
 
@@ -767,7 +767,7 @@ NPSAS data are accessed using the National Center on Education Statistics' (NCES
 
 This research is primarily interested in examining how factors like the racial wealth gap shape the lasting burdens of student debt among California borrowers. Figure 2 below compares average undergraduate borrowing by racial group among California's students compared to the U.S. overall, and below that, the corresponding shares of students who borrow any loans. 
 
-It is important to look at both the average loan amounts and the percentages who borrow. In California, undergraduates who *do* borrow must borrow *more* than undergraduate borrowers nationwide. However, a smaller share of families borrow in California than in the nation overall.  
+It is important to look at both the average loan amounts and the percentages who borrow. In California, undergraduates who *do* borrow must borrow *more* than undergraduate borrowers nationwide. However, a smaller share of families borrow in California than in the nation overall.
 
 Within California, 28 percent of Black undergraduates receive student loans, the most of any group, and this rises to 31 percent for Black women specifically. 
 
@@ -1244,7 +1244,7 @@ At the graduate level in California, Asian students borrow the most, exceeding $
 
 The NPSAS sample size is not sufficient to add a breakdown by gender and still compare California to the U.S., so we provide the breakdown by race and gender for the U.S. only. Within all groups, graduate students who are women more frequently borrow, but their male peers who borrow tend to borrow slightly more. 
 
-Among California graduate students, the NPSAS sample is not sufficient for a complete breakdown by program level. For context, Figure 4 below uses the national sample in NPSAS:16 to measure borrowing in the graduate program level for which there is sufficient data: namely, master's programs and professional doctorates (e.g. JDs, MDs). Unlike with other charts in this section, these are not limited to in-state students.
+Among California graduate students, the NPSAS sample is not sufficient for a complete breakdown by program level. For context, Figure 4 below uses the national sample in NPSAS:16 to measure borrowing in the graduate program level for which there is sufficient data: namely, master's programs and professional doctorates (e.g. JDs, MDs). Unlike with other charts in this section, these are not limited to in-state students, since we use the national sample here.
 
 #### {.tabset}
 ##### Figure 4: Average Graduate Loans by Program and Race
@@ -1470,6 +1470,8 @@ npsas3.1P$`Share Borrowing Loans` <- as.numeric(npsas3.1P$`Share Borrowing Loans
 ```
 
 ```{r percentages.figure4B}
+npsas3.1P <- npsas3.1P %>% filter(Group != "2+ races")
+
 npsas3.1P$`For Tooltip` <- paste(
   "State: ", npsas3.1P$State, '\n',
   "Group: ", npsas3.1P$Group, '\n',
@@ -3474,7 +3476,7 @@ tblEdAttain.CA.Borrow$`For Tooltip` <- paste(
   sep=""
 )
 
-g13A <- ggplot(data=tblEdAttain.CA.Borrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Highest level of education", x="Share of student loan borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+g13A <- ggplot(data=tblEdAttain.CA.Borrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Highest level of education", x="Share of student loan borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral", direction=-1) 
 
 ggplotly(g13A, width=800, height=350, tooltip="text")
 ```
@@ -3492,7 +3494,7 @@ tblEdAttain.US.Borrow$`For Tooltip` <- paste(
   sep=""
 )
 
-g13B <- ggplot(data=tblEdAttain.US.Borrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Highest level of education", x="Share of student loan borrowers in the rest of the U.S.", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+g13B <- ggplot(data=tblEdAttain.US.Borrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Highest level of education", x="Share of student loan borrowers in the rest of the U.S.", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral", direction=-1) 
 
 ggplotly(g13B, width=800, height=350, tooltip="text")
 ```
@@ -3510,7 +3512,7 @@ tblEdAttain.CA.Nonborrow$`For Tooltip` <- paste(
   sep=""
 )
 
-g13C <- ggplot(data=tblEdAttain.CA.Nonborrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Highest level of education", x="Share of non-borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+g13C <- ggplot(data=tblEdAttain.CA.Nonborrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Highest level of education", x="Share of non-borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral", direction=-1) 
 
 ggplotly(g13C, width=800, height=350, tooltip="text")
 ```
@@ -3572,7 +3574,7 @@ tblHomeOwn.CA.Borrow$`For Tooltip` <- paste(
   sep=""
 )
 
-g14A <- ggplot(data=tblHomeOwn.CA.Borrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Home ownership status", x="Share of student loan borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+g14A <- ggplot(data=tblHomeOwn.CA.Borrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Home ownership status", x="Share of student loan borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral", direction=-1) 
 
 ggplotly(g14A, width=800, height=350, tooltip="text")
 ```
@@ -3590,7 +3592,7 @@ tblHomeOwn.US.Borrow$`For Tooltip` <- paste(
   sep=""
 )
 
-g14B <- ggplot(data=tblHomeOwn.US.Borrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Home ownership status", x="Share of student loan borrowers in rest of U.S.", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+g14B <- ggplot(data=tblHomeOwn.US.Borrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Home ownership status", x="Share of student loan borrowers in rest of U.S.", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral", direction=-1) 
 
 ggplotly(g14B, width=800, height=350, tooltip="text")
 ```
@@ -3608,7 +3610,7 @@ tblHomeOwn.CA.Nonborrow$`For Tooltip` <- paste(
   sep=""
 )
 
-g14C <- ggplot(data=tblHomeOwn.CA.Nonborrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Home ownership status", x="Share of non-borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+g14C <- ggplot(data=tblHomeOwn.CA.Nonborrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Home ownership status", x="Share of non-borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral", direction=-1) 
 
 ggplotly(g14C, width=800, height=350, tooltip="text")
 ```
@@ -3834,7 +3836,7 @@ tblSavings.CA.Borrow$`For Tooltip` <- paste(
   sep=""
 )
 
-g17A <- ggplot(data=tblSavings.CA.Borrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Savings and investments", x="Share of student loan borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+g17A <- ggplot(data=tblSavings.CA.Borrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Savings and investments", x="Share of student loan borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral", direction=-1) 
 
 ggplotly(g17A, width=800, height=350, tooltip="text")
 ```
@@ -3852,7 +3854,7 @@ tblSavings.US.Borrow$`For Tooltip` <- paste(
   sep=""
 )
 
-g17B <- ggplot(data=tblSavings.US.Borrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Savings and investments", x="Share of student loan borrowers in rest of U.S.", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+g17B <- ggplot(data=tblSavings.US.Borrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Savings and investments", x="Share of student loan borrowers in rest of U.S.", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral", direction=-1) 
 
 ggplotly(g17B, width=800, height=350, tooltip="text")
 ```
@@ -3870,7 +3872,7 @@ tblSavings.CA.Nonborrow$`For Tooltip` <- paste(
   sep=""
 )
 
-g17C <- ggplot(data=tblSavings.CA.Nonborrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Savings and investments", x="Share of non-borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+g17C <- ggplot(data=tblSavings.CA.Nonborrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Savings and investments", x="Share of non-borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral", direction=-1) 
 
 ggplotly(g17C, width=800, height=350, tooltip="text")
 ```
@@ -3944,7 +3946,7 @@ tblTotalInc.CA.Borrow$`For Tooltip` <- paste(
   sep=""
 )
 
-g18A <- ggplot(data=tblTotalInc.CA.Borrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Total income", x="Share of student loan borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+g18A <- ggplot(data=tblTotalInc.CA.Borrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Total income", x="Share of student loan borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral", direction=-1) 
 
 ggplotly(g18A, width=800, height=350, tooltip="text")
 ```
@@ -3962,7 +3964,7 @@ tblTotalInc.US.Borrow$`For Tooltip` <- paste(
   sep=""
 )
 
-g18B <- ggplot(data=tblTotalInc.US.Borrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Total income", x="Share of student loan borrowers in rest of U.S.", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+g18B <- ggplot(data=tblTotalInc.US.Borrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Total income", x="Share of student loan borrowers in rest of U.S.", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral", direction=-1) 
 
 ggplotly(g18B, width=800, height=350, tooltip="text")
 ```
@@ -3980,7 +3982,7 @@ tblTotalInc.CA.Nonborrow$`For Tooltip` <- paste(
   sep=""
 )
 
-g18C <- ggplot(data=tblTotalInc.CA.Nonborrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Total income", x="Share of non-borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+g18C <- ggplot(data=tblTotalInc.CA.Nonborrow, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Total income", x="Share of non-borrowers in California", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral", direction=-1) 
 
 ggplotly(g18C, width=800, height=350, tooltip="text")
 ```
@@ -7484,22 +7486,21 @@ ggplotly(g36B, width=800, height=600, tooltip="text")
 
 The final analyses of this document will use College Scorecard data to show how federal student loan repayment in California compares to the rest of the U.S. 
 
-Here I examine dollar-based repayment rates, or "DBRR." DBRR data in the College Scorecard measure the total current loan balances for cohorts of federal student loan borrowers, as well as the original amount that the cohort collectively owed when they entered repayment. I use data for cohorts that are 1, 5, 10, and 20 years into repayment. 
+First, I examine dollar-based repayment rates, or "DBRR." DBRR data in the College Scorecard measure the total current loan balances for cohorts of federal student loan borrowers, as well as the original amount that the cohort collectively owed when they entered repayment. I use data for cohorts that are 1, 5, 10, and 20 years into repayment. 
 
-We can calculate a cohort's "DBRR ratio" by dividing its original total balance by its current total balance. When the ratio is over 1, the borrowers owe more than they originally borrowed, presumably due to the accumulation of interest outpacing the borrowers' payments. When the ratio is under 1, the borrowers are making progress on repayment. 
+We can calculate a cohort's "DBRR ratio" by dividing its current total balance by its original total balance. When the ratio is over 1, the borrowers owe more than they originally borrowed, presumably due to the accumulation of interest outpacing the borrowers' payments. When the ratio is under 1, the borrowers are making forward progress on repayment. 
 
-To be clear, DBRR does not track the same cohort of borrowers and report their loan balances at 1, 5, 10, and 20 years. Rather, each of these cohorts is a separate group of borrowers. It is also important to note the following: 
+A few data notes may be useful when interpreting Figures 38 and 39: 
 
 * These data reflect pre-pandemic balances. 
-* Not all colleges and universities have DBRR data in the College Scorecard. In Figures 38 and 39, you can hover over the points in the chart to see the count of institution represented in each cohort. For-profit colleges are especially under-represented, with only one California for-profit included. Interpret the charts on for-profits in Figures 38 and 39 with caution. 
+* DBRR does not track the same cohort of borrowers and report their loan balances at 1, 5, 10, and 20 years. Rather, each of these cohorts is a separate group of borrowers.
+* Not all colleges and universities have DBRR data in the College Scorecard. In Figures 38 and 39, you can hover over the points in the chart to see the count of institution represented in each cohort.  
 
-DBRR data are reported at the institution level and disaggregated by loan type (Stafford, Parent PLUS, and Grad PLUS). I aggregated the DBRR values across all institutions with sufficient data and compared institutions in California to institutions in the rest of the U.S., with breakouts by institutional control. 
+In the College Scorecard, DBRR data are reported at the institution level and disaggregated by loan type (Stafford, Parent PLUS, and Grad PLUS). I aggregated the DBRR values across all institutions with sufficient data and compared institutions in California to institutions in the rest of the U.S., with breakouts by institutional control and loan type. 
 
-Figure 38 shows the DBRR ratios for the available cohorts of borrowers in repayment. When the blue line (California) is higher than the yellow line (Rest of U.S.), it means that borrowers from California institutions owe a larger share of their original balance than do those from institutions across the rest of the U.S. 
+Figure 38 shows the DBRR ratios for four cohorts of borrowers in repayment. When the blue line (California) is higher than the yellow line (Rest of U.S.), it means that borrowers from California institutions owe a larger share of their original balance than do those from institutions across the rest of the U.S. 
 
-In all three tabs, we see that loan borrowers from California public institutions tend to have better (i.e. lower) DBRR ratios than loan borrowers from public institutions in the rest of the country, regardless of loan type. In the DBRR ratios for borrowers who took out loans for a nonprofit institution, California institutions roughly match institutions nationwide.  
-
-Overall, California performs well along DBRR metrics compared to the rest of the U.S. However, this same data can be used to track cohorts' average loan balances, which reveals some concerning trends for California. I derive the average loan balance by dividing current balances by borrower count. Note that a borrower who has fully paid off their loan is still counted in the average measure.  
+In all three tabs, we see that loan borrowers from California public institutions tend to have better (i.e. lower) DBRR ratios than loan borrowers from public institutions in the rest of the country, regardless of loan type. In the DBRR ratios for borrowers who took out loans for a nonprofit or for-profit institution, California institutions roughly match institutions nationwide. 
 
 ### {.tabset}
 ```{r CSI.DBRR, warning=FALSE}
@@ -7957,7 +7958,16 @@ ggplotly(g38C, width=800, height=600, tooltip="text")
 
 **Data source:** College Scorecard institution dataset, accessed November 2022, available through the U.S. Department of Education [here](https://collegescorecard.ed.gov/data/). 
 
-**Timeframe reflected:**   
+**Timeframe reflected:** These charts are comprised of data on loan balances for four distinct cohorts: the "1-year cohort," the "5-year cohort," the "10-year cohort," and the "20-year cohort," signifying how many years the cohort of borrowers has been in repayment. The data values are derived from the current balance of the borrowers compared to the original balance when they entered repayment (be it 1, 5, 10, or 20 years prior). 
+
+More specifically, the cohorts are defined as the following: 
+
+* 1-year cohort: Borrowers who entered repayment in AY2017-18 or AY2018-19. Data on current balances reflect balances in 2018-2019 or 2019-2020. 
+* 5-year cohort: Borrowers who entered repayment in AY2013-14 or AY2014-15. Data on current balances reflect balances in 2018-2019 or 2019-2020. 
+* 10-year cohort: Borrowers who entered repayment in AY2008-09 or AY2009-10. Data on current balances reflect balances in 2018-2019 or 2019-2020.
+* 20-year cohort: Borrowers who entered repayment in AY1998-99 or AY1999-00. Data on current balances reflect balances in 2018-2019 or 2019-2020.
+
+The measures reflect pre-pandemic balances.
 
 **Notes:**
 
@@ -7965,8 +7975,13 @@ ggplotly(g38C, width=800, height=600, tooltip="text")
 
 ### {-}
 
-Figure 39 shows the average current loan amount by institutional control and loan type, comparing California institutions to those in the rest of the U.S. Average Stafford loan amounts are lower among borrowers from California institutions than those from institutions across the rest of the U.S., driven by lower average loans at California's public institutions. 
+Overall, California performs well along DBRR metrics compared to the rest of the U.S. However, this same data can be used to track cohorts' average loan balances, which reveals some concerning trends for California. I derived the average loan balance by dividing current balances by borrower count. Note that a borrower who has fully paid off their loan is still counted in the average measure. 
 
+Figure 39 shows the average current loan amount for four cohorts, organized by institutional control and loan type, comparing California institutions to those in the rest of the U.S. In the first tab, we see that average Stafford loan amounts are lower among borrowers from California institutions than those from institutions across the rest of the U.S., driven by lower average loans at California's public institutions. 
+
+The next two tabs tell stories that more worrisome. Borrowers from California's private colleges have higher average Parent PLUS loans than those from non-California private colleges. This is especially true in the for-profit sector: 5 years into repayment, Parent PLUS borrowers from California for-profit institutions owe an average of \$22,000, versus \$14,000 for Parent PLUS borrowers from for-profits outside of California. This may be a more recent trend, as the gap is much smaller in the 10- and 20-year cohorts. 
+
+Looking now to Grad PLUS, we see similar trends. Borrowers from California's private colleges have higher average Grad PLUS loans than those from non-California private colleges, especially for-profits. For the 5-year cohort, average Grad PLUS loans for borrowers from California nonprofits are 29 percent higher than those for borrowers from non-California nonprofits. In the same cohort, average Grad PLUS loans for borrowers from California for-profits are 38 percent higher than those for borrowers from non-California for-profits. On the bright side, average Grad PLUS loans from California's public colleges are lower than average Grad PLUS loans from non-California public colleges, across all four cohorts. 
 
 ### {.tabset}
 ```{r average.DBRR, warning=FALSE}
@@ -8033,11 +8048,181 @@ ggplotly(g39C, width=800, height=600, tooltip="text")
 
 **Data source:** College Scorecard institution dataset, accessed November 2022, available through the U.S. Department of Education [here](https://collegescorecard.ed.gov/data/). 
 
-**Timeframe reflected:**   
+**Timeframe reflected:** These charts are comprised of data on loan balances for four distinct cohorts: the "1-year cohort," the "5-year cohort," the "10-year cohort," and the "20-year cohort," signifying how many years the cohort of borrowers has been in repayment. The data values are derived from the current balance of the borrowers compared to the original balance when they entered repayment (be it 1, 5, 10, or 20 years prior). 
 
-**Notes:**
+More specifically, the cohorts are defined as the following: 
+
+* 1-year cohort: Borrowers who entered repayment in AY2017-18 or AY2018-19. Data on current balances reflect balances in 2018-2019 or 2019-2020. 
+* 5-year cohort: Borrowers who entered repayment in AY2013-14 or AY2014-15. Data on current balances reflect balances in 2018-2019 or 2019-2020. 
+* 10-year cohort: Borrowers who entered repayment in AY2008-09 or AY2009-10. Data on current balances reflect balances in 2018-2019 or 2019-2020.
+* 20-year cohort: Borrowers who entered repayment in AY1998-99 or AY1999-00. Data on current balances reflect balances in 2018-2019 or 2019-2020.
+
+The measures reflect pre-pandemic balances.
+
+**Notes:** One factor influencing the slope of these lines is the rising cost of college. For example, the far-right points in each chart represent borrowers who entered repayment twenty years ago, when college costs were somewhat lower than they are today; it follows that their average loan amount would be slightly lower than other cohorts', even after accounting for the additional time the 20-year cohort has had to repay their loans. 
 
 ***
 
 ### {-}
 
+Taken together, figures 38 and 39 show that borrowers from California's colleges and universities make similar or better progress on repayment compared to borrowers from colleges and universities across the rest of the U.S. However, for borrowers with Parent PLUS and Grad PLUS loans, average loan balances tend to be higher when they are for enrollment in California institutions, and it takes those borrowers even longer to bring down those balances. 
+
+Consider that, for borrowers with Grad PLUS loans from a California for-profit college, the average loan of those who have been in repayment for 20 years is roughly $27,800. That means, for the typical borrower with Grad PLUS loans for a California for-profit, even 20 years is not enough to get the balance below \$20,000. Grad PLUS borrowers from for-profits outside California owe an average of \$8,618 after 20 years in repayment. 
+
+Now we will examine institutions' cohort default rates (CDR), a measure of the frequency with which borrowers from an institution default. I use CDR data from the College Scorecard and aggregate by institutional control and institutions' predominant degree awarded. Unfortunately, the College Scorecard does not disaggregate CDR data by loan type. 
+
+Figure 40 shows that, overall, California institutions have lower CDR rates than those outside the U.S., across all three institutional controls. This is good news, because it means borrowers are finding ways to stave off default. One exception is for-profit colleges that predominantly offer bachelor's degrees: those in California have a CDR of 12.8 percent, compared to a CDR of 11.3 percent for those outside California.  
+
+### {.tabset}
+```{r CDR, warning=FALSE}
+CSI3 <- fread("Most-Recent-Cohorts-Institution.csv", header=TRUE, select=c(
+  
+  # Basic information about institutions: 
+  "UNITID",       # Unit ID for institution
+  "OPEID",        # 8-digit OPEID
+  "OPEID6",       # 6-digit OPEID
+  "INSTNM",       # Institution name
+  "CITY",         # City
+  "STABBR",       # State postcode
+  "MAIN",         # "Flag for main campus (0 Not main campus, 1 Main campus)
+  "PREDDEG",      # Predominant undergraduate degree awarded
+  "CONTROL",      # Control of institution
+  "CCBASIC",      # Carnegie Classification -- basic
+  
+  # Cohort default rates: 
+  "CDR2",         # Two-year cohort default rate
+  "CDR3",         # Three-year cohort default rate
+  "CDR2_DENOM",   # Number of students in the cohort for the two-year cohort default rate	
+  "CDR3_DENOM"    # Number of students in the cohort for the three-year cohort default rate	
+))
+
+CSI3$CDR2 <- as.numeric(CSI3$CDR2)
+CSI3$CDR3 <- as.numeric(CSI3$CDR3)
+CSI3$CDR2_DENOM <- as.numeric(CSI3$CDR2_DENOM)
+CSI3$CDR3_DENOM <- as.numeric(CSI3$CDR3_DENOM)
+
+# I used the following lines to confirm that, for every institution with data for CDR2, there is data for CDR2_DENOM, and the same for CDR3 and CDR3_DENOM.
+#
+# CSI3$CDR2.real <- ifelse(is.na(CSI3$CDR2), 0, 1)
+# CSI3$CDR3.real <- ifelse(is.na(CSI3$CDR3), 0, 1)
+# CSI3$CDR2_DENOM.real <- ifelse(is.na(CSI3$CDR2_DENOM), 0, 1)
+# CSI3$CDR3_DENOM.real <- ifelse(is.na(CSI3$CDR3_DENOM), 0, 1)
+# table(CSI3$CDR2.real, CSI3$CDR2_DENOM.real)
+# table(CSI3$CDR3.real, CSI3$CDR3_DENOM.real)
+
+CSI3$CDR2_INST <- ifelse(is.na(CSI3$CDR2_DENOM), 0, 1)
+CSI3$CDR3_INST <- ifelse(is.na(CSI3$CDR3_DENOM), 0, 1)
+
+CSI3$CDR2_NUMER <- CSI3$CDR2 * CSI3$CDR2_DENOM
+CSI3$CDR3_NUMER <- CSI3$CDR3 * CSI3$CDR3_DENOM
+
+CSI3 <- CSI3 %>% arrange(desc(MAIN)) %>% filter(duplicated(OPEID6)==FALSE) 
+
+CSI3$State <- rep(NA, nrow(CSI3))
+CSI3$State[CSI3$STABBR == "CA"] <- "California"
+CSI3$State[CSI3$STABBR != "CA"] <- "Rest of U.S."
+```
+#### Figure 40: CDR by Control
+```{r CDR.control}
+CSI3$Control <- rep(NA, nrow(CSI3))
+CSI3$Control[CSI3$CONTROL==1] <- "Public"
+CSI3$Control[CSI3$CONTROL==2] <- "Nonprofit"
+CSI3$Control[CSI3$CONTROL==3] <- "For-profit"
+
+Q30A.1 <- aggregate(data=CSI3, cbind(
+  CDR2_NUMER, 
+  CDR2_DENOM, 
+  CDR3_NUMER, 
+  CDR3_DENOM, 
+  CDR2_INST, 
+  CDR3_INST
+) ~ State + Control, FUN=sum)
+Q30A.2 <- aggregate(data=CSI3, cbind(
+  CDR2_NUMER, 
+  CDR2_DENOM, 
+  CDR3_NUMER, 
+  CDR3_DENOM, 
+  CDR2_INST, 
+  CDR3_INST
+) ~ State, FUN=sum)
+Q30A.2$Control <- rep("All controls", nrow(Q30A.2))
+
+Q30A <- rbind(Q30A.1, Q30A.2)
+
+Q30A$CDR2 <- Q30A$CDR2_NUMER / Q30A$CDR2_DENOM
+Q30A$CDR3 <- Q30A$CDR3_NUMER / Q30A$CDR3_DENOM
+```
+
+```{r figure40A}
+Q30A$`For Tooltip` <- paste(
+  "State: ", Q30A$State, '\n',
+  "Control: ", Q30A$Control, '\n',
+  "Borrowers in 3-year cohort: ", comma(Q30A$CDR3_DENOM, accuracy=1), '\n',
+  "Defaulted borrowers: ", comma(Q30A$CDR3_NUMER, accuracy=1), '\n',
+  "3-year cohort default rate: ", percent(Q30A$CDR3, accuracy=0.1), '\n',
+  "Institution count: ", comma(Q30A$CDR3_INST, accuracy=1),
+  sep=""
+)
+
+g40A <- ggplot(data=Q30A, mapping=aes(x=Control, y=CDR3, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge") + scale_y_continuous(labels=scales::percent_format(accuracy=1)) + labs(x="Control", y="Three-year cohort default rate") + theme(text=element_text(family="Optima"), legend.position="right") + scale_fill_manual(values = stateCols)
+
+ggplotly(g40A, width=800, height=350, tooltip="text")
+```
+#### Figure 40: CDR by Control and Predominant Degree Awarded
+```{r CDR.highdeg}
+CSI3 <- CSI3 %>% filter(PREDDEG != 0) # This only removes Stockton Christian Life College, which does not have CDR data in Scorecard. 
+
+CSI3$PredDeg <- rep(NA, nrow(CSI3))
+CSI3$PredDeg[CSI3$PREDDEG==1] <- "Certificate"
+CSI3$PredDeg[CSI3$PREDDEG==2] <- "Associate's"
+CSI3$PredDeg[CSI3$PREDDEG==3] <- "Bachelor's"
+CSI3$PredDeg[CSI3$PREDDEG==4] <- "Graduate"
+
+CSI3$PredDeg <- as.factor(CSI3$PredDeg)
+CSI3$PredDeg <- factor(CSI3$PredDeg, levels=c(
+  "Certificate", 
+  "Associate's", 
+  "Bachelor's", 
+  "Graduate"
+))
+
+Q30B <- aggregate(data=CSI3, cbind(
+  CDR2_NUMER, 
+  CDR2_DENOM, 
+  CDR3_NUMER, 
+  CDR3_DENOM, 
+  CDR2_INST, 
+  CDR3_INST
+) ~ State + Control + PredDeg, FUN=sum)
+
+Q30B$CDR2 <- Q30B$CDR2_NUMER / Q30B$CDR2_DENOM
+Q30B$CDR3 <- Q30B$CDR3_NUMER / Q30B$CDR3_DENOM
+```
+
+```{r figure40B}
+Q30B$`For Tooltip` <- paste(
+  "State: ", Q30B$State, '\n',
+  "Control: ", Q30B$Control, '\n',
+  "Predominant degree awarded: ", Q30B$PredDeg, '\n',
+  "Borrowers in 3-year cohort: ", comma(Q30B$CDR3_DENOM, accuracy=1), '\n',
+  "Defaulted borrowers: ", comma(Q30B$CDR3_NUMER, accuracy=1), '\n',
+  "3-year cohort default rate: ", percent(Q30B$CDR3, accuracy=0.1), '\n',
+  "Institution count: ", comma(Q30B$CDR3_INST, accuracy=1),
+  sep=""
+)
+
+g40B <- ggplot(data=Q30B, mapping=aes(x=PredDeg, y=CDR3, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge") + facet_grid(Control ~ .) +  scale_y_continuous(labels=scales::percent_format(accuracy=1)) + labs(x="Institution's predominant degree awarded", y="Three-year cohort default rate") + theme(text=element_text(family="Optima"), legend.position="right") + scale_fill_manual(values = stateCols)
+
+ggplotly(g40B, width=800, height=600, tooltip="text")
+```
+#### Data Source and Notes
+
+**Data source:** College Scorecard institution dataset, accessed November 2022, available through the U.S. Department of Education [here](https://collegescorecard.ed.gov/data/). 
+
+**Timeframe reflected:** The three-year cohort default rates presented here represent borrowers who entered repayment between October 1, 2017 and September 30, 2018. Those counted as defaulters are those who defaulted anytime before September 30, 2020. 
+
+**Notes:** 
+
+***
+
+### {-}
