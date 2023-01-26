@@ -3439,6 +3439,8 @@ Figure 13 examines the educational attainment of borrowers. In California, Hispa
 
 Roughly 12 percent of California's student loan borrowers have only a high school degree, GED, or less. This is most commonly true of Hispanic (22 percent) and  Black (10 percent) student loan borrowers. When we discuss issues affecting student loan borrowers, it is important to remember that some borrowers who hold debt for a child's or spouse's education never went to college themselves at all and do not reap the economic rewards of that education.
 
+This figure also includes a special tab for parents, examining the education levels of parents who hold student loan debt for their child's education. Respondents who are not parents are not included in that tab. 
+
 ### {.tabset}
 ```{r EdAttain}
 # EdAttain: # What is the highest level of school you have completed or the highest degree you have received? 
@@ -3516,6 +3518,45 @@ g13C <- ggplot(data=tblEdAttain.CA.Nonborrow, mapping=aes(y=Race, x=`Share of bo
 
 ggplotly(g13C, width=800, height=350, tooltip="text")
 ```
+#### Figure 13: Parents
+##### Responses to "What is the highest level of school you have completed or the highest degree you have received?"
+```{r figure13D}
+shed$EdAttain0 <- shed$EdAttain
+
+shed.EdAttain0 <- shed %>% filter(is.na(EdAttain0)==FALSE) %>% filter((ChildDebt %in% c("Refused", "Not In Universe (not asked)", "Do not have children or grandchildren", ""))==FALSE)
+tblEdAttain0 <- aggregate(data=shed.EdAttain0, Weight ~ EdAttain0 + ChildDebt + State, FUN=sum)
+tblEdAttain0 <- reshape2::dcast(data=tblEdAttain0, State + ChildDebt ~ EdAttain0, value.var="Weight")
+tblEdAttain0$`Total weight` <- tblEdAttain0$`Associate degree` + tblEdAttain0$`Bachelor's degree` + tblEdAttain0$`Doctorate` + tblEdAttain0$`High school degree or GED` + tblEdAttain0$`Less than high school diploma` + tblEdAttain0$`Master's degree` + tblEdAttain0$`Professional degree` + tblEdAttain0$`Some college, no degree`
+tblEdAttain0$`Associate degree` <- tblEdAttain0$`Associate degree` / tblEdAttain0$`Total weight`
+tblEdAttain0$`Bachelor's degree` <- tblEdAttain0$`Bachelor's degree` / tblEdAttain0$`Total weight`
+tblEdAttain0$`Doctorate` <- tblEdAttain0$`Doctorate` / tblEdAttain0$`Total weight`
+tblEdAttain0$`High school degree or GED` <- tblEdAttain0$`High school degree or GED` / tblEdAttain0$`Total weight`
+tblEdAttain0$`Less than high school diploma` <- tblEdAttain0$`Less than high school diploma` / tblEdAttain0$`Total weight`
+tblEdAttain0$`Master's degree` <- tblEdAttain0$`Master's degree` / tblEdAttain0$`Total weight`
+tblEdAttain0$`Professional degree` <- tblEdAttain0$`Professional degree` / tblEdAttain0$`Total weight`
+tblEdAttain0$`Some college, no degree` <- tblEdAttain0$`Some college, no degree` / tblEdAttain0$`Total weight`
+tblEdAttain0 <- reshape2::melt(data=tblEdAttain0, id.vars = c("State", "ChildDebt"), value.name="Share of borrowers") %>% filter(variable != "Total weight")
+tblEdAttain0$variable <- factor(tblEdAttain0$variable, levels = c("Doctorate", "Professional degree", "Master's degree", "Bachelor's degree", "Associate degree", "Some college, no degree", "High school degree or GED", "Less than high school diploma"))
+
+tblEdAttain0$Group <- rep(NA, nrow(tblEdAttain0))
+tblEdAttain0$Group[(tblEdAttain0$ChildDebt=="Yes") & (tblEdAttain0$State=="CA")] <- "California parent-borrowers"
+tblEdAttain0$Group[(tblEdAttain0$ChildDebt=="No") & (tblEdAttain0$State=="CA")] <- "Other California parents"
+tblEdAttain0$Group[(tblEdAttain0$ChildDebt=="Yes") & (tblEdAttain0$State=="Rest of U.S.")] <- "Rest of U.S. parent-borrowers"
+tblEdAttain0 <- tblEdAttain0 %>% filter(is.na(Group)==FALSE)
+
+tblEdAttain0$`For Tooltip` <- paste(
+  "State: ", tblEdAttain0$State, '\n',
+  "Parent-borrowers: ", tblEdAttain0$AnyStudentLoans, '\n',
+  "Group: ", tblEdAttain0$Group, '\n',
+  "Highest level of education: ", tblEdAttain0$variable, '\n',
+  "Share: ", percent(tblEdAttain0$`Share of borrowers`, accuracy=0.1),
+  sep=""
+)
+
+g13D <- ggplot(data=tblEdAttain0, mapping=aes(y=Group, x=`Share of borrowers`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="Highest level of education", x="Share of parents", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral", direction=-1) 
+
+ggplotly(g13D, width=800, height=350, tooltip="text")
+```
 #### Data Source and Notes
 
 **Data source:** Survey of Household Economics and Decision-making, accessed November 2022, available through the U.S. Federal Reserve [here](https://www.federalreserve.gov/consumerscommunities/shed_data.htm).
@@ -3526,13 +3567,19 @@ survey_years(shed.EdAttain$SurveyYear)
 ```
 
 **Notes:** See the table below for the survey respondent sample size by subgroup.
-```{r EdAttain.N}
-N.EdAttain <- aggregate(data=shed.EdAttain, Count ~ Race + State + AnyStudentLoans, FUN=sum)
-N.EdAttain <- N.EdAttain %>% filter(State=="CA" | AnyStudentLoans=="Yes")
-names(N.EdAttain) <- c("Group", "State", "Student loan borrower", "Survey respondents")
-kable(N.EdAttain, caption="N size by group for Figure 13") %>% kable_paper("hover", full_width = F)
+```{r EdAttain.N1}
+N.EdAttain1 <- aggregate(data=shed.EdAttain, Count ~ Race + State + AnyStudentLoans, FUN=sum)
+N.EdAttain1 <- N.EdAttain1 %>% filter(State=="CA" | AnyStudentLoans=="Yes")
+names(N.EdAttain1) <- c("Group", "State", "Student loan borrower", "Survey respondents")
+kable(N.EdAttain1, caption="N size by group for Figure 13") %>% kable_paper("hover", full_width = F)
 ```
 
+```{r EdAttain.N0}
+N.EdAttain2 <- aggregate(data=shed.EdAttain0, Count ~ State + ChildDebt, FUN=sum)
+N.EdAttain2 <- N.EdAttain2 %>% filter(State=="CA" | ChildDebt=="Yes")
+names(N.EdAttain2) <- c("State", "Parent-borrower", "Survey respondents")
+kable(N.EdAttain2, caption="N size by group for Figure 13: Parents") %>% kable_paper("hover", full_width = F)
+```
 ***
 
 ### {-}
@@ -3699,6 +3746,8 @@ Figure 16 further explores California student loan borrowers' difficulty escapin
 
 The Black-white gap is mirrored in the rest of the California population (17.5 percentage points) but is still not as extreme as it is for student loan borrowers in the state. 
 
+This figure also contains a tab for parents, similar to Figure 13, and one for those who have a graduate degree. 
+
 ### {.tabset}
 ```{r CCBalance}
 # CCBalance: # In the past 12 months, how frequently have you carried an unpaid balance on one or more of your credit cards? 
@@ -3772,6 +3821,68 @@ g16C <- ggplot(data=tblCCBalance.CA.Nonborrow, mapping=aes(y=Race, x=`Share of b
 
 ggplotly(g16C, width=800, height=350, tooltip="text")
 ```
+#### Figure 16: Parents
+##### Responses to "In the past 12 months, how frequently have you carried an unpaid balance on one or more of your credit cards?"
+```{r figure16D}
+shed$CCBalance0 <- shed$CCBalance
+
+shed.CCBalance0 <- shed %>% filter(is.na(CCBalance0)==FALSE) %>% filter((CCBalance0 %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) %>% filter((ChildDebt %in% c("Do not have children or grandchildren", "", "Refused", "Not In Universe (not asked)"))==FALSE) 
+tblCCBalance0 <- aggregate(data=shed.CCBalance0, Weight ~ CCBalance0 + State + ChildDebt, FUN=sum)
+tblCCBalance0 <- reshape2::dcast(data=tblCCBalance0, State + ChildDebt ~ CCBalance0, value.var="Weight")
+tblCCBalance0$`Total weight` <- tblCCBalance0$`Always pay in full` + tblCCBalance0$`Most or all of the time` + tblCCBalance0$`Some of the time` + tblCCBalance0$`Once`
+tblCCBalance0$`Always pay in full` <- tblCCBalance0$`Always pay in full` / tblCCBalance0$`Total weight`
+tblCCBalance0$`Most or all of the time` <- tblCCBalance0$`Most or all of the time` / tblCCBalance0$`Total weight`
+tblCCBalance0$`Some of the time` <- tblCCBalance0$`Some of the time` / tblCCBalance0$`Total weight`
+tblCCBalance0$`Once` <- tblCCBalance0$`Once` / tblCCBalance0$`Total weight`
+tblCCBalance0 <- reshape2::melt(data=tblCCBalance0, id.vars = c("State", "ChildDebt"), value.name="Share of borrowers") %>% filter(variable != "Total weight")
+tblCCBalance0$variable <- factor(tblCCBalance0$variable, levels = c("Most or all of the time", "Some of the time", "Once", "Always pay in full"))
+
+tblCCBalance0$Group <- rep(NA, nrow(tblCCBalance0))
+tblCCBalance0$Group[(tblCCBalance0$State=="CA") & (tblCCBalance0$ChildDebt=="Yes")] <- "California parent-borrowers"
+tblCCBalance0$Group[(tblCCBalance0$State=="CA") & (tblCCBalance0$ChildDebt=="No")] <- "Other California parents"
+tblCCBalance0$Group[(tblCCBalance0$State=="Rest of U.S.") & (tblCCBalance0$ChildDebt=="Yes")] <- "Rest of U.S. parent-borrowers"
+tblCCBalance0 <- tblCCBalance0 %>% filter(State=="CA" | ChildDebt=="Yes")
+
+tblCCBalance0$`For Tooltip` <- paste(
+  "State: ", tblCCBalance0$State, '\n',
+  "Parent-borrowers: ", tblCCBalance0$ChildDebt, '\n',
+  "Group: ", tblCCBalance0$Group, '\n',
+  "Frequency of unpaid balance: ", tblCCBalance0$variable, '\n',
+  "Share: ", percent(tblCCBalance0$`Share of borrowers`, accuracy=0.1),
+  sep=""
+)
+
+g16D <- ggplot(data=tblCCBalance0, mapping=aes(y=Group, x=`Share of borrowers`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of parents", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+
+ggplotly(g16D, width=800, height=350, tooltip="text")
+```
+#### Figure 16: Graduate degee holders
+##### Responses to "In the past 12 months, how frequently have you carried an unpaid balance on one or more of your credit cards?"
+```{r figure16E}
+shed$CCBalance1 <- shed$CCBalance
+
+shed.CCBalance1 <- shed %>% filter(is.na(CCBalance1)==FALSE) %>% filter((CCBalance1 %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) %>% filter(EdAttain %in% c("Master's degree", "Doctorate", "Professional degree")) %>% filter(OwnDebt=="Yes")
+tblCCBalance1 <- aggregate(data=shed.CCBalance1, Weight ~ CCBalance1 + State, FUN=sum)
+tblCCBalance1 <- reshape2::dcast(data=tblCCBalance1, State ~ CCBalance1, value.var="Weight")
+tblCCBalance1$`Total weight` <- tblCCBalance1$`Always pay in full` + tblCCBalance1$`Most or all of the time` + tblCCBalance1$`Some of the time` + tblCCBalance1$`Once`
+tblCCBalance1$`Always pay in full` <- tblCCBalance1$`Always pay in full` / tblCCBalance1$`Total weight`
+tblCCBalance1$`Most or all of the time` <- tblCCBalance1$`Most or all of the time` / tblCCBalance1$`Total weight`
+tblCCBalance1$`Some of the time` <- tblCCBalance1$`Some of the time` / tblCCBalance1$`Total weight`
+tblCCBalance1$`Once` <- tblCCBalance1$`Once` / tblCCBalance1$`Total weight`
+tblCCBalance1 <- reshape2::melt(data=tblCCBalance1, id.vars = c("State"), value.name="Share of borrowers") %>% filter(variable != "Total weight")
+tblCCBalance1$variable <- factor(tblCCBalance1$variable, levels = c("Most or all of the time", "Some of the time", "Once", "Always pay in full"))
+
+tblCCBalance1$`For Tooltip` <- paste(
+  "State: ", tblCCBalance1$State, '\n',
+  "Frequency of unpaid balance: ", tblCCBalance1$variable, '\n',
+  "Share: ", percent(tblCCBalance1$`Share of borrowers`, accuracy=0.1),
+  sep=""
+)
+
+g16E <- ggplot(data=tblCCBalance1, mapping=aes(y=State, x=`Share of borrowers`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of graduate borrowers", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+
+ggplotly(g16E, width=800, height=350, tooltip="text")
+```
 #### Data Source and Notes
 
 **Data source:** Survey of Household Economics and Decision-making, accessed November 2022, available through the U.S. Federal Reserve [here](https://www.federalreserve.gov/consumerscommunities/shed_data.htm).
@@ -3789,7 +3900,18 @@ names(N.CCBalance) <- c("Group", "State", "Student loan borrower", "Survey respo
 kable(N.CCBalance, caption="N size by group for Figure 16") %>% kable_paper("hover", full_width = F)
 ```
 
+```{r CCBalance.N0}
+N.CCBalance0 <- aggregate(data=shed.CCBalance0, Count ~ State + ChildDebt, FUN=sum)
+N.CCBalance0 <- N.CCBalance0 %>% filter(State=="CA" | ChildDebt=="Yes")
+names(N.CCBalance0) <- c("State", "Parent-borrower", "Survey respondents")
+kable(N.CCBalance0, caption="N size by group for Figure 16: Parents") %>% kable_paper("hover", full_width = F)
+```
 
+```{r CCBalance.N1}
+N.CCBalance1 <- aggregate(data=shed.CCBalance1, Count ~ State, FUN=sum)
+names(N.CCBalance1) <- c("State", "Survey respondents")
+kable(N.CCBalance1, caption="N size by group for Figure 16: Graduate borrowers") %>% kable_paper("hover", full_width = F)
+```
 ***
 
 ### {-}
@@ -4087,6 +4209,68 @@ g19C <- ggplot(data=tblFinManage.CA.Nonborrow, mapping=aes(y=Race, x=`Share of b
 
 ggplotly(g19C, width=800, height=350, tooltip="text")
 ```
+#### Figure 19: Parents
+##### Responses to "Overall, which one of the following best describes how well you are managing financially these days?"
+```{r figure19D}
+shed$FinManage0 <- shed$FinManage
+
+shed.FinManage0 <- shed %>% filter(is.na(FinManage0)==FALSE) %>% filter((FinManage0 %in% c("Refused")==FALSE)) %>% filter(ChildDebt %in% c("No", "Yes"))
+tblFinManage0 <- aggregate(data=shed.FinManage0, Weight ~ FinManage0 + State + ChildDebt, FUN=sum)
+tblFinManage0 <- reshape2::dcast(data=tblFinManage0, State + ChildDebt ~ FinManage0, value.var="Weight")
+tblFinManage0$`Total weight` <- tblFinManage0$`Living comfortably` + tblFinManage0$`Finding it difficult to get by` + tblFinManage0$`Just getting by` + tblFinManage0$`Doing okay`
+tblFinManage0$`Living comfortably` <- tblFinManage0$`Living comfortably` / tblFinManage0$`Total weight`
+tblFinManage0$`Finding it difficult to get by` <- tblFinManage0$`Finding it difficult to get by` / tblFinManage0$`Total weight`
+tblFinManage0$`Just getting by` <- tblFinManage0$`Just getting by` / tblFinManage0$`Total weight`
+tblFinManage0$`Doing okay` <- tblFinManage0$`Doing okay` / tblFinManage0$`Total weight`
+tblFinManage0 <- reshape2::melt(data=tblFinManage0, id.vars = c("State", "ChildDebt"), value.name="Share of borrowers") %>% filter(variable != "Total weight")
+tblFinManage0$variable <- factor(tblFinManage0$variable, levels = c("Finding it difficult to get by", "Just getting by", "Doing okay", "Living comfortably"))
+
+tblFinManage0$Group <- rep(NA, nrow(tblFinManage0))
+tblFinManage0$Group[tblFinManage0$State=="CA" & tblFinManage0$ChildDebt=="Yes"] <- "California parent-borrowers"
+tblFinManage0$Group[tblFinManage0$State=="Rest of U.S." & tblFinManage0$ChildDebt=="Yes"] <- "Rest of U.S. parent-borrowers"
+tblFinManage0$Group[tblFinManage0$State=="CA" & tblFinManage0$ChildDebt=="No"] <- "Other California parents"
+tblFinManage0 <- tblFinManage0 %>% filter(is.na(Group)==FALSE)
+
+tblFinManage0$`For Tooltip` <- paste(
+  "State: ", tblFinManage0$State, '\n',
+  "Parent-borrowers: ", tblFinManage0$ChildDebt, '\n',
+  "Group: ", tblFinManage0$Group, '\n',
+  "Response: ", tblFinManage0$variable, '\n',
+  "Share: ", percent(tblFinManage0$`Share of borrowers`, accuracy=0.1),
+  sep="" 
+)
+
+g19D <- ggplot(data=tblFinManage0, mapping=aes(y=Group, x=`Share of borrowers`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of parents", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+
+ggplotly(g19D, width=800, height=350, tooltip="text")
+```
+#### Figure 19: Graduate borrowers
+##### Responses to "Overall, which one of the following best describes how well you are managing financially these days?"
+```{r figure19E}
+shed$FinManage1 <- shed$FinManage
+
+shed.FinManage1 <- shed %>% filter(is.na(FinManage1)==FALSE) %>% filter((FinManage1 %in% c("Refused"))==FALSE) %>% filter(OwnDebt=="Yes") %>% filter(EdAttain %in% c("Doctorate", "Master's degree", "Professional degree"))
+tblFinManage1 <- aggregate(data=shed.FinManage1, Weight ~ FinManage1 + State, FUN=sum)
+tblFinManage1 <- reshape2::dcast(data=tblFinManage1, State ~ FinManage1, value.var="Weight")
+tblFinManage1$`Total weight` <- tblFinManage1$`Living comfortably` + tblFinManage1$`Finding it difficult to get by` + tblFinManage1$`Just getting by` + tblFinManage1$`Doing okay`
+tblFinManage1$`Living comfortably` <- tblFinManage1$`Living comfortably` / tblFinManage1$`Total weight`
+tblFinManage1$`Finding it difficult to get by` <- tblFinManage1$`Finding it difficult to get by` / tblFinManage1$`Total weight`
+tblFinManage1$`Just getting by` <- tblFinManage1$`Just getting by` / tblFinManage1$`Total weight`
+tblFinManage1$`Doing okay` <- tblFinManage1$`Doing okay` / tblFinManage1$`Total weight`
+tblFinManage1 <- reshape2::melt(data=tblFinManage1, id.vars = c("State"), value.name="Share of borrowers") %>% filter(variable != "Total weight")
+tblFinManage1$variable <- factor(tblFinManage1$variable, levels = c("Finding it difficult to get by", "Just getting by", "Doing okay", "Living comfortably"))
+
+tblFinManage1$`For Tooltip` <- paste(
+  "State: ", tblFinManage1$State, '\n',
+  "Response: ", tblFinManage1$variable, '\n',
+  "Share: ", percent(tblFinManage1$`Share of borrowers`, accuracy=0.1),
+  sep="" 
+)
+
+g19E <- ggplot(data=tblFinManage1, mapping=aes(y=State, x=`Share of borrowers`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of graduate borrowers", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+
+ggplotly(g19E, width=800, height=350, tooltip="text")
+```
 #### Data Source and Notes
 
 **Data source:** Survey of Household Economics and Decision-making, accessed November 2022, available through the U.S. Federal Reserve [here](https://www.federalreserve.gov/consumerscommunities/shed_data.htm).
@@ -4104,6 +4288,18 @@ names(N.FinManage) <- c("Group", "State", "Student loan borrower", "Survey respo
 kable(N.FinManage, caption="N size by group for Figure 19") %>% kable_paper("hover", full_width = F)
 ```
 
+```{r FinManage.N0}
+N.FinManage0 <- aggregate(data=shed.FinManage0, Count ~  State + ChildDebt, FUN=sum)
+N.FinManage0 <- N.FinManage0 %>% filter(State=="CA" | ChildDebt=="Yes")
+names(N.FinManage0) <- c("State", "Parent-borrower", "Survey respondents")
+kable(N.FinManage0, caption="N size by group for Figure 19: Parents") %>% kable_paper("hover", full_width = F)
+```
+
+```{r FinManage.N1}
+N.FinManage1 <- aggregate(data=shed.FinManage0, Count ~  State, FUN=sum)
+names(N.FinManage1) <- c("State", "Survey respondents")
+kable(N.FinManage1, caption="N size by group for Figure 19: Graduate borrowers") %>% kable_paper("hover", full_width = F)
+```
 ***
 
 ### {-}
@@ -4382,6 +4578,65 @@ g22C <- ggplot(data=tblPayBills.CA.Nonborrow, mapping=aes(y=Race, x=`Share`, fil
 
 ggplotly(g22C, width=800, height=350, tooltip="text")
 ```
+#### Figure 22: Parents
+##### Responses to "Which best describes your ability to pay all of your bills in full this month?"
+```{r figure22D}
+shed$PayBills0 <- shed$PayBills
+
+shed.PayBills0 <- shed %>% filter(is.na(PayBills0)==FALSE) %>% filter((PayBills0 %in% c("Refused")==FALSE)) %>% filter(ChildDebt %in% c("No", "Yes"))
+tblPayBills0 <- aggregate(data=shed.PayBills0, Weight ~ PayBills0 + State + ChildDebt, FUN=sum)
+tblPayBills0 <- reshape2::dcast(data=tblPayBills0, State + ChildDebt ~ PayBills0, value.var="Weight")
+tblPayBills0$`Total weight` <- tblPayBills0$`I cannot pay some bills or will only make a partial payment on them` + tblPayBills0$`I will be able to pay all of my bills in full`
+tblPayBills0$`I cannot pay some bills or will only make a partial payment on them` <- tblPayBills0$`I cannot pay some bills or will only make a partial payment on them` / tblPayBills0$`Total weight`
+tblPayBills0$`I will be able to pay all of my bills in full` <- tblPayBills0$`I will be able to pay all of my bills in full` / tblPayBills0$`Total weight`
+tblPayBills0 <- reshape2::melt(data=tblPayBills0, id.vars = c("State", "ChildDebt"), value.name="Share") %>% filter(variable != "Total weight")
+tblPayBills0$variable <- factor(tblPayBills0$variable, levels = c("I will be able to pay all of my bills in full", "I cannot pay some bills or will only make a partial payment on them"))
+
+tblPayBills0$Group <- rep(NA, nrow(tblPayBills0))
+tblPayBills0$Group[(tblPayBills0$State=="CA") & (tblPayBills0$ChildDebt=="Yes")] <- "California parent-borrowers"
+tblPayBills0$Group[(tblPayBills0$State=="Rest of U.S.") & (tblPayBills0$ChildDebt=="Yes")] <- "Rest of U.S. parent-borrowers"
+tblPayBills0$Group[(tblPayBills0$State=="CA") & (tblPayBills0$ChildDebt=="No")] <- "Other California parents"
+tblPayBills0 <- tblPayBills0 %>% filter(State=="CA" | ChildDebt=="Yes")
+
+tblPayBills0$`For Tooltip` <- paste(
+  "State: ", tblPayBills0$State, '\n',
+  "Parent-borrowers: ", tblPayBills0$ChildDebt, '\n',
+  "Group: ", tblPayBills0$Group, '\n',
+  "Ability to pay: ", tblPayBills0$variable, '\n',
+  "Share: ", percent(tblPayBills0$`Share`, accuracy=0.1),
+  sep=""
+)
+
+g22D <- ggplot(data=tblPayBills0, mapping=aes(y=Group, x=`Share`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of parents", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Set2") 
+
+ggplotly(g22D, width=800, height=350, tooltip="text")
+```
+#### Figure 22: Graduate borrowers
+##### Responses to "Which best describes your ability to pay all of your bills in full this month?"
+```{r figure22E}
+shed$PayBills1 <- shed$PayBills
+
+shed.PayBills1 <- shed %>% filter(is.na(PayBills1)==FALSE) %>% filter((PayBills1 %in% c("Refused")==FALSE)) %>% filter(EdAttain %in% c("Doctorate", "Master's degree", "Professional degree")) %>% filter(OwnDebt=="Yes")
+
+tblPayBills1 <- aggregate(data=shed.PayBills1, Weight ~ PayBills1 + State, FUN=sum)
+tblPayBills1 <- reshape2::dcast(data=tblPayBills1, State ~ PayBills1, value.var="Weight")
+tblPayBills1$`Total weight` <- tblPayBills1$`I cannot pay some bills or will only make a partial payment on them` + tblPayBills1$`I will be able to pay all of my bills in full`
+tblPayBills1$`I cannot pay some bills or will only make a partial payment on them` <- tblPayBills1$`I cannot pay some bills or will only make a partial payment on them` / tblPayBills1$`Total weight`
+tblPayBills1$`I will be able to pay all of my bills in full` <- tblPayBills1$`I will be able to pay all of my bills in full` / tblPayBills1$`Total weight`
+tblPayBills1 <- reshape2::melt(data=tblPayBills1, id.vars = c("State"), value.name="Share") %>% filter(variable != "Total weight")
+tblPayBills1$variable <- factor(tblPayBills1$variable, levels = c("I will be able to pay all of my bills in full", "I cannot pay some bills or will only make a partial payment on them"))
+
+tblPayBills1$`For Tooltip` <- paste(
+  "State: ", tblPayBills1$State, '\n',
+  "Ability to pay: ", tblPayBills1$variable, '\n',
+  "Share: ", percent(tblPayBills1$`Share`, accuracy=0.1),
+  sep=""
+)
+
+g22E <- ggplot(data=tblPayBills1, mapping=aes(y=State, x=`Share`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of graduate borrowers", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Set2") 
+
+ggplotly(g22E, width=800, height=350, tooltip="text")
+```
 #### Data Source and Notes
 
 **Data source:** Survey of Household Economics and Decision-making, accessed November 2022, available through the U.S. Federal Reserve [here](https://www.federalreserve.gov/consumerscommunities/shed_data.htm).
@@ -4397,6 +4652,19 @@ N.PayBills <- aggregate(data=shed.PayBills, Count ~ Race + State + AnyStudentLoa
 N.PayBills <- N.PayBills %>% filter(State=="CA" | AnyStudentLoans=="Yes")
 names(N.PayBills) <- c("Group", "State", "Student loan borrower", "Survey respondents")
 kable(N.PayBills, caption="N size by group for Figure 22") %>% kable_paper("hover", full_width = F)
+```
+
+```{r PayBills.N0}
+N.PayBills0 <- aggregate(data=shed.PayBills0, Count ~ State + ChildDebt, FUN=sum)
+N.PayBills0 <- N.PayBills0 %>% filter(State=="CA" | ChildDebt=="Yes")
+names(N.PayBills0) <- c("State", "Parent-borrower", "Survey respondents")
+kable(N.PayBills0, caption="N size by group for Figure 22: Parents") %>% kable_paper("hover", full_width = F)
+```
+
+```{r PayBills.N1}
+N.PayBills1 <- aggregate(data=shed.PayBills1, Count ~ State, FUN=sum)
+names(N.PayBills1) <- c("State", "Survey respondents")
+kable(N.PayBills1, caption="N size by group for Figure 22: Graduate borrowera") %>% kable_paper("hover", full_width = F)
 ```
 
 
