@@ -30,7 +30,8 @@ stateCols <- c(
   "#faaa00", # darkgoldenrod2
   "#008e00", # forestgreen
   "#ff7932", # sienna1
-  "#4a3d90"  # darkslateblue
+  "#4a3d90", # darkslateblue
+  "#9FC2BA"  # mysticalgreen
 )
 
 stateCols2 <- c(
@@ -38,7 +39,8 @@ stateCols2 <- c(
   "#ffc956", 
   "#00c500", 
   "#ffa16f", 
-  "#7769bf"
+  "#7769bf", 
+  "#7CE0F9"
 )
 
 flagCols <- c(
@@ -46,7 +48,8 @@ flagCols <- c(
   "#008543", 
   "#584527", 
   "#de849c", 
-  "#5A5A5A"
+  "#5A5A5A",
+  "#CABD80"
 )
 
 flagCols2 <- c(
@@ -54,7 +57,8 @@ flagCols2 <- c(
   "#00d069", 
   "#8d6f3f", 
   "#de849c", 
-  "#838383"
+  "#838383", 
+  "#CAECCF"
 )
 ```
 
@@ -212,6 +216,112 @@ statenames <- data.frame("ST"=c(
   "Wisconsin",
   "Wyoming",
   "Puerto Rico"))
+statenames2 <- data.frame("State Abbreviation"=c(
+  "AL",     # Alabama/AL
+  "AK",     # Alaska/AK
+  "AZ",     # Arizona/AZ
+  "AR",     # Arkansas/AR
+  "CA",     # California/CA
+  "CO",     # Colorado/CO
+  "CT",     # Connecticut/CT
+  "DE",     # Delaware/DE
+  "DC",     # District of Columbia/DC
+  "FL",     # Florida/FL
+  "GA",     # Georgia/GA
+  "HI",     # Hawaii/HI
+  "ID",     # Idaho/ID
+  "IL",     # Illinois/IL
+  "IN",     # Indiana/IN
+  "IA",     # Iowa/IA
+  "KS",     # Kansas/KS
+  "KY",     # Kentucky/KY
+  "LA",     # Louisiana/LA
+  "ME",     # Maine/ME
+  "MD",     # Maryland/MD
+  "MA",     # Massachusetts/MA
+  "MI",     # Michigan/MI
+  "MN",     # Minnesota/MN
+  "MS",     # Mississippi/MS
+  "MO",     # Missouri/MO
+  "MT",     # Montana/MT
+  "NE",     # Nebraska/NE
+  "NV",     # Nevada/NV
+  "NH",     # New Hampshire/NH
+  "NJ",     # New Jersey/NJ
+  "NM",     # New Mexico/NM
+  "NY",     # New York/NY
+  "NC",     # North Carolina/NC
+  "ND",     # North Dakota/ND
+  "OH",     # Ohio/OH
+  "OK",     # Oklahoma/OK
+  "OR",     # Oregon/OR
+  "PA",     # Pennsylvania/PA
+  "RI",     # Rhode Island/RI
+  "SC",     # South Carolina/SC
+  "SD",     # South Dakota/SD
+  "TN",     # Tennessee/TN
+  "TX",     # Texas/TX
+  "UT",     # Utah/UT
+  "VT",     # Vermont/VT
+  "VA",     # Virginia/VA
+  "WA",     # Washington/WA
+  "WV",     # West Virginia/WV
+  "WI",     # Wisconsin/WI
+  "WY",     # Wyoming/WY
+  "PR"     # Puerto Rico/PR
+), "State"=c(
+  "Alabama",
+  "Alaska",
+  "Arizona",
+  "Arkansas",
+  "California",
+  "Colorado",
+  "Connecticut",
+  "Delaware",
+  "District of Columbia",
+  "Florida",
+  "Georgia",
+  "Hawaii",
+  "Idaho",
+  "Illinois",
+  "Indiana",
+  "Iowa",
+  "Kansas",
+  "Kentucky",
+  "Louisiana",
+  "Maine",
+  "Maryland",
+  "Massachusetts",
+  "Michigan",
+  "Minnesota",
+  "Mississippi",
+  "Missouri",
+  "Montana",
+  "Nebraska",
+  "Nevada",
+  "New Hampshire",
+  "New Jersey",
+  "New Mexico",
+  "New York",
+  "North Carolina",
+  "North Dakota",
+  "Ohio",
+  "Oklahoma",
+  "Oregon",
+  "Pennsylvania",
+  "Rhode Island",
+  "South Carolina",
+  "South Dakota",
+  "Tennessee",
+  "Texas",
+  "Utah",
+  "Vermont",
+  "Virginia",
+  "Washington",
+  "West Virginia",
+  "Wisconsin",
+  "Wyoming",
+  "Puerto Rico"))
 ```
 
 ```{r pums}
@@ -229,14 +339,14 @@ rm("pusa", "pusb")
 
 Table 1 below shows how California compares to other states in its federal student loan debt per capita, its number of borrowers per capita, and its average federal student loan balance. California ranks well in the firs two measures due to a smaller percentage of its population holding debt than in other states. However, California's borrowers exceed other states' borrowers in their average balance. Californians who hold federal student loan debt averaged roughly $37,000 in June 2022. 
 
-#### {.tabset}
+### {.tabset}
 ```{r interstateComp}
 
 ######################################################
 ### Because we will present these results in two   ###
 ### tables, we first create the tables.            ###
 ######################################################
-
+ 
 interstateComp <- data.frame(
   "X1" = c(NA), 
   "X2" = c(NA), 
@@ -283,7 +393,8 @@ portfolio$`Average balance` <- portfolio$Balance / portfolio$Borrowers
 
 totalDebt <- sum(portfolio$Balance)
 totalBorrowers <- sum(portfolio$Borrowers)
-portfolio <- portfolio %>% filter(State != "Other") %>% filter(State != "Not Reported")
+portfolio <- portfolio %>% filter(State %in% c("Other", "Not Reported", "Puerto Rico")==FALSE)
+portfolio <- left_join(x=portfolio, y=statenames2, by="State")
 
 ######################################################
 ### Now we want to consider the portfolio on a     ###
@@ -299,12 +410,12 @@ portfolio <- portfolio %>% filter(State != "Other") %>% filter(State != "Not Rep
 pusm <- pusm %>% filter(AGEP >= 18 & AGEP <= 50)
 population18to50 <- aggregate(data=pusm, PWGTP ~ ST, FUN=sum)
 population18to50 <- left_join(x=population18to50, y=statenames, by="ST")
-population18to50 <- population18to50 %>% select(State, PWGTP)
+population18to50 <- population18to50 %>% select(State,  PWGTP)
 names(population18to50) <- c("State", "Number of adults aged 18-50")
 portfolio <- left_join(x=portfolio, y=population18to50, by="State")
 
-portfolio$`Debt per capita` <- portfolio$Balance / portfolio$`Number of adults aged 18-50`
-portfolio$`Borrowers per capita` <- portfolio$Borrowers / portfolio$`Number of adults aged 18-50`
+portfolio$`Debt per adult aged 18-50` <- portfolio$Balance / portfolio$`Number of adults aged 18-50`
+portfolio$`Borrowers per 1000 adults` <- (portfolio$Borrowers / portfolio$`Number of adults aged 18-50`) * 1000
 
 ######################################################
 ### Now we can rank California alongside other     ###
@@ -317,8 +428,8 @@ portfolio$`Borrowers per capita` <- portfolio$Borrowers / portfolio$`Number of a
 
 portfolio$`Rank: Balance` <- rank(portfolio$Balance, ties.method="average")
 portfolio$`Rank: Borrowers` <- rank(portfolio$Borrowers, ties.method="average")
-portfolio$`Rank: Debt per capita` <- rank(portfolio$`Debt per capita`, ties.method="average")
-portfolio$`Rank: Borrowers per capita` <- rank(portfolio$`Borrowers per capita`, ties.method="average")
+portfolio$`Rank: Debt per adult aged 18-50` <- rank(portfolio$`Debt per adult aged 18-50`, ties.method="average")
+portfolio$`Rank: Borrowers per 1000 adults` <- rank(portfolio$`Borrowers per 1000 adults`, ties.method="average")
 portfolio$`Rank: Average balance` <- rank(portfolio$`Average balance`, ties.method="average")
 
 ######################################################
@@ -326,17 +437,17 @@ portfolio$`Rank: Average balance` <- rank(portfolio$`Average balance`, ties.meth
 ######################################################
 
 interstateComp <- interstateComp %>% add_row(
-  `Measure` = "Federal student loan debt per capita", 
-  `50-state median` = dollar(median(portfolio$`Debt per capita`, na.rm=TRUE), accuracy=1), 
-  `California value` = dollar(portfolio$`Debt per capita`[portfolio$State=="California"], accuracy=1), 
-  `California rank` = (portfolio$`Rank: Debt per capita`[portfolio$State=="California"])
+  `Measure` = "Federal student loan debt per adult (18-50)", 
+  `50-state median` = dollar(median(portfolio$`Debt per adult aged 18-50`, na.rm=TRUE), accuracy=1), 
+  `California value` = dollar(portfolio$`Debt per adult aged 18-50`[portfolio$State=="California"], accuracy=1), 
+  `California rank` = (portfolio$`Rank: Debt per adult aged 18-50`[portfolio$State=="California"])
 )
 
 interstateComp <- interstateComp %>% add_row(
-  `Measure` = "Federal student loan borrowers per capita", 
-  `50-state median` = as.character(round(median(portfolio$`Borrowers per capita`, na.rm=TRUE), digits=3)), 
-  `California value` = as.character(round(portfolio$`Borrowers per capita`[portfolio$State=="California"], digits=3)), 
-  `California rank` = (portfolio$`Rank: Borrowers per capita`[portfolio$State=="California"])
+  `Measure` = "Federal student loan borrowers per 1000 adults", 
+  `50-state median` = as.character(round(median(portfolio$`Borrowers per 1000 adults`, na.rm=TRUE), digits=3)), 
+  `California value` = as.character(round(portfolio$`Borrowers per 1000 adults`[portfolio$State=="California"], digits=3)), 
+  `California rank` = (portfolio$`Rank: Borrowers per 1000 adults`[portfolio$State=="California"])
 )
 
 interstateComp <- interstateComp %>% add_row(
@@ -367,11 +478,58 @@ scaleCali <- scaleCali %>% add_row(
 interstateComp <- interstateComp %>% filter(is.na(Measure)==FALSE)
 scaleCali <- scaleCali %>% filter(is.na(Measure)==FALSE)
 ```
-##### Table 1
+#### Table 1
 ```{r kable1, results='asis'}
 kable(interstateComp, caption="California's rank on average debt measures") %>% kable_paper("hover", full_width = F)
 ```
-##### Data Source and Notes
+#### Table 1: State Ranks
+##### States ranked by number of federal student loan borrowers per 1,000 adults aged 18-50
+```{r rankschart1}
+ranksChart1 <- portfolio %>% select(`State`, `State.Abbreviation`, `Borrowers`, `Number of adults aged 18-50`, `Borrowers per 1000 adults`, `Rank: Borrowers per 1000 adults`) %>% arrange(`Borrowers per 1000 adults`)
+
+ranksChart1$California <- rep(NA, nrow(ranksChart1))
+ranksChart1$California[ranksChart1$State=="California"] <- "Yes"
+ranksChart1$California[ranksChart1$State != "California"] <- "No"
+
+ranksChart1$`For Tooltip` <- paste(
+  "State: ", ranksChart1$State, '\n',
+  "Borrowers: ", comma(ranksChart1$Borrowers), '\n',
+  "Number of adults aged 18-50: ", comma(round(ranksChart1$`Number of adults aged 18-50`, -3)), '\n',
+  "Borrowers per 1000 adults: ", round(ranksChart1$`Borrowers per 1000 adults`, 1), '\n',
+  "Rank of borrowers per 1000 adults: ", round(ranksChart1$`Rank: Borrowers per 1000 adults`, 0),
+  sep=""
+)
+ranksChart1$State.Abbreviation <- factor(ranksChart1$State.Abbreviation, levels = ranksChart1$State.Abbreviation[order(ranksChart1$`Borrowers per 1000 adults`)])
+
+R1 <- ggplot(data=ranksChart1, mapping=aes(x=`State.Abbreviation`, y=`Borrowers per 1000 adults`, fill=California, text=`For Tooltip`)) + geom_bar(stat="identity") + labs(x="State", y="Student loan borrowers per 1000 adults") + scale_fill_manual(values = rev(flagCols2[4:5])) + theme(legend.position='none', text=element_text(family="Optima"), axis.text = element_text(size = 7)) 
+
+ggplotly(R1, width=900, height=300, tooltip="text")
+```
+
+##### States ranked by borrowers' average federal student loan balance
+```{r rankschart2}
+ranksChart2 <- portfolio %>% select(`State`, `State.Abbreviation`, `Balance`,  `Borrowers`, `Average balance`, `Rank: Average balance`) %>% arrange(`Average balance`)
+
+ranksChart2$California <- rep(NA, nrow(ranksChart2))
+ranksChart2$California[ranksChart2$State=="California"] <- "Yes"
+ranksChart2$California[ranksChart2$State != "California"] <- "No"
+
+ranksChart2$`For Tooltip` <- paste(
+  "State: ", ranksChart2$State, '\n',
+  "Borrowers: ", comma(ranksChart2$Borrowers), '\n',
+  "Balance: ", dollar(round(ranksChart2$Balance, -3)), '\n',
+  "Borrowers: ", comma(round(ranksChart2$Borrowers, -3)), '\n',
+  "Average balance: ", dollar(ranksChart2$`Average balance`, accuracy=1), '\n',
+  "Rank of average balance: ", round(ranksChart2$`Rank: Average balance`, 0), '\n',
+  sep=""
+)
+ranksChart2$State.Abbreviation <- factor(ranksChart2$State.Abbreviation, levels = ranksChart2$State.Abbreviation[order(ranksChart2$`Average balance`)])
+
+R2 <- ggplot(data=ranksChart2, mapping=aes(x=`State.Abbreviation`, y=`Average balance`, fill=California, text=`For Tooltip`)) + geom_bar(stat="identity") + labs(x="State", y="Average balance") + scale_fill_manual(values = rev(flagCols2[4:5])) + theme(legend.position='none', text=element_text(family="Optima"), axis.text = element_text(size = 7)) + scale_y_continuous(labels=scales::dollar_format(accuracy=1))
+
+ggplotly(R2, width=900, height=300, tooltip="text")
+```
+#### Data Source and Notes
 
 **Data source:** Federal Student Aid Data Center, spreadsheet on federal student loan portfolio by borrower location, [available here](https://studentaid.gov/data-center/student/portfolio), accessed December 2022. 
 
@@ -381,7 +539,7 @@ kable(interstateComp, caption="California's rank on average debt measures") %>% 
 
 ***
 
-#### {-}
+### {-}
 
 
 Table 2 below shows the size of California's outstanding federal student loan debt. California has the most outstanding federal student loan debt ($142 billion) and borrowers (3.8 million) of any state, amounting to around 9 percent of the nationwide federal student loan portfolio. Given that California has a slightly higher average federal student loan balance than most states (see Table 1 above), California has a slightly greater share of nationwide debt than its share of nationwide borrowers. 
@@ -596,11 +754,11 @@ table3$`GRAD PLUS share of total` <- table3$`GRAD PLUS: $ of Disbursements` / ta
 
 table3.1 <- table3 %>% filter(State %in% c("CA", "Rest of U.S.")) %>% select(State, `SUBSIDIZED share of total`, `UNSUBSIDIZED - UNDERGRADUATE share of total`, `UNSUBSIDIZED - GRADUATE share of total`, `PARENT PLUS share of total`, `GRAD PLUS share of total`)
 names(table3.1) <- c("State", "Subsidized", "Unsubsidized undergraduate", "Unsubsidized graduate", "Parent PLUS loans", "Grad PLUS")
-table3.1$`Subsidized` <- percent(table3.1$`Subsidized`)
-table3.1$`Unsubsidized undergraduate` <- percent(table3.1$`Unsubsidized undergraduate`)
-table3.1$`Unsubsidized graduate` <- percent(table3.1$`Unsubsidized graduate`)
-table3.1$`Parent PLUS loans` <- percent(table3.1$`Parent PLUS loans`)
-table3.1$`Grad PLUS` <- percent(table3.1$`Grad PLUS`)
+table3.1$`Subsidized` <- percent(table3.1$`Subsidized`, accuracy=0.1)
+table3.1$`Unsubsidized undergraduate` <- percent(table3.1$`Unsubsidized undergraduate`, accuracy=0.1)
+table3.1$`Unsubsidized graduate` <- percent(table3.1$`Unsubsidized graduate`, accuracy=0.1)
+table3.1$`Parent PLUS loans` <- percent(table3.1$`Parent PLUS loans`, accuracy=0.1)
+table3.1$`Grad PLUS` <- percent(table3.1$`Grad PLUS`, accuracy=0.1)
 ```
 
 #### {.tabset}
@@ -699,6 +857,20 @@ table4 <- aggregate(data=forTable4, cbind(
   `GRAD PLUS: $ of Disbursements`,
   `GRAD PLUS: Recipients`
 ) ~ State + Control, FUN=sum)
+table4.1 <- aggregate(data=forTable4, cbind(
+  `SUBSIDIZED: $ of Disbursements`, 
+  `SUBSIDIZED: Recipients`, 
+  `UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`,
+  `UNSUBSIDIZED - UNDERGRADUATE: Recipients`, 
+  `UNSUBSIDIZED - GRADUATE: $ of Disbursements`, 
+  `UNSUBSIDIZED - GRADUATE: Recipients`, 
+  `PARENT PLUS: $ of Disbursements`, 
+  `PARENT PLUS: Recipients`, 
+  `GRAD PLUS: $ of Disbursements`,
+  `GRAD PLUS: Recipients`
+) ~ State, FUN=sum)
+table4.1$Control <- rep("All controls", nrow(table4.1))
+table4 <- rbind(table4.1, table4)
 
 table4 <- table4 %>% filter(State %in% c("CA", "Rest of U.S."))
 
@@ -712,7 +884,7 @@ table4.1 <- table4 %>% select(State, Control, `Subsidized`, `Unsub. UG`, `Unsub.
 table4.1 <- reshape2::melt(data=table4.1, id.vars = c("State", "Control"), value.name="Average Loan")
 
 table4.1$Control <- as.factor(table4.1$Control)
-table4.1$Control <- factor(table4.1$Control, levels = rev(c("For-profit", "Non-profit", "Public")))
+table4.1$Control <- factor(table4.1$Control, levels = rev(c("For-profit", "Non-profit", "Public", "All controls")))
 ```
 ##### Figure 1
 ```{r figure1}
@@ -775,7 +947,12 @@ Within California, 28 percent of Black undergraduates receive student loans, the
 ##### Figure 2: Undergraduate Loans by Race
 ```{r npsas1}
 npsas1.US <- read.csv("Powerstats opspco.csv", skip=12, nrow=7, header=FALSE)
+npsas1.US.total <- read.csv("Powerstats opspco.csv", skip=10, nrow=1, header=FALSE)
+npsas1.US <- rbind(npsas1.US.total, npsas1.US)
+
 npsas1.CA <- read.csv("Powerstats opspco.csv", skip=73, nrow=7, header=FALSE)
+npsas1.CA.total <- read.csv("Powerstats opspco.csv", skip=71, nrow=1, header=FALSE)
+npsas1.CA <- rbind(npsas1.CA.total, npsas1.CA)
 
 names(npsas1.US) <- c("Group", "Average federal loans")
 names(npsas1.CA) <- c("Group", "Average federal loans")
@@ -789,11 +966,12 @@ npsas1$Group[npsas1$Group=="Black or African American"] <- "Black"
 npsas1$Group[npsas1$Group=="Hispanic or Latino"] <- "Latino/a"
 npsas1$Group[npsas1$Group=="Native Hawaiian/other Pacific Islander"] <- "Pacific Islander"
 npsas1$Group[npsas1$Group=="More than one race"] <- "2+ races"
+npsas1$Group[npsas1$Group=="Total"] <- "Overall"
 
 npsas1 <- reshape2::melt(data=npsas1, id.vars = c("Group", "State"), value.name="Average Loan")
 
 npsas1$Group <- as.factor(npsas1$Group)
-npsas1$Group <- factor(npsas1$Group, levels = c("White", "Latino/a", "Black", "Asian", "Pacific Islander", "2+ races"))
+npsas1$Group <- factor(npsas1$Group, levels = c("Overall", "White", "Latino/a", "Black", "Asian", "Pacific Islander", "2+ races"))
 
 npsas1$`Average Loan` <- gsub(pattern="!", x=npsas1$`Average Loan`, replacement="")
 npsas1$`Average Loan` <- gsub(pattern=",", x=npsas1$`Average Loan`, replacement="")
@@ -815,7 +993,12 @@ ggplotly(g2A, tooltip="text", width=800, height=350)
 
 ```{r percentages.npsas1}
 npsas1P.US <- read.csv("PowerStats njviui.csv", skip=14, nrow=7, header=FALSE) %>% select(V1, V3)
+npsas1P.US.total <- read.csv("PowerStats njviui.csv", skip=12, nrow=1, header=FALSE) %>% select(V1, V3)
+npsas1P.US <- rbind(npsas1P.US.total, npsas1P.US)
+
 npsas1P.CA <- read.csv("PowerStats njviui.csv", skip=78, nrow=7, header=FALSE) %>% select(V1, V3)
+npsas1P.CA.total <- read.csv("PowerStats njviui.csv", skip=76, nrow=1, header=FALSE) %>% select(V1, V3)
+npsas1P.CA <- rbind(npsas1P.CA.total, npsas1P.CA)
 
 names(npsas1P.US) <- c("Group", "Share Borrowing Loans")
 names(npsas1P.CA) <- c("Group", "Share Borrowing Loans")
@@ -829,11 +1012,12 @@ npsas1P$Group[npsas1P$Group=="Black or African American"] <- "Black"
 npsas1P$Group[npsas1P$Group=="Hispanic or Latino"] <- "Latino/a"
 npsas1P$Group[npsas1P$Group=="Native Hawaiian/other Pacific Islander"] <- "Pacific Islander"
 npsas1P$Group[npsas1P$Group=="More than one race"] <- "2+ races"
+npsas1P$Group[npsas1P$Group=="Total"] <- "Overall"
 
 npsas1P <- reshape2::melt(data=npsas1P, id.vars = c("Group", "State"), value.name="Share Borrowing Loans")
 
 npsas1P$Group <- as.factor(npsas1P$Group)
-npsas1P$Group <- factor(npsas1P$Group, levels = c("White", "Latino/a", "Black", "Asian", "Pacific Islander", "2+ races"))
+npsas1P$Group <- factor(npsas1P$Group, levels = c("Overall", "White", "Latino/a", "Black", "Asian", "Pacific Islander", "2+ races"))
 
 npsas1P$`Share Borrowing Loans` <- gsub(pattern="!", x=npsas1P$`Share Borrowing Loans`, replacement="")
 npsas1P$`Share Borrowing Loans` <- gsub(pattern=",", x=npsas1P$`Share Borrowing Loans`, replacement="")
@@ -855,7 +1039,12 @@ ggplotly(g2AP, tooltip="text", width=800, height=350)
 ##### Figure 2: Undergraduate Loans by Race and Gender 
 ```{r npsas1.1}
 npsas1.1.US <- read.csv("Powerstats ztmgmm.csv", skip=12, nrow=14, header=FALSE)
+npsas1.1.US.total <- read.csv("Powerstats vzreir.csv", skip=12, nrow=2, header=FALSE)
+npsas1.1.US <- rbind(npsas1.1.US.total, npsas1.1.US)
+
 npsas1.1.CA <- read.csv("Powerstats ztmgmm.csv", skip=108, nrow=14, header=FALSE)
+npsas1.1.CA.total <- read.csv("Powerstats vzreir.csv", skip=48, nrow=2, header=FALSE)
+npsas1.1.CA <- rbind(npsas1.1.CA.total, npsas1.1.CA)
 
 names(npsas1.1.US) <- c("Group", "Average federal loans")
 names(npsas1.1.CA) <- c("Group", "Average federal loans")
@@ -901,6 +1090,11 @@ npsas1.1$Gender[npsas1.1$Group=="Female of more than one race"] <- "Female"
 npsas1.1$Group[npsas1.1$Group=="Male of more than one race"] <- "2+ races"
 npsas1.1$Group[npsas1.1$Group=="Female of more than one race"] <- "2+ races"
 
+npsas1.1$Gender[npsas1.1$Group=="Male"] <- "Male"
+npsas1.1$Gender[npsas1.1$Group=="Female"] <- "Female"
+npsas1.1$Group[npsas1.1$Group=="Male"] <- "Overall"
+npsas1.1$Group[npsas1.1$Group=="Female"] <- "Overall"
+
 npsas1.1 <- npsas1.1 %>% filter(Group %in% c("Native American", "Pacific Islander")==FALSE)
 
 npsas1.1 <- reshape2::melt(data=npsas1.1, id.vars = c("Group", "State", "Gender"), value.name="Average Loan")
@@ -909,7 +1103,7 @@ npsas1.1$Gender <- as.factor(npsas1.1$Gender)
 npsas1.1$Gender <- factor(npsas1.1$Gender, levels=c("Male", "Female"))
 
 npsas1.1$Group <- as.factor(npsas1.1$Group)
-npsas1.1$Group <- factor(npsas1.1$Group, levels = c("White", "Latino/a", "Black", "Asian", "2+ races"))
+npsas1.1$Group <- factor(npsas1.1$Group, levels = c("Overall", "White", "Latino/a", "Black", "Asian", "2+ races"))
 
 npsas1.1$`Average Loan` <- gsub(pattern="!", x=npsas1.1$`Average Loan`, replacement="")
 npsas1.1$`Average Loan` <- gsub(pattern=",", x=npsas1.1$`Average Loan`, replacement="")
@@ -932,7 +1126,12 @@ ggplotly(g2B, tooltip="text", width=800, height=350)
 
 ```{r percentages.npsas1.1}
 npsas1.1P.US <- read.csv("Powerstats tqbbxv.csv", skip=14, nrow=14, header=FALSE) %>% select(V1, V3)
+npsas1.1P.US.total <- read.csv("Powerstats pqftzn.csv", skip=14, nrow=2, header=FALSE) %>% select(V1, V3)
+npsas1.1P.US <- rbind(npsas1.1P.US.total, npsas1.1P.US)
+
 npsas1.1P.CA <- read.csv("Powerstats tqbbxv.csv", skip=113, nrow=14, header=FALSE) %>% select(V1, V3)
+npsas1.1P.CA.total <- read.csv("Powerstats pqftzn.csv", skip=53, nrow=2, header=FALSE) %>% select(V1, V3)
+npsas1.1P.CA <- rbind(npsas1.1P.CA.total, npsas1.1P.CA)
 
 names(npsas1.1P.US) <- c("Group", "Share Borrowing Loans")
 names(npsas1.1P.CA) <- c("Group", "Share Borrowing Loans")
@@ -978,12 +1177,17 @@ npsas1.1P$Gender[npsas1.1P$Group=="Female of more than one race"] <- "Female"
 npsas1.1P$Group[npsas1.1P$Group=="Male of more than one race"] <- "2+ races"
 npsas1.1P$Group[npsas1.1P$Group=="Female of more than one race"] <- "2+ races"
 
+npsas1.1P$Gender[npsas1.1P$Group=="Male"] <- "Male"
+npsas1.1P$Gender[npsas1.1P$Group=="Female"] <- "Female"
+npsas1.1P$Group[npsas1.1P$Group=="Male"] <- "Overall"
+npsas1.1P$Group[npsas1.1P$Group=="Female"] <- "Overall"
+
 npsas1.1P <- npsas1.1P %>% filter(Group %in% c("Native American")==FALSE)
 
 npsas1.1P <- reshape2::melt(data=npsas1.1P, id.vars = c("Group", "State", "Gender"), value.name="Share Borrowing Loans")
 
 npsas1.1P$Group <- as.factor(npsas1.1P$Group)
-npsas1.1P$Group <- factor(npsas1.1P$Group, levels = c("White", "Latino/a", "Black", "Asian", "Pacific Islander", "2+ races"))
+npsas1.1P$Group <- factor(npsas1.1P$Group, levels = c("Overall", "White", "Latino/a", "Black", "Asian", "Pacific Islander", "2+ races"))
 
 npsas1.1P$`Share Borrowing Loans` <- gsub(pattern="!", x=npsas1.1P$`Share Borrowing Loans`, replacement="")
 npsas1.1P$`Share Borrowing Loans` <- gsub(pattern=",", x=npsas1.1P$`Share Borrowing Loans`, replacement="")
@@ -1005,7 +1209,7 @@ ggplotly(g2BP, tooltip="text", width=800, height=350)
 ```
 ##### Data Source and Notes
 
-**Data source:** National Postsecondary Student Aid Study, Undergraduate. Datalab interface available [here](https://nces.ed.gov/datalab/) using table retrieval number *opspco* for "Figure 2: Race" and *ztmgmm* for "Figure 2: Race and Gender."
+**Data source:** National Postsecondary Student Aid Study, Undergraduate. Datalab interface available [here](https://nces.ed.gov/datalab/) using table retrieval numbers *opspco* and *njviui* for "Figure 2: Race" and *ztmgmm*,  *vzreir*, *tqbbxv*, and *pqftzn* for "Figure 2: Race and Gender."
 
 **Timeframe reflected:** Figures in this graph reflect students enrolled in the 2015-16 academic year. 
 
@@ -1021,7 +1225,12 @@ Figure 3 shows that key differences at the graduate level. The average annual lo
 ##### Figure 3: Average Graduate Loans by Race
 ```{r npsas2}
 npsas2.US <- read.csv("Powerstats ozhexe.csv", skip=12, nrow=7, header=FALSE)
+npsas2.US.total <- read.csv("Powerstats ozhexe.csv", skip=10, nrow=1, header=FALSE)
+npsas2.US <- rbind(npsas2.US.total, npsas2.US)
+
 npsas2.CA <- read.csv("Powerstats ozhexe.csv", skip=73, nrow=7, header=FALSE)
+npsas2.CA.total <- read.csv("Powerstats ozhexe.csv", skip=71, nrow=1, header=FALSE)
+npsas2.CA <- rbind(npsas2.CA.total, npsas2.CA)
 
 names(npsas2.US) <- c("Group", "Average loans")
 names(npsas2.CA) <- c("Group", "Average loans")
@@ -1034,9 +1243,10 @@ npsas2 <- npsas2 %>% filter((Group %in% c("American Indian or Alaska Native", "N
 
 npsas2$Group[npsas2$Group=="Black or African American"] <- "Black"
 npsas2$Group[npsas2$Group=="Hispanic or Latino"] <- "Latino/a"
+npsas2$Group[npsas2$Group=="Total"] <- "Overall"
 
 npsas2$Group <- as.factor(npsas2$Group)
-npsas2$Group <- factor(npsas2$Group, levels = c("White", "Latino/a", "Black", "Asian"))
+npsas2$Group <- factor(npsas2$Group, levels = c("Overall", "White", "Latino/a", "Black", "Asian"))
 
 npsas2$`Average loans` <- gsub(pattern="!", x=npsas2$`Average loans`, replacement="")
 npsas2$`Average loans` <- gsub(pattern=",", x=npsas2$`Average loans`, replacement="")
@@ -1059,7 +1269,12 @@ ggplotly(g3, width=800, height=350, tooltip="text")
 
 ```{r percentages.npsas2}
 npsas2P.US <- read.csv("Powerstats lkxsci.csv", skip=14, nrow=7, header=FALSE) %>% select(V1, V3)
+npsas2P.US.total <- read.csv("Powerstats lkxsci.csv", skip=12, nrow=1, header=FALSE) %>% select(V1, V3)
+npsas2P.US <- rbind(npsas2P.US.total, npsas2P.US)
+
 npsas2P.CA <- read.csv("Powerstats lkxsci.csv", skip=78, nrow=7, header=FALSE) %>% select(V1, V3)
+npsas2P.CA.total <- read.csv("Powerstats lkxsci.csv", skip=76, nrow=1, header=FALSE) %>% select(V1, V3)
+npsas2P.CA <- rbind(npsas2P.CA.total, npsas2P.CA)
 
 names(npsas2P.US) <- c("Group", "Share Borrowing Loans")
 names(npsas2P.CA) <- c("Group", "Share Borrowing Loans")
@@ -1072,9 +1287,10 @@ npsas2P <- npsas2P %>% filter((Group %in% c("American Indian or Alaska Native", 
 
 npsas2P$Group[npsas2P$Group=="Black or African American"] <- "Black"
 npsas2P$Group[npsas2P$Group=="Hispanic or Latino"] <- "Latino/a"
+npsas2P$Group[npsas2P$Group=="Total"] <- "Overall"
 
 npsas2P$Group <- as.factor(npsas2P$Group)
-npsas2P$Group <- factor(npsas2P$Group, levels = c("White", "Latino/a", "Black", "Asian"))
+npsas2P$Group <- factor(npsas2P$Group, levels = c("Overall", "White", "Latino/a", "Black", "Asian"))
 
 npsas2P$`Share Borrowing Loans` <- gsub(pattern="!", x=npsas2P$`Share Borrowing Loans`, replacement="")
 npsas2P$`Share Borrowing Loans` <- gsub(pattern=",", x=npsas2P$`Share Borrowing Loans`, replacement="")
@@ -1097,6 +1313,8 @@ ggplotly(g3P, width=800, height=350, tooltip="text")
 ##### Figure 3: Average Graduate Loans by Race and Gender (U.S. only)
 ```{r npsas2.1}
 npsas2.1 <- read.csv("Powerstats odiegv.csv", skip=12, nrow=14, header=FALSE)
+npsas2.1.total <- read.csv("Powerstats qnabzw.csv", skip=12, nrow=2, header=FALSE)
+npsas2.1 <- rbind(npsas2.1.total, npsas2.1)
 names(npsas2.1) <- c("Group", "Average loans")
 
 npsas2.1$State <- rep("U.S.", nrow(npsas2.1))
@@ -1137,10 +1355,15 @@ npsas2.1$Gender[npsas2.1$Group=="Female of more than one race"] <- "Female"
 npsas2.1$Group[npsas2.1$Group=="Male of more than one race"] <- "2+ races"
 npsas2.1$Group[npsas2.1$Group=="Female of more than one race"] <- "2+ races"
 
+npsas2.1$Gender[npsas2.1$Group=="Male"] <- "Male"
+npsas2.1$Gender[npsas2.1$Group=="Female"] <- "Female"
+npsas2.1$Group[npsas2.1$Group=="Male"] <- "Overall"
+npsas2.1$Group[npsas2.1$Group=="Female"] <- "Overall"
+
 npsas2.1 <- npsas2.1 %>% filter((Group %in% c("Native American", "Pacific Islander", "2+ races"))==FALSE)
 
 npsas2.1$Group <- as.factor(npsas2.1$Group)
-npsas2.1$Group <- factor(npsas2.1$Group, levels = c("White", "Latino/a", "Black", "Asian", "2+ races"))
+npsas2.1$Group <- factor(npsas2.1$Group, levels = c("Overall", "White", "Latino/a", "Black", "Asian", "2+ races"))
 
 npsas2.1$`Average loans` <- gsub(pattern="!", x=npsas2.1$`Average loans`, replacement="")
 npsas2.1$`Average loans` <- gsub(pattern=",", x=npsas2.1$`Average loans`, replacement="")
@@ -1163,6 +1386,9 @@ ggplotly(g3B, tooltip="text", width=800, height=350)
 
 ```{r percentages.npsas2.1}
 npsas2.1P <- read.csv("Powerstats jcbvqb.csv", skip=14, nrow=14, header=FALSE) %>% select(V1, V3)
+npsas2.1P.total <- read.csv("Powerstats ietaou.csv", skip=14, nrow=2, header=FALSE) %>% select(V1, V3)
+npsas2.1P <- rbind(npsas2.1P.total, npsas2.1P)
+
 names(npsas2.1P) <- c("Group", "Share Borrowing Loans")
 
 npsas2.1P$State <- rep("U.S.", nrow(npsas2.1P))
@@ -1203,10 +1429,15 @@ npsas2.1P$Gender[npsas2.1P$Group=="Female of more than one race"] <- "Female"
 npsas2.1P$Group[npsas2.1P$Group=="Male of more than one race"] <- "2+ races"
 npsas2.1P$Group[npsas2.1P$Group=="Female of more than one race"] <- "2+ races"
 
+npsas2.1P$Gender[npsas2.1P$Group=="Male"] <- "Male"
+npsas2.1P$Gender[npsas2.1P$Group=="Female"] <- "Female"
+npsas2.1P$Group[npsas2.1P$Group=="Male"] <- "Overall"
+npsas2.1P$Group[npsas2.1P$Group=="Female"] <- "Overall"
+
 npsas2.1P <- npsas2.1P %>% filter((Group %in% c("Native American", "Pacific Islander", "2+ races"))==FALSE)
 
 npsas2.1P$Group <- as.factor(npsas2.1P$Group)
-npsas2.1P$Group <- factor(npsas2.1P$Group, levels = c("White", "Latino/a", "Black", "Asian", "2+ races"))
+npsas2.1P$Group <- factor(npsas2.1P$Group, levels = c("Overall", "White", "Latino/a", "Black", "Asian", "2+ races"))
 
 npsas2.1P$`Share Borrowing Loans` <- gsub(pattern="!", x=npsas2.1P$`Share Borrowing Loans`, replacement="")
 npsas2.1P$`Share Borrowing Loans` <- gsub(pattern=",", x=npsas2.1P$`Share Borrowing Loans`, replacement="")
@@ -1228,7 +1459,7 @@ ggplotly(g3BP, tooltip="text", width=800, height=350)
 ```
 ##### Data Source and Notes 
 
-**Data source:** National Postsecondary Student Aid Study, Undergraduate. Datalab interface available [here](https://nces.ed.gov/datalab/) using table retrieval number *ozhexe* for "Figure 3: Race" and *odiegv* for "Figure 3: Race and Gender."
+**Data source:** National Postsecondary Student Aid Study, Undergraduate. Datalab interface available [here](https://nces.ed.gov/datalab/) using table retrieval numbers *ozhexe* and *lkxsci* for "Figure 3: Race" and *odiegv*, *qnabzw*, *jcbvqb*, and *ietaou* for "Figure 3: Race and Gender."
 
 **Timeframe reflected:** Figures in this graph reflect students enrolled in the 2015-16 academic year. 
 
@@ -1238,7 +1469,7 @@ ggplotly(g3BP, tooltip="text", width=800, height=350)
 
 #### {-}
 
-Differences by group within California are also concerning. More than 75 percent of Black California graduate students and 62 percent of Latino/a California graduate students must borrow student loans, compared to 42 percent of white California graduate students. Although the share who borrow is roughly the same in California as in the U.S. overall, Black students are the exception, borrowing loans at a rate that is 13 percentage points higher. 
+Differences by group within California are also concerning. More than 75 percent of Black California graduate students and 62 percent of Latino/a California graduate students must borrow student loans, compared to 42 percent of white California graduate students. Although the share who borrow is roughly the same in California as in the U.S. overall, Black students are the exception, borrowing loans at a rate that is 13 percentage points higher.
 
 At the graduate level in California, Asian students borrow the most, exceeding $30,000 per year, which is slightly above the national average for Asian graduate students. However, Asian graduate students borrow the least frequently of these four groups, in California and in the U.S. overall. (Recall that this is limited to in-state students, so international enrollment is not a factor.)
 
@@ -1250,7 +1481,12 @@ Among California graduate students, the NPSAS sample is not sufficient for a com
 ##### Figure 4: Average Graduate Loans by Program and Race
 ```{r npsas3}
 npsas3.US.masters <- read.csv("PowerStats enucsq.csv", skip=73, nrow=7, header=FALSE)
+npsas3.US.masters.total <- read.csv("PowerStats enucsq.csv", skip=71, nrow=1, header=FALSE)
+npsas3.US.masters <- rbind(npsas3.US.masters.total, npsas3.US.masters
+                           )
 npsas3.US.professional <- read.csv("PowerStats enucsq.csv", skip=256, nrow=7, header=FALSE)
+npsas3.US.professional.total <- read.csv("PowerStats enucsq.csv", skip=254, nrow=1, header=FALSE)
+npsas3.US.professional <- rbind(npsas3.US.professional.total, npsas3.US.professional)
 
 names(npsas3.US.masters) <- c("Group", "Total federal loans")
 names(npsas3.US.professional) <- c("Group", "Total federal loans")
@@ -1265,11 +1501,12 @@ npsas3$State <- rep("U.S.", nrow(npsas3))
 npsas3$Group[npsas3$Group=="Black or African American"] <- "Black"
 npsas3$Group[npsas3$Group=="Hispanic or Latino"] <- "Latino/a"
 npsas3$Group[npsas3$Group=="More than one race"] <- "2+ races"
+npsas3$Group[npsas3$Group=="Total"] <- "Overall"
 
 npsas3 <- npsas3 %>% filter(Group %in% c("American Indian or Alaska Native", "Native Hawaiian/other Pacific Islander")==FALSE)
 
 npsas3$Group <- as.factor(npsas3$Group)
-npsas3$Group <- factor(npsas3$Group, levels = c("White", "Latino/a", "Black", "Asian", "2+ races"))
+npsas3$Group <- factor(npsas3$Group, levels = c("Overall", "White", "Latino/a", "Black", "Asian", "2+ races"))
 
 npsas3$`Total federal loans` <- gsub(pattern="!", x=npsas3$`Total federal loans`, replacement="")
 npsas3$`Total federal loans` <- gsub(pattern=",", x=npsas3$`Total federal loans`, replacement="")
@@ -1293,7 +1530,12 @@ ggplotly(g4A, width=800, height=350, tooltip="text")
 
 ```{r percentages.npsas3}
 npsas3P.US.masters <- read.csv("PowerStats lmjixp.csv", skip=78, nrow=7, header=FALSE) %>% select(V1, V3)
+npsas3P.US.masters.total <- read.csv("PowerStats lmjixp.csv", skip=76, nrow=1, header=FALSE) %>% select(V1, V3)
+npsas3P.US.masters <- rbind(npsas3P.US.masters.total, npsas3P.US.masters)
+
 npsas3P.US.professional <- read.csv("PowerStats lmjixp.csv", skip=270, nrow=7, header=FALSE) %>% select(V1, V3)
+npsas3P.US.professional.total <- read.csv("PowerStats lmjixp.csv", skip=268, nrow=1, header=FALSE) %>% select(V1, V3)
+npsas3P.US.professional <- rbind(npsas3P.US.professional.total, npsas3P.US.professional)
 
 names(npsas3P.US.masters) <- c("Group", "Share Borrowing Loans")
 names(npsas3P.US.professional) <- c("Group", "Share Borrowing Loans")
@@ -1308,11 +1550,12 @@ npsas3P$State <- rep("U.S.", nrow(npsas3P))
 npsas3P$Group[npsas3P$Group=="Black or African American"] <- "Black"
 npsas3P$Group[npsas3P$Group=="Hispanic or Latino"] <- "Latino/a"
 npsas3P$Group[npsas3P$Group=="More than one race"] <- "2+ races"
+npsas3P$Group[npsas3P$Group=="Total"] <- "Overall"
 
 npsas3P <- npsas3P %>% filter(Group %in% c("American Indian or Alaska Native", "Native Hawaiian/other Pacific Islander")==FALSE)
 
 npsas3P$Group <- as.factor(npsas3P$Group)
-npsas3P$Group <- factor(npsas3P$Group, levels = c("White", "Latino/a", "Black", "Asian", "2+ races"))
+npsas3P$Group <- factor(npsas3P$Group, levels = c("Overall", "White", "Latino/a", "Black", "Asian", "2+ races"))
 
 npsas3P$`Share Borrowing Loans` <- gsub(pattern="!", x=npsas3P$`Share Borrowing Loans`, replacement="")
 npsas3P$`Share Borrowing Loans` <- gsub(pattern=",", x=npsas3P$`Share Borrowing Loans`, replacement="")
@@ -1336,7 +1579,12 @@ ggplotly(g4AP, width=800, height=350, tooltip="text")
 ##### Figure 4: Average Graduate Loans by Program, Race, and Gender
 ```{r npsas3.1}
 npsas3.1.US.masters <- read.csv("PowerStats xqcxry.csv", skip=108, nrow=14, header=FALSE)
+npsas3.1.US.masters.total <- read.csv("PowerStats phedaa.csv", skip=48, nrow=2, header=FALSE)
+npsas3.1.US.masters <- rbind(npsas3.1.US.masters.total, npsas3.1.US.masters)
+
 npsas3.1.US.professional <- read.csv("PowerStats xqcxry.csv", skip=396, nrow=14, header=FALSE)
+npsas3.1.US.professional.total <- read.csv("PowerStats phedaa.csv", skip=156, nrow=2, header=FALSE)
+npsas3.1.US.professional <- rbind(npsas3.1.US.professional.total, npsas3.1.US.professional)
 
 names(npsas3.1.US.masters) <- c("Group", "Total federal loans")
 names(npsas3.1.US.professional) <- c("Group", "Total federal loans")
@@ -1384,9 +1632,14 @@ npsas3.1$Gender[npsas3.1$Group=="Female of more than one race"] <- "Female"
 npsas3.1$Group[npsas3.1$Group=="Male of more than one race"] <- "2+ races"
 npsas3.1$Group[npsas3.1$Group=="Female of more than one race"] <- "2+ races"
 
-npsas3.1 <- npsas3.1 %>% filter(Group %in% c("White",  "Latino/a", "Black", "Asian"))
+npsas3.1$Gender[npsas3.1$Group=="Male"] <- "Male"
+npsas3.1$Gender[npsas3.1$Group=="Female"] <- "Female"
+npsas3.1$Group[npsas3.1$Group=="Male"] <- "Overall"
+npsas3.1$Group[npsas3.1$Group=="Female"] <- "Overall"
+
+npsas3.1 <- npsas3.1 %>% filter(Group %in% c("Overall", "White",  "Latino/a", "Black", "Asian"))
 npsas3.1$Group <- as.factor(npsas3.1$Group)
-npsas3.1$Group <- factor(npsas3.1$Group, levels = c("White", "Latino/a", "Black", "Asian", "2+ races"))
+npsas3.1$Group <- factor(npsas3.1$Group, levels = c("Overall", "White", "Latino/a", "Black", "Asian", "2+ races"))
 
 npsas3.1$`Total federal loans` <- gsub(pattern="!", x=npsas3.1$`Total federal loans`, replacement="")
 npsas3.1$`Total federal loans` <- gsub(pattern=",", x=npsas3.1$`Total federal loans`, replacement="")
@@ -1411,7 +1664,12 @@ ggplotly(g4B, width=800, height=450, tooltip="text")
 
 ```{r percentages.npsas3.1}
 npsas3.1P.US.masters <- read.csv("PowerStats ilzmdk.csv", skip=113, nrow=14, header=FALSE) %>% select(V1, V3)
+npsas3.1P.US.masters.total <- read.csv("PowerStats noxoew.csv", skip=53, nrow=2, header=FALSE) %>% select(V1, V3)
+npsas3.1P.US.masters <- rbind(npsas3.1P.US.masters.total, npsas3.1P.US.masters)
+
 npsas3.1P.US.professional <- read.csv("PowerStats ilzmdk.csv", skip=410, nrow=14, header=FALSE) %>% select(V1, V3)
+npsas3.1P.US.professional.total <- read.csv("PowerStats noxoew.csv", skip=170, nrow=2, header=FALSE) %>% select(V1, V3)
+npsas3.1P.US.professional <- rbind(npsas3.1P.US.professional.total, npsas3.1P.US.professional)
 
 names(npsas3.1P.US.masters) <- c("Group", "Share Borrowing Loans")
 names(npsas3.1P.US.professional) <- c("Group", "Share Borrowing Loans")
@@ -1459,9 +1717,14 @@ npsas3.1P$Gender[npsas3.1P$Group=="Female of more than one race"] <- "Female"
 npsas3.1P$Group[npsas3.1P$Group=="Male of more than one race"] <- "2+ races"
 npsas3.1P$Group[npsas3.1P$Group=="Female of more than one race"] <- "2+ races"
 
-npsas3.1P <- npsas3.1P %>% filter(Group %in% c("White",  "Latino/a", "Black", "Asian", "2+ races"))
+npsas3.1P$Gender[npsas3.1P$Group=="Male"] <- "Male"
+npsas3.1P$Gender[npsas3.1P$Group=="Female"] <- "Female"
+npsas3.1P$Group[npsas3.1P$Group=="Male"] <- "Overall"
+npsas3.1P$Group[npsas3.1P$Group=="Female"] <- "Overall"
+
+npsas3.1P <- npsas3.1P %>% filter(Group %in% c("Overall", "White",  "Latino/a", "Black", "Asian", "2+ races"))
 npsas3.1P$Group <- as.factor(npsas3.1P$Group)
-npsas3.1P$Group <- factor(npsas3.1P$Group, levels = c("White", "Latino/a", "Black", "Asian", "2+ races"))
+npsas3.1P$Group <- factor(npsas3.1P$Group, levels = c("Overall", "White", "Latino/a", "Black", "Asian", "2+ races"))
 
 npsas3.1P$`Share Borrowing Loans` <- gsub(pattern="!", x=npsas3.1P$`Share Borrowing Loans`, replacement="")
 npsas3.1P$`Share Borrowing Loans` <- gsub(pattern=",", x=npsas3.1P$`Share Borrowing Loans`, replacement="")
@@ -1487,7 +1750,7 @@ ggplotly(g4BP, width=800, height=450, tooltip="text")
 ```
 ##### Data Source and Notes
 
-**Data source:** National Postsecondary Student Aid Study, Graduate. Datalab interface available [here](https://nces.ed.gov/datalab/) using table retrieval number *enucsq* for "Figure 4: Race" and table retrieval number *xqcxry* for "Figure 4: Race and Gender."
+**Data source:** National Postsecondary Student Aid Study, Graduate. Datalab interface available [here](https://nces.ed.gov/datalab/) using table retrieval numbers *enucsq* and *lmjixp* for "Figure 4: Race" and table retrieval numbers *xqcxry*, *phedaa*, *ilzmdk*, *noxoew* for "Figure 4: Race and Gender."
 
 **Timeframe reflected:** Figures in this graph reflect students enrolled in the 2015-16 academic year. 
 
@@ -1507,7 +1770,12 @@ Figure 5 returns to the undergraduate level and considers how much debt undergra
 ##### Figure 5: Average Undergraduate Loans at Graduation by Race
 ```{r npsas4, warning=FALSE}
 npsas4.US <- read.csv("PowerStats dxwsoi.csv", skip=12, nrow=7, header=FALSE)
+npsas4.US.total <- read.csv("PowerStats dxwsoi.csv", skip=10, nrow=1, header=FALSE)
+npsas4.US <- rbind(npsas4.US.total, npsas4.US)
+
 npsas4.CA <- read.csv("PowerStats dxwsoi.csv", skip=73, nrow=7, header=FALSE)
+npsas4.CA.total <- read.csv("PowerStats dxwsoi.csv", skip=71, nrow=1, header=FALSE)
+npsas4.CA <- rbind(npsas4.CA.total, npsas4.CA)
 
 names(npsas4.US) <- c("Group", "Average cumulative federal loans")
 names(npsas4.CA) <- c("Group", "Average cumulative federal loans")
@@ -1522,11 +1790,12 @@ npsas4$Group[npsas4$Group=="Black or African American"] <- "Black"
 npsas4$Group[npsas4$Group=="More than one race"] <- "2+ races"
 npsas4$Group[npsas4$Group=="Hispanic or Latino"] <- "Latino/a"
 npsas4$Group[npsas4$Group=="Native Hawaiian/other Pacific Islander"] <- "Pacific Islander"
+npsas4$Group[npsas4$Group=="Total"] <- "Overall"
 
 npsas4$`Average cumulative federal loans` <- as.numeric(npsas4$`Average cumulative federal loans`)
 
 npsas4$Group <- as.factor(npsas4$Group)
-npsas4$Group <- factor(npsas4$Group, levels = c("White", "Latino/a", "Black", "Asian", "Pacific Islander", "2+ races"))
+npsas4$Group <- factor(npsas4$Group, levels = c("Overall", "White", "Latino/a", "Black", "Asian", "Pacific Islander", "2+ races"))
 ```
 
 ```{r figure5A}
@@ -1544,7 +1813,12 @@ ggplotly(g5A, width=800, height=350, tooltip="text")
 
 ```{r percentages.npsas4}
 npsas4P.US <- read.csv("PowerStats dyclij.csv", skip=14, nrow=7, header=FALSE) %>% select(V1, V3)
+npsas4P.US.total <- read.csv("PowerStats dyclij.csv", skip=12, nrow=1, header=FALSE) %>% select(V1, V3)
+npsas4P.US <- rbind(npsas4P.US.total, npsas4P.US)
+
 npsas4P.CA <- read.csv("PowerStats dyclij.csv", skip=78, nrow=7, header=FALSE) %>% select(V1, V3)
+npsas4P.CA.total <- read.csv("PowerStats dyclij.csv", skip=76, nrow=1, header=FALSE) %>% select(V1, V3)
+npsas4P.CA <- rbind(npsas4P.CA.total, npsas4P.CA)
 
 names(npsas4P.US) <- c("Group", "Share with Cumulative Loans")
 names(npsas4P.CA) <- c("Group", "Share with Cumulative Loans")
@@ -1559,11 +1833,12 @@ npsas4P$Group[npsas4P$Group=="Black or African American"] <- "Black"
 npsas4P$Group[npsas4P$Group=="More than one race"] <- "2+ races"
 npsas4P$Group[npsas4P$Group=="Hispanic or Latino"] <- "Latino/a"
 npsas4P$Group[npsas4P$Group=="Native Hawaiian/other Pacific Islander"] <- "Pacific Islander"
+npsas4P$Group[npsas4P$Group=="Total"] <- "Overall"
 
 npsas4P$`Share with Cumulative Loans` <- as.numeric(npsas4P$`Share with Cumulative Loans`) / 100
 
 npsas4P$Group <- as.factor(npsas4P$Group)
-npsas4P$Group <- factor(npsas4P$Group, levels = c("White", "Latino/a", "Black", "Asian", "Pacific Islander", "2+ races"))
+npsas4P$Group <- factor(npsas4P$Group, levels = c("Overall", "White", "Latino/a", "Black", "Asian", "Pacific Islander", "2+ races"))
 ```
 
 ```{r percentages.figure5A}
@@ -1581,7 +1856,12 @@ ggplotly(g5AP, width=800, height=350, tooltip="text")
 ##### Figure 5: Average Undergraduate Loans at Graduation by Race and Gender
 ```{r npsas4.1, warning=FALSE}
 npsas4.1.US <- read.csv("PowerStats gkhfjw.csv", skip=12, nrow=14, header=FALSE)
+npsas4.1.US.total <- read.csv("PowerStats rrbopj.csv", skip=12, nrow=2, header=FALSE)
+npsas4.1.US <- rbind(npsas4.1.US.total, npsas4.1.US)
+
 npsas4.1.CA <- read.csv("PowerStats gkhfjw.csv", skip=108, nrow=14, header=FALSE)
+npsas4.1.CA.total <- read.csv("PowerStats rrbopj.csv", skip=48, nrow=2, header=FALSE)
+npsas4.1.CA <- rbind(npsas4.1.CA.total, npsas4.1.CA)
 
 names(npsas4.1.US) <- c("Group", "Average cumulative federal loans")
 names(npsas4.1.CA) <- c("Group", "Average cumulative federal loans")
@@ -1626,10 +1906,15 @@ npsas4.1$Gender[npsas4.1$Group=="Female of more than one race"] <- "Female"
 npsas4.1$Group[npsas4.1$Group=="Male of more than one race"] <- "2+ races"
 npsas4.1$Group[npsas4.1$Group=="Female of more than one race"] <- "2+ races"
 
+npsas4.1$Gender[npsas4.1$Group=="Male"] <- "Male"
+npsas4.1$Gender[npsas4.1$Group=="Female"] <- "Female"
+npsas4.1$Group[npsas4.1$Group=="Male"] <- "Overall"
+npsas4.1$Group[npsas4.1$Group=="Female"] <- "Overall"
+
 npsas4.1 <- npsas4.1 %>% filter(Group %in% c("Native American", "Pacific Islander")==FALSE)
 
 npsas4.1$Group <- as.factor(npsas4.1$Group)
-npsas4.1$Group <- factor(npsas4.1$Group, levels = c("White", "Latino/a", "Black", "Asian", "2+ races"))
+npsas4.1$Group <- factor(npsas4.1$Group, levels = c("Overall", "White", "Latino/a", "Black", "Asian", "2+ races"))
 
 npsas4.1$Gender <- as.factor(npsas4.1$Gender)
 npsas4.1$Gender <- factor(npsas4.1$Gender, levels=c("Male", "Female"))
@@ -1652,7 +1937,12 @@ ggplotly(g5B, width=800, height=350, tooltip="text")
 
 ```{r percentages.npsas4.1}
 npsas4.1P.US <- read.csv("PowerStats vylupp.csv", skip=14, nrow=14, header=FALSE) %>% select(V1, V3)
+npsas4.1P.US.total <- read.csv("PowerStats lpcmjs.csv", skip=14, nrow=2, header=FALSE) %>% select(V1, V3)
+npsas4.1P.US <- rbind(npsas4.1P.US.total, npsas4.1P.US)
+
 npsas4.1P.CA <- read.csv("PowerStats vylupp.csv", skip=113, nrow=14, header=FALSE) %>% select(V1, V3)
+npsas4.1P.CA.total <- read.csv("PowerStats lpcmjs.csv", skip=53, nrow=2, header=FALSE) %>% select(V1, V3)
+npsas4.1P.CA <- rbind(npsas4.1P.CA.total, npsas4.1P.CA)
 
 names(npsas4.1P.US) <- c("Group", "Share with Cumulative Loans")
 names(npsas4.1P.CA) <- c("Group", "Share with Cumulative Loans")
@@ -1697,9 +1987,14 @@ npsas4.1P$Gender[npsas4.1P$Group=="Female of more than one race"] <- "Female"
 npsas4.1P$Group[npsas4.1P$Group=="Male of more than one race"] <- "2+ races"
 npsas4.1P$Group[npsas4.1P$Group=="Female of more than one race"] <- "2+ races"
 
+npsas4.1P$Gender[npsas4.1P$Group=="Male"] <- "Male"
+npsas4.1P$Gender[npsas4.1P$Group=="Female"] <- "Female"
+npsas4.1P$Group[npsas4.1P$Group=="Male"] <- "Overall"
+npsas4.1P$Group[npsas4.1P$Group=="Female"] <- "Overall"
+
 npsas4.1P <- npsas4.1P %>% filter(Group %in% c("Native American", "Pacific Islander")==FALSE)
 npsas4.1P$Group <- as.factor(npsas4.1P$Group)
-npsas4.1P$Group <- factor(npsas4.1P$Group, levels = c("White", "Latino/a", "Black", "Asian", "2+ races"))
+npsas4.1P$Group <- factor(npsas4.1P$Group, levels = c("Overall", "White", "Latino/a", "Black", "Asian", "2+ races"))
 
 npsas4.1P$Gender <- as.factor(npsas4.1P$Gender)
 npsas4.1P$Gender <- factor(npsas4.1P$Gender, levels=c("Male", "Female"))
@@ -1721,7 +2016,7 @@ ggplotly(g5BP, width=800, height=350, tooltip="text")
 ```
 ##### Data Source and Notes
 
-**Data source:** National Postsecondary Student Aid Study, Undergraduate. Datalab interface available [here](https://nces.ed.gov/datalab/) using table retrieval numbers *dxwsoi* for "Figure 5: Race" and table retrieval number *gkhfjw* for "Figure 5: Race and Gender (U.S. only)".
+**Data source:** National Postsecondary Student Aid Study, Undergraduate. Datalab interface available [here](https://nces.ed.gov/datalab/) using table retrieval numbers *dxwsoi* and *dyclij* for "Figure 5: Race" and table retrieval number *gkhfjw*, *rrbopj*, *vylupp*, and *lpcmjs* for "Figure 5: Race and Gender (U.S. only)".
 
 **Timeframe reflected:** Figures in this graph reflect students enrolled in the 2015-16 academic year. 
 
@@ -1921,7 +2216,7 @@ ggplotly(g6BP, width=800, height=350, tooltip="text")
 ```
 ##### Data Source and Notes
 
-**Data source:** National Postsecondary Student Aid Study, Undergraduate. Datalab interface available [here](https://nces.ed.gov/datalab/) using table retrieval number *famipl.*
+**Data source:** National Postsecondary Student Aid Study, Undergraduate. Datalab interface available [here](https://nces.ed.gov/datalab/) using table retrieval numbers *famipl* and *dzalav*.
 
 **Timeframe reflected:** Figures in this graph reflect students enrolled in the 2015-16 academic year. 
 
@@ -3094,6 +3389,13 @@ g8C <- ggplot(data=tblOwnDebtCC, mapping=aes(y=Race, x=`Share of borrowers whose
 
 ggplotly(g8C, width=800, height=350, tooltip="text")
 ```
+
+```{r ForPolicyReport3, eval=FALSE}
+tblOwnDebtCC0 <- tblOwnDebtCC %>% filter(Race != "Other, Non-Hispanic")
+tblOwnDebtCC0$Race <- as.factor(tblOwnDebtCC0$Race)
+tblOwnDebtCC0$Race <- factor(tblOwnDebtCC0$Race, levels=c("All", "White, Non-Hispanic", "Hispanic", "Black, Non-Hispanic"))
+ggplot(data=tblOwnDebtCC0, mapping=aes(y=`Share of borrowers whose debt includes credit card debt`, x=Race, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.5) + scale_y_continuous(labels=scales::percent_format(accuracy=1)) + labs(y="Share whose education debt includes credit card debt", x="Group") + theme(text=element_text(family="Optima")) + scale_fill_manual(values = stateCols2)
+```
 #### Data Source and Notes
 
 **Data source:** Survey of Household Economics and Decision-making, accessed November 2022, available through the U.S. Federal Reserve [here](https://www.federalreserve.gov/consumerscommunities/shed_data.htm).
@@ -3598,7 +3900,7 @@ tblHomeOwn <- aggregate(data=shed.HomeOwn, Weight ~ HomeOwn + Race + State + Any
 tblHomeOwn2 <- aggregate(data=shed.HomeOwn, Weight ~ HomeOwn + State + AnyStudentLoans, FUN=sum)
 tblHomeOwn2$Race <- rep("All", nrow(tblHomeOwn2))
 tblHomeOwn <- rbind(tblHomeOwn, tblHomeOwn2)
-tblHomeOwn <- reshape2::dcast(data=tblHomeOwn, Race + State + AnyStudentLoans~ HomeOwn, value.var="Weight")
+tblHomeOwn <- reshape2::dcast(data=tblHomeOwn, Race + State + AnyStudentLoans ~ HomeOwn, value.var="Weight")
 tblHomeOwn$`Total weight` <- tblHomeOwn$`Own home with a mortgage or loan` + tblHomeOwn$`Own home free and clear` + tblHomeOwn$`Pay rent` + tblHomeOwn$`Other`
 tblHomeOwn$`Own home with a mortgage or loan` <- tblHomeOwn$`Own home with a mortgage or loan` / tblHomeOwn$`Total weight`
 tblHomeOwn$`Own home free and clear` <- tblHomeOwn$`Own home free and clear` / tblHomeOwn$`Total weight`
@@ -3607,6 +3909,29 @@ tblHomeOwn$`Other` <- tblHomeOwn$`Other` / tblHomeOwn$`Total weight`
 tblHomeOwn <- reshape2::melt(data=tblHomeOwn, id.vars = c("Race", "State", "AnyStudentLoans"), value.name="Share of borrowers") %>% filter(variable != "Total weight")
 tblHomeOwn$variable <- factor(tblHomeOwn$variable, levels = c("Own home free and clear", "Own home with a mortgage or loan", "Pay rent", "Other"))
 ```
+
+```{r ForPolicyReport1, eval=FALSE}
+# Chart on home ownership
+
+shed.HomeOwn$`Owns home` <- rep("No", nrow(shed.HomeOwn))
+shed.HomeOwn$`Owns home`[shed.HomeOwn$HomeOwn %in% c("Own home free and clear", "Own home with a mortgage or loan")] <- "Yes"
+tblHomeOwn0 <- aggregate(data=shed.HomeOwn, Weight ~ `Owns home` + Race + State + AnyStudentLoans, FUN=sum)
+tblHomeOwn02 <- aggregate(data=shed.HomeOwn, Weight ~ `Owns home` + State + AnyStudentLoans, FUN=sum)
+tblHomeOwn02$Race <- rep("All", nrow(tblHomeOwn02))
+tblHomeOwn0 <- rbind(tblHomeOwn0, tblHomeOwn02)
+tblHomeOwn0 <- reshape2::dcast(data=tblHomeOwn0, Race + State + AnyStudentLoans ~ `Owns home`, value.var="Weight")
+tblHomeOwn0$`Total weight` <- tblHomeOwn0$Yes + tblHomeOwn0$No
+tblHomeOwn0$`Share who own home` <- tblHomeOwn0$Yes / tblHomeOwn0$`Total weight`
+tblHomeOwn0 <- tblHomeOwn0 %>% filter(AnyStudentLoans=="Yes")
+
+tblHomeOwn0 <- tblHomeOwn0 %>% filter(Race != "Other, Non-Hispanic")
+tblHomeOwn0$Race <- as.factor(tblHomeOwn0$Race)
+tblHomeOwn0$Race <- factor(tblHomeOwn0$Race, levels=c("All", "White, Non-Hispanic", "Hispanic", "Black, Non-Hispanic"))
+
+ggplot(data=tblHomeOwn0, mapping=aes(y=`Share who own home`, x=Race, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.5) + scale_y_continuous(labels=scales::percent_format(accuracy=1)) + labs(y="Share", x="Group", title="Share of student loan borrowers who own their home") + theme(text=element_text(family="Optima")) + scale_fill_manual(values = stateCols2)
+
+```
+
 #### Figure 14: CA borrowers
 ##### Responses to "Do you own your home?"
 ```{r figure14A, warning=FALSE}
@@ -3746,7 +4071,7 @@ Figure 16 further explores California student loan borrowers' difficulty escapin
 
 The Black-white gap is mirrored in the rest of the California population (17.5 percentage points) but is still not as extreme as it is for student loan borrowers in the state. 
 
-This figure also contains a tab for parents, similar to Figure 13, and one for those who have a graduate degree. 
+Figure 16 also contains tabs for (1) parents and (2) borrowers with graduate degrees and student loans. 
 
 ### {.tabset}
 ```{r CCBalance}
@@ -3766,6 +4091,19 @@ tblCCBalance$`Some of the time` <- tblCCBalance$`Some of the time` / tblCCBalanc
 tblCCBalance$`Once` <- tblCCBalance$`Once` / tblCCBalance$`Total weight`
 tblCCBalance <- reshape2::melt(data=tblCCBalance, id.vars = c("Race", "State", "AnyStudentLoans"), value.name="Share of borrowers") %>% filter(variable != "Total weight")
 tblCCBalance$variable <- factor(tblCCBalance$variable, levels = c("Most or all of the time", "Some of the time", "Once", "Always pay in full"))
+```
+
+```{r forPolicyReport4, eval=FALSE}
+tblCCBalance0 <- tblCCBalance %>% filter(Race != "Other, Non-Hispanic") %>% filter(Race != "All") %>% filter(State == "CA" | AnyStudentLoans == "Yes")
+tblCCBalance0$Group <- rep(NA, nrow(tblCCBalance0))
+tblCCBalance0$Group[(tblCCBalance0$State=="CA") & (tblCCBalance0$AnyStudentLoans=="Yes")] <- "California borrowers"
+tblCCBalance0$Group[(tblCCBalance0$State=="Rest of U.S.") & (tblCCBalance0$AnyStudentLoans=="Yes")] <- "Rest of U.S. borrowers"
+tblCCBalance0$Group[(tblCCBalance0$State=="CA") & (tblCCBalance0$AnyStudentLoans=="No")] <- "California non-borrowers"
+
+tblCCBalance0$Group <- as.factor(tblCCBalance0$Group)
+tblCCBalance0$Group <- factor(tblCCBalance0$Group, levels=rev(c("California borrowers", "Rest of U.S. borrowers", "California non-borrowers")))
+
+ggplot(data=tblCCBalance0, mapping=aes(y=Group, x=`Share of borrowers`, fill=variable)) + geom_bar(stat="identity") + facet_wrap(Race ~ ., ncol=1, strip.position=c("top")) + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
 ```
 #### Figure 16: CA borrowers
 ##### Responses to "In the past 12 months, how frequently have you carried an unpaid balance on one or more of your credit cards?"
@@ -3861,7 +4199,7 @@ ggplotly(g16D, width=800, height=350, tooltip="text")
 ```{r figure16E}
 shed$CCBalance1 <- shed$CCBalance
 
-shed.CCBalance1 <- shed %>% filter(is.na(CCBalance1)==FALSE) %>% filter((CCBalance1 %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) %>% filter(EdAttain %in% c("Master's degree", "Doctorate", "Professional degree")) %>% filter(OwnDebt=="Yes")
+shed.CCBalance1 <- shed %>% filter(is.na(CCBalance1)==FALSE) %>% filter((CCBalance1 %in% c("Refused", "Not In Universe (not asked)", "")==FALSE)) %>% filter(EdAttain %in% c("Master's degree", "Doctorate", "Professional degree")) %>% filter(OwnDebtSL=="Yes")
 tblCCBalance1 <- aggregate(data=shed.CCBalance1, Weight ~ CCBalance1 + State, FUN=sum)
 tblCCBalance1 <- reshape2::dcast(data=tblCCBalance1, State ~ CCBalance1, value.var="Weight")
 tblCCBalance1$`Total weight` <- tblCCBalance1$`Always pay in full` + tblCCBalance1$`Most or all of the time` + tblCCBalance1$`Some of the time` + tblCCBalance1$`Once`
@@ -4136,6 +4474,8 @@ On the opposite end of the spectrum, between 9 and 12 percent of all white, Hisp
 
 Across all groups, non-borrowers in California report greater financial well-being than student loan borrowers. 
 
+Figure 19 also contains tabs for (1) parents and (2) borrowers with graduate degrees and student loans. 
+
 ### {.tabset}
 ```{r FinManage}
 # FinManage: # Overall, which one of the following best describes how well you are managing financially these days? 
@@ -4155,6 +4495,30 @@ tblFinManage$`Doing okay` <- tblFinManage$`Doing okay` / tblFinManage$`Total wei
 tblFinManage <- reshape2::melt(data=tblFinManage, id.vars = c("Race", "State", "AnyStudentLoans"), value.name="Share of borrowers") %>% filter(variable != "Total weight")
 tblFinManage$variable <- factor(tblFinManage$variable, levels = c("Finding it difficult to get by", "Just getting by", "Doing okay", "Living comfortably"))
 ```
+
+```{r forPolicyReport2, eval=FALSE}
+# FinManage: # Overall, which one of the following best describes how well you are managing financially these days? 
+
+# table(shed$FinManage)
+shed.FinManage$`Managing well` <- rep("No", nrow(shed.FinManage))
+shed.FinManage$`Managing well`[shed.FinManage$FinManage=="Living comfortably"] <- "Yes"
+
+tblFinManage0 <- aggregate(data=shed.FinManage, Weight ~ `Managing well` + Race + State + AnyStudentLoans, FUN=sum)
+tblFinManage02 <- aggregate(data=shed.FinManage, Weight ~ `Managing well` + State + AnyStudentLoans, FUN=sum)
+tblFinManage02$Race <- rep("All", nrow(tblFinManage02))
+tblFinManage0 <- rbind(tblFinManage0, tblFinManage02)
+tblFinManage0 <- reshape2::dcast(data=tblFinManage0, Race + State + AnyStudentLoans ~ `Managing well`, value.var="Weight")
+tblFinManage0$`Total weight` <- tblFinManage0$`Yes` + tblFinManage0$`No` 
+tblFinManage0$`Share living comfortably` <- tblFinManage0$`Yes` / tblFinManage0$`Total weight`
+
+tblFinManage0 <- tblFinManage0 %>% filter(AnyStudentLoans=="Yes") %>% filter(Race != "Other, Non-Hispanic")
+tblFinManage0$Race <- as.factor(tblFinManage0$Race)
+tblFinManage0$Race <- factor(tblFinManage0$Race, levels=c("All", "White, Non-Hispanic", "Hispanic", "Black, Non-Hispanic"))
+
+ggplot(data=tblFinManage0, mapping=aes(y=`Share living comfortably`, x=Race, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.5) + scale_y_continuous(labels=scales::percent_format(accuracy=1)) + labs(y="Share who report living comfortably", x="Group") + theme(text=element_text(family="Optima")) + scale_fill_manual(values = stateCols2)
+
+```
+
 #### Figure 19: CA borrowers
 ##### Responses to "Overall, which one of the following best describes how well you are managing financially these days?"
 ```{r figure19A}
@@ -4249,7 +4613,7 @@ ggplotly(g19D, width=800, height=350, tooltip="text")
 ```{r figure19E}
 shed$FinManage1 <- shed$FinManage
 
-shed.FinManage1 <- shed %>% filter(is.na(FinManage1)==FALSE) %>% filter((FinManage1 %in% c("Refused"))==FALSE) %>% filter(OwnDebt=="Yes") %>% filter(EdAttain %in% c("Doctorate", "Master's degree", "Professional degree"))
+shed.FinManage1 <- shed %>% filter(is.na(FinManage1)==FALSE) %>% filter((FinManage1 %in% c("Refused"))==FALSE) %>% filter(OwnDebtSL=="Yes") %>% filter(EdAttain %in% c("Doctorate", "Master's degree", "Professional degree"))
 tblFinManage1 <- aggregate(data=shed.FinManage1, Weight ~ FinManage1 + State, FUN=sum)
 tblFinManage1 <- reshape2::dcast(data=tblFinManage1, State ~ FinManage1, value.var="Weight")
 tblFinManage1$`Total weight` <- tblFinManage1$`Living comfortably` + tblFinManage1$`Finding it difficult to get by` + tblFinManage1$`Just getting by` + tblFinManage1$`Doing okay`
@@ -4429,6 +4793,24 @@ tblCreditScore$`Very poor` <- tblCreditScore$`Very poor` / tblCreditScore$`Total
 tblCreditScore <- reshape2::melt(data=tblCreditScore, id.vars = c("Race", "State", "AnyStudentLoans"), value.name="Share") %>% filter(variable != "Total weight")
 tblCreditScore$variable <- factor(tblCreditScore$variable, levels = c("Very poor", "Poor", "Fair", "Good", "Excellent"))
 ```
+
+```{r forPolicyReport5, eval=FALSE}
+shed.CreditScore$`Poor or very poor credit score` <- rep("No", nrow(shed.CreditScore))
+shed.CreditScore$`Poor or very poor credit score`[shed.CreditScore$CreditScore %in% c("Poor", "Very poor")] <- "Yes"
+tblCreditScore0 <- aggregate(data=shed.CreditScore, Weight ~ `Poor or very poor credit score` + Race + State + AnyStudentLoans, FUN=sum)
+tblCreditScore02 <- aggregate(data=shed.CreditScore, Weight ~ `Poor or very poor credit score` + State + AnyStudentLoans, FUN=sum)
+tblCreditScore02$Race <- rep("All", nrow(tblCreditScore02))
+tblCreditScore0 <- rbind(tblCreditScore0, tblCreditScore02)
+tblCreditScore0 <- reshape2::dcast(data=tblCreditScore0, Race + State + AnyStudentLoans ~ `Poor or very poor credit score`, value.var="Weight")
+tblCreditScore0$`Share with poor or very poor credit score` <- tblCreditScore0$Yes / (tblCreditScore0$Yes + tblCreditScore0$No)
+
+tblCreditScore0 <- tblCreditScore0 %>% filter(AnyStudentLoans=="Yes") %>% filter(Race != "Other, Non-Hispanic")
+tblCreditScore0$Race <- as.factor(tblCreditScore0$Race)
+tblCreditScore0$Race <- factor(tblCreditScore0$Race, levels=c("All", "White, Non-Hispanic", "Hispanic", "Black, Non-Hispanic"))
+
+ggplot(data=tblCreditScore0, mapping=aes(y=`Share with poor or very poor credit score`, x=Race, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.5) + scale_y_continuous(labels=scales::percent_format(accuracy=1)) + labs(y="Share with a poor or very poor credit score", x="Group") + theme(text=element_text(family="Optima")) + scale_fill_manual(values = stateCols2)
+```
+
 #### Figure 21: CA borrowers
 ##### Responses to "Where do you think your credit score falls?"
 ```{r Figure21A}
@@ -4465,7 +4847,7 @@ g21B <- ggplot(data=tblCreditScore.US.Borrow, mapping=aes(y=Race, x=`Share`, fil
 
 ggplotly(g21B, width=800, height=350, tooltip="text")
 ```
-#### Figure 21: Non-borrowers
+#### Figure 21: CA Non-borrowers
 ##### Responses to "Where do you think your credit score falls?"
 ```{r Figure21C}
 tblCreditScore.CA.Nonborrow <- tblCreditScore %>% filter(State=="CA") %>% filter(AnyStudentLoans=="No")
@@ -4506,6 +4888,8 @@ kable(N.CreditScore, caption="N size by group for Figure 21") %>% kable_paper("h
 ### {-}
 
 Figure 22 examines borrower's reported ability to pay off their bills in full in the month they were surveyed. About 6 in 10 Black California borrowers and Hispanic California borrowers report being able to fully pay their monthly bills, versus 7 in 10 among California borrowers overall. By comparison, a slightly higher percentage of student loan borrowers outside California report being able to pay their bills in full. 
+
+Figure 22 also contains tabs for (1) parents and (2) borrowers with graduate degrees and student loans. 
 
 ### {.tabset}
 ```{r PayBills}
@@ -4616,7 +5000,7 @@ ggplotly(g22D, width=800, height=350, tooltip="text")
 ```{r figure22E}
 shed$PayBills1 <- shed$PayBills
 
-shed.PayBills1 <- shed %>% filter(is.na(PayBills1)==FALSE) %>% filter((PayBills1 %in% c("Refused")==FALSE)) %>% filter(EdAttain %in% c("Doctorate", "Master's degree", "Professional degree")) %>% filter(OwnDebt=="Yes")
+shed.PayBills1 <- shed %>% filter(is.na(PayBills1)==FALSE) %>% filter((PayBills1 %in% c("Refused")==FALSE)) %>% filter(EdAttain %in% c("Doctorate", "Master's degree", "Professional degree")) %>% filter(OwnDebtSL=="Yes")
 
 tblPayBills1 <- aggregate(data=shed.PayBills1, Weight ~ PayBills1 + State, FUN=sum)
 tblPayBills1 <- reshape2::dcast(data=tblPayBills1, State ~ PayBills1, value.var="Weight")
@@ -6772,7 +7156,7 @@ kable(kable4D, caption="Top 100 California institutions by total outstanding loa
 
 **Timeframe reflected:** Loan data in this table reflect borrowers' balances as measured in the National Student Loan Data System on June 30, 2021. 
 
-**Notes:** Only 73 institutions have at least 500 borrowers with outstanding Grad PLUS debt. 
+**Notes:** Only 73 institutions have at least 500 borrowers with outstanding Grad PLUS debt. Total debt rounded to nearest \$1,000, total borrowers rounded to nearest 10, and average debt rounded to nearest \$100. 
 
 ***
 
@@ -7178,7 +7562,7 @@ kable(kable7, caption="Top 100 California institutions by the shares of undergra
 
 **Timeframe reflected:** Data in the "Percent of undergraduates who received federal student loans" column reflect students enrolled in academic year 2019-20. Data in the "Median debt at graduation" reflect pooled cohorts of students who graduated in fiscal year 2019 or fiscal year 2020. 
 
-**Notes:** 
+**Notes:** Percentages rounded to nearest 0.1%. 
 
 ***
 
@@ -7271,7 +7655,7 @@ kable(kable8C, caption="California institutions by ratio of Grad PLUS borrowers'
 
 **Timeframe reflected:** Loan balance data in this table reflect borrowers who entered repayment in either award year 2007-08 or award year 2008-09, with outstanding debt measured 10 years after entering repayment. 
 
-**Notes:** 
+**Notes:** Ratios rounded to nearest thousandth. 
 
 ***
 
@@ -7376,7 +7760,7 @@ kable(kable9C, caption="California institutions by share of Grad PLUS borrowers 
 
 **Timeframe reflected:** Borrower status data reflect borrowers who entered repayment in award year 2015-16 or 2016-17, at the time when the borrower had been in repayment for three years. 
 
-**Notes:** I applied a threshold of minimum 200 borrowers per institution in the ten-year repayment cohort. This does not include those in forbearance or deferment.
+**Notes:** I applied a threshold of minimum 200 borrowers per institution in the ten-year repayment cohort. This does not include those in forbearance or deferment. Percentages rounded to nearest 0.1%. 
 
 ***
 
@@ -7510,7 +7894,7 @@ kable(kable10B, caption="4-digit CIPs and award levels by debt compared to earni
 
 **Timeframe reflected:** Data in the "Estimated median debt" column are author's calculations using data reflecting borrowers who entered repayment in award year 2017-18 or 2018-19. Data in the "Estimated median earnings, 1 year after completing program" column are author's calculations using data reflecting the calendar year 2018 or 2019 earnings of students who received federal student aid and graduated from their program in academic year 2016-17 or 2017-18. Earnings data were adjusted by the Department of Education to 2020 dollars. 
 
-**Notes:**
+**Notes:** Ratios rounded to nearest thousandth. 
 
 ***
 
