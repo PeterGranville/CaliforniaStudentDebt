@@ -710,10 +710,11 @@ loans1819$`Total $ of Disbursements` <- loans1819$`SUBSIDIZED: $ of Disbursement
 ### we aggregate totals by state.                  ###
 ######################################################
 
-# added 12/6 04:30
-loans1819$State[loans1819$State != "CA"] <- "Rest of U.S."
+table3.1 <- loans1819
+table3.2 <- loans1819
+table3.1$State[table3.1$State != "CA"] <- "Rest of U.S."
 
-table3 <- aggregate(data=loans1819, cbind(  
+table3.1 <- aggregate(data=table3.1, cbind(  
   `SUBSIDIZED: $ of Disbursements`, 
   `UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`, 
   `UNSUBSIDIZED - GRADUATE: $ of Disbursements`, 
@@ -721,51 +722,72 @@ table3 <- aggregate(data=loans1819, cbind(
   `GRAD PLUS: $ of Disbursements`, 
   `Total $ of Disbursements`) ~ State, FUN=sum)
 
-######################################################
-### Next we add the U.S. totals for comparison.    ###
-######################################################
-
-# commented out 12/6 04:30
-# table3 <- table3 %>% add_row(
-#   `State`="U.S.",
-#   `SUBSIDIZED: $ of Disbursements`=sum(table3$`SUBSIDIZED: $ of Disbursements`), 
-#   `UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`=sum(table3$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`), 
-#   `UNSUBSIDIZED - GRADUATE: $ of Disbursements`=sum(table3$`UNSUBSIDIZED - GRADUATE: $ of Disbursements`), 
-#   `PARENT PLUS: $ of Disbursements`=sum(table3$`PARENT PLUS: $ of Disbursements`), 
-#   `GRAD PLUS: $ of Disbursements`=sum(table3$`GRAD PLUS: $ of Disbursements`), 
-#   `Total $ of Disbursements`=sum(table3$`Total $ of Disbursements`)
-# )
+table3.2 <- aggregate(data=table3.2, cbind(  
+  `SUBSIDIZED: $ of Disbursements`, 
+  `UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`, 
+  `UNSUBSIDIZED - GRADUATE: $ of Disbursements`, 
+  `PARENT PLUS: $ of Disbursements`, 
+  `GRAD PLUS: $ of Disbursements`, 
+  `Total $ of Disbursements`) ~ State, FUN=sum)
+table3.2 <- table3.2 %>% add_row(
+  State = "Nationwide",
+  "SUBSIDIZED: $ of Disbursements" = sum(table3.2$`SUBSIDIZED: $ of Disbursements`), 
+  "UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements" = sum(table3.2$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`), 
+  "UNSUBSIDIZED - GRADUATE: $ of Disbursements" = sum(table3.2$`UNSUBSIDIZED - GRADUATE: $ of Disbursements`), 
+  "PARENT PLUS: $ of Disbursements" = sum(table3.2$`PARENT PLUS: $ of Disbursements`), 
+  "GRAD PLUS: $ of Disbursements" = sum(table3.2$`GRAD PLUS: $ of Disbursements`), 
+  "Total $ of Disbursements" = sum(table3.2$`Total $ of Disbursements`)
+)
 
 ######################################################
 ### Now we derive each loan program's share of     ###
 ### total borrowing in every state.                ###
 ######################################################
 
-table3$`SUBSIDIZED share of total` <- table3$`SUBSIDIZED: $ of Disbursements` / table3$`Total $ of Disbursements`
-table3$`UNSUBSIDIZED - UNDERGRADUATE share of total` <- table3$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements` / table3$`Total $ of Disbursements`
-table3$`UNSUBSIDIZED - GRADUATE share of total` <- table3$`UNSUBSIDIZED - GRADUATE: $ of Disbursements` / table3$`Total $ of Disbursements`
-table3$`PARENT PLUS share of total` <- table3$`PARENT PLUS: $ of Disbursements` / table3$`Total $ of Disbursements`
-table3$`GRAD PLUS share of total` <- table3$`GRAD PLUS: $ of Disbursements` / table3$`Total $ of Disbursements`
+table3.1$`SUBSIDIZED share of total` <- table3.1$`SUBSIDIZED: $ of Disbursements` / table3.1$`Total $ of Disbursements`
+table3.1$`UNSUBSIDIZED - UNDERGRADUATE share of total` <- table3.1$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements` / table3.1$`Total $ of Disbursements`
+table3.1$`UNSUBSIDIZED - GRADUATE share of total` <- table3.1$`UNSUBSIDIZED - GRADUATE: $ of Disbursements` / table3.1$`Total $ of Disbursements`
+table3.1$`PARENT PLUS share of total` <- table3.1$`PARENT PLUS: $ of Disbursements` / table3.1$`Total $ of Disbursements`
+table3.1$`GRAD PLUS share of total` <- table3.1$`GRAD PLUS: $ of Disbursements` / table3.1$`Total $ of Disbursements`
+
+table3.2$`SUBSIDIZED share of total` <- table3.2$`SUBSIDIZED: $ of Disbursements` / table3.2$`Total $ of Disbursements`
+table3.2$`UNSUBSIDIZED - UNDERGRADUATE share of total` <- table3.2$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements` / table3.2$`Total $ of Disbursements`
+table3.2$`UNSUBSIDIZED - GRADUATE share of total` <- table3.2$`UNSUBSIDIZED - GRADUATE: $ of Disbursements` / table3.2$`Total $ of Disbursements`
+table3.2$`PARENT PLUS share of total` <- table3.2$`PARENT PLUS: $ of Disbursements` / table3.2$`Total $ of Disbursements`
+table3.2$`GRAD PLUS share of total` <- table3.2$`GRAD PLUS: $ of Disbursements` / table3.2$`Total $ of Disbursements`
 
 ######################################################
 ### We can now compare how California stacks up    ###
 ### versus the rest of the nation.                 ###
 ######################################################
 
-table3.1 <- table3 %>% filter(State %in% c("CA", "Rest of U.S.")) %>% select(State, `SUBSIDIZED share of total`, `UNSUBSIDIZED - UNDERGRADUATE share of total`, `UNSUBSIDIZED - GRADUATE share of total`, `PARENT PLUS share of total`, `GRAD PLUS share of total`)
+table3.1 <- table3.1 %>% filter(State %in% c("CA", "Rest of U.S.")) %>% select(State, `SUBSIDIZED share of total`, `UNSUBSIDIZED - UNDERGRADUATE share of total`, `UNSUBSIDIZED - GRADUATE share of total`, `PARENT PLUS share of total`, `GRAD PLUS share of total`)
 names(table3.1) <- c("State", "Subsidized", "Unsubsidized undergraduate", "Unsubsidized graduate", "Parent PLUS loans", "Grad PLUS")
 table3.1$`Subsidized` <- percent(table3.1$`Subsidized`, accuracy=0.1)
 table3.1$`Unsubsidized undergraduate` <- percent(table3.1$`Unsubsidized undergraduate`, accuracy=0.1)
 table3.1$`Unsubsidized graduate` <- percent(table3.1$`Unsubsidized graduate`, accuracy=0.1)
 table3.1$`Parent PLUS loans` <- percent(table3.1$`Parent PLUS loans`, accuracy=0.1)
 table3.1$`Grad PLUS` <- percent(table3.1$`Grad PLUS`, accuracy=0.1)
+
+table3.2 <- table3.2 %>% filter(State != "") %>% select(State, `SUBSIDIZED share of total`, `UNSUBSIDIZED - UNDERGRADUATE share of total`, `UNSUBSIDIZED - GRADUATE share of total`, `PARENT PLUS share of total`, `GRAD PLUS share of total`)
+names(table3.2) <- c("State", "Subsidized", "Unsubsidized undergraduate", "Unsubsidized graduate", "Parent PLUS loans", "Grad PLUS")
+table3.2$`Subsidized` <- percent(table3.2$`Subsidized`, accuracy=0.1)
+table3.2$`Unsubsidized undergraduate` <- percent(table3.2$`Unsubsidized undergraduate`, accuracy=0.1)
+table3.2$`Unsubsidized graduate` <- percent(table3.2$`Unsubsidized graduate`, accuracy=0.1)
+table3.2$`Parent PLUS loans` <- percent(table3.2$`Parent PLUS loans`, accuracy=0.1)
+table3.2$`Grad PLUS` <- percent(table3.2$`Grad PLUS`, accuracy=0.1)
 ```
 
 #### {.tabset}
 ##### Table 3
-```{r kable3}
+```{r kable3.1}
 kable(table3.1, caption="Share of loan dollars disbursed in 2018-19 by loan type, California vs. Rest of U.S.") %>% kable_paper("hover", full_width = F)
 ```
+##### Table 3: All states
+```{r kable3.2}
+kable(table3.2, caption="Share of loan dollars disbursed in 2018-19 by loan type") %>% kable_paper("hover", full_width = F)
+```
+
 ##### Data Source and Notes
 
 **Data source:** Federal Student Aid Data Center, spreadsheet on Direct Loan volume for Q4 2018-19, "Award year summary" tab, [available here](https://studentaid.gov/data-center/student/title-iv), accessed October 2022. 
@@ -841,6 +863,8 @@ scorecard1$OPEID <- ifelse(nchar(scorecard1$OPEID)==7, paste("0", scorecard1$OPE
 ######################################################
 ### Now we merge the two datasets by OPEID.        ###
 ######################################################
+
+loans1819$State[loans1819$State != "CA"] <- "Rest of U.S."
 
 loans1819 <- left_join(x=loans1819, y=scorecard1, by="OPEID")
 forTable4 <- loans1819 %>% filter(`Four-year`==1)
@@ -8816,9 +8840,9 @@ Q30A$`For Tooltip` <- paste(
   sep=""
 )
 
-g40A <- ggplot(data=Q30A, mapping=aes(x=Control, y=CDR3, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge") + scale_y_continuous(labels=scales::percent_format(accuracy=1)) + labs(x="Control", y="Three-year cohort default rate") + theme(text=element_text(family="Optima"), legend.position="right") + scale_fill_manual(values = stateCols)
+g40A <- ggplot(data=Q30A, mapping=aes(x=Control, y=CDR3, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.4) + scale_y_continuous(labels=scales::percent_format(accuracy=1)) + labs(x="Control", y="Three-year cohort default rate") + theme(text=element_text(family="Optima"), legend.position="right") + scale_fill_manual(values = stateCols)
 
-ggplotly(g40A, width=800, height=350, tooltip="text")
+ggplotly(g40A, width=600, height=350, tooltip="text")
 ```
 #### Figure 40: CDR by Control and Predominant Degree Awarded
 ```{r CDR.highdeg}
@@ -8863,9 +8887,9 @@ Q30B$`For Tooltip` <- paste(
   sep=""
 )
 
-g40B <- ggplot(data=Q30B, mapping=aes(x=PredDeg, y=CDR3, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge") + facet_grid(Control ~ .) +  scale_y_continuous(labels=scales::percent_format(accuracy=1)) + labs(x="Institution's predominant degree awarded", y="Three-year cohort default rate") + theme(text=element_text(family="Optima"), legend.position="right") + scale_fill_manual(values = stateCols)
+g40B <- ggplot(data=Q30B, mapping=aes(x=PredDeg, y=CDR3, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.4) + facet_grid(Control ~ .) +  scale_y_continuous(labels=scales::percent_format(accuracy=1)) + labs(x="Institution's predominant degree awarded", y="Three-year cohort default rate") + theme(text=element_text(family="Optima"), legend.position="right") + scale_fill_manual(values = stateCols)
 
-ggplotly(g40B, width=800, height=600, tooltip="text")
+ggplotly(g40B, width=600, height=600, tooltip="text")
 ```
 #### Data Source and Notes
 
