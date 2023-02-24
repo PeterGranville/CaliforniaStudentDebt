@@ -1248,12 +1248,12 @@ Figure 3 shows that key differences at the graduate level. The average annual lo
 #### {.tabset}
 ##### Figure 3: Average Graduate Loans by Race
 ```{r npsas2}
-npsas2.US <- read.csv("Powerstats ozhexe.csv", skip=12, nrow=7, header=FALSE)
-npsas2.US.total <- read.csv("Powerstats ozhexe.csv", skip=10, nrow=1, header=FALSE)
+npsas2.US <- read.csv("Powerstats avflfm.csv", skip=12, nrow=7, header=FALSE)
+npsas2.US.total <- read.csv("Powerstats avflfm.csv", skip=10, nrow=1, header=FALSE)
 npsas2.US <- rbind(npsas2.US.total, npsas2.US)
 
-npsas2.CA <- read.csv("Powerstats ozhexe.csv", skip=73, nrow=7, header=FALSE)
-npsas2.CA.total <- read.csv("Powerstats ozhexe.csv", skip=71, nrow=1, header=FALSE)
+npsas2.CA <- read.csv("Powerstats avflfm.csv", skip=73, nrow=7, header=FALSE)
+npsas2.CA.total <- read.csv("Powerstats avflfm.csv", skip=71, nrow=1, header=FALSE)
 npsas2.CA <- rbind(npsas2.CA.total, npsas2.CA)
 
 names(npsas2.US) <- c("Group", "Average loans")
@@ -1292,12 +1292,12 @@ ggplotly(g3, width=800, height=350, tooltip="text")
 ```
 
 ```{r percentages.npsas2}
-npsas2P.US <- read.csv("Powerstats lkxsci.csv", skip=14, nrow=7, header=FALSE) %>% select(V1, V3)
-npsas2P.US.total <- read.csv("Powerstats lkxsci.csv", skip=12, nrow=1, header=FALSE) %>% select(V1, V3)
+npsas2P.US <- read.csv("Powerstats lhkurg.csv", skip=14, nrow=7, header=FALSE) %>% select(V1, V3)
+npsas2P.US.total <- read.csv("Powerstats lhkurg.csv", skip=12, nrow=1, header=FALSE) %>% select(V1, V3)
 npsas2P.US <- rbind(npsas2P.US.total, npsas2P.US)
 
-npsas2P.CA <- read.csv("Powerstats lkxsci.csv", skip=78, nrow=7, header=FALSE) %>% select(V1, V3)
-npsas2P.CA.total <- read.csv("Powerstats lkxsci.csv", skip=76, nrow=1, header=FALSE) %>% select(V1, V3)
+npsas2P.CA <- read.csv("Powerstats lhkurg.csv", skip=78, nrow=7, header=FALSE) %>% select(V1, V3)
+npsas2P.CA.total <- read.csv("Powerstats lhkurg.csv", skip=76, nrow=1, header=FALSE) %>% select(V1, V3)
 npsas2P.CA <- rbind(npsas2P.CA.total, npsas2P.CA)
 
 names(npsas2P.US) <- c("Group", "Share Borrowing Loans")
@@ -1336,8 +1336,8 @@ ggplotly(g3P, width=800, height=350, tooltip="text")
 ```
 ##### Figure 3: Average Graduate Loans by Race and Gender (U.S. only)
 ```{r npsas2.1}
-npsas2.1 <- read.csv("Powerstats odiegv.csv", skip=12, nrow=14, header=FALSE)
-npsas2.1.total <- read.csv("Powerstats qnabzw.csv", skip=12, nrow=2, header=FALSE)
+npsas2.1 <- read.csv("Powerstats aotdhl.csv", skip=12, nrow=14, header=FALSE)
+npsas2.1.total <- read.csv("Powerstats lyrbbf.csv", skip=12, nrow=2, header=FALSE)
 npsas2.1 <- rbind(npsas2.1.total, npsas2.1)
 names(npsas2.1) <- c("Group", "Average loans")
 
@@ -1409,8 +1409,8 @@ ggplotly(g3B, tooltip="text", width=800, height=350)
 ```
 
 ```{r percentages.npsas2.1}
-npsas2.1P <- read.csv("Powerstats jcbvqb.csv", skip=14, nrow=14, header=FALSE) %>% select(V1, V3)
-npsas2.1P.total <- read.csv("Powerstats ietaou.csv", skip=14, nrow=2, header=FALSE) %>% select(V1, V3)
+npsas2.1P <- read.csv("Powerstats ukuclj.csv", skip=14, nrow=14, header=FALSE) %>% select(V1, V3)
+npsas2.1P.total <- read.csv("Powerstats minyim.csv", skip=14, nrow=2, header=FALSE) %>% select(V1, V3)
 npsas2.1P <- rbind(npsas2.1P.total, npsas2.1P)
 
 names(npsas2.1P) <- c("Group", "Share Borrowing Loans")
@@ -1483,7 +1483,7 @@ ggplotly(g3BP, tooltip="text", width=800, height=350)
 ```
 ##### Data Source and Notes 
 
-**Data source:** National Postsecondary Student Aid Study, Undergraduate. Datalab interface available [here](https://nces.ed.gov/datalab/) using table retrieval numbers *ozhexe* and *lkxsci* for "Figure 3: Race" and *odiegv*, *qnabzw*, *jcbvqb*, and *ietaou* for "Figure 3: Race and Gender."
+**Data source:** National Postsecondary Student Aid Study, Undergraduate. Datalab interface available [here](https://nces.ed.gov/datalab/) using table retrieval numbers *avflfm* and *lhkurg* for "Figure 3: Race" and *aotdhl*, *lyrbbf*, *ukuclj*, and *minyim* for "Figure 3: Race and Gender."
 
 **Timeframe reflected:** Figures in this graph reflect students enrolled in the 2015-16 academic year. 
 
@@ -1504,12 +1504,12 @@ Among California graduate students, the NPSAS sample is not sufficient for a com
 #### {.tabset}
 ##### Figure 4: Average Graduate Loans by Program and Race
 ```{r npsas3}
-npsas3.US.masters <- read.csv("PowerStats enucsq.csv", skip=73, nrow=7, header=FALSE)
-npsas3.US.masters.total <- read.csv("PowerStats enucsq.csv", skip=71, nrow=1, header=FALSE)
+npsas3.US.masters <- read.csv("PowerStats ibxxlt.csv", skip=73, nrow=7, header=FALSE)
+npsas3.US.masters.total <- read.csv("PowerStats ibxxlt.csv", skip=71, nrow=1, header=FALSE)
 npsas3.US.masters <- rbind(npsas3.US.masters.total, npsas3.US.masters
                            )
-npsas3.US.professional <- read.csv("PowerStats enucsq.csv", skip=256, nrow=7, header=FALSE)
-npsas3.US.professional.total <- read.csv("PowerStats enucsq.csv", skip=254, nrow=1, header=FALSE)
+npsas3.US.professional <- read.csv("PowerStats ibxxlt.csv", skip=256, nrow=7, header=FALSE)
+npsas3.US.professional.total <- read.csv("PowerStats ibxxlt.csv", skip=254, nrow=1, header=FALSE)
 npsas3.US.professional <- rbind(npsas3.US.professional.total, npsas3.US.professional)
 
 names(npsas3.US.masters) <- c("Group", "Total federal loans")
@@ -1553,12 +1553,12 @@ ggplotly(g4A, width=800, height=350, tooltip="text")
 ```
 
 ```{r percentages.npsas3}
-npsas3P.US.masters <- read.csv("PowerStats lmjixp.csv", skip=78, nrow=7, header=FALSE) %>% select(V1, V3)
-npsas3P.US.masters.total <- read.csv("PowerStats lmjixp.csv", skip=76, nrow=1, header=FALSE) %>% select(V1, V3)
+npsas3P.US.masters <- read.csv("PowerStats zlasyt.csv", skip=78, nrow=7, header=FALSE) %>% select(V1, V3)
+npsas3P.US.masters.total <- read.csv("PowerStats zlasyt.csv", skip=76, nrow=1, header=FALSE) %>% select(V1, V3)
 npsas3P.US.masters <- rbind(npsas3P.US.masters.total, npsas3P.US.masters)
 
-npsas3P.US.professional <- read.csv("PowerStats lmjixp.csv", skip=270, nrow=7, header=FALSE) %>% select(V1, V3)
-npsas3P.US.professional.total <- read.csv("PowerStats lmjixp.csv", skip=268, nrow=1, header=FALSE) %>% select(V1, V3)
+npsas3P.US.professional <- read.csv("PowerStats zlasyt.csv", skip=270, nrow=7, header=FALSE) %>% select(V1, V3)
+npsas3P.US.professional.total <- read.csv("PowerStats zlasyt.csv", skip=268, nrow=1, header=FALSE) %>% select(V1, V3)
 npsas3P.US.professional <- rbind(npsas3P.US.professional.total, npsas3P.US.professional)
 
 names(npsas3P.US.masters) <- c("Group", "Share Borrowing Loans")
@@ -1602,12 +1602,12 @@ ggplotly(g4AP, width=800, height=350, tooltip="text")
 ```
 ##### Figure 4: Average Graduate Loans by Program, Race, and Gender
 ```{r npsas3.1}
-npsas3.1.US.masters <- read.csv("PowerStats xqcxry.csv", skip=108, nrow=14, header=FALSE)
-npsas3.1.US.masters.total <- read.csv("PowerStats phedaa.csv", skip=48, nrow=2, header=FALSE)
+npsas3.1.US.masters <- read.csv("PowerStats gouiaq.csv", skip=108, nrow=14, header=FALSE)
+npsas3.1.US.masters.total <- read.csv("PowerStats kxgkel.csv", skip=48, nrow=2, header=FALSE)
 npsas3.1.US.masters <- rbind(npsas3.1.US.masters.total, npsas3.1.US.masters)
 
-npsas3.1.US.professional <- read.csv("PowerStats xqcxry.csv", skip=396, nrow=14, header=FALSE)
-npsas3.1.US.professional.total <- read.csv("PowerStats phedaa.csv", skip=156, nrow=2, header=FALSE)
+npsas3.1.US.professional <- read.csv("PowerStats gouiaq.csv", skip=396, nrow=14, header=FALSE)
+npsas3.1.US.professional.total <- read.csv("PowerStats kxgkel.csv", skip=156, nrow=2, header=FALSE)
 npsas3.1.US.professional <- rbind(npsas3.1.US.professional.total, npsas3.1.US.professional)
 
 names(npsas3.1.US.masters) <- c("Group", "Total federal loans")
@@ -1687,12 +1687,12 @@ ggplotly(g4B, width=800, height=450, tooltip="text")
 ```
 
 ```{r percentages.npsas3.1}
-npsas3.1P.US.masters <- read.csv("PowerStats ilzmdk.csv", skip=113, nrow=14, header=FALSE) %>% select(V1, V3)
-npsas3.1P.US.masters.total <- read.csv("PowerStats noxoew.csv", skip=53, nrow=2, header=FALSE) %>% select(V1, V3)
+npsas3.1P.US.masters <- read.csv("PowerStats iuyjsr.csv", skip=113, nrow=14, header=FALSE) %>% select(V1, V3)
+npsas3.1P.US.masters.total <- read.csv("PowerStats ajghcg.csv", skip=53, nrow=2, header=FALSE) %>% select(V1, V3)
 npsas3.1P.US.masters <- rbind(npsas3.1P.US.masters.total, npsas3.1P.US.masters)
 
-npsas3.1P.US.professional <- read.csv("PowerStats ilzmdk.csv", skip=410, nrow=14, header=FALSE) %>% select(V1, V3)
-npsas3.1P.US.professional.total <- read.csv("PowerStats noxoew.csv", skip=170, nrow=2, header=FALSE) %>% select(V1, V3)
+npsas3.1P.US.professional <- read.csv("PowerStats iuyjsr.csv", skip=410, nrow=14, header=FALSE) %>% select(V1, V3)
+npsas3.1P.US.professional.total <- read.csv("PowerStats ajghcg.csv", skip=170, nrow=2, header=FALSE) %>% select(V1, V3)
 npsas3.1P.US.professional <- rbind(npsas3.1P.US.professional.total, npsas3.1P.US.professional)
 
 names(npsas3.1P.US.masters) <- c("Group", "Share Borrowing Loans")
@@ -1774,7 +1774,7 @@ ggplotly(g4BP, width=800, height=450, tooltip="text")
 ```
 ##### Data Source and Notes
 
-**Data source:** National Postsecondary Student Aid Study, Graduate. Datalab interface available [here](https://nces.ed.gov/datalab/) using table retrieval numbers *enucsq* and *lmjixp* for "Figure 4: Race" and table retrieval numbers *xqcxry*, *phedaa*, *ilzmdk*, *noxoew* for "Figure 4: Race and Gender."
+**Data source:** National Postsecondary Student Aid Study, Graduate. Datalab interface available [here](https://nces.ed.gov/datalab/) using table retrieval numbers *ibxxlt* and *zlasyt* for "Figure 4: Race" and table retrieval numbers *gouiaq*, *kxgkel*, *iuyjsr*, *ajghcg* for "Figure 4: Race and Gender."
 
 **Timeframe reflected:** Figures in this graph reflect students enrolled in the 2015-16 academic year. 
 
@@ -1793,12 +1793,12 @@ Figure 5 returns to the undergraduate level and considers how much debt undergra
 #### {.tabset}
 ##### Figure 5: Average Undergraduate Loans at Graduation by Race
 ```{r npsas4, warning=FALSE}
-npsas4.US <- read.csv("PowerStats dxwsoi.csv", skip=12, nrow=7, header=FALSE)
-npsas4.US.total <- read.csv("PowerStats dxwsoi.csv", skip=10, nrow=1, header=FALSE)
+npsas4.US <- read.csv("PowerStats rcefsb.csv", skip=12, nrow=7, header=FALSE)
+npsas4.US.total <- read.csv("PowerStats rcefsb.csv", skip=10, nrow=1, header=FALSE)
 npsas4.US <- rbind(npsas4.US.total, npsas4.US)
 
-npsas4.CA <- read.csv("PowerStats dxwsoi.csv", skip=73, nrow=7, header=FALSE)
-npsas4.CA.total <- read.csv("PowerStats dxwsoi.csv", skip=71, nrow=1, header=FALSE)
+npsas4.CA <- read.csv("PowerStats rcefsb.csv", skip=73, nrow=7, header=FALSE)
+npsas4.CA.total <- read.csv("PowerStats rcefsb.csv", skip=71, nrow=1, header=FALSE)
 npsas4.CA <- rbind(npsas4.CA.total, npsas4.CA)
 
 names(npsas4.US) <- c("Group", "Average cumulative federal loans")
@@ -1836,12 +1836,12 @@ ggplotly(g5A, width=800, height=350, tooltip="text")
 ```
 
 ```{r percentages.npsas4}
-npsas4P.US <- read.csv("PowerStats dyclij.csv", skip=14, nrow=7, header=FALSE) %>% select(V1, V3)
-npsas4P.US.total <- read.csv("PowerStats dyclij.csv", skip=12, nrow=1, header=FALSE) %>% select(V1, V3)
+npsas4P.US <- read.csv("PowerStats admfpj.csv", skip=14, nrow=7, header=FALSE) %>% select(V1, V3)
+npsas4P.US.total <- read.csv("PowerStats admfpj.csv", skip=12, nrow=1, header=FALSE) %>% select(V1, V3)
 npsas4P.US <- rbind(npsas4P.US.total, npsas4P.US)
 
-npsas4P.CA <- read.csv("PowerStats dyclij.csv", skip=78, nrow=7, header=FALSE) %>% select(V1, V3)
-npsas4P.CA.total <- read.csv("PowerStats dyclij.csv", skip=76, nrow=1, header=FALSE) %>% select(V1, V3)
+npsas4P.CA <- read.csv("PowerStats admfpj.csv", skip=78, nrow=7, header=FALSE) %>% select(V1, V3)
+npsas4P.CA.total <- read.csv("PowerStats admfpj.csv", skip=76, nrow=1, header=FALSE) %>% select(V1, V3)
 npsas4P.CA <- rbind(npsas4P.CA.total, npsas4P.CA)
 
 names(npsas4P.US) <- c("Group", "Share with Cumulative Loans")
@@ -1879,12 +1879,12 @@ ggplotly(g5AP, width=800, height=350, tooltip="text")
 ```
 ##### Figure 5: Average Undergraduate Loans at Graduation by Race and Gender
 ```{r npsas4.1, warning=FALSE}
-npsas4.1.US <- read.csv("PowerStats gkhfjw.csv", skip=12, nrow=14, header=FALSE)
-npsas4.1.US.total <- read.csv("PowerStats rrbopj.csv", skip=12, nrow=2, header=FALSE)
+npsas4.1.US <- read.csv("PowerStats eggovm.csv", skip=12, nrow=14, header=FALSE)
+npsas4.1.US.total <- read.csv("PowerStats gnvptv.csv", skip=12, nrow=2, header=FALSE)
 npsas4.1.US <- rbind(npsas4.1.US.total, npsas4.1.US)
 
-npsas4.1.CA <- read.csv("PowerStats gkhfjw.csv", skip=108, nrow=14, header=FALSE)
-npsas4.1.CA.total <- read.csv("PowerStats rrbopj.csv", skip=48, nrow=2, header=FALSE)
+npsas4.1.CA <- read.csv("PowerStats eggovm.csv", skip=108, nrow=14, header=FALSE)
+npsas4.1.CA.total <- read.csv("PowerStats gnvptv.csv", skip=48, nrow=2, header=FALSE)
 npsas4.1.CA <- rbind(npsas4.1.CA.total, npsas4.1.CA)
 
 names(npsas4.1.US) <- c("Group", "Average cumulative federal loans")
@@ -1960,12 +1960,12 @@ ggplotly(g5B, width=800, height=350, tooltip="text")
 ```
 
 ```{r percentages.npsas4.1}
-npsas4.1P.US <- read.csv("PowerStats vylupp.csv", skip=14, nrow=14, header=FALSE) %>% select(V1, V3)
-npsas4.1P.US.total <- read.csv("PowerStats lpcmjs.csv", skip=14, nrow=2, header=FALSE) %>% select(V1, V3)
+npsas4.1P.US <- read.csv("PowerStats pnfkhv.csv", skip=14, nrow=14, header=FALSE) %>% select(V1, V3)
+npsas4.1P.US.total <- read.csv("PowerStats elhvny.csv", skip=14, nrow=2, header=FALSE) %>% select(V1, V3)
 npsas4.1P.US <- rbind(npsas4.1P.US.total, npsas4.1P.US)
 
-npsas4.1P.CA <- read.csv("PowerStats vylupp.csv", skip=113, nrow=14, header=FALSE) %>% select(V1, V3)
-npsas4.1P.CA.total <- read.csv("PowerStats lpcmjs.csv", skip=53, nrow=2, header=FALSE) %>% select(V1, V3)
+npsas4.1P.CA <- read.csv("PowerStats pnfkhv.csv", skip=113, nrow=14, header=FALSE) %>% select(V1, V3)
+npsas4.1P.CA.total <- read.csv("PowerStats elhvny.csv", skip=53, nrow=2, header=FALSE) %>% select(V1, V3)
 npsas4.1P.CA <- rbind(npsas4.1P.CA.total, npsas4.1P.CA)
 
 names(npsas4.1P.US) <- c("Group", "Share with Cumulative Loans")
@@ -2040,7 +2040,7 @@ ggplotly(g5BP, width=800, height=350, tooltip="text")
 ```
 ##### Data Source and Notes
 
-**Data source:** National Postsecondary Student Aid Study, Undergraduate. Datalab interface available [here](https://nces.ed.gov/datalab/) using table retrieval numbers *dxwsoi* and *dyclij* for "Figure 5: Race" and table retrieval number *gkhfjw*, *rrbopj*, *vylupp*, and *lpcmjs* for "Figure 5: Race and Gender (U.S. only)".
+**Data source:** National Postsecondary Student Aid Study, Undergraduate. Datalab interface available [here](https://nces.ed.gov/datalab/) using table retrieval numbers *rcefsb* and *admfpj* for "Figure 5: Race" and table retrieval number *eggovm*, *gnvptv*, *pnfkhv*, and *elhvny* for "Figure 5: Race and Gender (U.S. only)".
 
 **Timeframe reflected:** Figures in this graph reflect students enrolled in the 2015-16 academic year. 
 
@@ -4113,12 +4113,13 @@ tblCCBalance$`Always pay in full` <- tblCCBalance$`Always pay in full` / tblCCBa
 tblCCBalance$`Most or all of the time` <- tblCCBalance$`Most or all of the time` / tblCCBalance$`Total weight`
 tblCCBalance$`Some of the time` <- tblCCBalance$`Some of the time` / tblCCBalance$`Total weight`
 tblCCBalance$`Once` <- tblCCBalance$`Once` / tblCCBalance$`Total weight`
+tblCCBalance0 <- tblCCBalance # For the "forPolicyReport4 chunk"
 tblCCBalance <- reshape2::melt(data=tblCCBalance, id.vars = c("Race", "State", "AnyStudentLoans"), value.name="Share of borrowers") %>% filter(variable != "Total weight")
 tblCCBalance$variable <- factor(tblCCBalance$variable, levels = c("Most or all of the time", "Some of the time", "Once", "Always pay in full"))
 ```
 
 ```{r forPolicyReport4, eval=FALSE}
-tblCCBalance0 <- tblCCBalance %>% filter(Race != "Other, Non-Hispanic") %>% filter(Race != "All") %>% filter(State == "CA" | AnyStudentLoans == "Yes")
+tblCCBalance0 <- tblCCBalance0 %>% filter(Race != "Other, Non-Hispanic") %>% filter(Race != "All") %>% filter(State == "CA" | AnyStudentLoans == "Yes") 
 tblCCBalance0$Group <- rep(NA, nrow(tblCCBalance0))
 tblCCBalance0$Group[(tblCCBalance0$State=="CA") & (tblCCBalance0$AnyStudentLoans=="Yes")] <- "California borrowers"
 tblCCBalance0$Group[(tblCCBalance0$State=="Rest of U.S.") & (tblCCBalance0$AnyStudentLoans=="Yes")] <- "Rest of U.S. borrowers"
@@ -4127,7 +4128,7 @@ tblCCBalance0$Group[(tblCCBalance0$State=="CA") & (tblCCBalance0$AnyStudentLoans
 tblCCBalance0$Group <- as.factor(tblCCBalance0$Group)
 tblCCBalance0$Group <- factor(tblCCBalance0$Group, levels=rev(c("California borrowers", "Rest of U.S. borrowers", "California non-borrowers")))
 
-ggplot(data=tblCCBalance0, mapping=aes(y=Group, x=`Share of borrowers`, fill=variable)) + geom_bar(stat="identity") + facet_wrap(Race ~ ., ncol=1, strip.position=c("top")) + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+ggplot(data=tblCCBalance0, mapping=aes(y=Group, x=`Most or all of the time`, fill=Group)) + geom_bar(stat="identity") + facet_wrap(Race ~ ., ncol=1, strip.position=c("top")) + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share who say they carry an unpaid credit card balance most or all of the time", y="") + theme(legend.position="none", text=element_text(family="Optima")) + scale_fill_manual(values = flagCols2)
 ```
 #### Figure 16: CA borrowers
 ##### Responses to "In the past 12 months, how frequently have you carried an unpaid balance on one or more of your credit cards?"
@@ -7271,6 +7272,8 @@ Q17.OutsideCA$`Estimated debt for students from California enrolled online` <- Q
 
 Q17.OutsideCA <- Q17.OutsideCA %>% arrange(desc(`Estimated debt for students from California enrolled online`)) %>% select(INSTNM, STABBR2, `Estimated students from California enrolled online`, `Estimated debt for students from California enrolled online`)
 
+totalOutsideDebt <- sum(Q17.OutsideCA$`Estimated debt for students from California enrolled online`, na.rm=TRUE)
+
 Q17.OutsideCA$`Estimated students from California enrolled online` <- comma(round(Q17.OutsideCA$`Estimated students from California enrolled online`, -1))
 Q17.OutsideCA$`Estimated debt for students from California enrolled online` <- dollar(round(Q17.OutsideCA$`Estimated debt for students from California enrolled online`, -3), accuracy=1)
 
@@ -7294,6 +7297,8 @@ kable(kable5, caption="Top 100 institutions based outside California, by estimat
 ***
 
 ### {-}
+
+In total, an estimated $11.6 billion comes from online enrollment by California students at institutions based outside the state.
 
 The top institutions by outstanding debt have so far all been private institutions. In the first tab of Table 6, we see the breakdown of loan debt from California's three public sectors. In total, there is \$37 billion in outstanding debt from California's public colleges and universities, with the CSU and UC contributing the vast majority. 
 
@@ -8902,3 +8907,113 @@ ggplotly(g40B, width=600, height=600, tooltip="text")
 ***
 
 ### {-}
+
+```{r forPolicyReport6, eval=FALSE}
+# This dataset comes from the following site: https://www.politico.com/news/2023/02/16/joe-biden-student-debt-relief-00083243 
+politico.data <- read.delim("Student Loan Forgiveness by ZIP.txt", sep='\t')
+names(politico.data) <- c("ZIP", "Application count")
+politico.data$ZIP <- as.numeric(politico.data$ZIP)
+politico.data <- politico.data %>% filter(is.na(ZIP)==FALSE)
+# This dataset comes from the following site: https://data.census.gov/table?t=Age+and+Sex:Educational+Attainment&g=0100000US$8600000&tid=ACSDT5Y2021.B15001 
+education.data <- fread("ACSDT5Y2021.B15001-Data.csv", header=TRUE, select=c("NAME", "B15001_049E", "B15001_050E", "B15001_051E", "B15001_048E", "B15001_057E", "B15001_058E", "B15001_059E", "B15001_056E", "B15001_065E", "B15001_066E", "B15001_067E", "B15001_064E", "B15001_073E", "B15001_074E", "B15001_075E", "B15001_072E", "B15001_081E", "B15001_082E", "B15001_083E", "B15001_080E", "B15001_008E", "B15001_009E", "B15001_010E", "B15001_007E", "B15001_016E", "B15001_017E", "B15001_018E", "B15001_015E", "B15001_024E", "B15001_025E", "B15001_026E", "B15001_023E", "B15001_032E", "B15001_033E", "B15001_034E", "B15001_031E", "B15001_040E","B15001_041E", "B15001_042E", "B15001_039E"))
+names(education.data)[1] <- "ZIP"
+education.data$B15001_049E <- as.numeric(education.data$B15001_049E)
+education.data$B15001_050E <- as.numeric(education.data$B15001_050E)
+education.data$B15001_051E <- as.numeric(education.data$B15001_051E)
+education.data$B15001_048E <- as.numeric(education.data$B15001_048E)
+education.data$B15001_057E <- as.numeric(education.data$B15001_057E)
+education.data$B15001_058E <- as.numeric(education.data$B15001_058E)
+education.data$B15001_059E <- as.numeric(education.data$B15001_059E)
+education.data$B15001_056E <- as.numeric(education.data$B15001_056E)
+education.data$B15001_065E <- as.numeric(education.data$B15001_065E)
+education.data$B15001_066E <- as.numeric(education.data$B15001_066E)
+education.data$B15001_067E <- as.numeric(education.data$B15001_067E)
+education.data$B15001_064E <- as.numeric(education.data$B15001_064E)
+education.data$B15001_073E <- as.numeric(education.data$B15001_073E)
+education.data$B15001_074E <- as.numeric(education.data$B15001_074E)
+education.data$B15001_075E <- as.numeric(education.data$B15001_075E)
+education.data$B15001_072E <- as.numeric(education.data$B15001_072E)
+education.data$B15001_081E <- as.numeric(education.data$B15001_081E)
+education.data$B15001_082E <- as.numeric(education.data$B15001_082E)
+education.data$B15001_083E <- as.numeric(education.data$B15001_083E)
+education.data$B15001_080E <- as.numeric(education.data$B15001_080E)
+education.data$B15001_008E <- as.numeric(education.data$B15001_008E)
+education.data$B15001_009E <- as.numeric(education.data$B15001_009E)
+education.data$B15001_010E <- as.numeric(education.data$B15001_010E)
+education.data$B15001_007E <- as.numeric(education.data$B15001_007E)
+education.data$B15001_016E <- as.numeric(education.data$B15001_016E)
+education.data$B15001_017E <- as.numeric(education.data$B15001_017E)
+education.data$B15001_018E <- as.numeric(education.data$B15001_018E)
+education.data$B15001_015E <- as.numeric(education.data$B15001_015E)
+education.data$B15001_024E <- as.numeric(education.data$B15001_024E)
+education.data$B15001_025E <- as.numeric(education.data$B15001_025E)
+education.data$B15001_026E <- as.numeric(education.data$B15001_026E)
+education.data$B15001_023E <- as.numeric(education.data$B15001_023E)
+education.data$B15001_032E <- as.numeric(education.data$B15001_032E)
+education.data$B15001_033E <- as.numeric(education.data$B15001_033E)
+education.data$B15001_034E <- as.numeric(education.data$B15001_034E)
+education.data$B15001_031E <- as.numeric(education.data$B15001_031E)
+education.data$B15001_040E <- as.numeric(education.data$B15001_040E)
+education.data$B15001_041E <- as.numeric(education.data$B15001_041E)
+education.data$B15001_042E <- as.numeric(education.data$B15001_042E)
+education.data$B15001_039E <- as.numeric(education.data$B15001_039E)
+education.data <- education.data %>% mutate(`College-educated population aged 18 or older` = B15001_049E + B15001_050E + B15001_051E + B15001_048E + B15001_057E + B15001_058E + B15001_059E + B15001_056E + B15001_065E + B15001_066E + B15001_067E + B15001_064E + B15001_073E + B15001_074E + B15001_075E + B15001_072E + B15001_081E + B15001_082E + B15001_083E + B15001_080E + B15001_008E + B15001_009E + B15001_010E + B15001_007E + B15001_016E + B15001_017E + B15001_018E + B15001_015E + B15001_024E + B15001_025E + B15001_026E + B15001_023E + B15001_032E + B15001_033E + B15001_034E + B15001_031E + B15001_040E + B15001_041E + B15001_042E + B15001_039E)
+education.data$ZIP <- gsub("ZCTA5 ", "", education.data$ZIP)
+education.data$ZIP <- as.numeric(education.data$ZIP)
+education.data <- education.data %>% select(ZIP, `College-educated population aged 18 or older`) %>% filter(is.na(ZIP)==FALSE)
+
+# This dataset comes from the following site: https://data.census.gov/table?q=income+per+capita&t=Income+(Households,+Families,+Individuals)&g=0100000US$8600000&tid=ACSST5Y2021.S1902 
+income.data <- fread("ACSST5Y2021.S1902-Data.csv", header=TRUE, select=c("NAME", "S1902_C03_001E"))
+names(income.data) <- c("ZIP", "Mean household income")
+income.data$ZIP <- gsub("ZCTA5 ", "", income.data$ZIP)
+income.data$ZIP <- as.numeric(income.data$ZIP)
+income.data$`Mean household income` <- as.numeric(income.data$`Mean household income`)
+income.data <- income.data %>% filter(is.na(ZIP)==FALSE)
+
+# This dataset comes from the following site: https://data.census.gov/table?g=0100000US$8600000&tid=ACSST5Y2021.S0101 
+# population.data <- fread("ACSST5Y2021.S0101-Data.csv", header=TRUE, select=c("NAME", "S0101_C01_006E", "S0101_C01_007E", "S0101_C01_008E", "S0101_C01_009E", "S0101_C01_010E", "S0101_C01_011E", "S0101_C01_012E", "S0101_C01_013E"))
+# names(population.data) <- as.character(population.data[1, 1:9])
+# names(population.data) <- gsub("Estimate!!Total!!Total population!!AGE!!", "", names(population.data))
+# names(population.data)[1] <- "ZIP"
+# population.data$ZIP <- gsub("ZCTA5 ", "", population.data$ZIP)
+# population.data$ZIP <- as.numeric(population.data$ZIP)
+# population.data$`20 to 24 years` <- as.numeric(population.data$`20 to 24 years`)
+# population.data$`25 to 29 years` <- as.numeric(population.data$`25 to 29 years`)
+# population.data$`30 to 34 years` <- as.numeric(population.data$`30 to 34 years`)
+# population.data$`35 to 39 years` <- as.numeric(population.data$`35 to 39 years`)
+# population.data$`40 to 44 years` <- as.numeric(population.data$`40 to 44 years`)
+# population.data$`45 to 49 years` <- as.numeric(population.data$`45 to 49 years`)
+# population.data$`50 to 54 years` <- as.numeric(population.data$`50 to 54 years`)
+# population.data$`55 to 59 years` <- as.numeric(population.data$`55 to 59 years`)
+# population.data <- population.data %>% mutate(`Population aged 20 to 59 years` = `20 to 24 years` + `25 to 29 years` + `30 to 34 years` + `35 to 39 years` + `40 to 44 years` + `45 to 49 years` + `50 to 54 years` + `55 to 59 years`)
+# population.data <- population.data %>% select(`ZIP`, `Population aged 20 to 59 years`)
+
+# This dataset comes from the following site: https://data.census.gov/table?t=Poverty&g=0100000US$8600000&tid=ACSST5Y2021.S1701 
+# poverty.data <- fread("ACSST5Y2021.S1701-Data.csv", header=TRUE, select=c("NAME", "S1701_C01_001E", "S1701_C02_001E"))
+# names(poverty.data) <- as.character(c(poverty.data[1, 1], poverty.data[1, 2], poverty.data[1, 3]))
+# names(poverty.data) <- gsub("!!Population for whom poverty status is determined", "", names(poverty.data))
+# names(poverty.data) <- gsub("!!", " - ", names(poverty.data))
+# names(poverty.data)[1] <- "ZIP"
+# poverty.data$ZIP <- gsub("ZCTA5 ", "", poverty.data$ZIP)
+# poverty.data$ZIP <- as.numeric(poverty.data$ZIP)
+# poverty.data$`Estimate - Total` <- as.numeric(poverty.data$`Estimate - Total`)
+# poverty.data$`Estimate - Below poverty level` <- as.numeric(poverty.data$`Estimate - Below poverty level`)
+# poverty.data <- poverty.data %>% filter(is.na(ZIP)==FALSE)
+
+merged <- full_join(x=politico.data, y=education.data, by="ZIP")
+merged <- full_join(x=merged, y=income.data, by="ZIP")
+merged <- merged %>% filter(ZIP %in% (90000:96199)) # California zip codes
+merged <- merged %>% mutate(`Share who applied` = `Application count` / `College-educated population aged 18 or older`)
+
+merged <- merged %>% mutate(`Income under $95,000` = ifelse(`Mean household income` < 95000, 1, 0))
+merged <- merged %>% mutate(`Income under $75,000` = ifelse(`Mean household income` < 75000, 1, 0))
+merged <- merged %>% mutate(`Income under $60,000` = ifelse(`Mean household income` < 60000, 1, 0))
+merged <- merged %>% mutate(`Income under $50,000` = ifelse(`Mean household income` < 50000, 1, 0))
+merged <- merged %>% mutate(`Income under $40,000` = ifelse(`Mean household income` < 40000, 1, 0))
+
+agg0 <- aggregate(data=merged, cbind(`Application count`, `College-educated population aged 18 or older`) ~ `Income under $95,000`, FUN=sum) %>% mutate(`Share who applied` = `Application count` / `College-educated population aged 18 or older`)
+agg1 <- aggregate(data=merged, cbind(`Application count`, `College-educated population aged 18 or older`) ~ `Income under $75,000`, FUN=sum) %>% mutate(`Share who applied` = `Application count` / `College-educated population aged 18 or older`)
+agg2 <- aggregate(data=merged, cbind(`Application count`, `College-educated population aged 18 or older`) ~ `Income under $60,000`, FUN=sum) %>% mutate(`Share who applied` = `Application count` / `College-educated population aged 18 or older`)
+agg3 <- aggregate(data=merged, cbind(`Application count`, `College-educated population aged 18 or older`) ~ `Income under $50,000`, FUN=sum) %>% mutate(`Share who applied` = `Application count` / `College-educated population aged 18 or older`)
+agg4 <- aggregate(data=merged, cbind(`Application count`, `College-educated population aged 18 or older`) ~ `Income under $40,000`, FUN=sum) %>% mutate(`Share who applied` = `Application count` / `College-educated population aged 18 or older`)
+```
