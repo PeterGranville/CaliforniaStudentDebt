@@ -978,8 +978,8 @@ npsas1.CA <- read.csv("Powerstats opspco.csv", skip=73, nrow=7, header=FALSE)
 npsas1.CA.total <- read.csv("Powerstats opspco.csv", skip=71, nrow=1, header=FALSE)
 npsas1.CA <- rbind(npsas1.CA.total, npsas1.CA)
 
-names(npsas1.US) <- c("Group", "Average federal loans")
-names(npsas1.CA) <- c("Group", "Average federal loans")
+names(npsas1.US) <- c("Group", "Average loans")
+names(npsas1.CA) <- c("Group", "Average loans")
 
 npsas1.US$State <- rep("U.S.", nrow(npsas1.US))
 npsas1.CA$State <- rep("CA", nrow(npsas1.CA))
@@ -996,10 +996,6 @@ npsas1 <- reshape2::melt(data=npsas1, id.vars = c("Group", "State"), value.name=
 
 npsas1$Group <- as.factor(npsas1$Group)
 npsas1$Group <- factor(npsas1$Group, levels = c("Overall", "White", "Latino/a", "Black", "Asian", "Pacific Islander", "2+ races"))
-
-npsas1$`Average Loan` <- gsub(pattern="!", x=npsas1$`Average Loan`, replacement="")
-npsas1$`Average Loan` <- gsub(pattern=",", x=npsas1$`Average Loan`, replacement="")
-npsas1$`Average Loan` <- gsub(pattern=" ", x=npsas1$`Average Loan`, replacement="")
 npsas1$`Average Loan` <- as.numeric(npsas1$`Average Loan`)
 ```
 
@@ -1042,10 +1038,6 @@ npsas1P <- reshape2::melt(data=npsas1P, id.vars = c("Group", "State"), value.nam
 
 npsas1P$Group <- as.factor(npsas1P$Group)
 npsas1P$Group <- factor(npsas1P$Group, levels = c("Overall", "White", "Latino/a", "Black", "Asian", "Pacific Islander", "2+ races"))
-
-npsas1P$`Share Borrowing Loans` <- gsub(pattern="!", x=npsas1P$`Share Borrowing Loans`, replacement="")
-npsas1P$`Share Borrowing Loans` <- gsub(pattern=",", x=npsas1P$`Share Borrowing Loans`, replacement="")
-npsas1P$`Share Borrowing Loans` <- gsub(pattern=" ", x=npsas1P$`Share Borrowing Loans`, replacement="")
 npsas1P$`Share Borrowing Loans` <- as.numeric(npsas1P$`Share Borrowing Loans`) / 100
 ```
 
@@ -1070,8 +1062,8 @@ npsas1.1.CA <- read.csv("Powerstats ztmgmm.csv", skip=108, nrow=14, header=FALSE
 npsas1.1.CA.total <- read.csv("Powerstats vzreir.csv", skip=48, nrow=2, header=FALSE)
 npsas1.1.CA <- rbind(npsas1.1.CA.total, npsas1.1.CA)
 
-names(npsas1.1.US) <- c("Group", "Average federal loans")
-names(npsas1.1.CA) <- c("Group", "Average federal loans")
+names(npsas1.1.US) <- c("Group", "Average loans")
+names(npsas1.1.CA) <- c("Group", "Average loans")
 
 npsas1.1.US$State <- rep("U.S.", nrow(npsas1.1.US))
 npsas1.1.CA$State <- rep("CA", nrow(npsas1.1.CA))
@@ -1128,10 +1120,6 @@ npsas1.1$Gender <- factor(npsas1.1$Gender, levels=c("Male", "Female"))
 
 npsas1.1$Group <- as.factor(npsas1.1$Group)
 npsas1.1$Group <- factor(npsas1.1$Group, levels = c("Overall", "White", "Latino/a", "Black", "Asian", "2+ races"))
-
-npsas1.1$`Average Loan` <- gsub(pattern="!", x=npsas1.1$`Average Loan`, replacement="")
-npsas1.1$`Average Loan` <- gsub(pattern=",", x=npsas1.1$`Average Loan`, replacement="")
-npsas1.1$`Average Loan` <- gsub(pattern=" ", x=npsas1.1$`Average Loan`, replacement="")
 npsas1.1$`Average Loan` <- as.numeric(npsas1.1$`Average Loan`)
 ```
 
@@ -1206,16 +1194,12 @@ npsas1.1P$Gender[npsas1.1P$Group=="Female"] <- "Female"
 npsas1.1P$Group[npsas1.1P$Group=="Male"] <- "Overall"
 npsas1.1P$Group[npsas1.1P$Group=="Female"] <- "Overall"
 
-npsas1.1P <- npsas1.1P %>% filter(Group %in% c("Native American")==FALSE)
+npsas1.1P <- npsas1.1P %>% filter(Group %in% c("Native American", "Pacific Islander")==FALSE)
 
 npsas1.1P <- reshape2::melt(data=npsas1.1P, id.vars = c("Group", "State", "Gender"), value.name="Share Borrowing Loans")
 
 npsas1.1P$Group <- as.factor(npsas1.1P$Group)
-npsas1.1P$Group <- factor(npsas1.1P$Group, levels = c("Overall", "White", "Latino/a", "Black", "Asian", "Pacific Islander", "2+ races"))
-
-npsas1.1P$`Share Borrowing Loans` <- gsub(pattern="!", x=npsas1.1P$`Share Borrowing Loans`, replacement="")
-npsas1.1P$`Share Borrowing Loans` <- gsub(pattern=",", x=npsas1.1P$`Share Borrowing Loans`, replacement="")
-npsas1.1P$`Share Borrowing Loans` <- gsub(pattern=" ", x=npsas1.1P$`Share Borrowing Loans`, replacement="")
+npsas1.1P$Group <- factor(npsas1.1P$Group, levels = c("Overall", "White", "Latino/a", "Black", "Asian", "2+ races"))
 npsas1.1P$`Share Borrowing Loans` <- as.numeric(npsas1.1P$`Share Borrowing Loans`) / 100
 ```
 
@@ -1237,13 +1221,13 @@ ggplotly(g2BP, tooltip="text", width=800, height=350)
 
 **Timeframe reflected:** Figures in this graph reflect students enrolled in the 2015-16 academic year. 
 
-**Notes:** Due to limitations of NPSAS:16, the data in Figure 2 only apply to in-state students. The averages here do not include those who did not borrow federal loans. These measures include all federal student loans (including Parent PLUS) and do not include any private or institutional loans. 
+**Notes:** Due to limitations of NPSAS:16, the data in Figure 2 only apply to in-state students. The averages here do not include those who did not borrow any loans. These measures include all student loans, including federal student loans (including Parent PLUS), private loans, state loans, and institutional loans. 
 
 ***
 
 #### {-}
 
-Figure 3 shows that key differences at the graduate level. The average annual loans are significantly larger than at the undergraduate level, and California more sharply exceeds the nation in the average loan. In addition, the share of California students who borrow is much higher at the graduate level than the undergraduate level. 
+Figure 3 shows that key differences at the graduate level. The average annual loans are larger than at the undergraduate level, and California more sharply exceeds the nation in the average loan. In addition, the share of California students who borrow is much higher at the graduate level than the undergraduate level. 
 
 #### {.tabset}
 ##### Figure 3: Average Graduate Loans by Race
@@ -1271,10 +1255,6 @@ npsas2$Group[npsas2$Group=="Total"] <- "Overall"
 
 npsas2$Group <- as.factor(npsas2$Group)
 npsas2$Group <- factor(npsas2$Group, levels = c("Overall", "White", "Latino/a", "Black", "Asian"))
-
-npsas2$`Average loans` <- gsub(pattern="!", x=npsas2$`Average loans`, replacement="")
-npsas2$`Average loans` <- gsub(pattern=",", x=npsas2$`Average loans`, replacement="")
-npsas2$`Average loans` <- gsub(pattern=" ", x=npsas2$`Average loans`, replacement="")
 npsas2$`Average loans` <- as.numeric(npsas2$`Average loans`)
 ```
 
@@ -1315,10 +1295,6 @@ npsas2P$Group[npsas2P$Group=="Total"] <- "Overall"
 
 npsas2P$Group <- as.factor(npsas2P$Group)
 npsas2P$Group <- factor(npsas2P$Group, levels = c("Overall", "White", "Latino/a", "Black", "Asian"))
-
-npsas2P$`Share Borrowing Loans` <- gsub(pattern="!", x=npsas2P$`Share Borrowing Loans`, replacement="")
-npsas2P$`Share Borrowing Loans` <- gsub(pattern=",", x=npsas2P$`Share Borrowing Loans`, replacement="")
-npsas2P$`Share Borrowing Loans` <- gsub(pattern=" ", x=npsas2P$`Share Borrowing Loans`, replacement="")
 npsas2P$`Share Borrowing Loans` <- as.numeric(npsas2P$`Share Borrowing Loans`) / 100
 ```
 
@@ -1388,10 +1364,6 @@ npsas2.1 <- npsas2.1 %>% filter((Group %in% c("Native American", "Pacific Island
 
 npsas2.1$Group <- as.factor(npsas2.1$Group)
 npsas2.1$Group <- factor(npsas2.1$Group, levels = c("Overall", "White", "Latino/a", "Black", "Asian", "2+ races"))
-
-npsas2.1$`Average loans` <- gsub(pattern="!", x=npsas2.1$`Average loans`, replacement="")
-npsas2.1$`Average loans` <- gsub(pattern=",", x=npsas2.1$`Average loans`, replacement="")
-npsas2.1$`Average loans` <- gsub(pattern=" ", x=npsas2.1$`Average loans`, replacement="")
 npsas2.1$`Average loans` <- as.numeric(npsas2.1$`Average loans`)
 ```
 
@@ -1462,10 +1434,6 @@ npsas2.1P <- npsas2.1P %>% filter((Group %in% c("Native American", "Pacific Isla
 
 npsas2.1P$Group <- as.factor(npsas2.1P$Group)
 npsas2.1P$Group <- factor(npsas2.1P$Group, levels = c("Overall", "White", "Latino/a", "Black", "Asian", "2+ races"))
-
-npsas2.1P$`Share Borrowing Loans` <- gsub(pattern="!", x=npsas2.1P$`Share Borrowing Loans`, replacement="")
-npsas2.1P$`Share Borrowing Loans` <- gsub(pattern=",", x=npsas2.1P$`Share Borrowing Loans`, replacement="")
-npsas2.1P$`Share Borrowing Loans` <- gsub(pattern=" ", x=npsas2.1P$`Share Borrowing Loans`, replacement="")
 npsas2.1P$`Share Borrowing Loans` <- as.numeric(npsas2.1P$`Share Borrowing Loans`) / 100
 ```
 
@@ -1487,15 +1455,15 @@ ggplotly(g3BP, tooltip="text", width=800, height=350)
 
 **Timeframe reflected:** Figures in this graph reflect students enrolled in the 2015-16 academic year. 
 
-**Notes:** Due to limitations of NPSAS:16, the data in Figure 3 only apply to in-state students. For "Figure 3: Race and Gender," only the U.S. is used due to insufficient sample size for many subgroups in California. The averages here do not include those who did not borrow federal loans. These measures include all federal student loans and do not include any private or institutional loans. 
+**Notes:** Due to limitations of NPSAS:16, the data in Figure 3 only apply to in-state students. For "Figure 3: Race and Gender," only the U.S. is used due to insufficient sample size for many subgroups in California. The averages here do not include those who did not borrow any loans. These measures include all student loans, including federal loans, private loans, state loans, and institutional loans. 
 
 ***
 
 #### {-}
 
-Differences by group within California are also concerning. More than 75 percent of Black California graduate students and 62 percent of Latino/a California graduate students must borrow student loans, compared to 42 percent of white California graduate students. Although the share who borrow is roughly the same in California as in the U.S. overall, Black students are the exception, borrowing loans at a rate that is 13 percentage points higher.
+Differences by group within California are also concerning. More than 80 percent of Black California graduate students and 62 percent of Latino/a California graduate students must borrow student loans, compared to 44 percent of white California graduate students. Although the overall share who borrow is roughly the same in California as in the U.S., Black students are the exception, borrowing loans at a rate that is 13 percentage points higher.
 
-At the graduate level in California, Asian students borrow the most, exceeding $30,000 per year, which is slightly above the national average for Asian graduate students. However, Asian graduate students borrow the least frequently of these four groups, in California and in the U.S. overall. (Recall that this is limited to in-state students, so international enrollment is not a factor.)
+At the graduate level in California, Asian students borrow the greatest average amount, exceeding $30,000 per year, which is slightly above the national average for Asian graduate students. However, Asian graduate students borrow the least frequently of these four groups, in California and in the U.S. overall. (Recall that this is limited to in-state students, so international enrollment is not a factor.)
 
 The NPSAS sample size is not sufficient to add a breakdown by gender and still compare California to the U.S., so we provide the breakdown by race and gender for the U.S. only. Within all groups, graduate students who are women more frequently borrow, but their male peers who borrow tend to borrow slightly more. 
 
@@ -1512,8 +1480,8 @@ npsas3.US.professional <- read.csv("PowerStats ibxxlt.csv", skip=256, nrow=7, he
 npsas3.US.professional.total <- read.csv("PowerStats ibxxlt.csv", skip=254, nrow=1, header=FALSE)
 npsas3.US.professional <- rbind(npsas3.US.professional.total, npsas3.US.professional)
 
-names(npsas3.US.masters) <- c("Group", "Total federal loans")
-names(npsas3.US.professional) <- c("Group", "Total federal loans")
+names(npsas3.US.masters) <- c("Group", "Total loans")
+names(npsas3.US.professional) <- c("Group", "Total loans")
 
 npsas3.US.masters$Level <- rep("Master's programs", nrow(npsas3.US.masters))
 npsas3.US.professional$Level <- rep("Professional doctorates", nrow(npsas3.US.professional))
@@ -1531,11 +1499,7 @@ npsas3 <- npsas3 %>% filter(Group %in% c("American Indian or Alaska Native", "Na
 
 npsas3$Group <- as.factor(npsas3$Group)
 npsas3$Group <- factor(npsas3$Group, levels = c("Overall", "White", "Latino/a", "Black", "Asian", "2+ races"))
-
-npsas3$`Total federal loans` <- gsub(pattern="!", x=npsas3$`Total federal loans`, replacement="")
-npsas3$`Total federal loans` <- gsub(pattern=",", x=npsas3$`Total federal loans`, replacement="")
-npsas3$`Total federal loans` <- gsub(pattern=" ", x=npsas3$`Total federal loans`, replacement="")
-npsas3$`Total federal loans` <- as.numeric(npsas3$`Total federal loans`)
+npsas3$`Total loans` <- as.numeric(npsas3$`Total loans`)
 ```
 
 ```{r figure4A}
@@ -1543,11 +1507,11 @@ npsas3$`For Tooltip` <- paste(
   "State: ", npsas3$State, '\n',
   "Group: ", npsas3$Group, '\n',
   "Level: ", npsas3$Level, '\n',
-  "Average annual federal loans: ", dollar(npsas3$`Total federal loans`, accuracy=1),
+  "Average annual loans: ", dollar(npsas3$`Total loans`, accuracy=1),
   sep=""
 )
 
-g4A <- ggplot(data=npsas3, mapping=aes(x=Group, y=`Total federal loans`, fill=Group, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.6) + labs(title="Average annual graduate loans by program level and group: U.S. only", y="Average Loans") + facet_grid(. ~ Level) + scale_y_continuous(labels=scales::dollar_format()) + scale_fill_manual(values = stateCols) + theme(legend.position="none", text=element_text(family="Optima"))
+g4A <- ggplot(data=npsas3, mapping=aes(x=Group, y=`Total loans`, fill=Group, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.6) + labs(title="Average annual graduate loans by program level and group: U.S. only", y="Average Loans") + facet_grid(. ~ Level) + scale_y_continuous(labels=scales::dollar_format()) + scale_fill_manual(values = stateCols) + theme(legend.position="none", text=element_text(family="Optima"))
 
 ggplotly(g4A, width=800, height=350, tooltip="text")
 ```
@@ -1580,10 +1544,6 @@ npsas3P <- npsas3P %>% filter(Group %in% c("American Indian or Alaska Native", "
 
 npsas3P$Group <- as.factor(npsas3P$Group)
 npsas3P$Group <- factor(npsas3P$Group, levels = c("Overall", "White", "Latino/a", "Black", "Asian", "2+ races"))
-
-npsas3P$`Share Borrowing Loans` <- gsub(pattern="!", x=npsas3P$`Share Borrowing Loans`, replacement="")
-npsas3P$`Share Borrowing Loans` <- gsub(pattern=",", x=npsas3P$`Share Borrowing Loans`, replacement="")
-npsas3P$`Share Borrowing Loans` <- gsub(pattern=" ", x=npsas3P$`Share Borrowing Loans`, replacement="")
 npsas3P$`Share Borrowing Loans` <- as.numeric(npsas3P$`Share Borrowing Loans`) / 100
 ```
 
@@ -1603,15 +1563,15 @@ ggplotly(g4AP, width=800, height=350, tooltip="text")
 ##### Figure 4: Average Graduate Loans by Program, Race, and Gender
 ```{r npsas3.1}
 npsas3.1.US.masters <- read.csv("PowerStats gouiaq.csv", skip=108, nrow=14, header=FALSE)
-npsas3.1.US.masters.total <- read.csv("PowerStats kxgkel.csv", skip=48, nrow=2, header=FALSE)
+npsas3.1.US.masters.total <- read.csv("Powerstats hxgkel.csv", skip=48, nrow=2, header=FALSE)
 npsas3.1.US.masters <- rbind(npsas3.1.US.masters.total, npsas3.1.US.masters)
 
 npsas3.1.US.professional <- read.csv("PowerStats gouiaq.csv", skip=396, nrow=14, header=FALSE)
-npsas3.1.US.professional.total <- read.csv("PowerStats kxgkel.csv", skip=156, nrow=2, header=FALSE)
+npsas3.1.US.professional.total <- read.csv("Powerstats hxgkel.csv", skip=156, nrow=2, header=FALSE)
 npsas3.1.US.professional <- rbind(npsas3.1.US.professional.total, npsas3.1.US.professional)
 
-names(npsas3.1.US.masters) <- c("Group", "Total federal loans")
-names(npsas3.1.US.professional) <- c("Group", "Total federal loans")
+names(npsas3.1.US.masters) <- c("Group", "Total loans")
+names(npsas3.1.US.professional) <- c("Group", "Total loans")
 
 npsas3.1.US.masters$Level <- rep("Master's programs", nrow(npsas3.1.US.masters))
 npsas3.1.US.professional$Level <- rep("Professional doctorates", nrow(npsas3.1.US.professional))
@@ -1664,11 +1624,7 @@ npsas3.1$Group[npsas3.1$Group=="Female"] <- "Overall"
 npsas3.1 <- npsas3.1 %>% filter(Group %in% c("Overall", "White",  "Latino/a", "Black", "Asian"))
 npsas3.1$Group <- as.factor(npsas3.1$Group)
 npsas3.1$Group <- factor(npsas3.1$Group, levels = c("Overall", "White", "Latino/a", "Black", "Asian", "2+ races"))
-
-npsas3.1$`Total federal loans` <- gsub(pattern="!", x=npsas3.1$`Total federal loans`, replacement="")
-npsas3.1$`Total federal loans` <- gsub(pattern=",", x=npsas3.1$`Total federal loans`, replacement="")
-npsas3.1$`Total federal loans` <- gsub(pattern=" ", x=npsas3.1$`Total federal loans`, replacement="")
-npsas3.1$`Total federal loans` <- as.numeric(npsas3.1$`Total federal loans`)
+npsas3.1$`Total loans` <- as.numeric(npsas3.1$`Total loans`)
 ```
 
 ```{r  figure4B}
@@ -1677,11 +1633,11 @@ npsas3.1$`For Tooltip` <- paste(
   "Group: ", npsas3.1$Group, '\n',
   "Gender: ", npsas3.1$Gender, '\n',
   "Level: ", npsas3.1$Level, '\n',
-  "Average annual federal loans: ", dollar(npsas3.1$`Total federal loans`, accuracy=1),
+  "Average annual loans: ", dollar(npsas3.1$`Total loans`, accuracy=1),
   sep=""
 )
 
-g4B <- ggplot(data=npsas3.1, mapping=aes(x=Group, y=`Total federal loans`, fill=Group, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.6) + labs(title="Average annual graduate loans by program level, group and gender: U.S. only", y="Average Loans") + facet_grid(Gender ~ Level) + scale_y_continuous(labels=scales::dollar_format()) + scale_fill_manual(values = stateCols) + theme(legend.position="none", text=element_text(family="Optima"))
+g4B <- ggplot(data=npsas3.1, mapping=aes(x=Group, y=`Total loans`, fill=Group, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.6) + labs(title="Average annual graduate loans by program level, group and gender: U.S. only", y="Average Loans") + facet_grid(Gender ~ Level) + scale_y_continuous(labels=scales::dollar_format()) + scale_fill_manual(values = stateCols) + theme(legend.position="none", text=element_text(family="Optima"))
 
 ggplotly(g4B, width=800, height=450, tooltip="text")
 ```
@@ -1749,10 +1705,6 @@ npsas3.1P$Group[npsas3.1P$Group=="Female"] <- "Overall"
 npsas3.1P <- npsas3.1P %>% filter(Group %in% c("Overall", "White",  "Latino/a", "Black", "Asian", "2+ races"))
 npsas3.1P$Group <- as.factor(npsas3.1P$Group)
 npsas3.1P$Group <- factor(npsas3.1P$Group, levels = c("Overall", "White", "Latino/a", "Black", "Asian", "2+ races"))
-
-npsas3.1P$`Share Borrowing Loans` <- gsub(pattern="!", x=npsas3.1P$`Share Borrowing Loans`, replacement="")
-npsas3.1P$`Share Borrowing Loans` <- gsub(pattern=",", x=npsas3.1P$`Share Borrowing Loans`, replacement="")
-npsas3.1P$`Share Borrowing Loans` <- gsub(pattern=" ", x=npsas3.1P$`Share Borrowing Loans`, replacement="")
 npsas3.1P$`Share Borrowing Loans` <- as.numeric(npsas3.1P$`Share Borrowing Loans`) / 100
 ```
 
@@ -1774,11 +1726,11 @@ ggplotly(g4BP, width=800, height=450, tooltip="text")
 ```
 ##### Data Source and Notes
 
-**Data source:** National Postsecondary Student Aid Study, Graduate. Datalab interface available [here](https://nces.ed.gov/datalab/) using table retrieval numbers *ibxxlt* and *zlasyt* for "Figure 4: Race" and table retrieval numbers *gouiaq*, *kxgkel*, *iuyjsr*, *ajghcg* for "Figure 4: Race and Gender."
+**Data source:** National Postsecondary Student Aid Study, Graduate. Datalab interface available [here](https://nces.ed.gov/datalab/) using table retrieval numbers *ibxxlt* and *zlasyt* for "Figure 4: Race" and table retrieval numbers *gouiaq*, *hxgkel*, *iuyjsr*, *ajghcg* for "Figure 4: Race and Gender."
 
 **Timeframe reflected:** Figures in this graph reflect students enrolled in the 2015-16 academic year. 
 
-**Notes:** The averages here do not include those who did not borrow federal loans. These measures include all federal student loans and do not include any private or institutional loans. In contrast to other charts in this section, Figure 4 is not limited to in-state students, since it does not have California-only statistics. 
+**Notes:** The averages here do not include those who did not borrow federal loans. These measures include all student loans, including federal student loans, private loans, state loans, and institutional loans. In contrast to other charts in this section, Figure 4 is not limited to in-state students, since it does not have California-only statistics. 
 
 ***
 
@@ -1788,7 +1740,7 @@ Black and Latino/a students in master's programs and professional doctorate prog
 
 At the professional doctorate level, gender does not appear to play a large role. However, it is clear that female master's students borrow more frequently than male master's students. Combining the trends by race and gender, we observe that Black women in master's programs borrow almost threefold more often than do white men in master's programs. (Again, recall that this reflects the U.S. overall and not California specifically.)
 
-Figure 5 returns to the undergraduate level and considers how much debt undergraduate students earn by the time they are about to earn their bachelor's degree. Specifically, I examine here undergraduate students who are in their 4th or 5th undergraduate year in terms of credit accumulation.  
+Figure 5 returns to the undergraduate level and considers how much debt undergraduate students earn by the time they are about to earn their bachelor's degree. Specifically, I filter for those who are listed as a "graduating senior from a bachelor's degree program in 2015-16." Due to data limitations in NPSAS, Figure 5 does not include Parent PLUS loans. 
 
 #### {.tabset}
 ##### Figure 5: Average Undergraduate Loans at Graduation by Race
@@ -1801,8 +1753,8 @@ npsas4.CA <- read.csv("PowerStats rcefsb.csv", skip=73, nrow=7, header=FALSE)
 npsas4.CA.total <- read.csv("PowerStats rcefsb.csv", skip=71, nrow=1, header=FALSE)
 npsas4.CA <- rbind(npsas4.CA.total, npsas4.CA)
 
-names(npsas4.US) <- c("Group", "Average cumulative federal loans")
-names(npsas4.CA) <- c("Group", "Average cumulative federal loans")
+names(npsas4.US) <- c("Group", "Average cumulative loans")
+names(npsas4.CA) <- c("Group", "Average cumulative loans")
 
 npsas4.US$State <- rep("U.S.", nrow(npsas4.US))
 npsas4.CA$State <- rep("CA", nrow(npsas4.CA))
@@ -1816,7 +1768,7 @@ npsas4$Group[npsas4$Group=="Hispanic or Latino"] <- "Latino/a"
 npsas4$Group[npsas4$Group=="Native Hawaiian/other Pacific Islander"] <- "Pacific Islander"
 npsas4$Group[npsas4$Group=="Total"] <- "Overall"
 
-npsas4$`Average cumulative federal loans` <- as.numeric(npsas4$`Average cumulative federal loans`)
+npsas4$`Average cumulative loans` <- as.numeric(npsas4$`Average cumulative loans`)
 
 npsas4$Group <- as.factor(npsas4$Group)
 npsas4$Group <- factor(npsas4$Group, levels = c("Overall", "White", "Latino/a", "Black", "Asian", "Pacific Islander", "2+ races"))
@@ -1826,11 +1778,11 @@ npsas4$Group <- factor(npsas4$Group, levels = c("Overall", "White", "Latino/a", 
 npsas4$`For Tooltip` <- paste(
   "State: ", npsas4$State, '\n',
   "Group: ", npsas4$Group, '\n',
-  "Average cumulative federal loans: ", dollar(npsas4$`Average cumulative federal loans`, accuracy=1),
+  "Average cumulative loans: ", dollar(npsas4$`Average cumulative loans`, accuracy=1),
   sep=""
 )
 
-g5A <- ggplot(data=npsas4, mapping=aes(x=State, y=`Average cumulative federal loans`, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.6) + facet_grid(. ~ Group) + scale_y_continuous(label=scales::dollar) + labs(x="State", title="Graduating undergraduates' average cumulative loans by group", y="Average cumulative loans") + scale_fill_manual(values = stateCols) + theme(legend.position="none", text=element_text(family="Optima"))
+g5A <- ggplot(data=npsas4, mapping=aes(x=State, y=`Average cumulative loans`, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.6) + facet_grid(. ~ Group) + scale_y_continuous(label=scales::dollar) + labs(x="State", title="Graduating undergraduates' average cumulative loans by group", y="Average cumulative loans") + scale_fill_manual(values = stateCols) + theme(legend.position="none", text=element_text(family="Optima"))
 
 ggplotly(g5A, width=800, height=350, tooltip="text")
 ```
@@ -1879,16 +1831,16 @@ ggplotly(g5AP, width=800, height=350, tooltip="text")
 ```
 ##### Figure 5: Average Undergraduate Loans at Graduation by Race and Gender
 ```{r npsas4.1, warning=FALSE}
-npsas4.1.US <- read.csv("PowerStats eggovm.csv", skip=12, nrow=14, header=FALSE)
+npsas4.1.US <- read.csv("PowerStats eggovn.csv", skip=12, nrow=14, header=FALSE)
 npsas4.1.US.total <- read.csv("PowerStats gnvptv.csv", skip=12, nrow=2, header=FALSE)
 npsas4.1.US <- rbind(npsas4.1.US.total, npsas4.1.US)
 
-npsas4.1.CA <- read.csv("PowerStats eggovm.csv", skip=108, nrow=14, header=FALSE)
+npsas4.1.CA <- read.csv("PowerStats eggovn.csv", skip=108, nrow=14, header=FALSE)
 npsas4.1.CA.total <- read.csv("PowerStats gnvptv.csv", skip=48, nrow=2, header=FALSE)
 npsas4.1.CA <- rbind(npsas4.1.CA.total, npsas4.1.CA)
 
-names(npsas4.1.US) <- c("Group", "Average cumulative federal loans")
-names(npsas4.1.CA) <- c("Group", "Average cumulative federal loans")
+names(npsas4.1.US) <- c("Group", "Average cumulative loans")
+names(npsas4.1.CA) <- c("Group", "Average cumulative loans")
 npsas4.1.US$State <- rep("U.S.", nrow(npsas4.1.US))
 npsas4.1.CA$State <- rep("CA", nrow(npsas4.1.CA))
 
@@ -1942,7 +1894,7 @@ npsas4.1$Group <- factor(npsas4.1$Group, levels = c("Overall", "White", "Latino/
 
 npsas4.1$Gender <- as.factor(npsas4.1$Gender)
 npsas4.1$Gender <- factor(npsas4.1$Gender, levels=c("Male", "Female"))
-npsas4.1$`Average cumulative federal loans` <- as.numeric(npsas4.1$`Average cumulative federal loans`)
+npsas4.1$`Average cumulative loans` <- as.numeric(npsas4.1$`Average cumulative loans`)
 ```
 
 ```{r figure5B}
@@ -1950,11 +1902,11 @@ npsas4.1$`For Tooltip` <- paste(
   "State: ", npsas4.1$State, '\n',
   "Group: ", npsas4.1$Group, '\n',
   "Gender: ", npsas4.1$Gender, '\n',
-  "Average cumulative federal loans: ", dollar(npsas4.1$`Average cumulative federal loans`, accuracy=1),
+  "Average cumulative loans: ", dollar(npsas4.1$`Average cumulative loans`, accuracy=1),
   sep=""
 )
 
-g5B <- ggplot(data=npsas4.1, mapping=aes(x=State, y=`Average cumulative federal loans`, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.6) + facet_grid(Gender ~ Group) + scale_y_continuous(label=scales::dollar) + labs(title="Graduating undergraduates' average cumulative loans by group and gender", y="Average Cumulative Loans") + scale_fill_manual(values = flagCols) + theme(legend.position="none", text=element_text(family="Optima"))
+g5B <- ggplot(data=npsas4.1, mapping=aes(x=State, y=`Average cumulative loans`, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.6) + facet_grid(Gender ~ Group) + scale_y_continuous(label=scales::dollar) + labs(title="Graduating undergraduates' average cumulative loans by group and gender", y="Average Cumulative Loans") + scale_fill_manual(values = flagCols) + theme(legend.position="none", text=element_text(family="Optima"))
 
 ggplotly(g5B, width=800, height=350, tooltip="text")
 ```
@@ -2040,23 +1992,23 @@ ggplotly(g5BP, width=800, height=350, tooltip="text")
 ```
 ##### Data Source and Notes
 
-**Data source:** National Postsecondary Student Aid Study, Undergraduate. Datalab interface available [here](https://nces.ed.gov/datalab/) using table retrieval numbers *rcefsb* and *admfpj* for "Figure 5: Race" and table retrieval number *eggovm*, *gnvptv*, *pnfkhv*, and *elhvny* for "Figure 5: Race and Gender (U.S. only)".
+**Data source:** National Postsecondary Student Aid Study, Undergraduate. Datalab interface available [here](https://nces.ed.gov/datalab/) using table retrieval numbers *rcefsb* and *admfpj* for "Figure 5: Race" and table retrieval number *eggovn*, *gnvptv*, *pnfkhv*, and *elhvny* for "Figure 5: Race and Gender (U.S. only)".
 
 **Timeframe reflected:** Figures in this graph reflect students enrolled in the 2015-16 academic year. 
 
-**Notes:** Due to limitations of NPSAS:16, the data in Figure 5 only apply to in-state students. The averages here do not include those with no cumulative federal loans. These measures include all federal student loans (including Parent PLUS) and do not include any private or institutional loans. 
+**Notes:** Due to limitations of NPSAS:16, the data in Figure 5 only apply to in-state students. The averages here do not include those with no cumulative loans. These measures include all student loans, including federal student loans (but not including Parent PLUS), private loans, state loans, and institutional loans. 
 
 ***
 
 #### {-}
 
-California students fare better here than students nationwide, in terms of the share who borrow and the cumulative loans of those who do. One exception is that California Pacific Islander borrowers average more than those nationwide, almost \$34,000 by graduation. 
+Here, California students fare the same or better than students nationwide, in terms of the share who borrow and the cumulative loans of those who do. However, equity concerns cut across both California and the nation overall. 
 
-Nearly 85 percent of Black California undergraduates borrow student loans by graduation, which is slightly lower than the national rate for Black undergraduates but still exceeds all other groups by a concerning margin. Latino/a California undergraduates have the second-highest frequency at 67 percent. Notably, all groups are above 50 percent in California as in the U.S. overall. 
+Nearly 85 percent of Black California undergraduates borrow student loans by graduation, which exceeds most other groups in the state by a concerning margin. (An estimated 80 percent of California Pacific Islander students borrow.) Notably, all groups are above 50 percent in California as in the U.S. overall. 
 
-The trend of pronounced borrowing among women, and especially Black women, extends here as well. Nine in ten Black California undergraduate women borrow by the time they graduate, on par with the national rate but well above other groups. 
+The trend of pronounced borrowing among women, and especially Black women, extends here as well. Roughly 95 percent of Black California undergraduate women borrow by the time they graduate, on par with the national rate but well above all other groups. 
 
-NPSAS allows us to disaggregate by ethnicity (to a limited extent) for two racial groups, Hispanic and Asian. No individual Asian ethnic group stands out from the rest along these measures, although Indian, Korean, Filipino, and Mixed Asian California undergraduates all average more loans than other groups and exceed the corresponding national averages. Fewer distinct groups are available in the Hispanic variable; Puerto Rican California undergraduates show the highest average loans. 
+NPSAS allows us to disaggregate by ethnicity (to a limited extent) for two racial groups, Hispanic and Asian. No individual Asian ethnic group stands out from the rest along these measures, although Indian, Korean, Filipino, and Mixed Asian California undergraduates all average more in annual loans than other groups and exceed the corresponding national averages. Fewer distinct groups are available in the Hispanic variable; California's Puerto Rican undergraduates show the highest average loans among those who borrow. 
 
 #### {.tabset}
 ```{r npsas5}
@@ -2066,10 +2018,10 @@ npsas5.US.HSP <- read.csv("PowerStats famipl.csv", skip=23, nrow=6, header=FALSE
 npsas5.CA.ASN <- read.csv("PowerStats famipl.csv", skip=123, nrow=9, header=FALSE)
 npsas5.CA.HSP <- read.csv("PowerStats famipl.csv", skip=134, nrow=6, header=FALSE)
 
-names(npsas5.US.HSP) <- c("Group", "Total federal loans")
-names(npsas5.US.ASN) <- c("Group", "Total federal loans")
-names(npsas5.CA.HSP) <- c("Group", "Total federal loans")
-names(npsas5.CA.ASN) <- c("Group", "Total federal loans")
+names(npsas5.US.HSP) <- c("Group", "Total loans")
+names(npsas5.US.ASN) <- c("Group", "Total loans")
+names(npsas5.CA.HSP) <- c("Group", "Total loans")
+names(npsas5.CA.ASN) <- c("Group", "Total loans")
 
 npsas5.US.HSP$Race <- rep("Hispanic", nrow(npsas5.US.HSP))
 npsas5.US.ASN$Race <- rep("Asian", nrow(npsas5.US.ASN))
@@ -2086,10 +2038,7 @@ npsas5 <- rbind(npsas5.US.HSP,
                 npsas5.CA.HSP, 
                 npsas5.CA.ASN)
 
-npsas5$`Total federal loans` <- gsub(pattern="!", x=npsas5$`Total federal loans`, replacement="")
-npsas5$`Total federal loans` <- gsub(pattern=",", x=npsas5$`Total federal loans`, replacement="")
-npsas5$`Total federal loans` <- gsub(pattern=" ", x=npsas5$`Total federal loans`, replacement="")
-npsas5$`Total federal loans` <- as.numeric(npsas5$`Total federal loans`)
+npsas5$`Total federal loans` <- as.numeric(npsas5$`Total loans`)
 
 npsas5.ASN <- npsas5 %>% filter(Race=="Asian") %>% filter(Group != "Not of Asian origin")
 npsas5.HSP <- npsas5 %>% filter(Race=="Hispanic") %>% filter(Group != "Not Hispanic or Latino origin")
@@ -2150,9 +2099,6 @@ npsas5P <- rbind(npsas5P.US.HSP,
                 npsas5P.CA.HSP, 
                 npsas5P.CA.ASN)
 
-npsas5P$`Share Borrowing Loans` <- gsub(pattern="!", x=npsas5P$`Share Borrowing Loans`, replacement="")
-npsas5P$`Share Borrowing Loans` <- gsub(pattern=",", x=npsas5P$`Share Borrowing Loans`, replacement="")
-npsas5P$`Share Borrowing Loans` <- gsub(pattern=" ", x=npsas5P$`Share Borrowing Loans`, replacement="")
 npsas5P$`Share Borrowing Loans` <- as.numeric(npsas5P$`Share Borrowing Loans`) / 100
 
 npsas5P.ASN <- npsas5P %>% filter(Race=="Asian") %>% filter(Group != "Not of Asian origin")
@@ -2191,11 +2137,11 @@ npsas5P.ASN$Group <- factor(npsas5P.ASN$Group, levels=c(
 npsas5.ASN$`For Tooltip` <- paste(
   "State: ", npsas5.ASN$State, '\n',
   "Group: ", npsas5.ASN$Group, '\n',
-  "Average annual federal loans: ", dollar(npsas5.ASN$`Total federal loans`, accuracy=1), 
+  "Average annual loans: ", dollar(npsas5.ASN$`Total loans`, accuracy=1), 
   sep=""
 )
 
-g6A <- ggplot(data=npsas5.ASN, mapping=aes(x=State, y=`Total federal loans`, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.6) + labs(title="Average annual undergraduate loans by Asian ethinicity: U.S. vs CA", y="Average Loans") + facet_grid(. ~ Group) +  scale_y_continuous(labels=scales::dollar_format()) + scale_fill_manual(values=stateCols) + theme(legend.position="none", text=element_text(family="Optima"))
+g6A <- ggplot(data=npsas5.ASN, mapping=aes(x=State, y=`Total loans`, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.6) + labs(title="Average annual undergraduate loans by Asian ethinicity: U.S. vs CA", y="Average Loans") + facet_grid(. ~ Group) +  scale_y_continuous(labels=scales::dollar_format()) + scale_fill_manual(values=stateCols) + theme(legend.position="none", text=element_text(family="Optima"))
 
 ggplotly(g6A, width=800, height=350, tooltip="text")
 ```
@@ -2217,11 +2163,11 @@ ggplotly(g6AP, width=800, height=350, tooltip="text")
 npsas5.HSP$`For Tooltip` <- paste(
   "State: ", npsas5.HSP$State, '\n',
   "Group: ", npsas5.HSP$Group, '\n',
-  "Average annual federal loans: ", dollar(npsas5.HSP$`Total federal loans`, accuracy=1), 
+  "Average annual loans: ", dollar(npsas5.HSP$`Total loans`, accuracy=1), 
   sep=""
 )
 
-g6B <- ggplot(data=npsas5.HSP, mapping=aes(x=State, y=`Total federal loans`, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.6) + labs(title="Average annual undergraduate loans by Hispanic ethinicity: U.S. vs CA", y="Average Loans") + facet_grid(. ~ Group) +  scale_y_continuous(labels=scales::dollar_format()) + scale_fill_manual(values=stateCols) + theme(legend.position="none", text=element_text(family="Optima"))
+g6B <- ggplot(data=npsas5.HSP, mapping=aes(x=State, y=`Total loans`, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.6) + labs(title="Average annual undergraduate loans by Hispanic ethinicity: U.S. vs CA", y="Average Loans") + facet_grid(. ~ Group) +  scale_y_continuous(labels=scales::dollar_format()) + scale_fill_manual(values=stateCols) + theme(legend.position="none", text=element_text(family="Optima"))
 
 ggplotly(g6B, width=800, height=350, tooltip="text")
 ```
@@ -2244,7 +2190,7 @@ ggplotly(g6BP, width=800, height=350, tooltip="text")
 
 **Timeframe reflected:** Figures in this graph reflect students enrolled in the 2015-16 academic year. 
 
-**Notes:** No other racial groups besides Hispanic and Asian have breakouts by ethnicity in NPSAS. Due to limitations of NPSAS:16, the data in Figure 6 only apply to in-state students. The averages here do not include those who did not borrow federal loans. These measures include all federal student loans (including Parent PLUS) and do not include any private or institutional loans. 
+**Notes:** No other racial groups besides Hispanic and Asian have breakouts by ethnicity in NPSAS. Due to limitations of NPSAS:16, the data in Figure 6 only apply to in-state students. The averages here do not include those who did not borrow any loans. These measures include all student loans, including federal student loans (including Parent PLUS), private loans, state loans, and institutional loans. 
 
 ***
 
