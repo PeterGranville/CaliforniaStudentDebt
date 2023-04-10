@@ -1,7 +1,7 @@
 ---
 title: "What the Data Tell Us About Student Debt and Race in California"
 author: "Peter Granville"
-date: 'December 2022'
+date: 'April 2023'
 output:
   html_document:
     toc: true
@@ -73,7 +73,7 @@ I draw from the best available sources of California-specific data on student de
 * The Survey of Household Economics and Decisionmaking (SHED)
 * The College Scorecard
 
-To lesser extents, I also use data from the Integrated Postsecondary Education Data System (IPEDS) and the American Community Survey (ACS). 
+To lesser extents, I also use data from the Integrated Postsecondary Education Data System (IPEDS) and the American Community Survey (ACS). I also include a short analysis focusing on the relationship between education attainment and income, using data from the ACS.
 
 This report is not a static PDF: you can toggle between different versions of charts and hover over graphs to reveal the exact statistics. The code used to produce this document and its charts and tables can be found at [this GitHub repository](https://github.com/PeterGranville/CaliforniaStudentDebt). All data sets used in this report are publicly available, courtesy of the U.S. Department of Education, the U.S. Federal Reserve, and the U.S. Census Bureau. 
 
@@ -7875,257 +7875,22 @@ kable(kable10B, caption="4-digit CIPs and award levels by debt compared to earni
 
 ### {-}
 
-With Figure 36, I am interested in whether there is any relationship between the racial demographics of those who complete California programs and their earnings. Starting with the same aggregated program-level earnings data from College Scorecard as I used for Figure 35, I link in data on the demographics of program completers from IPEDS. The first tab in Figure 36 focuses on Black students' share of completers, and it compares the rank of Black students' share of completers by ranked earnings. 
 
-The key question when interpreting this data is whether a high/low rank in one variable seems to correlate with a high/low rank in the other variable. While this is only a cursory analysis, no such patterns emerge. There is perhaps a slight correlation in bachelor's degree programs, where a lower share of Black enrollment is associated with a higher earnings average; however, this seems to be a modest correlation at the most. The same holds true for the tab on the Hispanic share of completers. 
-
-### {.tabset}
-```{r EarningsDemographics, warning=FALSE}
-Q26.1 <- c2yr %>% select(
-  `UNITID`, 
-  `OPEID`,
-  `STABBR`,
-  `CIPCODE`,
-  `AWLEVEL`,
-  `CTOTALT`,
-  `CBKAAT`, 
-  `CHISPT`
-) %>% filter(STABBR=="CA")
-Q26.1$CIPCODE <- as.character(Q26.1$CIPCODE)
-Q26.1$CIPCODE <- ifelse(Q26.1$CIPCODE %in% c(
-  "1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
-  "11", "12", "13", "14", "15", "16", "17", "18", "19", "20",
-  "21", "22", "23", "24", "25", "26", "27", "28", "29", "30",
-  "31", "32", "33", "34", "35", "36", "37", "38", "39", "40",
-  "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", 
-  "51", "52", "53", "54", "99"
-), paste(Q26.1$CIPCODE, ".0000", sep=""), Q26.1$CIPCODE)
-Q26.1$CIPCODE <-ifelse(substr(Q26.1$CIPCODE, 1, 2) %in% c("1.", "2.", "3.", "4.", "5.", "6.", "7.", "8.", "9."), paste("0", Q26.1$CIPCODE, sep=""), Q26.1$CIPCODE)
-Q26.1$CIPCODE <-ifelse(nchar(Q26.1$CIPCODE)==4, paste(Q26.1$CIPCODE, "0", sep=""), Q26.1$CIPCODE)
-Q26.1$CIPCODE <-ifelse(nchar(Q26.1$CIPCODE)==5, paste(Q26.1$CIPCODE, "0", sep=""), Q26.1$CIPCODE)
-Q26.1$CIPCODE <-ifelse(nchar(Q26.1$CIPCODE)==6, paste(Q26.1$CIPCODE, "0", sep=""), Q26.1$CIPCODE)
-Q26.1$CIPCODE <- paste(substr(Q26.1$CIPCODE, 1, 2), substr(Q26.1$CIPCODE, 4, 5), sep="")
-Q26.1 <- aggregate(data=Q26.1, cbind(CTOTALT, CBKAAT, CHISPT) ~ CIPCODE + AWLEVEL, FUN=sum)
-
-Q26.1 <- Q26.1 %>% filter(CTOTALT > 50)
-
-Q26.1$CREDDESC <- rep(NA, nrow(Q26.1))
-Q26.1$CREDDESC[Q26.1$AWLEVEL %in% c(2, 4, 20, 21)] <- "Undergraduate Certificate or Diploma"
-Q26.1$CREDDESC[Q26.1$AWLEVEL==3] <- "Associate's Degree"
-Q26.1$CREDDESC[Q26.1$AWLEVEL==5] <- "Bachelors Degree"
-Q26.1$CREDDESC[Q26.1$AWLEVEL %in% c(6, 8)] <- "Graduate/Professional Certificate"
-Q26.1$CREDDESC[Q26.1$AWLEVEL==7] <- "Master's Degree"
-Q26.1$CREDDESC[Q26.1$AWLEVEL==17] <- "Doctoral Degree"
-Q26.1$CREDDESC[Q26.1$AWLEVEL %in% c(18, 19)] <- "First Professional Degree"
-
-Q26.1$`Share who are BKAA` <- Q26.1$CBKAAT / Q26.1$CTOTALT
-Q26.1$`Share who are HISP` <- Q26.1$CHISPT / Q26.1$CTOTALT
-
-Q26.2 <- CSP %>% select(
-  UNITID,       # Unit ID for institution
-  OPEID6,       # 6-digit OPE ID for institution
-  INSTNM,       # Institution name
-  STABBR,       # Institution state
-  MAIN,         # Flag for main campus
-  CONTROL,      # Control of institution
-  CIPCODE,      # Classification of Instructional Programs (CIP) code for the field of study
-  CIPDESC,      # Text description of the field of study CIP Code
-  CREDLEV,      # Level of credential
-  CREDDESC,     # Text description of the level of credential
-  EARN_MDN_HI_2YR,               # Median earnings of graduates working and not enrolled 2 years after completing highest credential
-  EARN_COUNT_WNE_HI_2YR          # Number of graduates working and not enrolled 2 years after completing highest credential	
-) %>% filter(STABBR=="CA") %>% arrange(desc(MAIN))
-
-Q26.2$CREDDESC[Q26.2$CREDDESC=="Post-baccalaureate Certificate"] <- "Graduate/Professional Certificate"
-
-Q26.2 <- Q26.2 %>% filter(EARN_MDN_HI_2YR != "PrivacySuppressed") 
-Q26.2 <- Q26.2 %>% filter(EARN_COUNT_WNE_HI_2YR != "PrivacySuppressed")
-
-Q26.2$`Unique combination of OPEID, CIP, and CREDLEV` <- paste(Q26.2$OPEID6, Q26.2$CIPCODE, Q26.2$CREDLEV, sep="+")
-Q26.2 <- Q26.2 %>% filter(duplicated(`Unique combination of OPEID, CIP, and CREDLEV`)==FALSE)
-
-Q26.2$EARN_MDN_HI_2YR <- as.numeric(Q26.2$EARN_MDN_HI_2YR)
-Q26.2$EARN_COUNT_WNE_HI_2YR <- as.numeric(Q26.2$EARN_COUNT_WNE_HI_2YR)
-
-cipNames.26 <- Q26.2 %>% select(CIPCODE, CIPDESC) %>% filter(duplicated(CIPCODE)==FALSE)
-
-Q26.3 <- aggregate(data=Q26.2, EARN_COUNT_WNE_HI_2YR ~ CIPCODE + CREDDESC, FUN=sum)
-names(Q26.3) <- c("CIPCODE", "CREDDESC", "Total earner count")
-Q26.2 <- left_join(x=Q26.2, y=Q26.3, by=c("CIPCODE", "CREDDESC"))
-
-Q26.2$`Share of all earners` <- Q26.2$EARN_COUNT_WNE_HI_2YR / Q26.2$`Total earner count`
-Q26.2$`Weighted earnings median` <- Q26.2$`Share of all earners` * Q26.2$EARN_MDN_HI_2YR
-Q26.2 <- aggregate(data=Q26.2, `Weighted earnings median` ~ CIPCODE + CREDDESC, FUN=sum)
-Q26.2 <- left_join(x=Q26.2, y=cipNames.26, by="CIPCODE")
-
-Q26.2$`Rank of weighted earnings` <- rank(-(Q26.2$`Weighted earnings median`), ties.method="average")
-Q26.2$CIPCODE <- as.character(Q26.2$CIPCODE)
-Q26.2$CIPCODE <- ifelse(nchar(Q26.2$CIPCODE)==3, paste("0", Q26.2$CIPCODE, sep=""), Q26.2$CIPCODE)
-
-Q26 <- inner_join(x=Q26.2, y=Q26.1, by=c("CIPCODE", "CREDDESC"))
-
-Q26.Bplot <- Q26 %>% filter(`Share who are BKAA` != 0)
-Q26.Hplot <- Q26 %>% filter(`Share who are HISP` != 0)
-
-Q26.Bplot$`Rank of BKAA share` <- rank(-(Q26.Bplot$`Share who are BKAA`), ties.method="average")
-Q26.Hplot$`Rank of HISP share` <- rank(-(Q26.Hplot$`Share who are HISP`), ties.method="average")
-```
-#### Figure 36: California programs by average earnings and Black/African-American enrollment
-```{r figure36A}
-Q26.Bplot$`For Tooltip` <- paste(
-  "Program name: ", Q26.Bplot$CIPDESC, '\n',
-  "Credential level: ", Q26.Bplot$CREDDESC, '\n',
-  "Black share of completers: ", percent(Q26.Bplot$`Share who are BKAA`, accuracy=0.1), '\n',
-  "Rank of Black share of completers: ", as.integer(Q26.Bplot$`Rank of BKAA share`), '\n',
-  "Estimated average earnings: ", dollar(Q26.Bplot$`Weighted earnings median`, accuracy=1), '\n',
-  "Rank of earnings among completers: ", as.integer(Q26.Bplot$`Rank of weighted earnings`), 
-  sep=""
-)
-
-g36A <- ggplot(data=Q26.Bplot, mapping=aes(x=`Rank of BKAA share`, y=`Rank of weighted earnings`, fill=CREDDESC, text=`For Tooltip`)) + geom_point(stat="identity") + facet_wrap(`CREDDESC` ~ .) + labs(x="Rank of Black share of completers (1=Highest share)", y="Rank of earnings among completers (1=Highest earnings)") + theme(text=element_text(family="Optima"), legend.position="none") + scale_fill_brewer(palette="Set2") 
-
-ggplotly(g36A, width=800, height=600, tooltip="text")
-```
-#### Figure 36: California programs by average earnings and Hispanic/Latino enrollment
-```{r figure36B}
-Q26.Hplot$`For Tooltip` <- paste(
-  "Program name: ", Q26.Hplot$CIPDESC, '\n',
-  "Credential level: ", Q26.Hplot$CREDDESC, '\n',
-  "Hispanic share of completers: ", percent(Q26.Hplot$`Share who are HISP`, accuracy=0.1), '\n',
-  "Rank of Hispanic share of completers: ", as.integer(Q26.Hplot$`Rank of HISP share`), '\n',
-  "Estimated average earnings: ", dollar(Q26.Hplot$`Weighted earnings median`, accuracy=1), '\n',
-  "Rank of earnings among completers: ", as.integer(Q26.Hplot$`Rank of weighted earnings`), 
-  sep=""
-)
-
-g36B <- ggplot(data=Q26.Hplot, mapping=aes(x=`Rank of HISP share`, y=`Rank of weighted earnings`, fill=CREDDESC, text=`For Tooltip`)) + geom_point(stat="identity") + facet_wrap(`CREDDESC` ~ .) + labs(x="Rank of Hispanic share of completers (1=Highest share)", y="Rank of earnings among completers (1=Highest earnings)") + theme(text=element_text(family="Optima"), legend.position="none") + scale_fill_brewer(palette="Set2") 
-
-ggplotly(g36B, width=800, height=600, tooltip="text")
-```
-#### Data Source and Notes
-
-**Data source:** These figures were calculated using data from two sources. First is the College Scorecard field-of-study dataset, accessed November 2022, available through the U.S. Department of Education [here](https://collegescorecard.ed.gov/data/). Second is the IPEDS Completion Surveys, accessed November 2022, available through NCES [here](https://nces.ed.gov/ipeds/use-the-data). 
-
-**Timeframe reflected:** Ranked earnings values are author's calculations using College Scorecard data reflecting the calendar year 2017 or 2018 earnings of students who received federal student aid and graduated from their program in academic year 2014-15 or 2015-16. Ranked shares of completers by race are author's calculations using data from the IPEDS Completion Surveys reflecting 2019-20 and 2020-21. 
-
-**Notes:**
-
-***
-
-### {-}
-
-Figure 37 operates the same as Figure 36, except its focus is average debt instead of average earnings. Once again, there does not appear to be a correlation that provides us useful insights. 
-
-### {.tabset}
-```{r DebtDemographics}
-Q27 <- CSP %>% select(
-  UNITID,       # Unit ID for institution
-  OPEID6,       # 6-digit OPE ID for institution
-  INSTNM,       # Institution name
-  STABBR,       # Institution state
-  MAIN,         # Flag for main campus
-  CONTROL,      # Control of institution
-  CIPCODE,      # Classification of Instructional Programs (CIP) code for the field of study
-  CIPDESC,      # Text description of the field of study CIP Code
-  CREDLEV,      # Level of credential
-  CREDDESC,     # Text description of the level of credential
-  DEBT_ALL_STGP_EVAL_N,          # Borrower count for average/median Stafford and Grad PLUS loan debt disbursed at this institution
-  DEBT_ALL_STGP_EVAL_MDN         # Median Stafford and Grad PLUS loan debt disbursed at this institution
-) %>% filter(STABBR=="CA") %>% arrange(desc(MAIN))
-
-Q27$CREDDESC[Q27$CREDDESC=="Post-baccalaureate Certificate"] <- "Graduate/Professional Certificate"
-
-Q27 <- Q27 %>% filter(DEBT_ALL_STGP_EVAL_MDN != "PrivacySuppressed") 
-Q27 <- Q27 %>% filter(DEBT_ALL_STGP_EVAL_N != "PrivacySuppressed")
-
-Q27$`Unique combination of OPEID, CIP, and CREDLEV` <- paste(Q27$OPEID6, Q27$CIPCODE, Q27$CREDLEV, sep="+")
-Q27 <- Q27 %>% filter(duplicated(`Unique combination of OPEID, CIP, and CREDLEV`)==FALSE)
-
-Q27$DEBT_ALL_STGP_EVAL_MDN <- as.numeric(Q27$DEBT_ALL_STGP_EVAL_MDN)
-Q27$DEBT_ALL_STGP_EVAL_N <- as.numeric(Q27$DEBT_ALL_STGP_EVAL_N)
-
-cipNames.27 <- Q27 %>% select(CIPCODE, CIPDESC) %>% filter(duplicated(CIPCODE)==FALSE)
-
-Q27.1 <- aggregate(data=Q27, DEBT_ALL_STGP_EVAL_N ~ CIPCODE + CREDDESC, FUN=sum)
-names(Q27.1) <- c("CIPCODE", "CREDDESC", "Total borrower count")
-Q27 <- left_join(x=Q27, y=Q27.1, by=c("CIPCODE", "CREDDESC"))
-
-Q27$`Share of all borrowers` <- Q27$DEBT_ALL_STGP_EVAL_N / Q27$`Total borrower count`
-Q27$`Weighted debt median` <- Q27$`Share of all borrowers` * Q27$DEBT_ALL_STGP_EVAL_MDN
-Q27 <- aggregate(data=Q27, `Weighted debt median` ~ CIPCODE + CREDDESC, FUN=sum)
-Q27 <- left_join(x=Q27, y=cipNames.27, by="CIPCODE")
-
-Q27$`Rank of weighted debt` <- rank(-(Q27$`Weighted debt median`), ties.method="average")
-Q27$CIPCODE <- as.character(Q27$CIPCODE)
-Q27$CIPCODE <- ifelse(nchar(Q27$CIPCODE)==3, paste("0", Q27$CIPCODE, sep=""), Q27$CIPCODE)
-
-Q27 <- inner_join(x=Q27, y=Q26.1, by=c("CIPCODE", "CREDDESC"))
-
-Q27.Bplot <- Q27 %>% filter(`Share who are BKAA` != 0)
-Q27.Hplot <- Q27 %>% filter(`Share who are HISP` != 0)
-
-Q27.Bplot$`Rank of BKAA share` <- rank(-(Q27.Bplot$`Share who are BKAA`), ties.method="average")
-Q27.Hplot$`Rank of HISP share` <- rank(-(Q27.Hplot$`Share who are HISP`), ties.method="average")
-```
-#### Figure 37: California programs by average debt and Black/African-American enrollment
-```{r figure37A}
-Q27.Bplot$`For Tooltip` <- paste(
-  "Program name: ", Q27.Bplot$CIPDESC, '\n',
-  "Credential level: ", Q27.Bplot$CREDDESC, '\n',
-  "Black share of completers: ", percent(Q27.Bplot$`Share who are BKAA`, accuracy=0.1), '\n',
-  "Rank of Black share of completers: ", as.integer(Q27.Bplot$`Rank of BKAA share`), '\n',
-  "Estimated average debt: ", dollar(Q27.Bplot$`Weighted debt median`, accuracy=1), '\n',
-  "Rank of debt among completers: ", as.integer(Q27.Bplot$`Rank of weighted debt`), 
-  sep=""
-)
-
-g37A <- ggplot(data=Q27.Bplot, mapping=aes(x=`Rank of BKAA share`, y=`Rank of weighted debt`, fill=CREDDESC, text=`For Tooltip`)) + geom_point(stat="identity") + facet_wrap(`CREDDESC` ~ .) + labs(x="Rank of Black share of completers (1=Highest share)", y="Rank of debt among completers (1=Highest debt)") + theme(text=element_text(family="Optima"), legend.position="none") + scale_fill_brewer(palette="Set2") 
-
-ggplotly(g37A, width=800, height=600, tooltip="text")
-```
-#### Figure 37: California programs by average debt and Hispanic/Latino enrollment
-```{r figure37B}
-Q27.Hplot$`For Tooltip` <- paste(
-  "Program name: ", Q27.Hplot$CIPDESC, '\n',
-  "Credential level: ", Q27.Hplot$CREDDESC, '\n',
-  "Hispanic share of completers: ", percent(Q27.Hplot$`Share who are HISP`, accuracy=0.1), '\n',
-  "Rank of Hispanic share of completers: ", as.integer(Q27.Hplot$`Rank of HISP share`), '\n',
-  "Estimated average debt: ", dollar(Q27.Hplot$`Weighted debt median`, accuracy=1), '\n',
-  "Rank of debt among completers: ", as.integer(Q27.Hplot$`Rank of weighted debt`), 
-  sep=""
-)
-
-g36B <- ggplot(data=Q27.Hplot, mapping=aes(x=`Rank of HISP share`, y=`Rank of weighted debt`, fill=CREDDESC, text=`For Tooltip`)) + geom_point(stat="identity") + facet_wrap(`CREDDESC` ~ .) + labs(x="Rank of Hispanic share of completers (1=Highest share)", y="Rank of debt among completers (1=Highest debt)") + theme(text=element_text(family="Optima"), legend.position="none") + scale_fill_brewer(palette="Set2") 
-
-ggplotly(g36B, width=800, height=600, tooltip="text")
-```
-#### Data Source and Notes
-
-**Data source:** These figures were calculated using data from two sources. First is the College Scorecard field-of-study dataset, accessed November 2022, available through the U.S. Department of Education [here](https://collegescorecard.ed.gov/data/). Second is the IPEDS Completion Surveys, accessed November 2022, available through NCES [here](https://nces.ed.gov/ipeds/use-the-data). 
-
-**Timeframe reflected:**  Ranked debt values are author's calculations using College Scorecard data reflecting borrowers who entered repayment in award year 2017-18 or 2018-19. Ranked shares of completers by race are author's calculations using data from the IPEDS Completion Surveys reflecting 2019-20 and 2020-21. 
-
-**Notes:**
-
-***
-
-### {-}
-
-The final analyses of this document will use College Scorecard data to show how federal student loan repayment in California compares to the rest of the U.S. 
+Next, we will use College Scorecard data to show how federal student loan repayment in California compares to the rest of the U.S. 
 
 First, I examine dollar-based repayment rates, or "DBRR." DBRR data in the College Scorecard measure the total current loan balances for cohorts of federal student loan borrowers, as well as the original amount that the cohort collectively owed when they entered repayment. I use data for cohorts that are 1, 5, 10, and 20 years into repayment. 
 
 We can calculate a cohort's "DBRR ratio" by dividing its current total balance by its original total balance. When the ratio is over 1, the borrowers owe more than they originally borrowed, presumably due to the accumulation of interest outpacing the borrowers' payments. When the ratio is under 1, the borrowers are making forward progress on repayment. 
 
-A few data notes may be useful when interpreting Figures 38 and 39: 
+A few data notes may be useful when interpreting Figures 36 and 37: 
 
 * These data reflect pre-pandemic balances. 
 * DBRR does not track the same cohort of borrowers and report their loan balances at 1, 5, 10, and 20 years. Rather, each of these cohorts is a separate group of borrowers.
-* Not all colleges and universities have DBRR data in the College Scorecard. In Figures 38 and 39, you can hover over the points in the chart to see the count of institution represented in each cohort.  
+* Not all colleges and universities have DBRR data in the College Scorecard. In Figures 36 and 37, you can hover over the points in the chart to see the count of institution represented in each cohort.  
 
 In the College Scorecard, DBRR data are reported at the institution level and disaggregated by loan type (Stafford, Parent PLUS, and Grad PLUS). I aggregated the DBRR values across all institutions with sufficient data and compared institutions in California to institutions in the rest of the U.S., with breakouts by institutional control and loan type. 
 
-Figure 38 shows the DBRR ratios for four cohorts of borrowers in repayment. When the blue line (California) is higher than the yellow line (Rest of U.S.), it means that borrowers from California institutions owe a larger share of their original balance than do those from institutions across the rest of the U.S. 
+Figure 36 shows the DBRR ratios for four cohorts of borrowers in repayment. When the blue line (California) is higher than the yellow line (Rest of U.S.), it means that borrowers from California institutions owe a larger share of their original balance than do those from institutions across the rest of the U.S. 
 
 In all three tabs, we see that loan borrowers from California public institutions tend to have better (i.e. lower) DBRR ratios than loan borrowers from public institutions in the rest of the country, regardless of loan type. In the DBRR ratios for borrowers who took out loans for a nonprofit or for-profit institution, California institutions roughly match institutions nationwide. 
 
@@ -8527,8 +8292,8 @@ Q28.S <- Q28 %>% filter(Program=="Stafford")
 Q28.G <- Q28 %>% filter(Program=="Grad PLUS")
 Q28.P <- Q28 %>% filter(Program=="Parent PLUS")
 ```
-#### Figure 38: Stafford
-```{r figure38A}
+#### Figure 36: Stafford
+```{r figure36A}
 Q28.S$`For Tooltip` <- paste(
   "State: ", Q28.S$State, '\n',
   "Control: ", Q28.S$Control, '\n',
@@ -8541,12 +8306,12 @@ Q28.S$`For Tooltip` <- paste(
   sep=""
 )
 
-g38A <- ggplot(data=Q28.S, mapping=aes(x=Year, y=Ratio, group=State, text=`For Tooltip`)) + geom_point(aes(color=State)) + geom_line(aes(color=State)) + facet_wrap(Control ~ ., nrow=2) + scale_y_continuous(limits=c(0, 1.4)) + labs(x="Years into repayment", y="Ratio of current balance to original balance") + theme(text=element_text(family="Optima"), legend.position="right") + scale_color_manual(values = stateCols)
+g36A <- ggplot(data=Q28.S, mapping=aes(x=Year, y=Ratio, group=State, text=`For Tooltip`)) + geom_point(aes(color=State)) + geom_line(aes(color=State)) + facet_wrap(Control ~ ., nrow=2) + scale_y_continuous(limits=c(0, 1.4)) + labs(x="Years into repayment", y="Ratio of current balance to original balance") + theme(text=element_text(family="Optima"), legend.position="right") + scale_color_manual(values = stateCols)
 
-ggplotly(g38A, width=800, height=600, tooltip="text")
+ggplotly(g36A, width=800, height=600, tooltip="text")
 ```
-#### Figure 38: Parent PLUS
-```{r figure38B}
+#### Figure 36: Parent PLUS
+```{r figure36B}
 Q28.P$`For Tooltip` <- paste(
   "State: ", Q28.P$State, '\n',
   "Control: ", Q28.P$Control, '\n',
@@ -8559,12 +8324,12 @@ Q28.P$`For Tooltip` <- paste(
   sep=""
 )
 
-g38B <- ggplot(data=Q28.P, mapping=aes(x=Year, y=Ratio, group=State, text=`For Tooltip`)) + geom_point(aes(color=State)) + geom_line(aes(color=State)) + facet_wrap(Control ~ ., nrow=2) + scale_y_continuous(limits=c(0, 1.4)) + labs(x="Years into repayment", y="Ratio of current balance to original balance") + theme(text=element_text(family="Optima"), legend.position="right") + scale_color_manual(values = stateCols)
+g36B <- ggplot(data=Q28.P, mapping=aes(x=Year, y=Ratio, group=State, text=`For Tooltip`)) + geom_point(aes(color=State)) + geom_line(aes(color=State)) + facet_wrap(Control ~ ., nrow=2) + scale_y_continuous(limits=c(0, 1.4)) + labs(x="Years into repayment", y="Ratio of current balance to original balance") + theme(text=element_text(family="Optima"), legend.position="right") + scale_color_manual(values = stateCols)
 
-ggplotly(g38B, width=800, height=600, tooltip="text")
+ggplotly(g36B, width=800, height=600, tooltip="text")
 ```
-#### Figure 38: Grad PLUS
-```{r figure38C}
+#### Figure 36: Grad PLUS
+```{r figure36C}
 Q28.G$`For Tooltip` <- paste(
   "State: ", Q28.G$State, '\n',
   "Control: ", Q28.G$Control, '\n',
@@ -8577,9 +8342,9 @@ Q28.G$`For Tooltip` <- paste(
   sep=""
 )
 
-g38C <- ggplot(data=Q28.G, mapping=aes(x=Year, y=Ratio, group=State, text=`For Tooltip`)) + geom_point(aes(color=State)) + geom_line(aes(color=State)) + facet_wrap(Control ~ ., nrow=2) + scale_y_continuous(limits=c(0, 1.4)) + labs(x="Years into repayment", y="Ratio of current balance to original balance") + theme(text=element_text(family="Optima"), legend.position="right") + scale_color_manual(values = stateCols)
+g36C <- ggplot(data=Q28.G, mapping=aes(x=Year, y=Ratio, group=State, text=`For Tooltip`)) + geom_point(aes(color=State)) + geom_line(aes(color=State)) + facet_wrap(Control ~ ., nrow=2) + scale_y_continuous(limits=c(0, 1.4)) + labs(x="Years into repayment", y="Ratio of current balance to original balance") + theme(text=element_text(family="Optima"), legend.position="right") + scale_color_manual(values = stateCols)
 
-ggplotly(g38C, width=800, height=600, tooltip="text")
+ggplotly(g36C, width=800, height=600, tooltip="text")
 ```
 #### Data Source and Notes
 
@@ -8604,7 +8369,7 @@ The measures reflect pre-pandemic balances.
 
 Overall, California performs well along DBRR metrics compared to the rest of the U.S. However, this same data can be used to track cohorts' average loan balances, which reveals some concerning trends for California. I derived the average loan balance by dividing current balances by borrower count. Note that a borrower who has fully paid off their loan is still counted in the average measure. 
 
-Figure 39 shows the average current loan amount for four cohorts, organized by institutional control and loan type, comparing California institutions to those in the rest of the U.S. In the first tab, we see that average Stafford loan amounts are lower among borrowers from California institutions than those from institutions across the rest of the U.S., driven by lower average loans at California's public institutions. 
+Figure 37 shows the average current loan amount for four cohorts, organized by institutional control and loan type, comparing California institutions to those in the rest of the U.S. In the first tab, we see that average Stafford loan amounts are lower among borrowers from California institutions than those from institutions across the rest of the U.S., driven by lower average loans at California's public institutions. 
 
 The next two tabs tell stories that more worrisome. Borrowers from California's private colleges have higher average Parent PLUS loans than those from non-California private colleges. This is especially true in the for-profit sector: 5 years into repayment, Parent PLUS borrowers from California for-profit institutions owe an average of \$22,000, versus \$14,000 for Parent PLUS borrowers from for-profits outside of California. This may be a more recent trend, as the gap is much smaller in the 10- and 20-year cohorts. 
 
@@ -8620,8 +8385,8 @@ Q29.S$`Average loan balance at year X` <- Q29.S$`Balance at repayment year X` / 
 Q29.P$`Average loan balance at year X` <- Q29.P$`Balance at repayment year X` / Q29.P$`Borrower count`
 Q29.G$`Average loan balance at year X` <- Q29.G$`Balance at repayment year X` / Q29.G$`Borrower count`
 ```
-#### Figure 39: Stafford
-```{r figure39A}
+#### Figure 37: Stafford
+```{r figure37A}
 Q29.S$`For Tooltip` <- paste(
   "State: ", Q29.S$State, '\n',
   "Control: ", Q29.S$Control, '\n',
@@ -8633,12 +8398,12 @@ Q29.S$`For Tooltip` <- paste(
   sep=""
 )
 
-g39A <- ggplot(data=Q29.S, mapping=aes(x=Year, y=`Average loan balance at year X`, group=State, text=`For Tooltip`)) + geom_point(aes(color=State)) + geom_line(aes(color=State)) + facet_wrap(Control ~ ., nrow=2) + scale_y_continuous(labels=scales::dollar_format(), limits=c(0, (max(Q29.S$`Average loan balance at year X`)+2500))) + labs(x="Years into repayment", y="Average loan balance at year X") + theme(text=element_text(family="Optima"), legend.position="right") + scale_color_manual(values = stateCols)
+g37A <- ggplot(data=Q29.S, mapping=aes(x=Year, y=`Average loan balance at year X`, group=State, text=`For Tooltip`)) + geom_point(aes(color=State)) + geom_line(aes(color=State)) + facet_wrap(Control ~ ., nrow=2) + scale_y_continuous(labels=scales::dollar_format(), limits=c(0, (max(Q29.S$`Average loan balance at year X`)+2500))) + labs(x="Years into repayment", y="Average loan balance at year X") + theme(text=element_text(family="Optima"), legend.position="right") + scale_color_manual(values = stateCols)
 
-ggplotly(g39A, width=800, height=600, tooltip="text")
+ggplotly(g37A, width=800, height=600, tooltip="text")
 ```
-#### Figure 39: Parent PLUS
-```{r figure39B}
+#### Figure 37: Parent PLUS
+```{r figure37B}
 Q29.P$`For Tooltip` <- paste(
   "State: ", Q29.P$State, '\n',
   "Control: ", Q29.P$Control, '\n',
@@ -8650,12 +8415,12 @@ Q29.P$`For Tooltip` <- paste(
   sep=""
 )
 
-g39B <- ggplot(data=Q29.P, mapping=aes(x=Year, y=`Average loan balance at year X`, group=State, text=`For Tooltip`)) + geom_point(aes(color=State)) + geom_line(aes(color=State)) + facet_wrap(Control ~ ., nrow=2) + scale_y_continuous(labels=scales::dollar_format(), limits=c(0, (max(Q29.P$`Average loan balance at year X`)+2500))) + labs(x="Years into repayment", y="Average loan balance at year X") + theme(text=element_text(family="Optima"), legend.position="right") + scale_color_manual(values = stateCols)
+g37B <- ggplot(data=Q29.P, mapping=aes(x=Year, y=`Average loan balance at year X`, group=State, text=`For Tooltip`)) + geom_point(aes(color=State)) + geom_line(aes(color=State)) + facet_wrap(Control ~ ., nrow=2) + scale_y_continuous(labels=scales::dollar_format(), limits=c(0, (max(Q29.P$`Average loan balance at year X`)+2500))) + labs(x="Years into repayment", y="Average loan balance at year X") + theme(text=element_text(family="Optima"), legend.position="right") + scale_color_manual(values = stateCols)
 
-ggplotly(g39B, width=800, height=600, tooltip="text")
+ggplotly(g37B, width=800, height=600, tooltip="text")
 ```
-#### Figure 39: Grad PLUS
-```{r figure39C}
+#### Figure 37: Grad PLUS
+```{r figure37C}
 Q29.G$`For Tooltip` <- paste(
   "State: ", Q29.G$State, '\n',
   "Control: ", Q29.G$Control, '\n',
@@ -8667,9 +8432,9 @@ Q29.G$`For Tooltip` <- paste(
   sep=""
 )
 
-g39C <- ggplot(data=Q29.G, mapping=aes(x=Year, y=`Average loan balance at year X`, group=State, text=`For Tooltip`)) + geom_point(aes(color=State)) + geom_line(aes(color=State)) + facet_wrap(Control ~ ., nrow=2) + scale_y_continuous(labels=scales::dollar_format(), limits=c(0, (max(Q29.G$`Average loan balance at year X`)+2500))) + labs(x="Years into repayment", y="Average loan balance at year X") + theme(text=element_text(family="Optima"), legend.position="right") + scale_color_manual(values = stateCols)
+g37C <- ggplot(data=Q29.G, mapping=aes(x=Year, y=`Average loan balance at year X`, group=State, text=`For Tooltip`)) + geom_point(aes(color=State)) + geom_line(aes(color=State)) + facet_wrap(Control ~ ., nrow=2) + scale_y_continuous(labels=scales::dollar_format(), limits=c(0, (max(Q29.G$`Average loan balance at year X`)+2500))) + labs(x="Years into repayment", y="Average loan balance at year X") + theme(text=element_text(family="Optima"), legend.position="right") + scale_color_manual(values = stateCols)
 
-ggplotly(g39C, width=800, height=600, tooltip="text")
+ggplotly(g37C, width=800, height=600, tooltip="text")
 ```
 #### Data Source and Notes
 
@@ -8692,13 +8457,13 @@ The measures reflect pre-pandemic balances.
 
 ### {-}
 
-Taken together, figures 38 and 39 show that borrowers from California's colleges and universities make similar or better progress on repayment compared to borrowers from colleges and universities across the rest of the U.S. However, for borrowers with Parent PLUS and Grad PLUS loans, average loan balances tend to be higher when they are for enrollment in California institutions, and it takes those borrowers even longer to bring down those balances. 
+Taken together, figures 36 and 37 show that borrowers from California's colleges and universities make similar or better progress on repayment compared to borrowers from colleges and universities across the rest of the U.S. However, for borrowers with Parent PLUS and Grad PLUS loans, average loan balances tend to be higher when they are for enrollment in California institutions, and it takes those borrowers even longer to bring down those balances. 
 
 Consider that, for borrowers with Grad PLUS loans from a California for-profit college, the average loan of those who have been in repayment for 20 years is roughly $27,800. That means, for the typical borrower with Grad PLUS loans for a California for-profit, even 20 years is not enough to get the balance below \$20,000. Grad PLUS borrowers from for-profits outside California owe an average of \$8,618 after 20 years in repayment. 
 
 Now we will examine institutions' cohort default rates (CDR), a measure of the frequency with which borrowers from an institution default. I use CDR data from the College Scorecard and aggregate by institutional control and institutions' predominant degree awarded. Unfortunately, the College Scorecard does not disaggregate CDR data by loan type. 
 
-Figure 40 shows that, overall, California institutions have lower CDR rates than those outside the U.S., across all three institutional controls. This is good news, because it means borrowers are finding ways to stave off default. One exception is for-profit colleges that predominantly offer bachelor's degrees: those in California have a CDR of 12.8 percent, compared to a CDR of 11.3 percent for those outside California.  
+Figure 38 shows that, overall, California institutions have lower CDR rates than those outside the U.S., across all three institutional controls. This is good news, because it means borrowers are finding ways to stave off default. One exception is for-profit colleges that predominantly offer bachelor's degrees: those in California have a CDR of 12.8 percent, compared to a CDR of 11.3 percent for those outside California.  
 
 ### {.tabset}
 ```{r CDR, warning=FALSE}
@@ -8749,7 +8514,7 @@ CSI3$State <- rep(NA, nrow(CSI3))
 CSI3$State[CSI3$STABBR == "CA"] <- "California"
 CSI3$State[CSI3$STABBR != "CA"] <- "Rest of U.S."
 ```
-#### Figure 40: CDR by Control
+#### Figure 38: CDR by Control
 ```{r CDR.control}
 CSI3$Control <- rep(NA, nrow(CSI3))
 CSI3$Control[CSI3$CONTROL==1] <- "Public"
@@ -8780,7 +8545,7 @@ Q30A$CDR2 <- Q30A$CDR2_NUMER / Q30A$CDR2_DENOM
 Q30A$CDR3 <- Q30A$CDR3_NUMER / Q30A$CDR3_DENOM
 ```
 
-```{r figure40A}
+```{r figure38A}
 Q30A$`For Tooltip` <- paste(
   "State: ", Q30A$State, '\n',
   "Control: ", Q30A$Control, '\n',
@@ -8791,11 +8556,11 @@ Q30A$`For Tooltip` <- paste(
   sep=""
 )
 
-g40A <- ggplot(data=Q30A, mapping=aes(x=Control, y=CDR3, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.4) + scale_y_continuous(labels=scales::percent_format(accuracy=1)) + labs(x="Control", y="Three-year cohort default rate") + theme(text=element_text(family="Optima"), legend.position="right") + scale_fill_manual(values = stateCols)
+g38A <- ggplot(data=Q30A, mapping=aes(x=Control, y=CDR3, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.4) + scale_y_continuous(labels=scales::percent_format(accuracy=1)) + labs(x="Control", y="Three-year cohort default rate") + theme(text=element_text(family="Optima"), legend.position="right") + scale_fill_manual(values = stateCols)
 
-ggplotly(g40A, width=600, height=350, tooltip="text")
+ggplotly(g38A, width=600, height=350, tooltip="text")
 ```
-#### Figure 40: CDR by Control and Predominant Degree Awarded
+#### Figure 38: CDR by Control and Predominant Degree Awarded
 ```{r CDR.highdeg}
 CSI3 <- CSI3 %>% filter(PREDDEG != 0) # This only removes Stockton Christian Life College, which does not have CDR data in Scorecard. 
 
@@ -8826,7 +8591,7 @@ Q30B$CDR2 <- Q30B$CDR2_NUMER / Q30B$CDR2_DENOM
 Q30B$CDR3 <- Q30B$CDR3_NUMER / Q30B$CDR3_DENOM
 ```
 
-```{r figure40B}
+```{r figure38B}
 Q30B$`For Tooltip` <- paste(
   "State: ", Q30B$State, '\n',
   "Control: ", Q30B$Control, '\n',
@@ -8838,9 +8603,9 @@ Q30B$`For Tooltip` <- paste(
   sep=""
 )
 
-g40B <- ggplot(data=Q30B, mapping=aes(x=PredDeg, y=CDR3, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.4) + facet_grid(Control ~ .) +  scale_y_continuous(labels=scales::percent_format(accuracy=1)) + labs(x="Institution's predominant degree awarded", y="Three-year cohort default rate") + theme(text=element_text(family="Optima"), legend.position="right") + scale_fill_manual(values = stateCols)
+g38B <- ggplot(data=Q30B, mapping=aes(x=PredDeg, y=CDR3, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.4) + facet_grid(Control ~ .) +  scale_y_continuous(labels=scales::percent_format(accuracy=1)) + labs(x="Institution's predominant degree awarded", y="Three-year cohort default rate") + theme(text=element_text(family="Optima"), legend.position="right") + scale_fill_manual(values = stateCols)
 
-ggplotly(g40B, width=600, height=600, tooltip="text")
+ggplotly(g38B, width=600, height=600, tooltip="text")
 ```
 #### Data Source and Notes
 
@@ -8853,6 +8618,285 @@ ggplotly(g40B, width=600, height=600, tooltip="text")
 ***
 
 ### {-}
+
+
+## American Community Survey 
+
+Finally, we are interested in why people take out student loan debt, particularly the motivation to increase one's income. California is a high-income state, but it is also a state with a high cost of living. Is California a state where someone particularly *needs* education to achieve a comfortable living, to a greater degree than most states? We can explore this using data from the American Community Survey. 
+
+#### About the data
+
+The American Community Survey (ACS) is an annual survey conducted by the U.S. Census Bureau that samples one percent of all U.S. households every year. It asks about a battery of person-level and household-level questions. Here, we are interested in data on education and income. 
+
+The COVID-19 pandemic severely strained the Census Bureau's ability to conduct the ACS in a way that meets the bureau's quality standards in the 2020 survey year. Therefore, we focus on a five-year data set spanning years 2015 to 2019, known as the "Public Use Microdata Sample." 
+
+The 2015-2019 ACS PUMS data set contains records on 16 million individuals across all states, bringing to bear an immense volume of data. I filter for those who are aged 18 to 65 and in the labor force, reducing the sample size to 7.3 million individuals. We can compare annual income across education level and state. 
+
+#### Findings 
+
+### {.tabset}
+```{r PUMS.income}
+PUMS.Income.Vars <- c("SERIALNO", 
+                      "PWGTP",
+                      "ST", 
+                      "SCHL", 
+                      "SEX", 
+                      "WAGP", 
+                      "AGEP", 
+                      "RAC1P",
+                      "HISP",
+                      "ESR")
+pusa1519 <- fread("psam1519_pusa.csv", header=TRUE, select=PUMS.Income.Vars)
+pusb1519 <- fread("psam1519_pusb.csv", header=TRUE, select=PUMS.Income.Vars)
+pusc1519 <- fread("psam1519_pusc.csv", header=TRUE, select=PUMS.Income.Vars)
+pusd1519 <- fread("psam1519_pusd.csv", header=TRUE, select=PUMS.Income.Vars)
+pusm1519 <- rbind(pusa1519, pusb1519, pusc1519, pusd1519)
+rm("pusa1519", "pusb1519", "pusc1519", "pusd1519")
+
+pusm1519 <- pusm1519 %>% filter(AGEP %in% (18:65))
+pusm1519 <- pusm1519 %>% filter(ESR %in% (1:5))
+pusm1519 <- left_join(x=pusm1519, y=statenames, by="ST")
+
+pusm1519$Education <- rep(NA, nrow(pusm1519))
+pusm1519$Education[pusm1519$SCHL %in% (1:15)] <- "Less than high school diploma"
+pusm1519$Education[pusm1519$SCHL %in% (16:17)] <- "High school diploma or equivalent"
+pusm1519$Education[pusm1519$SCHL %in% (18:19)] <- "Some college, no degree"
+pusm1519$Education[pusm1519$SCHL == 20] <- "Associate's degree"
+pusm1519$Education[pusm1519$SCHL == 21] <- "Bachelor's degree"
+pusm1519$Education[pusm1519$SCHL %in% (22:24)] <- "Graduate degree"
+
+pusm1519$Sex <- rep(NA, nrow(pusm1519))
+pusm1519$Sex[pusm1519$SEX == 1] <- "Male"
+pusm1519$Sex[pusm1519$SEX == 2] <- "Female"
+
+pusm1519$Race <- rep(NA, nrow(pusm1519))
+pusm1519$Race[(pusm1519$RAC1P == 1) & (pusm1519$HISP == 1)] <- "White"
+pusm1519$Race[(pusm1519$RAC1P == 2) & (pusm1519$HISP == 1)] <- "Black"
+pusm1519$Race[pusm1519$HISP > 1] <- "Latino/a"
+pusm1519$Race[(pusm1519$RAC1P %in% (3:5)) & (pusm1519$HISP == 1)] <- "Native American"
+pusm1519$Race[(pusm1519$RAC1P %in% (6:7)) & (pusm1519$HISP == 1)] <- "Asian / Pacific Islander"
+pusm1519$Race[(pusm1519$RAC1P == 8) & (pusm1519$HISP == 1)] <- "Other"
+pusm1519$Race[pusm1519$RAC1P == 9] <- "More than one"
+
+pusm1519 <- pusm1519 %>% mutate(`Earning at least $50,000` = ifelse(WAGP > 50000, 1, 0))
+pusm1519 <- pusm1519 %>% mutate(`Earning at least $60,000` = ifelse(WAGP > 60000, 1, 0))
+pusm1519 <- pusm1519 %>% mutate(`Earning at least $75,000` = ifelse(WAGP > 75000, 1, 0))
+pusm1519 <- pusm1519 %>% mutate(`Earning at least $80,000` = ifelse(WAGP > 80000, 1, 0))
+pusm1519 <- pusm1519 %>% mutate(`Earning at least $100,000` = ifelse(WAGP > 100000, 1, 0))
+
+agg50 <- aggregate(data=pusm1519, PWGTP ~ State + Education + `Earning at least $50,000`, FUN=sum)
+agg60 <- aggregate(data=pusm1519, PWGTP ~ State + Education + `Earning at least $60,000`, FUN=sum)
+agg75 <- aggregate(data=pusm1519, PWGTP ~ State + Education + `Earning at least $75,000`, FUN=sum)
+agg80 <- aggregate(data=pusm1519, PWGTP ~ State + Education + `Earning at least $80,000`, FUN=sum)
+agg100 <- aggregate(data=pusm1519, PWGTP ~ State + Education + `Earning at least $100,000`, FUN=sum)
+
+agg50 <- reshape2::dcast(data=agg50, State + Education ~ `Earning at least $50,000`, value.var="PWGTP") %>% mutate(`Share earning at least $50,000` = `1` / (`1` + `0`)) %>% select(`State`, `Education`, `Share earning at least $50,000`)
+agg60 <- reshape2::dcast(data=agg60, State + Education ~ `Earning at least $60,000`, value.var="PWGTP") %>% mutate(`Share earning at least $60,000` = `1` / (`1` + `0`)) %>% select(`State`, `Education`, `Share earning at least $60,000`)
+agg75 <- reshape2::dcast(data=agg75, State + Education ~ `Earning at least $75,000`, value.var="PWGTP") %>% mutate(`Share earning at least $75,000` = `1` / (`1` + `0`)) %>% select(`State`, `Education`, `Share earning at least $75,000`)
+agg80 <- reshape2::dcast(data=agg80, State + Education ~ `Earning at least $80,000`, value.var="PWGTP") %>% mutate(`Share earning at least $80,000` = `1` / (`1` + `0`)) %>% select(`State`, `Education`, `Share earning at least $80,000`)
+agg100 <- reshape2::dcast(data=agg100, State + Education ~ `Earning at least $100,000`, value.var="PWGTP") %>% mutate(`Share earning at least $100,000` = `1` / (`1` + `0`)) %>% select(`State`, `Education`, `Share earning at least $100,000`)
+
+agg.income <- left_join(x=agg50, y=agg60, by=c("State", "Education"))
+agg.income <- left_join(x=agg.income, y=agg75, by=c("State", "Education"))
+agg.income <- left_join(x=agg.income, y=agg80, by=c("State", "Education"))
+agg.income <- left_join(x=agg.income, y=agg100, by=c("State", "Education"))
+
+agg50 <- reshape2::dcast(data=agg.income, State ~ Education, value.var="Share earning at least $50,000") 
+agg60 <- reshape2::dcast(data=agg.income, State ~ Education, value.var="Share earning at least $60,000")
+agg75 <- reshape2::dcast(data=agg.income, State ~ Education, value.var="Share earning at least $75,000")
+agg80 <- reshape2::dcast(data=agg.income, State ~ Education, value.var="Share earning at least $80,000")
+agg100 <- reshape2::dcast(data=agg.income, State ~ Education, value.var="Share earning at least $100,000")
+
+agg50 <- agg50 %>% mutate(`Bachelor's over HS` = `Bachelor's degree` - `High school diploma or equivalent`) %>% mutate(`Graduate over bachelor's` = `Graduate degree` - `Bachelor's degree`)
+agg60 <- agg60 %>% mutate(`Bachelor's over HS` = `Bachelor's degree` - `High school diploma or equivalent`) %>% mutate(`Graduate over bachelor's` = `Graduate degree` - `Bachelor's degree`)
+agg75 <- agg75 %>% mutate(`Bachelor's over HS` = `Bachelor's degree` - `High school diploma or equivalent`) %>% mutate(`Graduate over bachelor's` = `Graduate degree` - `Bachelor's degree`)
+agg80 <- agg80 %>% mutate(`Bachelor's over HS` = `Bachelor's degree` - `High school diploma or equivalent`) %>% mutate(`Graduate over bachelor's` = `Graduate degree` - `Bachelor's degree`)
+agg100 <- agg100 %>% mutate(`Bachelor's over HS` = `Bachelor's degree` - `High school diploma or equivalent`) %>% mutate(`Graduate over bachelor's` = `Graduate degree` - `Bachelor's degree`)
+
+agg50 <- left_join(x=agg50, y=statenames2, by="State")
+agg60 <- left_join(x=agg60, y=statenames2, by="State")
+agg75 <- left_join(x=agg75, y=statenames2, by="State")
+agg80 <- left_join(x=agg80, y=statenames2, by="State")
+agg100 <- left_join(x=agg100, y=statenames2, by="State")
+```
+#### Figure 39: Share of workforce earning $60,000
+```{r figure39A1}
+agg60$`For Tooltip` <- paste(
+  "State: ", agg60$State, '\n',
+  "Share of bachelors holders earning at least $60,000: ", percent(agg60$`Bachelor's degree`, accuracy=0.1), '\n',
+  "Share of high school diploma holders earning at least $60,000: ", percent(agg60$`High school diploma or equivalent`, accuracy=0.1), '\n', 
+  sep=""
+)
+agg60$California <- as.factor(ifelse(agg60$State.Abbreviation=="CA", 1, 0))
+
+f39A1 <- agg60
+f39A1$State.Abbreviation <- factor(f39A1$State.Abbreviation, levels = f39A1$State.Abbreviation[order(f39A1$`Bachelor's degree`)])
+g39A1 <- ggplot(data=f39A1, mapping=aes(x=`State.Abbreviation`, y=`Bachelor's degree`, fill=California, text=`For Tooltip`)) + geom_bar(stat="identity") + labs(x="State", y="Share of B.A. holders earning $60,000+") + scale_fill_manual(values = rev(flagCols2[4:5])) + theme(legend.position='none', text=element_text(family="Optima"), axis.text = element_text(size = 7)) + scale_y_continuous(labels=scales::percent_format(accuracy=1))
+
+ggplotly(g39A1, width=900, height=400, tooltip="text")
+```
+
+```{r figure39A2}
+f39A2 <- agg60
+f39A2$State.Abbreviation <- factor(f39A2$State.Abbreviation, levels = f39A2$State.Abbreviation[order(f39A2$`High school diploma or equivalent`)])
+g39A2 <- ggplot(data=f39A2, mapping=aes(x=`State.Abbreviation`, y=`High school diploma or equivalent`, fill=California, text=`For Tooltip`)) + geom_bar(stat="identity") + labs(x="State", y="Share of H.S. diploma holders earning $60,000+") + scale_fill_manual(values = rev(flagCols2[4:5])) + theme(legend.position='none', text=element_text(family="Optima"), axis.text = element_text(size = 7)) + scale_y_continuous(labels=scales::percent_format(accuracy=1)) 
+
+ggplotly(g39A2, width=900, height=400, tooltip="text")
+```
+#### Figure 39: Share of workforce earning $80,000
+```{r figure39B1}
+agg80$`For Tooltip` <- paste(
+  "State: ", agg80$State, '\n',
+  "Share of graduate degree holders earning at least $80,000: ", percent(agg80$`Graduate degree`, accuracy=0.1), '\n', 
+  "Share of bachelors holders earning at least $80,000: ", percent(agg80$`Bachelor's degree`, accuracy=0.1), '\n',
+  sep=""
+)
+agg80$California <- as.factor(ifelse(agg80$State.Abbreviation=="CA", 1, 0))
+
+f39B1 <- agg80
+f39B1$State.Abbreviation <- factor(f39B1$State.Abbreviation, levels = f39B1$State.Abbreviation[order(f39B1$`Graduate degree`)])
+g39B1 <- ggplot(data=f39B1, mapping=aes(x=`State.Abbreviation`, y=`Graduate degree`, fill=California, text=`For Tooltip`)) + geom_bar(stat="identity") + labs(x="State", y="Share of graduate degree holders earning $80,000+") + scale_fill_manual(values = rev(flagCols2[4:5])) + theme(legend.position='none', text=element_text(family="Optima"), axis.text = element_text(size = 7)) + scale_y_continuous(labels=scales::percent_format(accuracy=1))
+
+ggplotly(g39B1, width=900, height=400, tooltip="text")
+```
+
+```{r figure39B2}
+f39B2 <- agg80
+f39B2$State.Abbreviation <- factor(f39B2$State.Abbreviation, levels = f39B2$State.Abbreviation[order(f39B2$`Bachelor's degree`)])
+g39B2 <- ggplot(data=f39B2, mapping=aes(x=`State.Abbreviation`, y=`Bachelor's degree`, fill=California, text=`For Tooltip`)) + geom_bar(stat="identity") + labs(x="State", y="Share of B.A. holders earning $80,000+") + scale_fill_manual(values = rev(flagCols2[4:5])) + theme(legend.position='none', text=element_text(family="Optima"), axis.text = element_text(size = 7)) + scale_y_continuous(labels=scales::percent_format(accuracy=1)) 
+
+ggplotly(g39B2, width=900, height=400, tooltip="text")
+```
+#### Table 11: State ranks
+```{r kable11A, results='asis'}
+table11A <- agg60 %>% select(`State`, `Bachelor's degree`, `High school diploma or equivalent`, `Bachelor's over HS`)
+table11A <- table11A %>% mutate(`Rank of Bachelor's over HS` = rank(-(`Bachelor's over HS`), ties.method="average"))
+table11A <- table11A %>% filter(State=="California")
+
+table11A <- data.frame("Measure" = c(
+  "Share of high school diploma holders in California who earn $60,000", 
+  "Share of bachelor's degree holders in California who earn $60,000",
+  "Percentage point increase in likelihood of earning $60,000, high school to bachelor's", 
+  "California's national rank by percentage point difference (1=greatest difference)"
+), "Value" = c(
+  percent(table11A$`High school diploma or equivalent`[1], accuracy=0.1),
+  percent(table11A$`Bachelor's degree`[1], accuracy=0.1), 
+  paste(round(((table11A$`Bachelor's over HS`[1]) * 100), 1), "pp", sep=""), 
+  round(table11A$`Rank of Bachelor's over HS`[1], 0)
+))
+
+kable(table11A, caption="Share of workforce who earn $60,000, by educational attainment") %>% kable_paper("hover", full_width = F)
+```
+
+```{r kable11B, results='asis'}
+table11B <- agg80 %>% select(`State`, `Graduate degree`, `Bachelor's degree`, `Graduate over bachelor's`)
+table11B <- table11B %>% mutate(`Rank of Graduate over bachelor's` = rank(-(`Graduate over bachelor's`), ties.method="average"))
+table11B <- table11B %>% filter(State=="California")
+
+table11B <- data.frame("Measure" = c(
+  "Share of bachelor's degree holders in California who earn $80,000",
+  "Share of graduate degree holders in California who earn $80,000",
+  "Percentage point increase in likelihood of earning $80,000, bachelor's to graduate degree", 
+  "California's national rank by percentage point difference (1=greatest difference)"
+), "Value" = c(
+  percent(table11B$`Bachelor's degree`[1], accuracy=0.1),
+  percent(table11B$`Graduate degree`[1], accuracy=0.1),
+  paste(round(((table11B$`Graduate over bachelor's`[1]) * 100), 1), "pp", sep=""),
+  round(table11B$`Rank of Graduate over bachelor's`[1], 0)
+))
+
+kable(table11B, caption="Share of workforce who earn $80,000, by educational attainment") %>% kable_paper("hover", full_width = F)
+
+```
+
+#### Data Source and Notes
+
+**Data source:** American Community Survey Public Use Microdata Survey 5-year 2019 dataset, accessed April 2023, available through the U.S. Census Bureau [here](https://www2.census.gov/programs-surveys/acs/data/pums/2019/5-Year/). 
+
+**Timeframe reflected:** The 5-year PUMS data set reflects survey data collected in 2015, 2016, 2017, 2018, and 2019.
+
+**Notes:** 
+
+***
+
+### {-}
+
+
+### {.tabset}
+```{r figure40}
+pusm1519S1 <- pusm1519 %>% filter(State=="California")
+pusm1519S2 <- pusm1519 %>% filter(State=="California")
+
+# For all workers:
+PWGTP.st.ed <- aggregate(data=pusm1519, PWGTP ~ State + Education, FUN=sum)
+names(PWGTP.st.ed)[3] <- "Weight in group"
+pusm1519 <- left_join(x=pusm1519, y=PWGTP.st.ed, by=c("State", "Education"))
+pusm1519 <- pusm1519 %>% mutate(`Adjusted WAGP` = `WAGP` * (`PWGTP` / `Weight in group`))
+agg4 <- aggregate(data=pusm1519, `Adjusted WAGP` ~ State + Education, FUN=sum)
+agg4 <- reshape2::dcast(data=agg4, State ~ Education, value.var="Adjusted WAGP")
+agg4 <- agg4 %>% mutate(`Difference: BA over HS` = `Bachelor's degree` - `High school diploma or equivalent`)
+agg4 <- agg4 %>% mutate(`Ratio: BA over HS` = `Bachelor's degree` / `High school diploma or equivalent`)
+agg4 <- agg4 %>% mutate(`Difference: GD over BA` =  `Graduate degree` - `Bachelor's degree`)
+agg4 <- agg4 %>% mutate(`Ratio: GD over BA` = `Graduate degree` / `Bachelor's degree`)
+
+# For race and gender: 
+PWGTP.st.ed <- aggregate(data=pusm1519S1, PWGTP ~ Education + Race + Sex, FUN=sum)
+names(PWGTP.st.ed)[4] <- "Weight in group"
+pusm1519S1 <- left_join(x=pusm1519S1, y=PWGTP.st.ed, by=c("Education", "Race", "Sex"))
+pusm1519S1 <- pusm1519S1 %>% mutate(`Adjusted WAGP` = `WAGP` * (`PWGTP` / `Weight in group`))
+agg5 <- aggregate(data=pusm1519S1, `Adjusted WAGP` ~ Education + Race + Sex, FUN=sum)
+agg5 <- reshape2::dcast(data=agg5, Race + Sex ~ Education, value.var="Adjusted WAGP")
+agg5 <- agg5 %>% mutate(`Difference: BA over HS` = `Bachelor's degree` - `High school diploma or equivalent`)
+agg5 <- agg5 %>% mutate(`Ratio: BA over HS` = `Bachelor's degree` / `High school diploma or equivalent`)
+agg5 <- agg5 %>% mutate(`Difference: GD over BA` =  `Graduate degree` - `Bachelor's degree`)
+agg5 <- agg5 %>% mutate(`Ratio: GD over BA` = `Graduate degree` / `Bachelor's degree`)
+
+# For race only: 
+PWGTP.st.ed <- aggregate(data=pusm1519S2, PWGTP ~ Education + Race, FUN=sum)
+names(PWGTP.st.ed)[3] <- "Weight in group"
+pusm1519S2 <- left_join(x=pusm1519S2, y=PWGTP.st.ed, by=c("Education", "Race"))
+pusm1519S2 <- pusm1519S2 %>% mutate(`Adjusted WAGP` = `WAGP` * (`PWGTP` / `Weight in group`))
+agg6 <- aggregate(data=pusm1519S2, `Adjusted WAGP` ~ Education + Race, FUN=sum)
+agg6 <- reshape2::dcast(data=agg6, Race ~ Education, value.var="Adjusted WAGP")
+agg6 <- agg6 %>% mutate(`Difference: BA over HS` = `Bachelor's degree` - `High school diploma or equivalent`)
+agg6 <- agg6 %>% mutate(`Ratio: BA over HS` = `Bachelor's degree` / `High school diploma or equivalent`)
+agg6 <- agg6 %>% mutate(`Difference: GD over BA` =  `Graduate degree` - `Bachelor's degree`)
+agg6 <- agg6 %>% mutate(`Ratio: GD over BA` = `Graduate degree` / `Bachelor's degree`)
+
+```
+#### Figure 40: Average income by education level 
+
+#### Table 12: State ranks
+```{r kable12A, results='asis'}
+
+
+table12A <- data.frame("Measure" = c())
+
+
+kable(table11A, caption="Share of workforce who earn $60,000, by educational attainment") %>% kable_paper("hover", full_width = F)
+```
+
+#### Data Source and Notes
+
+**Data source:** American Community Survey Public Use Microdata Survey 5-year 2019 dataset, accessed April 2023, available through the U.S. Census Bureau [here](https://www2.census.gov/programs-surveys/acs/data/pums/2019/5-Year/). 
+
+**Timeframe reflected:** The 5-year PUMS data set reflects survey data collected in 2015, 2016, 2017, 2018, and 2019.
+
+**Notes:** 
+
+***
+
+### {-}
+
+
+
+
+## Checks on Data Universes and Samples
+
+
+
+
+
 
 ```{r forPolicyReport6, eval=FALSE}
 # This dataset comes from the following site: https://www.politico.com/news/2023/02/16/joe-biden-student-debt-relief-00083243 
@@ -8963,3 +9007,65 @@ agg2 <- aggregate(data=merged, cbind(`Application count`, `College-educated popu
 agg3 <- aggregate(data=merged, cbind(`Application count`, `College-educated population aged 18 or older`) ~ `Income under $50,000`, FUN=sum) %>% mutate(`Share who applied` = `Application count` / `College-educated population aged 18 or older`)
 agg4 <- aggregate(data=merged, cbind(`Application count`, `College-educated population aged 18 or older`) ~ `Income under $40,000`, FUN=sum) %>% mutate(`Share who applied` = `Application count` / `College-educated population aged 18 or older`)
 ```
+
+```{r forPolicyReport7, eval=FALSE}
+effy2021 <- fread("effy2021.csv", header=TRUE, select=c(
+  "UNITID",
+  "EFFYALEV",
+  "EFYTOTLT",
+  "EFYAIANT",
+  "EFYASIAT",
+  "EFYBKAAT",
+  "EFYHISPT",
+  "EFYNHPIT",
+  "EFYWHITT",
+  "EFY2MORT",
+  "EFYUNKNT",
+  "EFYNRALT"
+)) %>% filter(EFFYALEV==1)
+hd2021 <- fread("hd2021.csv", header=TRUE, select=c(
+  "UNITID", 
+  "SECTOR",
+  "STABBR"
+))
+effy2021 <- left_join(x=effy2021, y=hd2021, by="UNITID")
+effy2021 <- effy2021 %>% filter((SECTOR %in% c(4, 7))==FALSE) # Filtering out community colleges
+agg1 <- aggregate(data=effy2021, cbind(EFYTOTLT,  EFYAIANT,  EFYASIAT,  EFYBKAAT,  EFYHISPT,  EFYNHPIT,  EFYWHITT,  EFY2MORT,  EFYUNKNT,  EFYNRALT) ~ STABBR, FUN=sum)
+agg1 <- agg1 %>% filter(STABBR=="CA")
+agg1 <- reshape2::melt(data=agg1, id.vars=c("STABBR"))
+agg1 <- agg1 %>% mutate(`Enrollment share` = percent(`value` / (agg1$value[1] - (agg1$value[9] + agg1$value[10])), accuracy=0.01))
+agg1 <- agg1 %>% filter((variable %in% c("EFYTOTLT", "EFYNRALT", "EFYUNKNT"))==FALSE)
+
+pusa21 <- fread("psam_pusa_2021.csv", header=TRUE, select=c(
+  "SERIALNO",
+  "ST",
+  "PWGTP",
+  "RAC1P", 
+  "HISP", 
+  "AGEP"
+)) 
+pusb21 <- fread("psam_pusb_2021.csv", header=TRUE, select=c(
+  "SERIALNO",
+  "ST",
+  "PWGTP",
+  "RAC1P", 
+  "HISP", 
+  "AGEP"
+)) 
+pusm2021 <- rbind(pusa21, pusb21)
+pusm2021 <- pusm2021 %>% filter(AGEP %in% (18:35)) # Age condition
+pusm2021 <- pusm2021 %>% filter(ST==6)
+pusm2021$Group <- rep(NA, nrow(pusm2021))
+pusm2021$Group[pusm2021$HISP > 1] <- "Latino/a"
+pusm2021$Group[(pusm2021$HISP==1) & (pusm2021$RAC1P %in% c(1))] <- "White"
+pusm2021$Group[(pusm2021$HISP==1) & (pusm2021$RAC1P %in% c(2))] <- "Black"
+pusm2021$Group[(pusm2021$HISP==1) & (pusm2021$RAC1P %in% c(3, 4, 5))] <- "Native American"
+pusm2021$Group[(pusm2021$HISP==1) & (pusm2021$RAC1P %in% c(6, 7))] <- "AAPI"
+pusm2021$Group[(pusm2021$HISP==1) & (pusm2021$RAC1P %in% c(8, 9))] <- "Other / more than one race"
+agg2 <- aggregate(data=pusm2021, PWGTP ~ Group, FUN=sum)
+agg2 <- agg2 %>% mutate(`Population share` = percent(`PWGTP` / sum(agg2$PWGTP), accuracy=0.01))
+
+
+```
+
+
