@@ -8634,8 +8634,16 @@ The 2015-2019 ACS PUMS data set contains records on 16 million individuals acros
 
 #### Findings 
 
+We will examine two ways of measuring gaps in income across groups: the attainment of a threshold income, and average income. 
+
+First, we find what percentage of California's workers attain certain benchmark incomes, broken out by education level. Comparing California's rank along these measures is one way to visualize how the state's income dynamics differ from the rest of the country's. 
+
+I use \$60,000 as an income cutoff for comparing workers whose highest education is a bachelor's degree to those whose highest education is a high school diploma (or equivalent). I use \$80,000 as an income cutoff for comparing workers whose highest education is a graduate degree to those whose highest education is a bachelor's degree. 
+
+Figure 39 shows the percentages of workers meeting these benchmarks by state, separated by education level. California's share of bachelor's degree holders who earn \$60,000 is seventh-highest, but its share of high school diploma holders who earn \$60,000 is barely in the top half. Table 11 breaks down the percentage point differences and find that California has one of the largest increases between high school-educated workers and four-year college-educated workers, in terms of the attainment of a \$60,000 income. Similar trends can be found for the jump in likelihood that a California worker earns \$80,000, based on whether they have attained a graduate degree instead of only a bachelor's degree. 
+
 ### {.tabset}
-```{r PUMS.income}
+```{r PUMS.income1}
 PUMS.Income.Vars <- c("SERIALNO", 
                       "PWGTP",
                       "ST", 
@@ -8821,59 +8829,114 @@ kable(table11B, caption="Share of workforce who earn $80,000, by educational att
 
 ### {-}
 
+Next, we turn to average wages, examined in Figure 40 and Table 12. Californians with only a high school diploma earn about the same amount as they would in other states, based on their education level. But the average wages of workers with a bachelor's degree are higher in California than in other states, and the same goes for workers with a graduate degree. We can see why the state is first overall in the average wage increase between high school-educated workers and those with a bachelor's degree. 
 
 ### {.tabset}
-```{r figure40}
+```{r PUMS.income2}
+pusm1519R <- pusm1519
+pusm1519S0 <- pusm1519 %>% mutate(State = ifelse(`State` == "California", "California", "Rest of U.S."))
 pusm1519S1 <- pusm1519 %>% filter(State=="California")
 pusm1519S2 <- pusm1519 %>% filter(State=="California")
 
-# For all workers:
-PWGTP.st.ed <- aggregate(data=pusm1519, PWGTP ~ State + Education, FUN=sum)
+# For all workers (for state ranks):
+PWGTP.st.ed <- aggregate(data=pusm1519R, PWGTP ~ State + Education, FUN=sum)
 names(PWGTP.st.ed)[3] <- "Weight in group"
-pusm1519 <- left_join(x=pusm1519, y=PWGTP.st.ed, by=c("State", "Education"))
-pusm1519 <- pusm1519 %>% mutate(`Adjusted WAGP` = `WAGP` * (`PWGTP` / `Weight in group`))
-agg4 <- aggregate(data=pusm1519, `Adjusted WAGP` ~ State + Education, FUN=sum)
+pusm1519R <- left_join(x=pusm1519R, y=PWGTP.st.ed, by=c("State", "Education"))
+pusm1519R <- pusm1519R %>% mutate(`Adjusted WAGP` = `WAGP` * (`PWGTP` / `Weight in group`))
+agg4 <- aggregate(data=pusm1519R, `Adjusted WAGP` ~ State + Education, FUN=sum)
 agg4 <- reshape2::dcast(data=agg4, State ~ Education, value.var="Adjusted WAGP")
 agg4 <- agg4 %>% mutate(`Difference: BA over HS` = `Bachelor's degree` - `High school diploma or equivalent`)
 agg4 <- agg4 %>% mutate(`Ratio: BA over HS` = `Bachelor's degree` / `High school diploma or equivalent`)
 agg4 <- agg4 %>% mutate(`Difference: GD over BA` =  `Graduate degree` - `Bachelor's degree`)
 agg4 <- agg4 %>% mutate(`Ratio: GD over BA` = `Graduate degree` / `Bachelor's degree`)
 
+# For all workers, California vs. Rest of US:
+PWGTP.st.ed <- aggregate(data=pusm1519S0, PWGTP ~ State + Education, FUN=sum)
+names(PWGTP.st.ed)[3] <- "Weight in group"
+pusm1519S0 <- left_join(x=pusm1519S0, y=PWGTP.st.ed, by=c("State", "Education"))
+pusm1519S0 <- pusm1519S0 %>% mutate(`Adjusted WAGP` = `WAGP` * (`PWGTP` / `Weight in group`))
+agg5 <- aggregate(data=pusm1519S0, `Adjusted WAGP` ~ State + Education, FUN=sum)
+
 # For race and gender: 
 PWGTP.st.ed <- aggregate(data=pusm1519S1, PWGTP ~ Education + Race + Sex, FUN=sum)
 names(PWGTP.st.ed)[4] <- "Weight in group"
 pusm1519S1 <- left_join(x=pusm1519S1, y=PWGTP.st.ed, by=c("Education", "Race", "Sex"))
 pusm1519S1 <- pusm1519S1 %>% mutate(`Adjusted WAGP` = `WAGP` * (`PWGTP` / `Weight in group`))
-agg5 <- aggregate(data=pusm1519S1, `Adjusted WAGP` ~ Education + Race + Sex, FUN=sum)
-agg5 <- reshape2::dcast(data=agg5, Race + Sex ~ Education, value.var="Adjusted WAGP")
-agg5 <- agg5 %>% mutate(`Difference: BA over HS` = `Bachelor's degree` - `High school diploma or equivalent`)
-agg5 <- agg5 %>% mutate(`Ratio: BA over HS` = `Bachelor's degree` / `High school diploma or equivalent`)
-agg5 <- agg5 %>% mutate(`Difference: GD over BA` =  `Graduate degree` - `Bachelor's degree`)
-agg5 <- agg5 %>% mutate(`Ratio: GD over BA` = `Graduate degree` / `Bachelor's degree`)
+agg6 <- aggregate(data=pusm1519S1, `Adjusted WAGP` ~ Education + Race + Sex, FUN=sum)
+agg6 <- reshape2::dcast(data=agg6, Race + Sex ~ Education, value.var="Adjusted WAGP")
+agg6 <- agg6 %>% mutate(`Difference: BA over HS` = `Bachelor's degree` - `High school diploma or equivalent`)
+agg6 <- agg6 %>% mutate(`Ratio: BA over HS` = `Bachelor's degree` / `High school diploma or equivalent`)
+agg6 <- agg6 %>% mutate(`Difference: GD over BA` =  `Graduate degree` - `Bachelor's degree`)
+agg6 <- agg6 %>% mutate(`Ratio: GD over BA` = `Graduate degree` / `Bachelor's degree`)
 
 # For race only: 
 PWGTP.st.ed <- aggregate(data=pusm1519S2, PWGTP ~ Education + Race, FUN=sum)
 names(PWGTP.st.ed)[3] <- "Weight in group"
 pusm1519S2 <- left_join(x=pusm1519S2, y=PWGTP.st.ed, by=c("Education", "Race"))
 pusm1519S2 <- pusm1519S2 %>% mutate(`Adjusted WAGP` = `WAGP` * (`PWGTP` / `Weight in group`))
-agg6 <- aggregate(data=pusm1519S2, `Adjusted WAGP` ~ Education + Race, FUN=sum)
-agg6 <- reshape2::dcast(data=agg6, Race ~ Education, value.var="Adjusted WAGP")
-agg6 <- agg6 %>% mutate(`Difference: BA over HS` = `Bachelor's degree` - `High school diploma or equivalent`)
-agg6 <- agg6 %>% mutate(`Ratio: BA over HS` = `Bachelor's degree` / `High school diploma or equivalent`)
-agg6 <- agg6 %>% mutate(`Difference: GD over BA` =  `Graduate degree` - `Bachelor's degree`)
-agg6 <- agg6 %>% mutate(`Ratio: GD over BA` = `Graduate degree` / `Bachelor's degree`)
-
+agg7 <- aggregate(data=pusm1519S2, `Adjusted WAGP` ~ Education + Race, FUN=sum)
+agg7 <- reshape2::dcast(data=agg7, Race ~ Education, value.var="Adjusted WAGP")
+agg7 <- agg7 %>% mutate(`Difference: BA over HS` = `Bachelor's degree` - `High school diploma or equivalent`)
+agg7 <- agg7 %>% mutate(`Ratio: BA over HS` = `Bachelor's degree` / `High school diploma or equivalent`)
+agg7 <- agg7 %>% mutate(`Difference: GD over BA` =  `Graduate degree` - `Bachelor's degree`)
+agg7 <- agg7 %>% mutate(`Ratio: GD over BA` = `Graduate degree` / `Bachelor's degree`)
 ```
 #### Figure 40: Average income by education level 
+```{r figure40}
+agg5 <- agg5 %>% mutate(`Education` = as.factor(`Education`))
+agg5$Education <- factor(agg5$Education, levels=c(
+  "Less than high school diploma", 
+  "High school diploma or equivalent", 
+  "Some college, no degree", 
+  "Associate's degree", 
+  "Bachelor's degree", 
+  "Graduate degree"
+))
+agg5$`For Tooltip` <- paste(
+  "State: ", agg5$State, '\n',
+  "Highest level of education: ", agg5$Education, '\n',
+  "Average wages: ", dollar(agg5$`Adjusted WAGP`, accuracy=1),
+  sep=""
+)
 
+g40 <- ggplot(data=agg5, mapping=aes(x=`Adjusted WAGP`, y=Education, fill=Education, text=`For Tooltip`)) + geom_bar(stat="identity") + facet_wrap(State ~ ., ncol=1, strip.position=c("top")) + scale_x_continuous(labels=dollar_format(accuracy=1)) + labs(x="Workers' average annual wages", "Highest education level") + scale_fill_manual(values = rev(flagCols)) + theme(legend.position='none', text=element_text(family="Optima"), axis.text = element_text(size = 7)) 
+
+ggplotly(g40, width=800, height=350, tooltip="text")
+```
 #### Table 12: State ranks
 ```{r kable12A, results='asis'}
+agg4.0 <- agg4 %>% filter(State != "District of Columbia") %>% mutate(`Rank of Ratio: BA over HS` = rank(-(`Ratio: BA over HS`))) %>% mutate(`Rank of Ratio: GD over BA` = rank(-(`Ratio: GD over BA`)))
+agg4.0 <- agg4.0 %>% filter(State=="California")
 
+table12A <- data.frame("Measure" = c(
+  "Average wages of workers with a high school diploma in California", 
+  "Average wages of workers with a bachelor's degree in California",
+  "Percentage increase in average wages, high school to bachelor's", 
+  "California's national rank by percentage increase (1=greatest increase)"
+), "Value"=c(
+  dollar(agg4.0$`High school diploma or equivalent`[1], accuracy=1), 
+  dollar(agg4.0$`Bachelor's degree`[1], accuracy=1), 
+  percent((agg4.0$`Ratio: BA over HS`[1] - 1), accuracy=0.1), 
+  round(agg4.0$`Rank of Ratio: BA over HS`[1], 0)
+))
 
-table12A <- data.frame("Measure" = c())
+kable(table12A, caption="Average annual wages of workers by highest education: High school diploma vs. Bachelor's degree") %>% kable_paper("hover", full_width = F)
+```
 
+```{r kable12B, results='asis'}
+table12B <- data.frame("Measure" = c(
+  "Average wages of workers with a bachelor's degree in California", 
+  "Average wages of workers with a graduate degree in California",
+  "Percentage increase in average wages, bachelor's to graduate degree", 
+  "California's national rank by percentage increase (1=greatest increase)"
+), "Value"=c(
+  dollar(agg4.0$`Bachelor's degree`[1], accuracy=1), 
+  dollar(agg4.0$`Graduate degree`[1], accuracy=1), 
+  percent((agg4.0$`Ratio: GD over BA`[1] - 1), accuracy=0.1), 
+  round(agg4.0$`Rank of Ratio: GD over BA`[1], 0)
+))
 
-kable(table11A, caption="Share of workforce who earn $60,000, by educational attainment") %>% kable_paper("hover", full_width = F)
+kable(table12B, caption="Average annual wages of workers by highest education: Bachelor's degree vs. Graduate degree") %>% kable_paper("hover", full_width = F)
 ```
 
 #### Data Source and Notes
@@ -8882,21 +8945,33 @@ kable(table11A, caption="Share of workforce who earn $60,000, by educational att
 
 **Timeframe reflected:** The 5-year PUMS data set reflects survey data collected in 2015, 2016, 2017, 2018, and 2019.
 
-**Notes:** 
+**Notes:** This analysis is limited to adults aged 18 to 65 who are in the workforce, including those who are unemployed. Annual wages refer to wages earned over a 12 month period. 
 
 ***
 
 ### {-}
 
-
-
-
 ## Checks on Data Universes and Samples
 
+In this final section, I provide further statistics to check the validity of our data universes and samples. 
 
+*Is the subsample on California households from SHED sufficiently large to draw comparisons across groups?*
+```{r check.SHED1}
+```
+*Is the SHED sample sufficiently representative of California households?*
+```{r check.SHED2}
+```
+*To what extent are the aggregate statistics based on FSA data influenced by individual institutions?* 
+```{r check.FSA1}
+```
+*To what extent are the aggregate statistics based on College Scorecard data influenced by individual institutions?*
+```{r check.Scorecard1}
+```
+*How strong is our confidence in the statistics derived from NPSAS?*
+```{r check.NPSAS1}
+```
 
-
-
+<!-- The code chunks below are for anlayses that are not included in this report but are included in the accompanying policy report.  -->
 
 ```{r forPolicyReport6, eval=FALSE}
 # This dataset comes from the following site: https://www.politico.com/news/2023/02/16/joe-biden-student-debt-relief-00083243 
