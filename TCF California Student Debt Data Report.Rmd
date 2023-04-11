@@ -8969,152 +8969,7 @@ Not every survey question has an answer from every respondent, and some question
 Take "Figure 8: Credit Card debt" as an example. It is notable that Black Californians report having credit card debt that they used for their education at a high level (40.2%), more so than do Black adults in the rest of the U.S. (29.8%). The sub-samples contain 107 and 1,713 respondents, respectively. Are those enough to detect a difference of 10.4 percentage points?   
 
 
-```{r check.SHED1}
-pwr.2p2n.test(n1 = NULL, n2 = NULL, sig.level=0.05, power = NULL, alternative="greater")
-
-# Fig 7
-pwr.2p2n.test(
-  n1 = 450, 
-  n2 = 4039, 
-  sig.level=0.05,
-  power = 0.8, 
-  alternative="greater")
-
-# Fig 9
-pwr.2p2n.test(
-  n1 = 108, 
-  n2 = 1692, 
-  sig.level=0.05,
-  power = 0.8, 
-  alternative="less")
-
-# Fig 11
-pwr.2p2n.test(
-  n1 = 81, 
-  n2 = 235, 
-  sig.level=0.05,
-  power = 0.8, 
-  alternative="greater")
-
-# Fig 13 
-pwr.2p2n.test(
-  n1 = 121, 
-  n2 = 412, 
-  sig.level=0.05,
-  power = 0.8, 
-  alternative="greater")
-
-# Fig 14 
-pwr.2p2n.test(
-  n1 = 120, 
-  n2 = 412, 
-  sig.level=0.05,
-  power = 0.8, 
-  alternative="greater")
-
-# Fig 18
-pwr.2p2n.test(
-  n1 = 386, 
-  n2 = 411, 
-  sig.level=0.05,
-  power = 0.8, 
-  alternative="greater")
-pwr.2p2n.test(
-  n1 = 118, 
-  n2 = 411, 
-  sig.level=0.05,
-  power = 0.8, 
-  alternative="greater")
-
-# Fig 19
-pwr.2p2n.test(
-  n1 = 120, 
-  n2 = 412, 
-  sig.level=0.05,
-  power = 0.8, 
-  alternative="greater")
-pwr.2p2n.test(
-  n1 = 120, 
-  n2 = 1935, 
-  sig.level=0.05,
-  power = 0.8, 
-  alternative="greater")
-
-# Fig 29
-pwr.2p2n.test(
-  n1 = 121, 
-  n2 = 412, 
-  sig.level=0.05,
-  power = 0.8, 
-  alternative="greater")
-
-# Fig 22
-pwr.2p2n.test(
-  n1 = 474, 
-  n2 = 385, 
-  sig.level=0.05,
-  power = 0.8, 
-  alternative="greater")
-pwr.2p2n.test(
-  n1 = (186 + 112 + 362 + 385), 
-  n2 = (758 + 1793 + 1273 + 6585), 
-  sig.level=0.05,
-  power = 0.8, 
-  alternative="greater")
-
-# Fig 8
-pwr.2p2n.test(
-  n1 = 107, 
-  n2 = 323, 
-  sig.level=0.05,
-  power = 0.8, 
-  alternative="greater")
-
-# Fig 15
-pwr.2p2n.test(
-  n1 = (179 + 107 + 348 + 376), 
-  n2 = (980 + 287 + 1457 + 3290), 
-  sig.level=0.05,
-  power = 0.8, 
-  alternative="greater")
-
-# Fig 16
-pwr.2p2n.test(
-  n1 = 102, 
-  n2 = 368, 
-  sig.level=0.05,
-  power = 0.8, 
-  alternative="greater")
-
-# Fig 21
-pwr.2p2n.test(
-  n1 = 49, 
-  n2 = 163, 
-  sig.level=0.05,
-  power = 0.8, 
-  alternative="greater")
-pwr.2p2n.test(
-  n1 = 49, 
-  n2 = 784, 
-  sig.level=0.05,
-  power = 0.8, 
-  alternative="greater")
-pwr.2p2n.test(
-  n1 = 180, 
-  n2 = 163, 
-  sig.level=0.05,
-  power = 0.8, 
-  alternative="greater")
-
-# Fig 26 
-pwr.2p2n.test(
-  n1 = 119, 
-  n2 = 397, 
-  sig.level=0.05,
-  power = 0.8, 
-  alternative="greater")
-
-
+```{r powerChartStart}
 power.SHED <- data.frame(
   "Measure"= c(NA), 
   "Figure"=c(NA), 
@@ -9129,8 +8984,9 @@ power.SHED <- data.frame(
 )
 names(power.SHED)[3] <- "Group 1" 
 names(power.SHED)[4] <- "Group 2" 
+```
 
-
+```{r powerChart1}
 # Figure 7
 # Code OwnDebt
 # Share of households who hold education debt 
@@ -9148,7 +9004,9 @@ power.SHED <- power.SHED %>% add_row(
   `Power`=pwr.2p2n.test(n1 = pc.n1, n2 = pc.n2, h = (pc.p1 - pc.p2), sig.level=0.05, alternative="greater")$power
 )
 rm("pc.n1", "pc.n2", "pc.p1", "pc.p2")
+```
 
+```{r powerChart2}
 # Figure 7
 # Code OwnDebt
 # Share of households who hold education debt 
@@ -9166,7 +9024,9 @@ power.SHED <- power.SHED %>% add_row(
   `Power`=pwr.2p2n.test(n1 = pc.n1, n2 = pc.n2, h = (pc.p1 - pc.p2), sig.level=0.05, alternative="greater")$power
 )
 rm("pc.n1", "pc.n2", "pc.p1", "pc.p2")
+```
 
+```{r powerChart3}
 # Figure 8
 # Code OwnDebtCC
 # Share of borrowers who have education-related credit card debt 
@@ -9184,7 +9044,9 @@ power.SHED <- power.SHED %>% add_row(
   `Power`=pwr.2p2n.test(n1 = pc.n1, n2 = pc.n2, h = (pc.p1 - pc.p2), sig.level=0.05, alternative="greater")$power
 )
 rm("pc.n1", "pc.n2", "pc.p1", "pc.p2")
+```
 
+```{r powerChart4}
 # Figure 8
 # Code OwnDebtCC
 # Share of borrowers who have education-related credit card debt 
@@ -9202,7 +9064,9 @@ power.SHED <- power.SHED %>% add_row(
   `Power`=pwr.2p2n.test(n1 = pc.n1, n2 = pc.n2, h = (pc.p1 - pc.p2), sig.level=0.05, alternative="greater")$power
 )
 rm("pc.n1", "pc.n2", "pc.p1", "pc.p2")
+```
 
+```{r powerChart5}
 # Figure 8
 # Code OwnDebtCC
 # Share of borrowers who have education-related credit card debt 
@@ -9224,7 +9088,9 @@ power.SHED <- power.SHED %>% add_row(
   `Power`=pwr.2p2n.test(n1 = pc.n1, n2 = pc.n2, h = (pc.p1 - pc.p2), sig.level=0.05, alternative="greater")$power
 )
 rm("pc.m1", "pc.m2", "pc.o1", "pc.o2", "pc.n1", "pc.n2", "pc.p1", "pc.p2")
+```
 
+```{r powerChart6}
 # Figure 8
 # Code OwnDebtCC
 # Share of borrowers who have education-related credit card debt 
@@ -9242,15 +9108,17 @@ power.SHED <- power.SHED %>% add_row(
   `Power`=pwr.2p2n.test(n1 = pc.n1, n2 = pc.n2, h = (pc.p1 - pc.p2), sig.level=0.05, alternative="greater")$power
 )
 rm("pc.n1", "pc.n2", "pc.p1", "pc.p2")
+```
 
+```{r powerChart7}
 # Figure 9
 # Code OwnDebtTotal
 # Share who owe $25K or less 
 # Hispanic borrowers in CA vs. white borrowers in CA 
 tblOwnDebtTot4 <- reshape2::dcast(data=tblOwnDebtTot3, Race + State ~ variable, value.var="Share of borrowers")
 tblOwnDebtTot4 <- tblOwnDebtTot4 %>% mutate(`Less than $25,000` = `Less than $5,000` + `$5,000 to $9,999` + `$10,000 to $14,999` + `$15,000 to $19,999` + `$20,000 to $24,999`)
-pc.n1 <- N.OwnDebtTot3$`Survey respondents`[(N.OwnDebtTot3$State=="CA") & (N.OwnDebtTot3$Group=="Hispanic")]
-pc.n2 <- N.OwnDebtTot3$`Survey respondents`[(N.OwnDebtTot3$State=="CA") & (N.OwnDebtTot3$Group=="White, Non-Hispanic")]
+pc.n1 <- N.OwnDebtTotal$`Survey respondents`[(N.OwnDebtTotal$State=="CA") & (N.OwnDebtTotal$Group=="Hispanic")]
+pc.n2 <- N.OwnDebtTotal$`Survey respondents`[(N.OwnDebtTotal$State=="CA") & (N.OwnDebtTotal$Group=="White, Non-Hispanic")]
 pc.p1 <- tblOwnDebtTot4$`Less than $25,000`[(tblOwnDebtTot4$State=="CA") & (tblOwnDebtTot4$Race=="Hispanic")]
 pc.p2 <- tblOwnDebtTot4$`Less than $25,000`[(tblOwnDebtTot4$State=="CA") & (tblOwnDebtTot4$Race=="White, Non-Hispanic")]
 power.SHED <- power.SHED %>% add_row(
@@ -9262,7 +9130,9 @@ power.SHED <- power.SHED %>% add_row(
   `Power`=pwr.2p2n.test(n1 = pc.n1, n2 = pc.n2, h = (pc.p1 - pc.p2), sig.level=0.05, alternative="greater")$power
 )
 rm("pc.n1", "pc.n2", "pc.p1", "pc.p2")
+```
 
+```{r powerChart8}
 # Figure 11
 # Code OwnDebtBehind
 # Share who are behind on payments 
@@ -9284,17 +9154,19 @@ power.SHED <- power.SHED %>% add_row(
   `Power`=pwr.2p2n.test(n1 = pc.n1, n2 = pc.n2, h = (pc.p1 - pc.p2), sig.level=0.05, alternative="greater")$power
 )
 rm("pc.m1", "pc.m2", "pc.o1", "pc.o2", "pc.n1", "pc.n2", "pc.p1", "pc.p2")
+```
 
+```{r powerChart9}
 # Figure 13
 # Code EdAttain
 # Share who do not have a college degree
 # Hispanic borrowers in CA vs. white borrowers in CA 
 tblEdAttain2 <- reshape2::dcast(data=tblEdAttain, Race + State + AnyStudentLoans ~ `variable`, value.var="Share of borrowers")
 tblEdAttain2 <- tblEdAttain2 %>% mutate(`No college degree` = `Less than high school diploma` + `High school degree or GED` + `Some college, no degree`)
-pc.n1 <- N.EdAttain$`Survey respondents`[(N.EdAttain$State=="CA") & (N.EdAttain$Group=="Hispanic") & (N.EdAttain$AnyStudentLoans=="Yes")]
-pc.n2 <- N.EdAttain$`Survey respondents`[(N.EdAttain$State=="CA") & (N.EdAttain$Group=="White, Non-Hispanic") & (N.EdAttain$AnyStudentLoans=="Yes")]
-pc.p1 <- tblEdAttain2$`No college degree`[(tblEdAttain2$State=="CA") & (tblEdAttain2$Race=="Hispanic") & (tblEdAttain2$tblEdAttain2$AnyStudentLoans=="Yes")]
-pc.p2 <- tblEdAttain2$`No college degree`[(tblEdAttain2$State=="CA") & (tblEdAttain2$Race=="White, Non-Hispanic") & (tblEdAttain2$tblEdAttain2$AnyStudentLoans=="Yes")]
+pc.n1 <- N.EdAttain1$`Survey respondents`[(N.EdAttain1$State=="CA") & (N.EdAttain1$Group=="Hispanic") & (N.EdAttain1$`Student loan borrower`=="Yes")]
+pc.n2 <- N.EdAttain1$`Survey respondents`[(N.EdAttain1$State=="CA") & (N.EdAttain1$Group=="White, Non-Hispanic") & (N.EdAttain1$`Student loan borrower`=="Yes")]
+pc.p1 <- tblEdAttain2$`No college degree`[(tblEdAttain2$State=="CA") & (tblEdAttain2$Race=="Hispanic") & (tblEdAttain2$AnyStudentLoans=="Yes")]
+pc.p2 <- tblEdAttain2$`No college degree`[(tblEdAttain2$State=="CA") & (tblEdAttain2$Race=="White, Non-Hispanic") & (tblEdAttain2$AnyStudentLoans=="Yes")]
 power.SHED <- power.SHED %>% add_row(
   `Measure`="Share without a college degree", 
   `Figure`="Figure 13", 
@@ -9304,15 +9176,17 @@ power.SHED <- power.SHED %>% add_row(
   `Power`=pwr.2p2n.test(n1 = pc.n1, n2 = pc.n2, h = (pc.p1 - pc.p2), sig.level=0.05, alternative="greater")$power
 )
 rm("pc.n1", "pc.n2", "pc.p1", "pc.p2")
+```
 
+```{r powerChart10}
 # Figure 14
 # Code HomeOwn
 # Share who own their home 
 # Black borrowers in CA vs. Black borrowers in rest of U.S. 
 tblHomeOwn2 <- reshape2::dcast(data=tblHomeOwn, State + Race + AnyStudentLoans ~ variable, value.var="Share of borrowers")
 tblHomeOwn2 <- tblHomeOwn2 %>% mutate(`Own home` = `Own home free and clear` + `Own home with a mortgage or loan`)
-pc.n1 <- N.HomeOwn$`Survey respondents`[(N.HomeOwn$State=="CA") & (N.HomeOwn$Group=="Black, Non-Hispanic") & (N.HomeOwn$AnyStudentLoans=="Yes")]
-pc.n2 <- N.HomeOwn$`Survey respondents`[(N.HomeOwn$State=="Rest of U.S.") & (N.HomeOwn$Group=="Black, Non-Hispanic") & (N.HomeOwn$AnyStudentLoans=="Yes")]
+pc.n1 <- N.HomeOwn$`Survey respondents`[(N.HomeOwn$State=="CA") & (N.HomeOwn$Group=="Black, Non-Hispanic") & (N.HomeOwn$`Student loan borrower`=="Yes")]
+pc.n2 <- N.HomeOwn$`Survey respondents`[(N.HomeOwn$State=="Rest of U.S.") & (N.HomeOwn$Group=="Black, Non-Hispanic") & (N.HomeOwn$`Student loan borrower`=="Yes")]
 pc.p1 <- tblHomeOwn2$`Own home`[(tblHomeOwn2$State=="CA") & (tblHomeOwn2$Race=="Black, Non-Hispanic") & (tblHomeOwn2$AnyStudentLoans=="Yes")]
 pc.p2 <- tblHomeOwn2$`Own home`[(tblHomeOwn2$State=="Rest of U.S.") & (tblHomeOwn2$Race=="Black, Non-Hispanic") & (tblHomeOwn2$AnyStudentLoans=="Yes")]
 power.SHED <- power.SHED %>% add_row(
@@ -9321,16 +9195,18 @@ power.SHED <- power.SHED %>% add_row(
   `Group 1`="Black borrowers in CA",
   `Group 2`="Black borrowers in rest of U.S.", 
   `N1`=pc.n1, `N2`=pc.n2, `P1`=percent(pc.p1, accuracy=0.1), `P2`=percent(pc.p2, accuracy=0.1), `Difference`= percent((pc.p1 - pc.p2), accuracy=0.1), 
-  `Power`=pwr.2p2n.test(n1 = pc.n1, n2 = pc.n2, h = (pc.p1 - pc.p2), sig.level=0.05, alternative="greater")$power
+  `Power`=pwr.2p2n.test(n1 = pc.n1, n2 = pc.n2, h = (pc.p1 - pc.p2), sig.level=0.05, alternative="less")$power
 )
 rm("pc.n1", "pc.n2", "pc.p1", "pc.p2")
+```
 
+```{r powerChart11}
 # Figure 14
 # Code HomeOwn
 # Share who own their home 
 # Black borrowers in CA vs. white borrowers in CA 
-pc.n1 <- N.HomeOwn$`Survey respondents`[(N.HomeOwn$State=="CA") & (N.HomeOwn$Group=="Black, Non-Hispanic") & (N.HomeOwn$AnyStudentLoans=="Yes")]
-pc.n2 <- N.HomeOwn$`Survey respondents`[(N.HomeOwn$State=="CA") & (N.HomeOwn$Group=="White, Non-Hispanic") & (N.HomeOwn$AnyStudentLoans=="Yes")]
+pc.n1 <- N.HomeOwn$`Survey respondents`[(N.HomeOwn$State=="CA") & (N.HomeOwn$Group=="Black, Non-Hispanic") & (N.HomeOwn$`Student loan borrower`=="Yes")]
+pc.n2 <- N.HomeOwn$`Survey respondents`[(N.HomeOwn$State=="CA") & (N.HomeOwn$Group=="White, Non-Hispanic") & (N.HomeOwn$`Student loan borrower`=="Yes")]
 pc.p1 <- tblHomeOwn2$`Own home`[(tblHomeOwn2$State=="CA") & (tblHomeOwn2$Race=="Black, Non-Hispanic") & (tblHomeOwn2$AnyStudentLoans=="Yes")]
 pc.p2 <- tblHomeOwn2$`Own home`[(tblHomeOwn2$State=="CA") & (tblHomeOwn2$Race=="White, Non-Hispanic") & (tblHomeOwn2$AnyStudentLoans=="Yes")]
 power.SHED <- power.SHED %>% add_row(
@@ -9339,10 +9215,12 @@ power.SHED <- power.SHED %>% add_row(
   `Group 1`="Black borrowers in CA",
   `Group 2`="White borrowers in CA", 
   `N1`=pc.n1, `N2`=pc.n2, `P1`=percent(pc.p1, accuracy=0.1), `P2`=percent(pc.p2, accuracy=0.1), `Difference`= percent((pc.p1 - pc.p2), accuracy=0.1), 
-  `Power`=pwr.2p2n.test(n1 = pc.n1, n2 = pc.n2, h = (pc.p1 - pc.p2), sig.level=0.05, alternative="greater")$power
+  `Power`=pwr.2p2n.test(n1 = pc.n1, n2 = pc.n2, h = (pc.p1 - pc.p2), sig.level=0.05, alternative="less")$power
 )
 rm("pc.n1", "pc.n2", "pc.p1", "pc.p2")
+```
 
+```{r powerChart12}
 # Figure 15
 # Code UnpaidCC
 # Share who hold unpaid credit card debt 
@@ -9364,7 +9242,9 @@ power.SHED <- power.SHED %>% add_row(
   `Power`=pwr.2p2n.test(n1 = pc.n1, n2 = pc.n2, h = (pc.p1 - pc.p2), sig.level=0.05, alternative="greater")$power
 )
 rm("pc.n1", "pc.n2", "pc.p1", "pc.p2")
+```
 
+```{r powerChart13}
 # Figure 15
 # Code UnpaidCC
 # Share who hold unpaid credit card debt
@@ -9386,17 +9266,19 @@ power.SHED <- power.SHED %>% add_row(
   `Power`=pwr.2p2n.test(n1 = pc.n1, n2 = pc.n2, h = (pc.p1 - pc.p2), sig.level=0.05, alternative="greater")$power
 )
 rm("pc.m1", "pc.m2", "pc.o1", "pc.o2", "pc.n1", "pc.n2", "pc.p1", "pc.p2")
+```
 
+```{r powerChart14}
 # Figure 16 
 # Code CCBalance
 # Share who carry an unpaid credit card balance at least "some of the time" 
 # Black borrowers in CA vs. white borrowers in CA 
 tblCCBalance2 <- reshape2::dcast(data=tblCCBalance, Race + State + AnyStudentLoans ~ variable, value.var="Share of borrowers")
 tblCCBalance2 <- tblCCBalance2 %>% mutate(`At least some of the time` = `Some of the time` + `Most or all of the time`)
-pc.n1 <- N.CCBalance$`Survey respondents`[(N.CCBalance$State=="CA") & (N.CCBalance$Group=="Black, Non-Hispanic") & (N.CCBalance$AnyStudentLoans=="Yes")]
-pc.n2 <- N.CCBalance$`Survey respondents`[(N.CCBalance$State=="CA") & (N.CCBalance$Group=="White, Non-Hispanic") & (N.CCBalance$AnyStudentLoans=="Yes")]
+pc.n1 <- N.CCBalance$`Survey respondents`[(N.CCBalance$State=="CA") & (N.CCBalance$Group=="Black, Non-Hispanic") & (N.CCBalance$`Student loan borrower`=="Yes")]
+pc.n2 <- N.CCBalance$`Survey respondents`[(N.CCBalance$State=="CA") & (N.CCBalance$Group=="White, Non-Hispanic") & (N.CCBalance$`Student loan borrower`=="Yes")]
 pc.p1 <- tblCCBalance2$`At least some of the time`[(tblCCBalance2$State=="CA") & (tblCCBalance2$Race=="Black, Non-Hispanic") & (tblCCBalance2$AnyStudentLoans=="Yes")] 
-pc.p2 <-  tblCCBalance2$`At least some of the time`[(tblCCBalance2$State=="CA") & (tblCCBalance2$Race=="White, Non-Hispanic") & (tblCCBalance2$AnyStudentLoans=="Yes")] 
+pc.p2 <- tblCCBalance2$`At least some of the time`[(tblCCBalance2$State=="CA") & (tblCCBalance2$Race=="White, Non-Hispanic") & (tblCCBalance2$AnyStudentLoans=="Yes")] 
 power.SHED <- power.SHED %>% add_row(
   `Measure`="Share who carry an unpaid credit card balance at least some of the time", 
   `Figure`="Figure 16", 
@@ -9406,13 +9288,15 @@ power.SHED <- power.SHED %>% add_row(
   `Power`=pwr.2p2n.test(n1 = pc.n1, n2 = pc.n2, h = (pc.p1 - pc.p2), sig.level=0.05, alternative="greater")$power
 )
 rm("pc.n1", "pc.n2", "pc.p1", "pc.p2")
+```
 
+```{r powerChart15}
 # Figure 16 
 # Code CCBalance
 # Share who carry an unpaid credit card balance at least "some of the time" 
 # Hispanic borrowers in CA vs. white borrowers in CA
-pc.n1 <- N.CCBalance$`Survey respondents`[(N.CCBalance$State=="CA") & (N.CCBalance$Group=="Hispanic") & (N.CCBalance$AnyStudentLoans=="Yes")]
-pc.n2 <- N.CCBalance$`Survey respondents`[(N.CCBalance$State=="CA") & (N.CCBalance$Group=="White, Non-Hispanic") & (N.CCBalance$AnyStudentLoans=="Yes")]
+pc.n1 <- N.CCBalance$`Survey respondents`[(N.CCBalance$State=="CA") & (N.CCBalance$Group=="Hispanic") & (N.CCBalance$`Student loan borrower`=="Yes")]
+pc.n2 <- N.CCBalance$`Survey respondents`[(N.CCBalance$State=="CA") & (N.CCBalance$Group=="White, Non-Hispanic") & (N.CCBalance$`Student loan borrower`=="Yes")]
 pc.p1 <- tblCCBalance2$`At least some of the time`[(tblCCBalance2$State=="CA") & (tblCCBalance2$Race=="Hispanic") & (tblCCBalance2$AnyStudentLoans=="Yes")] 
 pc.p2 <- tblCCBalance2$`At least some of the time`[(tblCCBalance2$State=="CA") & (tblCCBalance2$Race=="White, Non-Hispanic") & (tblCCBalance2$AnyStudentLoans=="Yes")] 
 power.SHED <- power.SHED %>% add_row(
@@ -9424,13 +9308,15 @@ power.SHED <- power.SHED %>% add_row(
   `Power`=pwr.2p2n.test(n1 = pc.n1, n2 = pc.n2, h = (pc.p1 - pc.p2), sig.level=0.05, alternative="greater")$power
 )
 rm("pc.n1", "pc.n2", "pc.p1", "pc.p2")
+```
 
+```{r powerChart16}
 # Figure 16 
 # Code CCBalance
 # Share who carry an unpaid credit card balance at least "some of the time" 
 # Black borrowers in CA vs. Black borrowers outside CA  
-pc.n1 <- N.CCBalance$`Survey respondents`[(N.CCBalance$State=="CA") & (N.CCBalance$Group=="Black, Non-Hispanic") & (N.CCBalance$AnyStudentLoans=="Yes")]
-pc.n2 <- N.CCBalance$`Survey respondents`[(N.CCBalance$State=="Rest of U.S.") & (N.CCBalance$Group=="Black, Non-Hispanic") & (N.CCBalance$AnyStudentLoans=="Yes")]
+pc.n1 <- N.CCBalance$`Survey respondents`[(N.CCBalance$State=="CA") & (N.CCBalance$Group=="Black, Non-Hispanic") & (N.CCBalance$`Student loan borrower`=="Yes")]
+pc.n2 <- N.CCBalance$`Survey respondents`[(N.CCBalance$State=="Rest of U.S.") & (N.CCBalance$Group=="Black, Non-Hispanic") & (N.CCBalance$`Student loan borrower`=="Yes")]
 pc.p1 <- tblCCBalance2$`At least some of the time`[(tblCCBalance2$State=="CA") & (tblCCBalance2$Race=="Black, Non-Hispanic") & (tblCCBalance2$AnyStudentLoans=="Yes")] 
 pc.p2 <- tblCCBalance2$`At least some of the time`[(tblCCBalance2$State=="Rest of U.S.") & (tblCCBalance2$Race=="Black, Non-Hispanic") & (tblCCBalance2$AnyStudentLoans=="Yes")] 
 power.SHED <- power.SHED %>% add_row(
@@ -9442,17 +9328,19 @@ power.SHED <- power.SHED %>% add_row(
   `Power`=pwr.2p2n.test(n1 = pc.n1, n2 = pc.n2, h = (pc.p1 - pc.p2), sig.level=0.05, alternative="greater")$power
 )
 rm("pc.n1", "pc.n2", "pc.p1", "pc.p2")
+```
 
+```{r powerChart17}
 # Figure 17
 # Code Savings
 # Share who have under $50,000
 # Black or Hispanic borrowers in CA vs. white borrowers in CA 
 pc.o1 <- tblSavings$`Share of borrowers`[(tblSavings$State=="CA") & (tblSavings$Race=="Black, Non-Hispanic") & (tblSavings$AnyStudentLoans=="Yes") & (tblSavings$variable=="Under $50,000")]
 pc.o2 <- tblSavings$`Share of borrowers`[(tblSavings$State=="CA") & (tblSavings$Race=="Hispanic") & (tblSavings$AnyStudentLoans=="Yes") & (tblSavings$variable=="Under $50,000")]
-pc.m1 <- N.Savings$`Survey respondents`[(N.Savings$State=="CA") & (N.Savings$Group=="Black, Non-Hispanic") & (N.Savings$AnyStudentLoans=="Yes")]
-pc.m2 <- N.Savings$`Survey respondents`[(N.Savings$State=="CA") & (N.Savings$Group=="Hispanic") & (N.Savings$AnyStudentLoans=="Yes")]
+pc.m1 <- N.Savings$`Survey respondents`[(N.Savings$State=="CA") & (N.Savings$Group=="Black, Non-Hispanic") & (N.Savings$`Student loan borrower`=="Yes")]
+pc.m2 <- N.Savings$`Survey respondents`[(N.Savings$State=="CA") & (N.Savings$Group=="Hispanic") & (N.Savings$`Student loan borrower`=="Yes")]
 pc.n1 <- pc.m1 + pc.m2
-pc.n2 <- N.Savings$`Survey respondents`[(N.Savings$State=="CA") & (N.Savings$Group=="White, Non-Hispanic") & (N.Savings$AnyStudentLoans=="Yes")]
+pc.n2 <- N.Savings$`Survey respondents`[(N.Savings$State=="CA") & (N.Savings$Group=="White, Non-Hispanic") & (N.Savings$`Student loan borrower`=="Yes")]
 pc.p1 <- (pc.o1 * (pc.m1 / (pc.m1 + pc.m2))) + (pc.o2 * (pc.m2 / (pc.m1 + pc.m2)))
 pc.p2 <- tblSavings$`Share of borrowers`[(tblSavings$State=="CA") & (tblSavings$Race=="White, Non-Hispanic") & (tblSavings$AnyStudentLoans=="Yes") & (tblSavings$variable=="Under $50,000")]
 power.SHED <- power.SHED %>% add_row(
@@ -9464,15 +9352,17 @@ power.SHED <- power.SHED %>% add_row(
   `Power`=pwr.2p2n.test(n1 = pc.n1, n2 = pc.n2, h = (pc.p1 - pc.p2), sig.level=0.05, alternative="greater")$power
 )
 rm("pc.m1", "pc.m2", "pc.o1", "pc.o2", "pc.n1", "pc.n2", "pc.p1", "pc.p2")
+```
 
+```{r powerChart18}
 # Figure 18
 # Code TotalInc
 # Share who earn under $75,000 
 # Hispanic borrowers in CA vs. white borrowers in CA 
 tblTotalInc2 <- reshape2::dcast(data=tblTotalInc, Race + State + AnyStudentLoans ~ variable, value.var="Share of borrowers")
 tblTotalInc2 <- tblTotalInc2 %>% mutate(`Under $75,000` = `$0 to $4,999` + `$5,000 to $14,999` + `$15,000 to $24,999` + `$25,000 to $39,999` + `$40,000 to $49,999` + `$50,000 to $74,999`)
-pc.n1 <- N.TotalInc$`Survey respondents`[(N.TotalInc$State=="CA") & (N.TotalInc$Group=="Hispanic") & (N.TotalInc$AnyStudentLoans=="Yes")]
-pc.n2 <- N.TotalInc$`Survey respondents`[(N.TotalInc$State=="CA") & (N.TotalInc$Group=="White, Non-Hispanic") & (N.TotalInc$AnyStudentLoans=="Yes")]
+pc.n1 <- N.TotalInc$`Survey respondents`[(N.TotalInc$State=="CA") & (N.TotalInc$Group=="Hispanic") & (N.TotalInc$`Student loan borrower`=="Yes")]
+pc.n2 <- N.TotalInc$`Survey respondents`[(N.TotalInc$State=="CA") & (N.TotalInc$Group=="White, Non-Hispanic") & (N.TotalInc$`Student loan borrower`=="Yes")]
 pc.p1 <- tblTotalInc2$`Under $75,000`[(tblTotalInc2$State=="CA") & (tblTotalInc2$Race=="Hispanic") & (tblTotalInc2$AnyStudentLoans=="Yes")] 
 pc.p2 <- tblTotalInc2$`Under $75,000`[(tblTotalInc2$State=="CA") & (tblTotalInc2$Race=="White, Non-Hispanic") & (tblTotalInc2$AnyStudentLoans=="Yes")] 
 power.SHED <- power.SHED %>% add_row(
@@ -9484,13 +9374,15 @@ power.SHED <- power.SHED %>% add_row(
   `Power`=pwr.2p2n.test(n1 = pc.n1, n2 = pc.n2, h = (pc.p1 - pc.p2), sig.level=0.05, alternative="greater")$power
 )
 rm("pc.n1", "pc.n2", "pc.p1", "pc.p2")
+```
 
+```{r powerChart19}
 # Figure 18
 # Code TotalInc
 # Share who earn under $75,000
 # Black borrowers in CA vs. white borrowers in CA 
-pc.n1 <- N.TotalInc$`Survey respondents`[(N.TotalInc$State=="CA") & (N.TotalInc$Group=="Black, Non-Hispanic") & (N.TotalInc$AnyStudentLoans=="Yes")]
-pc.n2 <- N.TotalInc$`Survey respondents`[(N.TotalInc$State=="CA") & (N.TotalInc$Group=="White, Non-Hispanic") & (N.TotalInc$AnyStudentLoans=="Yes")]
+pc.n1 <- N.TotalInc$`Survey respondents`[(N.TotalInc$State=="CA") & (N.TotalInc$Group=="Black, Non-Hispanic") & (N.TotalInc$`Student loan borrower`=="Yes")]
+pc.n2 <- N.TotalInc$`Survey respondents`[(N.TotalInc$State=="CA") & (N.TotalInc$Group=="White, Non-Hispanic") & (N.TotalInc$`Student loan borrower`=="Yes")]
 pc.p1 <- tblTotalInc2$`Under $75,000`[(tblTotalInc2$State=="CA") & (tblTotalInc2$Race=="Black, Non-Hispanic") & (tblTotalInc2$AnyStudentLoans=="Yes")] 
 pc.p2 <- tblTotalInc2$`Under $75,000`[(tblTotalInc2$State=="CA") & (tblTotalInc2$Race=="White, Non-Hispanic") & (tblTotalInc2$AnyStudentLoans=="Yes")] 
 power.SHED <- power.SHED %>% add_row(
@@ -9502,15 +9394,17 @@ power.SHED <- power.SHED %>% add_row(
   `Power`=pwr.2p2n.test(n1 = pc.n1, n2 = pc.n2, h = (pc.p1 - pc.p2), sig.level=0.05, alternative="greater")$power
 )
 rm("pc.n1", "pc.n2", "pc.p1", "pc.p2")
+```
 
+```{r powerChart20}
 # Figure 18
 # Code TotalInc
 # Share who earn under $75,000
 # Hispanic or Black borrowers in CA vs. white borrowers in CA
 pc.o1 <- tblTotalInc2$`Under $75,000`[(tblTotalInc2$State=="CA") & (tblTotalInc2$Race=="Black, Non-Hispanic") & (tblTotalInc2$AnyStudentLoans=="Yes")] 
 pc.o2 <- tblTotalInc2$`Under $75,000`[(tblTotalInc2$State=="CA") & (tblTotalInc2$Race=="Hispanic") & (tblTotalInc2$AnyStudentLoans=="Yes")] 
-pc.m1 <- N.TotalInc$`Survey respondents`[(N.TotalInc$State=="CA") & (N.TotalInc$Group=="Black, Non-Hispanic") & (N.TotalInc$AnyStudentLoans=="Yes")]
-pc.m2 <- N.TotalInc$`Survey respondents`[(N.TotalInc$State=="CA") & (N.TotalInc$Group=="Hispanic") & (N.TotalInc$AnyStudentLoans=="Yes")]
+pc.m1 <- N.TotalInc$`Survey respondents`[(N.TotalInc$State=="CA") & (N.TotalInc$Group=="Black, Non-Hispanic") & (N.TotalInc$`Student loan borrower`=="Yes")]
+pc.m2 <- N.TotalInc$`Survey respondents`[(N.TotalInc$State=="CA") & (N.TotalInc$Group=="Hispanic") & (N.TotalInc$`Student loan borrower`=="Yes")]
 pc.n1 <- pc.m1 + pc.m2
 pc.n2 <- N.TotalInc$`Survey respondents`[(N.TotalInc$State=="CA") & (N.TotalInc$Group=="White, Non-Hispanic") & (N.TotalInc$AnyStudentLoans=="Yes")]
 pc.p1 <- (pc.o1 * (pc.m1 / (pc.m1 + pc.m2))) + (pc.o2 * (pc.m2 / (pc.m1 + pc.m2)))
@@ -9524,13 +9418,15 @@ power.SHED <- power.SHED %>% add_row(
   `Power`=pwr.2p2n.test(n1 = pc.n1, n2 = pc.n2, h = (pc.p1 - pc.p2), sig.level=0.05, alternative="greater")$power
 )
 rm("pc.m1", "pc.m2", "pc.o1", "pc.o2", "pc.n1", "pc.n2", "pc.p1", "pc.p2")
+```
 
+```{r powerChart21}
 # Figure 19
 # Code FinManage
 # Share who report living comfortably 
 # Black borrowers in CA vs. white borrowers in CA
-pc.n1 <- N.FinManage$`Survey respondents`[(N.FinManage$State=="CA") & (N.FinManage$Group=="Black, Non-Hispanic") & (N.FinManage$AnyStudentLoans=="Yes")]
-pc.n2 <- N.FinManage$`Survey respondents`[(N.FinManage$State=="CA") & (N.FinManage$Group=="White, Non-Hispanic") & (N.FinManage$AnyStudentLoans=="Yes")]
+pc.n1 <- N.FinManage$`Survey respondents`[(N.FinManage$State=="CA") & (N.FinManage$Group=="Black, Non-Hispanic") & (N.FinManage$`Student loan borrower`=="Yes")]
+pc.n2 <- N.FinManage$`Survey respondents`[(N.FinManage$State=="CA") & (N.FinManage$Group=="White, Non-Hispanic") & (N.FinManage$`Student loan borrower`=="Yes")]
 pc.p1 <- tblFinManage$`Share of borrowers`[(tblFinManage$State=="CA") & (tblFinManage$Race=="Black, Non-Hispanic") & (tblFinManage$AnyStudentLoans=="Yes") & (tblFinManage$variable=="Living comfortably")]
 pc.p2 <- tblFinManage$`Share of borrowers`[(tblFinManage$State=="CA") & (tblFinManage$Race=="White, Non-Hispanic") & (tblFinManage$AnyStudentLoans=="Yes") & (tblFinManage$variable=="Living comfortably")]
 power.SHED <- power.SHED %>% add_row(
@@ -9539,18 +9435,20 @@ power.SHED <- power.SHED %>% add_row(
   `Group 1`="Black borrowers in CA",
   `Group 2`="White borrowers in CA", 
   `N1`=pc.n1, `N2`=pc.n2, `P1`=percent(pc.p1, accuracy=0.1), `P2`=percent(pc.p2, accuracy=0.1), `Difference`= percent((pc.p1 - pc.p2), accuracy=0.1), 
-  `Power`=pwr.2p2n.test(n1 = pc.n1, n2 = pc.n2, h = (pc.p1 - pc.p2), sig.level=0.05, alternative="greater")$power
+  `Power`=pwr.2p2n.test(n1 = pc.n1, n2 = pc.n2, h = (pc.p1 - pc.p2), sig.level=0.05, alternative="less")$power
 )
 rm("pc.n1", "pc.n2", "pc.p1", "pc.p2")
+```
 
+```{r powerChart22}
 # Figure 21
 # Code CreditScore
 # Share who believe their credit score is "poor" or "very poor"
 # Black borrowers in CA vs. white borrowers in CA
 tblCreditScore2 <- reshape2::dcast(data=tblCreditScore, Race + State + AnyStudentLoans ~ variable, value.var="Share")
 tblCreditScore2 <- tblCreditScore2 %>% mutate(`Poor or very poor` = `Poor` + `Very poor`)
-pc.n1 <- N.CreditScore$`Survey respondents`[(N.CreditScore$State=="CA") & (N.CreditScore$Group=="Black, Non-Hispanic") & (N.CreditScore$AnyStudentLoans=="Yes")]
-pc.n2 <- N.CreditScore$`Survey respondents`[(N.CreditScore$State=="CA") & (N.CreditScore$Group=="White, Non-Hispanic") & (N.CreditScore$AnyStudentLoans=="Yes")]
+pc.n1 <- N.CreditScore$`Survey respondents`[(N.CreditScore$State=="CA") & (N.CreditScore$Group=="Black, Non-Hispanic") & (N.CreditScore$`Student loan borrower`=="Yes")]
+pc.n2 <- N.CreditScore$`Survey respondents`[(N.CreditScore$State=="CA") & (N.CreditScore$Group=="White, Non-Hispanic") & (N.CreditScore$`Student loan borrower`=="Yes")]
 pc.p1 <- tblCreditScore2$`Poor or very poor`[(tblCreditScore2$State=="CA") & (tblCreditScore2$Race=="Black, Non-Hispanic") & (tblCreditScore2$AnyStudentLoans=="Yes")]
 pc.p2 <- tblCreditScore2$`Poor or very poor`[(tblCreditScore2$State=="CA") & (tblCreditScore2$Race=="White, Non-Hispanic") & (tblCreditScore2$AnyStudentLoans=="Yes")]
 power.SHED <- power.SHED %>% add_row(
@@ -9562,13 +9460,15 @@ power.SHED <- power.SHED %>% add_row(
   `Power`=pwr.2p2n.test(n1 = pc.n1, n2 = pc.n2, h = (pc.p1 - pc.p2), sig.level=0.05, alternative="greater")$power
 )
 rm("pc.n1", "pc.n2", "pc.p1", "pc.p2")
+```
 
+```{r powerChart23}
 # Figure 21
 # Code CreditScore
 # Share who believe their credit score is "poor" or "very poor"
 # Black borrowers in CA vs. Black borrowers in rest of US 
-pc.n1 <- N.CreditScore$`Survey respondents`[(N.CreditScore$State=="CA") & (N.CreditScore$Group=="Black, Non-Hispanic") & (N.CreditScore$AnyStudentLoans=="Yes")]
-pc.n2 <- N.CreditScore$`Survey respondents`[(N.CreditScore$State=="Rest of U.S.") & (N.CreditScore$Group=="Black, Non-Hispanic") & (N.CreditScore$AnyStudentLoans=="Yes")]
+pc.n1 <- N.CreditScore$`Survey respondents`[(N.CreditScore$State=="CA") & (N.CreditScore$Group=="Black, Non-Hispanic") & (N.CreditScore$`Student loan borrower`=="Yes")]
+pc.n2 <- N.CreditScore$`Survey respondents`[(N.CreditScore$State=="Rest of U.S.") & (N.CreditScore$Group=="Black, Non-Hispanic") & (N.CreditScore$`Student loan borrower`=="Yes")]
 pc.p1 <- tblCreditScore2$`Poor or very poor`[(tblCreditScore2$State=="CA") & (tblCreditScore2$Race=="Black, Non-Hispanic") & (tblCreditScore2$AnyStudentLoans=="Yes")]
 pc.p2 <- tblCreditScore2$`Poor or very poor`[(tblCreditScore2$State=="Rest of U.S.") & (tblCreditScore2$Race=="Black, Non-Hispanic") & (tblCreditScore2$AnyStudentLoans=="Yes")]
 power.SHED <- power.SHED %>% add_row(
@@ -9580,7 +9480,9 @@ power.SHED <- power.SHED %>% add_row(
   `Power`=pwr.2p2n.test(n1 = pc.n1, n2 = pc.n2, h = (pc.p1 - pc.p2), sig.level=0.05, alternative="greater")$power
 )
 rm("pc.n1", "pc.n2", "pc.p1", "pc.p2")
+```
 
+```{r powerChart24}
 # Figure 22
 # Code PayBills
 # Share who say that they cannot pay all their month's bills in full 
@@ -9592,8 +9494,8 @@ tblPayBills3$`I cannot pay some bills or will only make a partial payment on the
 tblPayBills3$`I will be able to pay all of my bills in full` <- tblPayBills3$`I will be able to pay all of my bills in full` / tblPayBills3$`Total weight`
 pc.n1 <- sum(N.PayBills$`Survey respondents`[(N.PayBills$State=="CA") & (N.PayBills$`Student loan borrower`=="Yes")])
 pc.n2 <- sum(N.PayBills$`Survey respondents`[(N.PayBills$State=="CA") & (N.PayBills$`Student loan borrower`=="No")])
-pc.p1 <- tblPayBills3$`I cannot pay some bills or will only make a partial payment on them`[(tblPayBills3$State=="CA") & (N.PayBills3$`AnyStudentLoans`=="Yes")]
-pc.p2 <- tblPayBills3$`I cannot pay some bills or will only make a partial payment on them`[(tblPayBills3$State=="CA") & (N.PayBills3$`AnyStudentLoans`=="No")]
+pc.p1 <- tblPayBills3$`I cannot pay some bills or will only make a partial payment on them`[(tblPayBills3$State=="CA") & (tblPayBills3$`AnyStudentLoans`=="Yes")]
+pc.p2 <- tblPayBills3$`I cannot pay some bills or will only make a partial payment on them`[(tblPayBills3$State=="CA") & (tblPayBills3$`AnyStudentLoans`=="No")]
 power.SHED <- power.SHED %>% add_row(
   `Measure`="Share who cannot pay all their month's bills in full ", 
   `Figure`="Figure 22", 
@@ -9603,7 +9505,9 @@ power.SHED <- power.SHED %>% add_row(
   `Power`=pwr.2p2n.test(n1 = pc.n1, n2 = pc.n2, h = (pc.p1 - pc.p2), sig.level=0.05, alternative="greater")$power
 )
 rm("pc.n1", "pc.n2", "pc.p1", "pc.p2")
+```
 
+```{r powerChart25}
 # Figure 22
 # Code PayBills
 # Share who say that they cannot pay all their month's bills in full 
@@ -9625,7 +9529,9 @@ power.SHED <- power.SHED %>% add_row(
   `Power`=pwr.2p2n.test(n1 = pc.n1, n2 = pc.n2, h = (pc.p1 - pc.p2), sig.level=0.05, alternative="greater")$power
 )
 rm("pc.m1", "pc.m2", "pc.o1", "pc.o2", "pc.n1", "pc.n2", "pc.p1", "pc.p2")
+```
 
+```{r powerChart26}
 # Figure 26
 # Code CCApprov
 # Share who are "very confident" they would be approved for a credit card
@@ -9644,33 +9550,56 @@ power.SHED <- power.SHED %>% add_row(
   `Group 1`="Black and Hispanic borrowers in CA",
   `Group 2`="White borrowers in CA", 
   `N1`=pc.n1, `N2`=pc.n2, `P1`=percent(pc.p1, accuracy=0.1), `P2`=percent(pc.p2, accuracy=0.1), `Difference`= percent((pc.p1 - pc.p2), accuracy=0.1), 
-  `Power`=pwr.2p2n.test(n1 = pc.n1, n2 = pc.n2, h = (pc.p1 - pc.p2), sig.level=0.05, alternative="greater")$power
+  `Power`=pwr.2p2n.test(n1 = pc.n1, n2 = pc.n2, h = (pc.p1 - pc.p2), sig.level=0.05, alternative="less")$power
 )
 rm("pc.m1", "pc.m2", "pc.o1", "pc.o2", "pc.n1", "pc.n2", "pc.p1", "pc.p2")
+```
 
+```{r powerChart28}
 # Figure 29
 # Code ThreeMonExpenses
 # Share who could replace 3 months of income using savings
 # Black borrowers in CA vs. white borrowers in CA
-pc.n1 <- N.ThreeMonExpenses$`Survey respondents`[(N.ThreeMonExpenses$State=="CA") & (N.ThreeMonExpenses$Group=="Black, Non-Hispanic") & (N.ThreeMonExpenses$AnyStudentLoans=="Yes")]
-pc.n2 <- N.ThreeMonExpenses$`Survey respondents`[(N.ThreeMonExpenses$State=="CA") & (N.ThreeMonExpenses$Group=="White, Non-Hispanic") & (N.ThreeMonExpenses$AnyStudentLoans=="Yes")]
+pc.n1 <- N.ThreeMonExpenses$`Survey respondents`[(N.ThreeMonExpenses$State=="CA") & (N.ThreeMonExpenses$Group=="Black, Non-Hispanic") & (N.ThreeMonExpenses$`Student loan borrower`=="Yes")]
+pc.n2 <- N.ThreeMonExpenses$`Survey respondents`[(N.ThreeMonExpenses$State=="CA") & (N.ThreeMonExpenses$Group=="White, Non-Hispanic") & (N.ThreeMonExpenses$`Student loan borrower`=="Yes")]
 pc.p1 <- tblThreeMonExpenses$`Share`[(tblThreeMonExpenses$State=="CA") & (tblThreeMonExpenses$Race=="Black, Non-Hispanic") & (tblThreeMonExpenses$AnyStudentLoans=="Yes") & (tblThreeMonExpenses$variable=="I cannot replace the income needed for three months of expenses")]
 pc.p2 <- tblThreeMonExpenses$`Share`[(tblThreeMonExpenses$State=="CA") & (tblThreeMonExpenses$Race=="White, Non-Hispanic") & (tblThreeMonExpenses$AnyStudentLoans=="Yes") & (tblThreeMonExpenses$variable=="I cannot replace the income needed for three months of expenses")]
 power.SHED <- power.SHED %>% add_row(
-  `Measure`="Share who report living comfortably", 
-  `Figure`="Figure 21", 
+  `Measure`="Share who cannot replace 3 months of income using savings", 
+  `Figure`="Figure 29", 
+  `Group 1`="Black borrowers in CA",
+  `Group 2`="White borrowers in CA", 
+  `N1`=pc.n1, `N2`=pc.n2, `P1`=percent(pc.p1, accuracy=0.1), `P2`=percent(pc.p2, accuracy=0.1), `Difference`= percent((pc.p1 - pc.p2), accuracy=0.1), 
+  `Power`=pwr.2p2n.test(n1 = pc.n1, n2 = pc.n2, h = (pc.p1 - pc.p2), sig.level=0.05, alternative="greater")$power
+)
+rm("pc.n1", "pc.n2", "pc.p1", "pc.p2")
+```
+
+```{r powerChart29}
+# Figure 29
+# Code ThreeMonExpenses
+# Share who could replace 3 months of income using savings
+# Black borrowers in CA vs. Black borrowers in rest of US
+pc.n1 <- N.ThreeMonExpenses$`Survey respondents`[(N.ThreeMonExpenses$State=="CA") & (N.ThreeMonExpenses$Group=="Black, Non-Hispanic") & (N.ThreeMonExpenses$`Student loan borrower`=="Yes")]
+pc.n2 <- N.ThreeMonExpenses$`Survey respondents`[(N.ThreeMonExpenses$State=="Rest of U.S.") & (N.ThreeMonExpenses$Group=="Black, Non-Hispanic") & (N.ThreeMonExpenses$`Student loan borrower`=="Yes")]
+pc.p1 <- tblThreeMonExpenses$`Share`[(tblThreeMonExpenses$State=="CA") & (tblThreeMonExpenses$Race=="Black, Non-Hispanic") & (tblThreeMonExpenses$AnyStudentLoans=="Yes") & (tblThreeMonExpenses$variable=="I cannot replace the income needed for three months of expenses")]
+pc.p2 <- tblThreeMonExpenses$`Share`[(tblThreeMonExpenses$State=="Rest of U.S.") & (tblThreeMonExpenses$Race=="Black, Non-Hispanic") & (tblThreeMonExpenses$AnyStudentLoans=="Yes") & (tblThreeMonExpenses$variable=="I cannot replace the income needed for three months of expenses")]
+power.SHED <- power.SHED %>% add_row(
+  `Measure`="Share who cannot replace 3 months of income using savings", 
+  `Figure`="Figure 29", 
   `Group 1`="Black borrowers in CA",
   `Group 2`="Black borrowers in rest of U.S.", 
   `N1`=pc.n1, `N2`=pc.n2, `P1`=percent(pc.p1, accuracy=0.1), `P2`=percent(pc.p2, accuracy=0.1), `Difference`= percent((pc.p1 - pc.p2), accuracy=0.1), 
   `Power`=pwr.2p2n.test(n1 = pc.n1, n2 = pc.n2, h = (pc.p1 - pc.p2), sig.level=0.05, alternative="greater")$power
 )
 rm("pc.n1", "pc.n2", "pc.p1", "pc.p2")
-# Black borrowers in CA vs. Black borrowers in rest of US
+```
 
-
-
-
+```{r powerChartEnd, results='asis'}
 power.SHED <- power.SHED %>% filter(is.na(`Measure`)==FALSE)
+power.SHED$Power <- round(power.SHED$Power, 3)
+
+kable(power.SHED, caption="Checking statistical power values of SHED analyses") %>% kable_paper("hover", full_width = F) %>% scroll_box(height = "400px")
 ```
 *Is the SHED sample sufficiently representative of California households?*
 ```{r check.SHED2}
