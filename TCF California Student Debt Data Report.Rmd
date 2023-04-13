@@ -8956,7 +8956,7 @@ kable(table12B, caption="Average annual wages of workers by highest education: B
 
 In this final section, I provide further statistics to check the validity of our data universes and samples. 
 
-*Is the subsample on California households from SHED sufficiently large to draw comparisons across groups?*
+*Is the sub-sample on California households from SHED sufficiently large to draw comparisons across groups?*
 
 The pooled data from SHED that we use contains survey records from 71,710 households nationwide, of which 7,891 (or 11%) are from California. Of those 7,891 California households, 1,117 hold student loan debt.  
 
@@ -8964,10 +8964,14 @@ Throughout this document, the number of households included in each sub-sample i
 
 The smallest sub-samples used in our analysis are for California households with student loans, broken down by the racial identity of the survey respondent. In nearly every case, Black student loan borrowers in California are the smallest group. The next-smallest sub-sample is student loan borrowers in California who fall into the "Other, Non-Hispanic" category, which encompasses Asian, Pacific Islander, Native American, and other groups besides white, Hispanic, and Black families. 
 
-Not every survey question has an answer from every respondent, and some questions were not asked in every year in our pooled set. This causes variation in the number of respondents by sub-sample, depending on the variable under focus. What would be a sufficient number of respondents in a given sub-sample for us to feel confident drawing conclusions about differences across groups? For questions such as this, statisticians refer to a study's "power," a measure of sample size that we can apply to the individual analyses in this document. A study that aims to detect an inter-group difference of 5 percent along a key variable needs more power (and thus more subjects) than a study that only aims to detect an inter-group difference of 10 percent or more. More respondents means more power, and it means smaller inter-group differences can be regarded as meaningful. 
+Not every survey question has an answer from every respondent, and some questions were not asked in every survey year in our pooled set. This causes variation in the number of respondents by sub-sample, depending on the variable under focus. What would be a sufficient number of respondents in a given sub-sample for us to feel confident drawing conclusions about differences across groups? 
 
-Take "Figure 8: Credit Card debt" as an example. It is notable that Black Californians report having credit card debt that they used for their education at a high level (40.2%), more so than do Black adults in the rest of the U.S. (29.8%). The sub-samples contain 107 and 1,713 respondents, respectively. Are those enough to detect a difference of 10.4 percentage points?   
+For questions such as this, statisticians refer to a study's "power," a measure of sample size that we can apply to the individual analyses in this document. A study that aims to detect an inter-group difference of 5 percent along a key variable needs more power (and thus more subjects) than a study that only aims to detect an inter-group difference of 10 percent or more. More respondents means more power, which means we can be even more confident that our results are not the result of chance. 
 
+Table 13 takes certain results from the SHED analysis above and measures the power of a two-sample t-test. (The figure numbers refer to the figures in this document.) After reporting the measure, groups, sample sizes, the sample proportions, the percentage point difference, it provides the power calculation. A power level of 0.8 is considered standard. 
+
+### {.tabset}
+#### Table 13 
 
 ```{r powerChartStart}
 power.SHED <- data.frame(
@@ -9314,16 +9318,20 @@ rm("pc.n1", "pc.n2", "pc.p1", "pc.p2")
 # Figure 16 
 # Code CCBalance
 # Share who carry an unpaid credit card balance at least "some of the time" 
-# Black borrowers in CA vs. Black borrowers outside CA  
-pc.n1 <- N.CCBalance$`Survey respondents`[(N.CCBalance$State=="CA") & (N.CCBalance$Group=="Black, Non-Hispanic") & (N.CCBalance$`Student loan borrower`=="Yes")]
-pc.n2 <- N.CCBalance$`Survey respondents`[(N.CCBalance$State=="Rest of U.S.") & (N.CCBalance$Group=="Black, Non-Hispanic") & (N.CCBalance$`Student loan borrower`=="Yes")]
-pc.p1 <- tblCCBalance2$`At least some of the time`[(tblCCBalance2$State=="CA") & (tblCCBalance2$Race=="Black, Non-Hispanic") & (tblCCBalance2$AnyStudentLoans=="Yes")] 
-pc.p2 <- tblCCBalance2$`At least some of the time`[(tblCCBalance2$State=="Rest of U.S.") & (tblCCBalance2$Race=="Black, Non-Hispanic") & (tblCCBalance2$AnyStudentLoans=="Yes")] 
+# Black and Hispanic borrowers in CA vs. white borrowers in CA  
+pc.m1 <- N.CCBalance$`Survey respondents`[(N.CCBalance$State=="CA") & (N.CCBalance$Group=="Black, Non-Hispanic") & (N.CCBalance$`Student loan borrower`=="Yes")]
+pc.m2 <- N.CCBalance$`Survey respondents`[(N.CCBalance$State=="CA") & (N.CCBalance$Group=="Hispanic") & (N.CCBalance$`Student loan borrower`=="Yes")]
+pc.o1 <- tblCCBalance2$`At least some of the time`[(tblCCBalance2$State=="CA") & (tblCCBalance2$Race=="Black, Non-Hispanic") & (tblCCBalance2$AnyStudentLoans=="Yes")] 
+pc.o2 <- tblCCBalance2$`At least some of the time`[(tblCCBalance2$State=="CA") & (tblCCBalance2$Race=="Hispanic") & (tblCCBalance2$AnyStudentLoans=="Yes")] 
+pc.n1 <- pc.m1 + pc.m2
+pc.n2 <- N.CCBalance$`Survey respondents`[(N.CCBalance$State=="CA") & (N.CCBalance$Group=="White, Non-Hispanic") & (N.CCBalance$`Student loan borrower`=="Yes")]
+pc.p1 <- (pc.o1 * (pc.m1 / (pc.m1 + pc.m2))) + (pc.o2 * (pc.m2 / (pc.m1 + pc.m2)))
+pc.p2 <- tblCCBalance2$`At least some of the time`[(tblCCBalance2$State=="CA") & (tblCCBalance2$Race=="White, Non-Hispanic") & (tblCCBalance2$AnyStudentLoans=="Yes")] 
 power.SHED <- power.SHED %>% add_row(
   `Measure`="Share who carry an unpaid credit card balance at least some of the time", 
   `Figure`="Figure 16", 
-  `Group 1`="Black borrowers in CA",
-  `Group 2`="Black borrowers in rest of U.S.", 
+  `Group 1`="Black and Hispanic borrowers in CA",
+  `Group 2`="White borrowers in CA", 
   `N1`=pc.n1, `N2`=pc.n2, `P1`=percent(pc.p1, accuracy=0.1), `P2`=percent(pc.p2, accuracy=0.1), `Difference`= percent((pc.p1 - pc.p2), accuracy=0.1), 
   `Power`=pwr.2p2n.test(n1 = pc.n1, n2 = pc.n2, h = (pc.p1 - pc.p2), sig.level=0.05, alternative="greater")$power
 )
@@ -9598,19 +9606,65 @@ rm("pc.n1", "pc.n2", "pc.p1", "pc.p2")
 ```{r powerChartEnd, results='asis'}
 power.SHED <- power.SHED %>% filter(is.na(`Measure`)==FALSE)
 power.SHED$Power <- round(power.SHED$Power, 3)
+power.SHED$N1 <- comma(power.SHED$N1)
+power.SHED$N2 <- comma(power.SHED$N2)
+power.SHED$Difference <- abs(power.SHED$Difference)
 
 kable(power.SHED, caption="Checking statistical power values of SHED analyses") %>% kable_paper("hover", full_width = F) %>% scroll_box(height = "400px")
 ```
-*Is the SHED sample sufficiently representative of California households?*
+
+#### Data Source and Notes
+
+**Data source:** Survey of Household Economics and Decision-making, accessed November 2022, available through the U.S. Federal Reserve [here](https://www.federalreserve.gov/consumerscommunities/shed_data.htm).
+
+**Notes:** I use the R package `pwr` and the `pwr.2p2n.test` function to calculate the power of certain subgroup comparisons, using two-sample t-tests with different sample sizes. The alpha level is set at 0.05 for all tests, which is considered standard. I do not factor in the population weight of respondents, for the purposes of measuring sample size: each respondent counts the same. 
+
+
+***
+### {-}
+
+Not all the comparisons have a power value of at least 0.8. This informs how the accompanying policy report is written. For comparisons that meet the power threshold of 0.8, the report makes more definitive claims, such as "Hispanic student loan borrowers in California are less likely to have a college degree than white student loan borrowers in California." For comparisons that are close to 0.8 but not above it (0.65 or higher), the report makes more cautious claims, such as "The data suggest that, in California, Black and Hispanic borrowers are less likely to report living comfortably than white student loan borrowers." And comparisons that have power values even lower are not included in the policy report. 
+
+*Is the SHED sample representative of California households?*
+
+Because the SHED sample can get small for certain sub-groups that are of interest to our analysis, sample bias can become a concern. 
+
 ```{r check.SHED2}
 ```
+
 *To what extent are the aggregate statistics based on FSA data influenced by individual institutions?* 
+
+We can start by determining the 
+
+Figure 1 has twenty bars reflecting the average annual loan at California institutions: four rows for institutional control, five columns for loan program. For each of those bars, we can assess the amount that any individual institution is driving the height of the bar, which represents the average annual loan amount. 
+
 ```{r check.FSA1}
+
+# Figure 1 
+ca.loans <- loans1819 %>% filter()
+
+
 ```
+
+```{ r check.FSA1}
+# Table 3
+
+```
+
 *To what extent are the aggregate statistics based on College Scorecard data influenced by individual institutions?*
+
+
 ```{r check.Scorecard1}
+
+# Figure 36 
+
+# figure 
+
 ```
+
 *How strong is our confidence in the statistics derived from NPSAS?*
+
+
 ```{r check.NPSAS1}
 ```
 
