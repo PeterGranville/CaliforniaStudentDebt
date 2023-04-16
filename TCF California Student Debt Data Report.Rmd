@@ -564,17 +564,18 @@ kable(scaleCali, caption="Size of California borrowers' outstanding debt") %>% k
 
 For California's borrowers to have the most debt likely comes as no surprise given that California has the nation's largest populace. But it also means that California's lawmakers can do more to change the course of the nation's student debt crisis than virtually any other state's leaders. 
 
-Table 3 below draws from the FSA Data Center's quarterly data on disbursements. To minimize any impact from the COVID-19 pandemic on our results, we examine data from the last fully pre-pandemic award year, 2018-19. 
+Table 3 below draws from the FSA Data Center's quarterly data on disbursements, reflecting 2021-22. 
 
 ```{r loanPrep1, warning=FALSE}
 
 ######################################################
 ### First we load in student loan disbursement     ###
-### data from 2018-19.                             ###
+### data from 2021-22.                             ###
 ######################################################
 
-loans1819 <- fread("dl-dashboard-ay2018-2019-q4-california.csv", header=TRUE, skip=6)
-names(loans1819) <- c(
+loans2122 <- fread("dl-dashboard-ay2021-2022-q4-california.csv", header=TRUE, skip=6)
+
+names(loans2122) <- c(
   "OPEID",
   "School",
   "State",
@@ -617,14 +618,14 @@ names(loans1819) <- c(
 ### to eight digits.                               ###
 ######################################################
 
-loans1819$OPEID <- as.character(loans1819$OPEID)
-loans1819$OPEID <- ifelse(nchar(loans1819$OPEID)==1, paste("0", loans1819$OPEID, sep=""), loans1819$OPEID)
-loans1819$OPEID <- ifelse(nchar(loans1819$OPEID)==2, paste("0", loans1819$OPEID, sep=""), loans1819$OPEID)
-loans1819$OPEID <- ifelse(nchar(loans1819$OPEID)==3, paste("0", loans1819$OPEID, sep=""), loans1819$OPEID)
-loans1819$OPEID <- ifelse(nchar(loans1819$OPEID)==4, paste("0", loans1819$OPEID, sep=""), loans1819$OPEID)
-loans1819$OPEID <- ifelse(nchar(loans1819$OPEID)==5, paste("0", loans1819$OPEID, sep=""), loans1819$OPEID)
-loans1819$OPEID <- ifelse(nchar(loans1819$OPEID)==6, paste("0", loans1819$OPEID, sep=""), loans1819$OPEID)
-loans1819$OPEID <- ifelse(nchar(loans1819$OPEID)==7, paste("0", loans1819$OPEID, sep=""), loans1819$OPEID)
+loans2122$OPEID <- as.character(loans2122$OPEID)
+loans2122$OPEID <- ifelse(nchar(loans2122$OPEID)==1, paste("0", loans2122$OPEID, sep=""), loans2122$OPEID)
+loans2122$OPEID <- ifelse(nchar(loans2122$OPEID)==2, paste("0", loans2122$OPEID, sep=""), loans2122$OPEID)
+loans2122$OPEID <- ifelse(nchar(loans2122$OPEID)==3, paste("0", loans2122$OPEID, sep=""), loans2122$OPEID)
+loans2122$OPEID <- ifelse(nchar(loans2122$OPEID)==4, paste("0", loans2122$OPEID, sep=""), loans2122$OPEID)
+loans2122$OPEID <- ifelse(nchar(loans2122$OPEID)==5, paste("0", loans2122$OPEID, sep=""), loans2122$OPEID)
+loans2122$OPEID <- ifelse(nchar(loans2122$OPEID)==6, paste("0", loans2122$OPEID, sep=""), loans2122$OPEID)
+loans2122$OPEID <- ifelse(nchar(loans2122$OPEID)==7, paste("0", loans2122$OPEID, sep=""), loans2122$OPEID)
 
 ######################################################
 ### We only need each school's total disbursements ###
@@ -632,7 +633,7 @@ loans1819$OPEID <- ifelse(nchar(loans1819$OPEID)==7, paste("0", loans1819$OPEID,
 ### those variables.                               ###
 ######################################################
 
-loans1819 <- loans1819 %>% select(
+loans2122 <- loans2122 %>% select(
   `OPEID`,
   `School`,
   `State`,
@@ -660,47 +661,47 @@ loans1819 <- loans1819 %>% select(
 ### numerically.                                   ###
 ######################################################
 
-loans1819$`SUBSIDIZED: Recipients` <- as.numeric(loans1819$`SUBSIDIZED: Recipients`)
-loans1819$`SUBSIDIZED: $ of Disbursements` <- as.numeric(loans1819$`SUBSIDIZED: $ of Disbursements`)
+loans2122$`SUBSIDIZED: Recipients` <- as.numeric(loans2122$`SUBSIDIZED: Recipients`)
+loans2122$`SUBSIDIZED: $ of Disbursements` <- as.numeric(loans2122$`SUBSIDIZED: $ of Disbursements`)
    
-loans1819$`UNSUBSIDIZED - UNDERGRADUATE: Recipients` <- as.numeric(loans1819$`UNSUBSIDIZED - UNDERGRADUATE: Recipients`)
-loans1819$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements` <- as.numeric(loans1819$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`)
+loans2122$`UNSUBSIDIZED - UNDERGRADUATE: Recipients` <- as.numeric(loans2122$`UNSUBSIDIZED - UNDERGRADUATE: Recipients`)
+loans2122$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements` <- as.numeric(loans2122$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`)
 
-loans1819$`UNSUBSIDIZED - GRADUATE: Recipients` <- as.numeric(loans1819$`UNSUBSIDIZED - GRADUATE: Recipients`)
-loans1819$`UNSUBSIDIZED - GRADUATE: $ of Disbursements` <- as.numeric(loans1819$`UNSUBSIDIZED - GRADUATE: $ of Disbursements`)
+loans2122$`UNSUBSIDIZED - GRADUATE: Recipients` <- as.numeric(loans2122$`UNSUBSIDIZED - GRADUATE: Recipients`)
+loans2122$`UNSUBSIDIZED - GRADUATE: $ of Disbursements` <- as.numeric(loans2122$`UNSUBSIDIZED - GRADUATE: $ of Disbursements`)
 
-loans1819$`PARENT PLUS: Recipients` <- as.numeric(loans1819$`PARENT PLUS: Recipients`)
-loans1819$`PARENT PLUS: $ of Disbursements` <- as.numeric(loans1819$`PARENT PLUS: $ of Disbursements`)
+loans2122$`PARENT PLUS: Recipients` <- as.numeric(loans2122$`PARENT PLUS: Recipients`)
+loans2122$`PARENT PLUS: $ of Disbursements` <- as.numeric(loans2122$`PARENT PLUS: $ of Disbursements`)
 
-loans1819$`GRAD PLUS: Recipients` <- as.numeric(loans1819$`GRAD PLUS: Recipients`)
-loans1819$`GRAD PLUS: $ of Disbursements` <- as.numeric(loans1819$`GRAD PLUS: $ of Disbursements`)
+loans2122$`GRAD PLUS: Recipients` <- as.numeric(loans2122$`GRAD PLUS: Recipients`)
+loans2122$`GRAD PLUS: $ of Disbursements` <- as.numeric(loans2122$`GRAD PLUS: $ of Disbursements`)
 
 ######################################################
 ### We also want to make sure any NA values are    ###
 ### stored as zeroes.                              ###
 ######################################################
 
-loans1819$`SUBSIDIZED: Recipients`[is.na(loans1819$`SUBSIDIZED: Recipients`)] <- 0
-loans1819$`SUBSIDIZED: $ of Disbursements`[is.na(loans1819$`SUBSIDIZED: $ of Disbursements`)] <- 0
+loans2122$`SUBSIDIZED: Recipients`[is.na(loans2122$`SUBSIDIZED: Recipients`)] <- 0
+loans2122$`SUBSIDIZED: $ of Disbursements`[is.na(loans2122$`SUBSIDIZED: $ of Disbursements`)] <- 0
    
-loans1819$`UNSUBSIDIZED - UNDERGRADUATE: Recipients`[is.na(loans1819$`UNSUBSIDIZED - UNDERGRADUATE: Recipients`)] <- 0
-loans1819$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`[is.na(loans1819$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`)] <- 0
+loans2122$`UNSUBSIDIZED - UNDERGRADUATE: Recipients`[is.na(loans2122$`UNSUBSIDIZED - UNDERGRADUATE: Recipients`)] <- 0
+loans2122$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`[is.na(loans2122$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`)] <- 0
 
-loans1819$`UNSUBSIDIZED - GRADUATE: Recipients`[is.na(loans1819$`UNSUBSIDIZED - GRADUATE: Recipients`)] <- 0
-loans1819$`UNSUBSIDIZED - GRADUATE: $ of Disbursements`[is.na(loans1819$`UNSUBSIDIZED - GRADUATE: $ of Disbursements`)] <- 0
+loans2122$`UNSUBSIDIZED - GRADUATE: Recipients`[is.na(loans2122$`UNSUBSIDIZED - GRADUATE: Recipients`)] <- 0
+loans2122$`UNSUBSIDIZED - GRADUATE: $ of Disbursements`[is.na(loans2122$`UNSUBSIDIZED - GRADUATE: $ of Disbursements`)] <- 0
 
-loans1819$`PARENT PLUS: Recipients`[is.na(loans1819$`PARENT PLUS: Recipients`)] <- 0
-loans1819$`PARENT PLUS: $ of Disbursements`[is.na(loans1819$`PARENT PLUS: $ of Disbursements`)] <- 0
+loans2122$`PARENT PLUS: Recipients`[is.na(loans2122$`PARENT PLUS: Recipients`)] <- 0
+loans2122$`PARENT PLUS: $ of Disbursements`[is.na(loans2122$`PARENT PLUS: $ of Disbursements`)] <- 0
 
-loans1819$`GRAD PLUS: Recipients`[is.na(loans1819$`GRAD PLUS: Recipients`)] <- 0
-loans1819$`GRAD PLUS: $ of Disbursements`[is.na(loans1819$`GRAD PLUS: $ of Disbursements`)] <- 0
+loans2122$`GRAD PLUS: Recipients`[is.na(loans2122$`GRAD PLUS: Recipients`)] <- 0
+loans2122$`GRAD PLUS: $ of Disbursements`[is.na(loans2122$`GRAD PLUS: $ of Disbursements`)] <- 0
 
 ######################################################
 ### Here we create a variable for total loan       ###
 ### disbursements at a college.                    ###
 ######################################################
 
-loans1819$`Total $ of Disbursements` <- loans1819$`SUBSIDIZED: $ of Disbursements` + loans1819$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements` + loans1819$`UNSUBSIDIZED - GRADUATE: $ of Disbursements` + loans1819$`PARENT PLUS: $ of Disbursements` + loans1819$`GRAD PLUS: $ of Disbursements`
+loans2122$`Total $ of Disbursements` <- loans2122$`SUBSIDIZED: $ of Disbursements` + loans2122$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements` + loans2122$`UNSUBSIDIZED - GRADUATE: $ of Disbursements` + loans2122$`PARENT PLUS: $ of Disbursements` + loans2122$`GRAD PLUS: $ of Disbursements`
 
 ```
 
@@ -711,8 +712,8 @@ loans1819$`Total $ of Disbursements` <- loans1819$`SUBSIDIZED: $ of Disbursement
 ### we aggregate totals by state.                  ###
 ######################################################
 
-table3.1 <- loans1819
-table3.2 <- loans1819
+table3.1 <- loans2122
+table3.2 <- loans2122
 table3.1$State[table3.1$State != "CA"] <- "Rest of U.S."
 
 table3.1 <- aggregate(data=table3.1, cbind(  
@@ -782,18 +783,18 @@ table3.2$`Grad PLUS` <- percent(table3.2$`Grad PLUS`, accuracy=0.1)
 #### {.tabset}
 ##### Table 3
 ```{r kable3.1}
-kable(table3.1, caption="Share of loan dollars disbursed in 2018-19 by loan type, California vs. Rest of U.S.") %>% kable_paper("hover", full_width = F)
+kable(table3.1, caption="Share of loan dollars disbursed in 2021-22 by loan type, California vs. Rest of U.S.") %>% kable_paper("hover", full_width = F)
 ```
 ##### Table 3: All states
 ```{r kable3.2}
-kable(table3.2, caption="Share of loan dollars disbursed in 2018-19 by loan type") %>% kable_paper("hover", full_width = F)
+kable(table3.2, caption="Share of loan dollars disbursed in 2021-122 by loan type") %>% kable_paper("hover", full_width = F)
 ```
 
 ##### Data Source and Notes
 
-**Data source:** Federal Student Aid Data Center, spreadsheet on Direct Loan volume for Q4 2018-19, "Award year summary" tab, [available here](https://studentaid.gov/data-center/student/title-iv), accessed October 2022. 
+**Data source:** Federal Student Aid Data Center, spreadsheet on Direct Loan volume for Q4 2021-22, "Award year summary" tab, [available here](https://studentaid.gov/data-center/student/title-iv), accessed April 2023. 
 
-**Timeframe reflected:** Figures in this table reflect the 2018-19 award year. 
+**Timeframe reflected:** Figures in this table reflect the 2021-22 award year. 
 
 **Notes:** Here I use the data on loan disbursements, not loan originations.
 
@@ -865,10 +866,9 @@ scorecard1$OPEID <- ifelse(nchar(scorecard1$OPEID)==7, paste("0", scorecard1$OPE
 ### Now we merge the two datasets by OPEID.        ###
 ######################################################
 
-loans1819$State[loans1819$State != "CA"] <- "Rest of U.S."
-
-loans1819 <- left_join(x=loans1819, y=scorecard1, by="OPEID")
-forTable4 <- loans1819 %>% filter(`Four-year`==1)
+loans2122$State[loans2122$State != "CA"] <- "Rest of U.S."
+loans2122 <- left_join(x=loans2122, y=scorecard1, by="OPEID")
+forTable4 <- loans2122 %>% filter(`Four-year`==1)
 
 table4 <- aggregate(data=forTable4, cbind(
   `SUBSIDIZED: $ of Disbursements`, 
@@ -928,9 +928,9 @@ ggplotly(g1, width=800, height=500, tooltip="text")
 ```
 ##### Data Source and Notes
 
-**Data source:** Federal Student Aid Data Center, spreadsheet on Direct Loan volume for Q4 2018-19, "Award year summary" tab, [available here](https://studentaid.gov/data-center/student/title-iv), accessed October 2022.
+**Data source:** Federal Student Aid Data Center, spreadsheet on Direct Loan volume for Q4 2021-22, "Award year summary" tab, [available here](https://studentaid.gov/data-center/student/title-iv), accessed April 2023.
 
-**Timeframe reflected:** Figures in this graph reflect the 2018-19 award year. 
+**Timeframe reflected:** Figures in this graph reflect the 2021-22 award year. 
 
 **Notes:** Here I use the data on loan disbursements, not loan originations. These averages do not include students who receive no loans. Only four-year institutions are included. 
 
@@ -3360,13 +3360,6 @@ g8C <- ggplot(data=tblOwnDebtCC, mapping=aes(y=Race, x=`Share of borrowers whose
 
 ggplotly(g8C, width=800, height=350, tooltip="text")
 ```
-
-```{r ForPolicyReport3, eval=FALSE}
-tblOwnDebtCC0 <- tblOwnDebtCC %>% filter(Race != "Other, Non-Hispanic")
-tblOwnDebtCC0$Race <- as.factor(tblOwnDebtCC0$Race)
-tblOwnDebtCC0$Race <- factor(tblOwnDebtCC0$Race, levels=c("All", "White, Non-Hispanic", "Hispanic", "Black, Non-Hispanic"))
-ggplot(data=tblOwnDebtCC0, mapping=aes(y=`Share of borrowers whose debt includes credit card debt`, x=Race, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.5) + scale_y_continuous(labels=scales::percent_format(accuracy=1)) + labs(y="Share whose education debt includes credit card debt", x="Group") + theme(text=element_text(family="Optima")) + scale_fill_manual(values = stateCols2)
-```
 #### Data Source and Notes
 
 **Data source:** Survey of Household Economics and Decision-making, accessed November 2022, available through the U.S. Federal Reserve [here](https://www.federalreserve.gov/consumerscommunities/shed_data.htm).
@@ -3880,29 +3873,6 @@ tblHomeOwn$`Other` <- tblHomeOwn$`Other` / tblHomeOwn$`Total weight`
 tblHomeOwn <- reshape2::melt(data=tblHomeOwn, id.vars = c("Race", "State", "AnyStudentLoans"), value.name="Share of borrowers") %>% filter(variable != "Total weight")
 tblHomeOwn$variable <- factor(tblHomeOwn$variable, levels = c("Own home free and clear", "Own home with a mortgage or loan", "Pay rent", "Other"))
 ```
-
-```{r ForPolicyReport1, eval=FALSE}
-# Chart on home ownership
-
-shed.HomeOwn$`Owns home` <- rep("No", nrow(shed.HomeOwn))
-shed.HomeOwn$`Owns home`[shed.HomeOwn$HomeOwn %in% c("Own home free and clear", "Own home with a mortgage or loan")] <- "Yes"
-tblHomeOwn0 <- aggregate(data=shed.HomeOwn, Weight ~ `Owns home` + Race + State + AnyStudentLoans, FUN=sum)
-tblHomeOwn02 <- aggregate(data=shed.HomeOwn, Weight ~ `Owns home` + State + AnyStudentLoans, FUN=sum)
-tblHomeOwn02$Race <- rep("All", nrow(tblHomeOwn02))
-tblHomeOwn0 <- rbind(tblHomeOwn0, tblHomeOwn02)
-tblHomeOwn0 <- reshape2::dcast(data=tblHomeOwn0, Race + State + AnyStudentLoans ~ `Owns home`, value.var="Weight")
-tblHomeOwn0$`Total weight` <- tblHomeOwn0$Yes + tblHomeOwn0$No
-tblHomeOwn0$`Share who own home` <- tblHomeOwn0$Yes / tblHomeOwn0$`Total weight`
-tblHomeOwn0 <- tblHomeOwn0 %>% filter(AnyStudentLoans=="Yes")
-
-tblHomeOwn0 <- tblHomeOwn0 %>% filter(Race != "Other, Non-Hispanic")
-tblHomeOwn0$Race <- as.factor(tblHomeOwn0$Race)
-tblHomeOwn0$Race <- factor(tblHomeOwn0$Race, levels=c("All", "White, Non-Hispanic", "Hispanic", "Black, Non-Hispanic"))
-
-ggplot(data=tblHomeOwn0, mapping=aes(y=`Share who own home`, x=Race, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.5) + scale_y_continuous(labels=scales::percent_format(accuracy=1)) + labs(y="Share", x="Group", title="Share of student loan borrowers who own their home") + theme(text=element_text(family="Optima")) + scale_fill_manual(values = stateCols2)
-
-```
-
 #### Figure 14: CA borrowers
 ##### Responses to "Do you own your home?"
 ```{r figure14A, warning=FALSE}
@@ -4063,19 +4033,6 @@ tblCCBalance$`Once` <- tblCCBalance$`Once` / tblCCBalance$`Total weight`
 tblCCBalance0 <- tblCCBalance # For the "forPolicyReport4 chunk"
 tblCCBalance <- reshape2::melt(data=tblCCBalance, id.vars = c("Race", "State", "AnyStudentLoans"), value.name="Share of borrowers") %>% filter(variable != "Total weight")
 tblCCBalance$variable <- factor(tblCCBalance$variable, levels = c("Most or all of the time", "Some of the time", "Once", "Always pay in full"))
-```
-
-```{r forPolicyReport4, eval=FALSE}
-tblCCBalance0 <- tblCCBalance0 %>% filter(Race != "Other, Non-Hispanic") %>% filter(Race != "All") %>% filter(State == "CA" | AnyStudentLoans == "Yes") 
-tblCCBalance0$Group <- rep(NA, nrow(tblCCBalance0))
-tblCCBalance0$Group[(tblCCBalance0$State=="CA") & (tblCCBalance0$AnyStudentLoans=="Yes")] <- "California borrowers"
-tblCCBalance0$Group[(tblCCBalance0$State=="Rest of U.S.") & (tblCCBalance0$AnyStudentLoans=="Yes")] <- "Rest of U.S. borrowers"
-tblCCBalance0$Group[(tblCCBalance0$State=="CA") & (tblCCBalance0$AnyStudentLoans=="No")] <- "California non-borrowers"
-
-tblCCBalance0$Group <- as.factor(tblCCBalance0$Group)
-tblCCBalance0$Group <- factor(tblCCBalance0$Group, levels=rev(c("California borrowers", "Rest of U.S. borrowers", "California non-borrowers")))
-
-ggplot(data=tblCCBalance0, mapping=aes(y=Group, x=`Most or all of the time`, fill=Group)) + geom_bar(stat="identity") + facet_wrap(Race ~ ., ncol=1, strip.position=c("top")) + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share who say they carry an unpaid credit card balance most or all of the time", y="") + theme(legend.position="none", text=element_text(family="Optima")) + scale_fill_manual(values = flagCols2)
 ```
 #### Figure 16: CA borrowers
 ##### Responses to "In the past 12 months, how frequently have you carried an unpaid balance on one or more of your credit cards?"
@@ -4467,30 +4424,6 @@ tblFinManage$`Doing okay` <- tblFinManage$`Doing okay` / tblFinManage$`Total wei
 tblFinManage <- reshape2::melt(data=tblFinManage, id.vars = c("Race", "State", "AnyStudentLoans"), value.name="Share of borrowers") %>% filter(variable != "Total weight")
 tblFinManage$variable <- factor(tblFinManage$variable, levels = c("Finding it difficult to get by", "Just getting by", "Doing okay", "Living comfortably"))
 ```
-
-```{r forPolicyReport2, eval=FALSE}
-# FinManage: # Overall, which one of the following best describes how well you are managing financially these days? 
-
-# table(shed$FinManage)
-shed.FinManage$`Managing well` <- rep("No", nrow(shed.FinManage))
-shed.FinManage$`Managing well`[shed.FinManage$FinManage=="Living comfortably"] <- "Yes"
-
-tblFinManage0 <- aggregate(data=shed.FinManage, Weight ~ `Managing well` + Race + State + AnyStudentLoans, FUN=sum)
-tblFinManage02 <- aggregate(data=shed.FinManage, Weight ~ `Managing well` + State + AnyStudentLoans, FUN=sum)
-tblFinManage02$Race <- rep("All", nrow(tblFinManage02))
-tblFinManage0 <- rbind(tblFinManage0, tblFinManage02)
-tblFinManage0 <- reshape2::dcast(data=tblFinManage0, Race + State + AnyStudentLoans ~ `Managing well`, value.var="Weight")
-tblFinManage0$`Total weight` <- tblFinManage0$`Yes` + tblFinManage0$`No` 
-tblFinManage0$`Share living comfortably` <- tblFinManage0$`Yes` / tblFinManage0$`Total weight`
-
-tblFinManage0 <- tblFinManage0 %>% filter(AnyStudentLoans=="Yes") %>% filter(Race != "Other, Non-Hispanic")
-tblFinManage0$Race <- as.factor(tblFinManage0$Race)
-tblFinManage0$Race <- factor(tblFinManage0$Race, levels=c("All", "White, Non-Hispanic", "Hispanic", "Black, Non-Hispanic"))
-
-ggplot(data=tblFinManage0, mapping=aes(y=`Share living comfortably`, x=Race, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.5) + scale_y_continuous(labels=scales::percent_format(accuracy=1)) + labs(y="Share who report living comfortably", x="Group") + theme(text=element_text(family="Optima")) + scale_fill_manual(values = stateCols2)
-
-```
-
 #### Figure 19: CA borrowers
 ##### Responses to "Overall, which one of the following best describes how well you are managing financially these days?"
 ```{r figure19A}
@@ -4765,24 +4698,6 @@ tblCreditScore$`Very poor` <- tblCreditScore$`Very poor` / tblCreditScore$`Total
 tblCreditScore <- reshape2::melt(data=tblCreditScore, id.vars = c("Race", "State", "AnyStudentLoans"), value.name="Share") %>% filter(variable != "Total weight")
 tblCreditScore$variable <- factor(tblCreditScore$variable, levels = c("Very poor", "Poor", "Fair", "Good", "Excellent"))
 ```
-
-```{r forPolicyReport5, eval=FALSE}
-shed.CreditScore$`Poor or very poor credit score` <- rep("No", nrow(shed.CreditScore))
-shed.CreditScore$`Poor or very poor credit score`[shed.CreditScore$CreditScore %in% c("Poor", "Very poor")] <- "Yes"
-tblCreditScore0 <- aggregate(data=shed.CreditScore, Weight ~ `Poor or very poor credit score` + Race + State + AnyStudentLoans, FUN=sum)
-tblCreditScore02 <- aggregate(data=shed.CreditScore, Weight ~ `Poor or very poor credit score` + State + AnyStudentLoans, FUN=sum)
-tblCreditScore02$Race <- rep("All", nrow(tblCreditScore02))
-tblCreditScore0 <- rbind(tblCreditScore0, tblCreditScore02)
-tblCreditScore0 <- reshape2::dcast(data=tblCreditScore0, Race + State + AnyStudentLoans ~ `Poor or very poor credit score`, value.var="Weight")
-tblCreditScore0$`Share with poor or very poor credit score` <- tblCreditScore0$Yes / (tblCreditScore0$Yes + tblCreditScore0$No)
-
-tblCreditScore0 <- tblCreditScore0 %>% filter(AnyStudentLoans=="Yes") %>% filter(Race != "Other, Non-Hispanic")
-tblCreditScore0$Race <- as.factor(tblCreditScore0$Race)
-tblCreditScore0$Race <- factor(tblCreditScore0$Race, levels=c("All", "White, Non-Hispanic", "Hispanic", "Black, Non-Hispanic"))
-
-ggplot(data=tblCreditScore0, mapping=aes(y=`Share with poor or very poor credit score`, x=Race, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.5) + scale_y_continuous(labels=scales::percent_format(accuracy=1)) + labs(y="Share with a poor or very poor credit score", x="Group") + theme(text=element_text(family="Optima")) + scale_fill_manual(values = stateCols2)
-```
-
 #### Figure 21: CA borrowers
 ##### Responses to "Where do you think your credit score falls?"
 ```{r Figure21A}
@@ -7876,7 +7791,6 @@ kable(kable10B, caption="4-digit CIPs and award levels by debt compared to earni
 
 ### {-}
 
-
 Next, we will use College Scorecard data to show how federal student loan repayment in California compares to the rest of the U.S. 
 
 First, I examine dollar-based repayment rates, or "DBRR." DBRR data in the College Scorecard measure the total current loan balances for cohorts of federal student loan borrowers, as well as the original amount that the cohort collectively owed when they entered repayment. I use data for cohorts that are 1, 5, 10, and 20 years into repayment. 
@@ -9160,6 +9074,26 @@ power.SHED <- power.SHED %>% add_row(
 rm("pc.m1", "pc.m2", "pc.o1", "pc.o2", "pc.n1", "pc.n2", "pc.p1", "pc.p2")
 ```
 
+```{r powerChart8.1}
+# Figure 12
+# Code ChildDebt
+# Share who hold debt for a child or grandchild's education 
+# Hispanic households in CA vs. white households in CA 
+pc.n1 <- N.ChildDebt$`Survey respondents`[(N.ChildDebt$State=="CA") & (N.ChildDebt$Group=="Hispanic")]
+pc.n2 <- N.ChildDebt$`Survey respondents`[(N.ChildDebt$State=="CA") & (N.ChildDebt$Group=="White, Non-Hispanic")]
+pc.p1 <- tblChildDebt$`Share who have debt for a child's or grandchild's education`[(tblChildDebt$State=="CA") & (tblChildDebt$Race=="Hispanic")]
+pc.p2 <- tblChildDebt$`Share who have debt for a child's or grandchild's education`[(tblChildDebt$State=="CA") & (tblChildDebt$Race=="White, Non-Hispanic")]
+power.SHED <- power.SHED %>% add_row(
+  `Measure`="Share with debt for a child or grandchild's education", 
+  `Figure`="Figure 12", 
+  `Group 1`="Hispanic households in CA",
+  `Group 2`="White households in CA", 
+  `N1`=pc.n1, `N2`=pc.n2, `P1`=percent(pc.p1, accuracy=0.1), `P2`=percent(pc.p2, accuracy=0.1), `Difference`= percent((pc.p1 - pc.p2), accuracy=0.1), 
+  `Power`=pwr.2p2n.test(n1 = pc.n1, n2 = pc.n2, h = (pc.p1 - pc.p2), sig.level=0.05, alternative="greater")$power
+)
+rm("pc.n1", "pc.n2", "pc.p1", "pc.p2")
+```
+
 ```{r powerChart9}
 # Figure 13
 # Code EdAttain
@@ -9608,7 +9542,6 @@ power.SHED <- power.SHED %>% filter(is.na(`Measure`)==FALSE)
 power.SHED$Power <- round(power.SHED$Power, 3)
 power.SHED$N1 <- comma(power.SHED$N1)
 power.SHED$N2 <- comma(power.SHED$N2)
-power.SHED$Difference <- abs(power.SHED$Difference)
 
 kable(power.SHED, caption="Checking statistical power values of SHED analyses") %>% kable_paper("hover", full_width = F) %>% scroll_box(height = "400px")
 ```
@@ -9638,37 +9571,326 @@ We can start by determining the
 
 Figure 1 has twenty bars reflecting the average annual loan at California institutions: four rows for institutional control, five columns for loan program. For each of those bars, we can assess the amount that any individual institution is driving the height of the bar, which represents the average annual loan amount. 
 
+### {.tabset}
+#### Figure 41 
 ```{r check.FSA1}
 
 # Figure 1 
-ca.loans <- loans1819 %>% filter()
 
+ca.loans.ALL <- forTable4 %>% filter(State=="CA")
+ca.loans.FPC <- ca.loans.ALL %>% filter(Control=="For-profit") 
+ca.loans.NPC <- ca.loans.ALL %>% filter(Control=="Non-profit") 
+ca.loans.PBC <- ca.loans.ALL %>% filter(Control=="Public") 
 
+F1.weights <- aggregate(data=ca.loans.ALL, cbind(
+  `SUBSIDIZED: Recipients`, 
+  `UNSUBSIDIZED - UNDERGRADUATE: Recipients`, 
+  `UNSUBSIDIZED - GRADUATE: Recipients`, 
+  `PARENT PLUS: Recipients`,
+  `GRAD PLUS: Recipients`) ~ Control, FUN=sum)
+names(F1.weights) <- c("Control", 
+                       "Total Subsidized Recipients", 
+                       "Total Unsubsidized Undergraduate Recipients", 
+                       "Total Unsubsidized Graduate Recipients", 
+                       "Total Parent PLUS recipients", 
+                       "Total Grad PLUS recipients")
+F1.weights.all <- aggregate(data=ca.loans.ALL, cbind(
+  `SUBSIDIZED: Recipients`, 
+  `UNSUBSIDIZED - UNDERGRADUATE: Recipients`, 
+  `UNSUBSIDIZED - GRADUATE: Recipients`, 
+  `PARENT PLUS: Recipients`,
+  `GRAD PLUS: Recipients`) ~ State, FUN=sum) 
+names(F1.weights.all) <- c("State", 
+                           "Total Subsidized Recipients", 
+                           "Total Unsubsidized Undergraduate Recipients", 
+                           "Total Unsubsidized Graduate Recipients", 
+                           "Total Parent PLUS recipients", 
+                           "Total Grad PLUS recipients")
+
+ca.loans.ALL <- left_join(x=ca.loans.ALL, y=F1.weights.all, by="State")
+ca.loans.FPC <- left_join(x=ca.loans.FPC, y=F1.weights, by="Control")
+ca.loans.NPC <- left_join(x=ca.loans.NPC, y=F1.weights, by="Control")
+ca.loans.PBC <- left_join(x=ca.loans.PBC, y=F1.weights, by="Control")
+ca.loans.ALL$Control <- rep("All controls", nrow(ca.loans.ALL))
+
+ca.loans.ALL <- ca.loans.ALL %>% mutate(`Share of Subsidized Recipients` = round(`SUBSIDIZED: Recipients` / `Total Subsidized Recipients`, 3))
+ca.loans.ALL <- ca.loans.ALL %>% mutate(`Share of Unsubsidized Undergraduate Recipients` = round(`UNSUBSIDIZED - UNDERGRADUATE: Recipients` / `Total Unsubsidized Undergraduate Recipients`, 3))
+ca.loans.ALL <- ca.loans.ALL %>% mutate(`Share of Unsubsidized Graduate Recipients` = round(`UNSUBSIDIZED - GRADUATE: Recipients` / `Total Unsubsidized Graduate Recipients`, 3))
+ca.loans.ALL <- ca.loans.ALL %>% mutate(`Share of Parent PLUS Recipients` = round(`PARENT PLUS: Recipients` / `Total Parent PLUS recipients`, 3))
+ca.loans.ALL <- ca.loans.ALL %>% mutate(`Share of Grad PLUS Recipients` = round(`GRAD PLUS: Recipients` / `Total Grad PLUS recipients`, 3))
+
+ca.loans.FPC <- ca.loans.FPC %>% mutate(`Share of Subsidized Recipients` = round(`SUBSIDIZED: Recipients` / `Total Subsidized Recipients`, 3)) 
+ca.loans.FPC <- ca.loans.FPC %>% mutate(`Share of Unsubsidized Undergraduate Recipients` = round(`UNSUBSIDIZED - UNDERGRADUATE: Recipients` / `Total Unsubsidized Undergraduate Recipients`, 3))
+ca.loans.FPC <- ca.loans.FPC %>% mutate(`Share of Unsubsidized Graduate Recipients` = round(`UNSUBSIDIZED - GRADUATE: Recipients` / `Total Unsubsidized Graduate Recipients`, 3))
+ca.loans.FPC <- ca.loans.FPC %>% mutate(`Share of Parent PLUS Recipients` = round(`PARENT PLUS: Recipients` / `Total Parent PLUS recipients`, 3))
+ca.loans.FPC <- ca.loans.FPC %>% mutate(`Share of Grad PLUS Recipients` = round(`GRAD PLUS: Recipients` / `Total Grad PLUS recipients`, 3))
+
+ca.loans.NPC <- ca.loans.NPC %>% mutate(`Share of Subsidized Recipients` = round(`SUBSIDIZED: Recipients` / `Total Subsidized Recipients`, 3)) 
+ca.loans.NPC <- ca.loans.NPC %>% mutate(`Share of Unsubsidized Undergraduate Recipients` = round(`UNSUBSIDIZED - UNDERGRADUATE: Recipients` / `Total Unsubsidized Undergraduate Recipients`, 3))
+ca.loans.NPC <- ca.loans.NPC %>% mutate(`Share of Unsubsidized Graduate Recipients` = round(`UNSUBSIDIZED - GRADUATE: Recipients` / `Total Unsubsidized Graduate Recipients`, 3))
+ca.loans.NPC <- ca.loans.NPC %>% mutate(`Share of Parent PLUS Recipients` = round(`PARENT PLUS: Recipients` / `Total Parent PLUS recipients`, 3))
+ca.loans.NPC <- ca.loans.NPC %>% mutate(`Share of Grad PLUS Recipients` = round(`GRAD PLUS: Recipients` / `Total Grad PLUS recipients`, 3))
+
+ca.loans.PBC <- ca.loans.PBC %>% mutate(`Share of Subsidized Recipients` = round(`SUBSIDIZED: Recipients` / `Total Subsidized Recipients`, 3)) 
+ca.loans.PBC <- ca.loans.PBC %>% mutate(`Share of Unsubsidized Undergraduate Recipients` = round(`UNSUBSIDIZED - UNDERGRADUATE: Recipients` / `Total Unsubsidized Undergraduate Recipients`, 3))
+ca.loans.PBC <- ca.loans.PBC %>% mutate(`Share of Unsubsidized Graduate Recipients` = round(`UNSUBSIDIZED - GRADUATE: Recipients` / `Total Unsubsidized Graduate Recipients`, 3))
+ca.loans.PBC <- ca.loans.PBC %>% mutate(`Share of Parent PLUS Recipients` = round(`PARENT PLUS: Recipients` / `Total Parent PLUS recipients`, 3))
+ca.loans.PBC <- ca.loans.PBC %>% mutate(`Share of Grad PLUS Recipients` = round(`GRAD PLUS: Recipients` / `Total Grad PLUS recipients`, 3))
+
+ca.loans.ALL <- ca.loans.ALL %>% select(OPEID, School, Control, `Share of Subsidized Recipients`, `Share of Unsubsidized Undergraduate Recipients`, `Share of Unsubsidized Graduate Recipients`, `Share of Parent PLUS Recipients`, `Share of Grad PLUS Recipients`)
+ca.loans.FPC <- ca.loans.FPC %>% select(OPEID, School, Control, `Share of Subsidized Recipients`, `Share of Unsubsidized Undergraduate Recipients`, `Share of Unsubsidized Graduate Recipients`, `Share of Parent PLUS Recipients`, `Share of Grad PLUS Recipients`)
+ca.loans.NPC <- ca.loans.NPC %>% select(OPEID, School, Control, `Share of Subsidized Recipients`, `Share of Unsubsidized Undergraduate Recipients`, `Share of Unsubsidized Graduate Recipients`, `Share of Parent PLUS Recipients`, `Share of Grad PLUS Recipients`)
+ca.loans.PBC <- ca.loans.PBC %>% select(OPEID, School, Control, `Share of Subsidized Recipients`, `Share of Unsubsidized Undergraduate Recipients`, `Share of Unsubsidized Graduate Recipients`, `Share of Parent PLUS Recipients`, `Share of Grad PLUS Recipients`)
+
+ca.loans <- rbind(ca.loans.ALL, ca.loans.FPC, ca.loans.NPC, ca.loans.PBC)
+
+forTable4 <- forTable4 %>% mutate(`Institution's average Subsidized loan` = `SUBSIDIZED: $ of Disbursements` / `SUBSIDIZED: Recipients`)
+forTable4 <- forTable4 %>% mutate(`Institution's average Unsubsidized Undergraduate loan` = `UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements` / `UNSUBSIDIZED - UNDERGRADUATE: Recipients`)
+forTable4 <- forTable4 %>% mutate(`Institution's average Unsubsidized Graduate loan` = `UNSUBSIDIZED - GRADUATE: $ of Disbursements` / `UNSUBSIDIZED - GRADUATE: Recipients`)
+forTable4 <- forTable4 %>% mutate(`Institution's average Parent PLUS loan` = `PARENT PLUS: $ of Disbursements` / `PARENT PLUS: Recipients`)
+forTable4 <- forTable4 %>% mutate(`Institution's average Grad PLUS loan` = `GRAD PLUS: $ of Disbursements` / `GRAD PLUS: Recipients`)
+
+ca.loans0 <- forTable4 %>% select(OPEID, `Institution's average Subsidized loan`, `Institution's average Unsubsidized Undergraduate loan`, `Institution's average Unsubsidized Graduate loan`, `Institution's average Parent PLUS loan`, `Institution's average Grad PLUS loan`)
+ca.loans <- left_join(x=ca.loans, y=ca.loans0, by="OPEID")
+
+# Getting data on the average loan by sector and program 
+
+ca.loans1 <- table4 %>% filter(State=="CA") %>% select(`Control`, `Subsidized`, `Unsub. UG`, `Unsub. Grad.`, `Parent PLUS`, `Grad PLUS`) 
+names(ca.loans1) <- c("Control", 
+                      "Global average Subsidized loan", 
+                      "Global average Unsubsidized Undergraduate loan", 
+                      "Global average Unsubsidized Graduate loan", 
+                      "Global average Parent PLUS loan", 
+                      "Global average Grad PLUS loan")
+ca.loans <- left_join(x=ca.loans, y=ca.loans1, by="Control")
+
+ca.loans.subsidized <- ca.loans %>% select(`OPEID`, `School`, `Control`, 
+                                           `Share of Subsidized Recipients`, 
+                                           `Institution's average Subsidized loan`, 
+                                           `Global average Subsidized loan`)
+ca.loans.unsubsidizedUG <- ca.loans %>% select(`OPEID`, `School`, `Control`, 
+                                               `Share of Unsubsidized Undergraduate Recipients`, 
+                                               `Institution's average Unsubsidized Undergraduate loan`, 
+                                               `Global average Unsubsidized Undergraduate loan`)
+ca.loans.unsubsidizedGD <- ca.loans %>% select(`OPEID`, `School`, `Control`, 
+                                               `Share of Unsubsidized Graduate Recipients`, 
+                                               `Institution's average Unsubsidized Graduate loan`, 
+                                               `Global average Unsubsidized Graduate loan`)
+ca.loans.ParentPLUS <- ca.loans %>% select(`OPEID`, `School`, `Control`, 
+                                           `Share of Parent PLUS Recipients`, 
+                                           `Institution's average Parent PLUS loan`, 
+                                           `Global average Parent PLUS loan`) 
+ca.loans.GradPLUS <- ca.loans %>% select(`OPEID`, `School`, `Control`, 
+                                         `Share of Grad PLUS Recipients`, 
+                                         `Institution's average Grad PLUS loan`, 
+                                         `Global average Grad PLUS loan`) 
+
+ca.loans.subsidized$`Loan program` <- rep("Subsidized", nrow(ca.loans.subsidized))
+ca.loans.unsubsidizedUG$`Loan program` <- rep("Unsubsidized Undergraduate", nrow(ca.loans.unsubsidizedUG))
+ca.loans.unsubsidizedGD$`Loan program` <- rep("Unsubsidized Graduate", nrow(ca.loans.unsubsidizedGD))
+ca.loans.ParentPLUS$`Loan program` <- rep("Parent PLUS", nrow(ca.loans.ParentPLUS))
+ca.loans.GradPLUS$`Loan program` <- rep("Grad PLUS", nrow(ca.loans.GradPLUS))
+
+names(ca.loans.subsidized) <- c("OPEID", "School", "Control", "Share of loan recipients", "Institution's average loan", "Sector-wide average loan", "Loan program")
+names(ca.loans.unsubsidizedUG) <- c("OPEID", "School", "Control", "Share of loan recipients", "Institution's average loan", "Sector-wide average loan", "Loan program")
+names(ca.loans.unsubsidizedGD) <- c("OPEID", "School", "Control", "Share of loan recipients", "Institution's average loan", "Sector-wide average loan", "Loan program")
+names(ca.loans.ParentPLUS) <- c("OPEID", "School", "Control", "Share of loan recipients", "Institution's average loan", "Sector-wide average loan", "Loan program")
+names(ca.loans.GradPLUS) <- c("OPEID", "School", "Control", "Share of loan recipients", "Institution's average loan", "Sector-wide average loan", "Loan program")
+
+ca.loans2 <- rbind(ca.loans.subsidized, ca.loans.unsubsidizedUG, ca.loans.unsubsidizedGD, ca.loans.ParentPLUS, ca.loans.GradPLUS)
+ca.loans2 <- ca.loans2 %>% mutate(`Ratio of institution's average loan to sector average` = `Institution's average loan` / `Sector-wide average loan`)
 ```
 
-```{ r check.FSA1}
-# Table 3
+```{r figure41}
+ca.loans2$`Loan program` <- as.factor(ca.loans2$`Loan program`)
+ca.loans2$`Loan program` <- factor(ca.loans2$`Loan program`, levels=c(
+  "Subsidized",
+  "Unsubsidized Undergraduate", 
+  "Unsubsidized Graduate", 
+  "Parent PLUS", 
+  "Grad PLUS"
+))
 
+ca.loans2$`For Tooltip` <- paste(
+  "College: ", ca.loans2$School, '\n',
+  "Program: ", ca.loans2$`Loan program`, '\n',
+  "College's share of California loan recipients: ", percent(ca.loans2$`Share of loan recipients`, accuracy=0.1), '\n',
+  "College's average loan: ", dollar(ca.loans2$`Institution's average loan`, accuracy=1), '\n',
+  "Sector-wide average loan: ", dollar(ca.loans2$`Sector-wide average loan`, accuracy=1), '\n',
+  "Ratio of institution's average loan to sector average: ", round(ca.loans2$`Ratio of institution's average loan to sector average`, 3),
+  sep=""
+)
+
+g41 <- ggplot(data=ca.loans2, mapping=aes(x=`Share of loan recipients`, y=`Ratio of institution's average loan to sector average`, text=`For Tooltip`)) + geom_point(stat="identity", alpha=0.7) + geom_hline(yintercept=1, linetype=4) + facet_grid(`Control` ~ `Loan program`) + theme(legend.position='none', text=element_text(family="Optima")) + labs(x="Institution's share of California loan recipients, 2018-19") + scale_x_continuous(labels=percent_format(accuracy=1))
+
+ggplotly(g41, width=900, height=800, tooltip="text")
 ```
+#### Data Source and Notes
+
+**Data source:** Federal Student Aid Data Center, spreadsheet on Direct Loan volume for Q4 2018-19, "Award year summary" tab, [available here](https://studentaid.gov/data-center/student/title-iv), accessed October 2022.
+
+**Timeframe reflected:** Figures in this graph reflect the 2018-19 award year. 
+
+**Notes:** Average loan amounts reflect loan disbursements, not loan originations. These averages do not include students who receive no loans. Only four-year institutions are included. 
+
+***
+### {-}
+
+This figure gives good context to Figure 1, and particularly the concerns about Grad PLUS and Parent PLUS raised in the policy report. 
+
+* University of St. Augustine for Health Sciences comprises 48.1% of all for-profit Grad PLUS loans, and it has the highest average Grad PLUS loan of any California for-profit. 
+* Together, West Cost University, Academy of Art University, and the Fashion Institute of Design & Marketing comprise 51.3% of for-profit Parent PLUS loans, and their average Parent PLUS loans are all greater than the average for-profit Parent PLUS loan. 
+* USC comprises 18.4% of all nonprofit Grad PLUS loans, and 12.9% of all statewide Grad PLUS loans (across all controls).  
+* All the public institutions with above-average Grad PLUS loans are from the UC system.  
+* CSU campuses tend to bring the statewide Grad PLUS average down. 
 
 *To what extent are the aggregate statistics based on College Scorecard data influenced by individual institutions?*
 
-
 ```{r check.Scorecard1}
 
-# Figure 36 
-
-# figure 
+# We're primarily interested in 37, so that's what we'll focus on. 
+# Figure 37 
 
 ```
 
 *How strong is our confidence in the statistics derived from NPSAS?*
 
+For the statistics in this report that are derived from NPSAS, I use the National Center on Education Statistics' Datalab tool, which is an online user interface for aggregating NCES survey data. With each query, Datalab provides the standard error of each estimate, allowing us to generate confidence intervals. 
+
+Including confidence intervals on every NPSAS query included above would have required significant additional coding time. In this section, I provide confidence intervals for selected key findings that were derived from the NPSAS data. 
 
 ```{r check.NPSAS1}
+
+# Figure 2: Share borrowing  
+# CA vs US 
+
+# Figure 2: Average loan
+# CA vs US
+
+# Figure 2: Share borrowing 
+# Black in CA vs Overall CA 
+
+# Figure 3: Share borrowing 
+# Overall CA
+# Black in CA 
+# Black in US 
+# Latino in CA
+# Latino in US
+
+# Figure 3: Average loan 
+# Overall CA
+# Black in CA 
+# Black in US 
+# Latino in CA
+# Latino in US
+
+# Figure 3: Share borrowing (race/gender)
+# Black women in CA vs Overall CA 
+
+# Figure 5: Share borrowing 
+# Black in CA
+# Latino in CA
+# Pacific Islander in CA
+# Asian in CA 
+# White in CA 
+# Overall CA
+
+# Figure 5: Average loan 
+# Black in CA
+# Latino in CA
+# Pacific Islander in CA
+# Asian in CA 
+# White in CA 
+# Overall CA
+
+# 
+
 ```
 
+
+
 <!-- The code chunks below are for anlayses that are not included in this report but are included in the accompanying policy report.  -->
+
+```{r ForPolicyReport1, eval=FALSE}
+# Chart on home ownership
+
+shed.HomeOwn$`Owns home` <- rep("No", nrow(shed.HomeOwn))
+shed.HomeOwn$`Owns home`[shed.HomeOwn$HomeOwn %in% c("Own home free and clear", "Own home with a mortgage or loan")] <- "Yes"
+tblHomeOwn0 <- aggregate(data=shed.HomeOwn, Weight ~ `Owns home` + Race + State + AnyStudentLoans, FUN=sum)
+tblHomeOwn02 <- aggregate(data=shed.HomeOwn, Weight ~ `Owns home` + State + AnyStudentLoans, FUN=sum)
+tblHomeOwn02$Race <- rep("All", nrow(tblHomeOwn02))
+tblHomeOwn0 <- rbind(tblHomeOwn0, tblHomeOwn02)
+tblHomeOwn0 <- reshape2::dcast(data=tblHomeOwn0, Race + State + AnyStudentLoans ~ `Owns home`, value.var="Weight")
+tblHomeOwn0$`Total weight` <- tblHomeOwn0$Yes + tblHomeOwn0$No
+tblHomeOwn0$`Share who own home` <- tblHomeOwn0$Yes / tblHomeOwn0$`Total weight`
+tblHomeOwn0 <- tblHomeOwn0 %>% filter(AnyStudentLoans=="Yes")
+
+tblHomeOwn0 <- tblHomeOwn0 %>% filter(Race != "Other, Non-Hispanic")
+tblHomeOwn0$Race <- as.factor(tblHomeOwn0$Race)
+tblHomeOwn0$Race <- factor(tblHomeOwn0$Race, levels=c("All", "White, Non-Hispanic", "Hispanic", "Black, Non-Hispanic"))
+
+ggplot(data=tblHomeOwn0, mapping=aes(y=`Share who own home`, x=Race, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.5) + scale_y_continuous(labels=scales::percent_format(accuracy=1)) + labs(y="Share", x="Group", title="Share of student loan borrowers who own their home") + theme(text=element_text(family="Optima")) + scale_fill_manual(values = stateCols2)
+```
+
+```{r forPolicyReport2, eval=FALSE}
+# FinManage: # Overall, which one of the following best describes how well you are managing financially these days? 
+
+# table(shed$FinManage)
+shed.FinManage$`Managing well` <- rep("No", nrow(shed.FinManage))
+shed.FinManage$`Managing well`[shed.FinManage$FinManage=="Living comfortably"] <- "Yes"
+
+tblFinManage0 <- aggregate(data=shed.FinManage, Weight ~ `Managing well` + Race + State + AnyStudentLoans, FUN=sum)
+tblFinManage02 <- aggregate(data=shed.FinManage, Weight ~ `Managing well` + State + AnyStudentLoans, FUN=sum)
+tblFinManage02$Race <- rep("All", nrow(tblFinManage02))
+tblFinManage0 <- rbind(tblFinManage0, tblFinManage02)
+tblFinManage0 <- reshape2::dcast(data=tblFinManage0, Race + State + AnyStudentLoans ~ `Managing well`, value.var="Weight")
+tblFinManage0$`Total weight` <- tblFinManage0$`Yes` + tblFinManage0$`No` 
+tblFinManage0$`Share living comfortably` <- tblFinManage0$`Yes` / tblFinManage0$`Total weight`
+
+tblFinManage0 <- tblFinManage0 %>% filter(AnyStudentLoans=="Yes") %>% filter(Race != "Other, Non-Hispanic")
+tblFinManage0$Race <- as.factor(tblFinManage0$Race)
+tblFinManage0$Race <- factor(tblFinManage0$Race, levels=c("All", "White, Non-Hispanic", "Hispanic", "Black, Non-Hispanic"))
+
+ggplot(data=tblFinManage0, mapping=aes(y=`Share living comfortably`, x=Race, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.5) + scale_y_continuous(labels=scales::percent_format(accuracy=1)) + labs(y="Share who report living comfortably", x="Group") + theme(text=element_text(family="Optima")) + scale_fill_manual(values = stateCols2)
+
+```
+
+```{r ForPolicyReport3, eval=FALSE}
+tblOwnDebtCC0 <- tblOwnDebtCC %>% filter(Race != "Other, Non-Hispanic")
+tblOwnDebtCC0$Race <- as.factor(tblOwnDebtCC0$Race)
+tblOwnDebtCC0$Race <- factor(tblOwnDebtCC0$Race, levels=c("All", "White, Non-Hispanic", "Hispanic", "Black, Non-Hispanic"))
+ggplot(data=tblOwnDebtCC0, mapping=aes(y=`Share of borrowers whose debt includes credit card debt`, x=Race, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.5) + scale_y_continuous(labels=scales::percent_format(accuracy=1)) + labs(y="Share whose education debt includes credit card debt", x="Group") + theme(text=element_text(family="Optima")) + scale_fill_manual(values = stateCols2)
+```
+
+```{r forPolicyReport4, eval=FALSE}
+tblCCBalance0 <- tblCCBalance0 %>% filter(Race != "Other, Non-Hispanic") %>% filter(Race != "All") %>% filter(State == "CA" | AnyStudentLoans == "Yes") 
+tblCCBalance0$Group <- rep(NA, nrow(tblCCBalance0))
+tblCCBalance0$Group[(tblCCBalance0$State=="CA") & (tblCCBalance0$AnyStudentLoans=="Yes")] <- "California borrowers"
+tblCCBalance0$Group[(tblCCBalance0$State=="Rest of U.S.") & (tblCCBalance0$AnyStudentLoans=="Yes")] <- "Rest of U.S. borrowers"
+tblCCBalance0$Group[(tblCCBalance0$State=="CA") & (tblCCBalance0$AnyStudentLoans=="No")] <- "California non-borrowers"
+
+tblCCBalance0$Group <- as.factor(tblCCBalance0$Group)
+tblCCBalance0$Group <- factor(tblCCBalance0$Group, levels=rev(c("California borrowers", "Rest of U.S. borrowers", "California non-borrowers")))
+
+ggplot(data=tblCCBalance0, mapping=aes(y=Group, x=`Most or all of the time`, fill=Group)) + geom_bar(stat="identity") + facet_wrap(Race ~ ., ncol=1, strip.position=c("top")) + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share who say they carry an unpaid credit card balance most or all of the time", y="") + theme(legend.position="none", text=element_text(family="Optima")) + scale_fill_manual(values = flagCols2)
+```
+
+```{r forPolicyReport5, eval=FALSE}
+shed.CreditScore$`Poor or very poor credit score` <- rep("No", nrow(shed.CreditScore))
+shed.CreditScore$`Poor or very poor credit score`[shed.CreditScore$CreditScore %in% c("Poor", "Very poor")] <- "Yes"
+tblCreditScore0 <- aggregate(data=shed.CreditScore, Weight ~ `Poor or very poor credit score` + Race + State + AnyStudentLoans, FUN=sum)
+tblCreditScore02 <- aggregate(data=shed.CreditScore, Weight ~ `Poor or very poor credit score` + State + AnyStudentLoans, FUN=sum)
+tblCreditScore02$Race <- rep("All", nrow(tblCreditScore02))
+tblCreditScore0 <- rbind(tblCreditScore0, tblCreditScore02)
+tblCreditScore0 <- reshape2::dcast(data=tblCreditScore0, Race + State + AnyStudentLoans ~ `Poor or very poor credit score`, value.var="Weight")
+tblCreditScore0$`Share with poor or very poor credit score` <- tblCreditScore0$Yes / (tblCreditScore0$Yes + tblCreditScore0$No)
+
+tblCreditScore0 <- tblCreditScore0 %>% filter(AnyStudentLoans=="Yes") %>% filter(Race != "Other, Non-Hispanic")
+tblCreditScore0$Race <- as.factor(tblCreditScore0$Race)
+tblCreditScore0$Race <- factor(tblCreditScore0$Race, levels=c("All", "White, Non-Hispanic", "Hispanic", "Black, Non-Hispanic"))
+
+ggplot(data=tblCreditScore0, mapping=aes(y=`Share with poor or very poor credit score`, x=Race, fill=State)) + geom_bar(stat="identity", position="dodge", width=0.5) + scale_y_continuous(labels=scales::percent_format(accuracy=1)) + labs(y="Share with a poor or very poor credit score", x="Group") + theme(text=element_text(family="Optima")) + scale_fill_manual(values = stateCols2)
+```
 
 ```{r forPolicyReport6, eval=FALSE}
 # This dataset comes from the following site: https://www.politico.com/news/2023/02/16/joe-biden-student-debt-relief-00083243 
@@ -9840,4 +10062,209 @@ agg2 <- agg2 %>% mutate(`Population share` = percent(`PWGTP` / sum(agg2$PWGTP), 
 
 ```
 
+```{r forPolicyReport8, eval=FALSE}
 
+loanfile22 <- "dl-dashboard-ay2021-2022-q4-california.csv"
+loanfile21 <- "dl-dashboard-ay2020-2021-q4-california.csv"
+loanfile20 <- "dl-dashboard-ay2019-2020-q4-california.csv"
+loanfile19 <- "dl-dashboard-ay2018-2019-q4-california.csv"
+loanfile18 <- "DL_Dashboard_AY2017_2018_Q4-california.csv"
+loanfile17 <- "DL_Dashboard_AY2016_2017_Q4-california.csv"
+loanfile16 <- "DL_Dashboard_AY2015_2016_Q4-california.csv"
+loanfile15 <- "DL_Dashboard_AY2014_2015_Q4-california.csv"
+loanfile14 <- "DL_Dashboard_AY2013_2014_Q4-california.csv"
+loanfile13 <- "DL_Dashboard_AY2012_2013_Q4-california.csv"
+loanfile12 <- "DL_Dashboard_AY2011_2012_Q4-california.csv"
+loanfile11 <- "DL_Dashboard_AY2010_2011_Q4-california.csv"
+loanfile10 <- "DL_Dashboard_AY2009_2010_Q4-california.csv"
+loanfile09 <- "DL_Dashboard_AY2008_2009_Q4-california.csv"
+loanfile08 <- "DL_Dashboard_AY2007_2008_Q4-california.csv"
+loanfile07 <- "DL_Dashboard_AY2006_2007_Q4-california.csv"
+loanfile06 <- "DL_AwardYr_Summary_AY2005_2006_All-california.csv"
+
+# 2012-13 to 2021-22
+colnames1 <- c(
+  "OPEID",  "School",  "State",  "Zip Code",  "School Type",
+
+  "SUBSIDIZED: Recipients",   "SUBSIDIZED: # of Loans Originated",   "SUBSIDIZED: $ of Loans Originated",   "SUBSIDIZED: # of Disbursements",   "SUBSIDIZED: $ of Disbursements", 
+   
+  "UNSUBSIDIZED - UNDERGRADUATE: Recipients",   "UNSUBSIDIZED - UNDERGRADUATE: # of Loans Originated",   "UNSUBSIDIZED - UNDERGRADUATE: $ of Loans Originated",   "UNSUBSIDIZED - UNDERGRADUATE: # of Disbursements",   "UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements", 
+
+  "UNSUBSIDIZED - GRADUATE: Recipients",   "UNSUBSIDIZED - GRADUATE: # of Loans Originated",   "UNSUBSIDIZED - GRADUATE: $ of Loans Originated",   "UNSUBSIDIZED - GRADUATE: # of Disbursements",   "UNSUBSIDIZED - GRADUATE: $ of Disbursements", 
+
+  "PARENT PLUS: Recipients",   "PARENT PLUS: # of Loans Originated",   "PARENT PLUS: $ of Loans Originated",   "PARENT PLUS: # of Disbursements",   "PARENT PLUS: $ of Disbursements", 
+
+  "GRAD PLUS: Recipients",   "GRAD PLUS: # of Loans Originated",   "GRAD PLUS: $ of Loans Originated",   "GRAD PLUS: # of Disbursements",   "GRAD PLUS: $ of Disbursements"
+)
+
+# 2010-11 to 2011-12
+colnames2 <- c(
+  "OPEID",  "School",  "State",  "Zip Code",  "School Type",
+
+  "SUBSIDIZED - UNDERGRADUATE: Recipients",   "SUBSIDIZED - UNDERGRADUATE: # of Loans Originated",   "SUBSIDIZED - UNDERGRADUATE: $ of Loans Originated",   "SUBSIDIZED - UNDERGRADUATE: # of Disbursements",   "SUBSIDIZED - UNDERGRADUATE: $ of Disbursements", 
+  
+  "SUBSIDIZED - GRADUATE: Recipients",   "SUBSIDIZED - GRADUATE: # of Loans Originated",   "SUBSIDIZED - GRADUATE: $ of Loans Originated",   "SUBSIDIZED - GRADUATE: # of Disbursements",   "SUBSIDIZED - GRADUATE: $ of Disbursements", 
+   
+  "UNSUBSIDIZED - UNDERGRADUATE: Recipients",   "UNSUBSIDIZED - UNDERGRADUATE: # of Loans Originated",   "UNSUBSIDIZED - UNDERGRADUATE: $ of Loans Originated",   "UNSUBSIDIZED - UNDERGRADUATE: # of Disbursements",   "UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements", 
+
+  "UNSUBSIDIZED - GRADUATE: Recipients",   "UNSUBSIDIZED - GRADUATE: # of Loans Originated",   "UNSUBSIDIZED - GRADUATE: $ of Loans Originated",   "UNSUBSIDIZED - GRADUATE: # of Disbursements",   "UNSUBSIDIZED - GRADUATE: $ of Disbursements", 
+
+  "PARENT PLUS: Recipients",   "PARENT PLUS: # of Loans Originated",   "PARENT PLUS: $ of Loans Originated",   "PARENT PLUS: # of Disbursements",   "PARENT PLUS: $ of Disbursements", 
+
+  "GRAD PLUS: Recipients",   "GRAD PLUS: # of Loans Originated",   "GRAD PLUS: $ of Loans Originated",   "GRAD PLUS: # of Disbursements",   "GRAD PLUS: $ of Disbursements"
+)
+
+# 2005-06 to 2009-10
+colnames3 <- c(
+  "OPEID",  "School",  "State",  "Zip Code",  "School Type",
+
+  "SUBSIDIZED: Recipients",   "SUBSIDIZED: # of Loans Originated",   "SUBSIDIZED: $ of Loans Originated",   "SUBSIDIZED: # of Disbursements",   "SUBSIDIZED: $ of Disbursements", 
+  
+  "UNSUBSIDIZED: Recipients",   "UNSUBSIDIZED: # of Loans Originated",   "UNSUBSIDIZED: $ of Loans Originated",   "UNSUBSIDIZED: # of Disbursements",   "UNSUBSIDIZED: $ of Disbursements", 
+
+  "PARENT PLUS: Recipients",   "PARENT PLUS: # of Loans Originated",   "PARENT PLUS: $ of Loans Originated",   "PARENT PLUS: # of Disbursements",   "PARENT PLUS: $ of Disbursements", 
+
+  "GRAD PLUS: Recipients",   "GRAD PLUS: # of Loans Originated",   "GRAD PLUS: $ of Loans Originated",   "GRAD PLUS: # of Disbursements",   "GRAD PLUS: $ of Disbursements"
+)
+
+nskip22 <- 6
+nskip21 <- 6
+nskip20 <- 6
+nskip19 <- 6
+nskip18 <- 6
+nskip17 <- 5
+nskip16 <- 5
+nskip15 <- 5
+nskip14 <- 5
+nskip13 <- 5
+nskip12 <- 5
+nskip11 <- 5
+nskip10 <- 5
+nskip09 <- 5
+nskip08 <- 5
+nskip07 <- 4
+nskip06 <- 5
+
+derivePLUStotals <- function(loansyear, loanfile, nskip, colnames) {
+  loans <- fread(loanfile, header=TRUE, skip=nskip)
+  names(loans) <- colnames
+  
+  if(colnames==colnames1){
+    loans <- loans %>% select(
+      `OPEID`,
+      `State`, 
+      `SUBSIDIZED: $ of Disbursements`, 
+      `UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`, 
+      `UNSUBSIDIZED - GRADUATE: $ of Disbursements`, 
+      `PARENT PLUS: $ of Disbursements`, 
+      `GRAD PLUS: $ of Disbursements`
+    )
+    
+    loans$`SUBSIDIZED: $ of Disbursements` <- as.numeric(loans$`SUBSIDIZED: $ of Disbursements`)
+    loans$`SUBSIDIZED: $ of Disbursements`[is.na(loans$`SUBSIDIZED: $ of Disbursements`)] <- 0
+    
+    loans$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements` <- as.numeric(loans$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`)
+    loans$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`[is.na(loans$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`)] <- 0
+    
+    loans$`UNSUBSIDIZED - GRADUATE: $ of Disbursements` <- as.numeric(loans$`UNSUBSIDIZED - GRADUATE: $ of Disbursements`)
+    loans$`UNSUBSIDIZED - GRADUATE: $ of Disbursements`[is.na(loans$`UNSUBSIDIZED - GRADUATE: $ of Disbursements`)] <- 0
+    
+    loans$`PARENT PLUS: $ of Disbursements` <- as.numeric(loans$`PARENT PLUS: $ of Disbursements`)
+    loans$`PARENT PLUS: $ of Disbursements`[is.na(loans$`PARENT PLUS: $ of Disbursements`)] <- 0
+    
+    loans$`GRAD PLUS: $ of Disbursements` <- as.numeric(loans$`GRAD PLUS: $ of Disbursements`)
+    loans$`GRAD PLUS: $ of Disbursements`[is.na(loans$`GRAD PLUS: $ of Disbursements`)] <- 0
+    
+    loans <- loans %>% mutate(`Total $ of Disbursements` = `SUBSIDIZED: $ of Disbursements` + `UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements` + `UNSUBSIDIZED - GRADUATE: $ of Disbursements` + `PARENT PLUS: $ of Disbursements` + `GRAD PLUS: $ of Disbursements`)
+    loans <- loans %>% select(`OPEID`, `State`, `Total $ of Disbursements`, `PARENT PLUS: $ of Disbursements`, `GRAD PLUS: $ of Disbursements`)
+  }
+  
+  if(colnames==colnames2){
+    loans <- loans %>% select(
+      `OPEID`,
+      `State`, 
+      `SUBSIDIZED - UNDERGRADUATE: $ of Disbursements`, 
+      `SUBSIDIZED - GRADUATE: $ of Disbursements`, 
+      `UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`, 
+      `UNSUBSIDIZED - GRADUATE: $ of Disbursements`, 
+      `PARENT PLUS: $ of Disbursements`, 
+      `GRAD PLUS: $ of Disbursements`
+    )
+    loans$`SUBSIDIZED - UNDERGRADUATE: $ of Disbursements` <- as.numeric(loans$`SUBSIDIZED - UNDERGRADUATE: $ of Disbursements`)
+    loans$`SUBSIDIZED - UNDERGRADUATE: $ of Disbursements`[is.na(loans$`SUBSIDIZED - UNDERGRADUATE: $ of Disbursements`)] <- 0
+    
+    loans$`SUBSIDIZED - GRADUATE: $ of Disbursements` <- as.numeric(loans$`SUBSIDIZED - GRADUATE: $ of Disbursements`)
+    loans$`SUBSIDIZED - GRADUATE: $ of Disbursements`[is.na(loans$`SUBSIDIZED - GRADUATE: $ of Disbursements`)] <- 0
+    
+    loans$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements` <- as.numeric(loans$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`)
+    loans$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`[is.na(loans$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements`)] <- 0
+    
+    loans$`UNSUBSIDIZED - GRADUATE: $ of Disbursements` <- as.numeric(loans$`UNSUBSIDIZED - GRADUATE: $ of Disbursements`)
+    loans$`UNSUBSIDIZED - GRADUATE: $ of Disbursements`[is.na(loans$`UNSUBSIDIZED - GRADUATE: $ of Disbursements`)] <- 0
+    
+    loans$`PARENT PLUS: $ of Disbursements` <- as.numeric(loans$`PARENT PLUS: $ of Disbursements`)
+    loans$`PARENT PLUS: $ of Disbursements`[is.na(loans$`PARENT PLUS: $ of Disbursements`)] <- 0
+    
+    loans$`GRAD PLUS: $ of Disbursements` <- as.numeric(loans$`GRAD PLUS: $ of Disbursements`)
+    loans$`GRAD PLUS: $ of Disbursements`[is.na(loans$`GRAD PLUS: $ of Disbursements`)] <- 0
+    
+    loans <- loans %>% mutate(`Total $ of Disbursements` = `SUBSIDIZED - UNDERGRADUATE: $ of Disbursements` + `SUBSIDIZED - GRADUATE: $ of Disbursements` + `UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements` + `UNSUBSIDIZED - GRADUATE: $ of Disbursements` + `PARENT PLUS: $ of Disbursements` + `GRAD PLUS: $ of Disbursements`)
+    loans <- loans %>% select(`OPEID`, `State`, `Total $ of Disbursements`, `PARENT PLUS: $ of Disbursements`, `GRAD PLUS: $ of Disbursements`)
+  }
+  
+  if(colnames==colnames3){
+    loans <- loans %>% select(
+      `OPEID`,
+      `State`, 
+      `SUBSIDIZED: $ of Disbursements`, 
+      `UNSUBSIDIZED: $ of Disbursements`, 
+      `PARENT PLUS: $ of Disbursements`, 
+      `GRAD PLUS: $ of Disbursements`
+    )
+    loans$`SUBSIDIZED: $ of Disbursements` <- as.numeric(loans$`SUBSIDIZED: $ of Disbursements`)
+    loans$`SUBSIDIZED: $ of Disbursements`[is.na(loans$`SUBSIDIZED: $ of Disbursements`)] <- 0
+    
+    loans$`UNSUBSIDIZED: $ of Disbursements` <- as.numeric(loans$`UNSUBSIDIZED: $ of Disbursements`)
+    loans$`UNSUBSIDIZED: $ of Disbursements`[is.na(loans$`UNSUBSIDIZED: $ of Disbursements`)] <- 0
+    
+    loans$`PARENT PLUS: $ of Disbursements` <- as.numeric(loans$`PARENT PLUS: $ of Disbursements`)
+    loans$`PARENT PLUS: $ of Disbursements`[is.na(loans$`PARENT PLUS: $ of Disbursements`)] <- 0
+    
+    loans$`GRAD PLUS: $ of Disbursements` <- as.numeric(loans$`GRAD PLUS: $ of Disbursements`)
+    loans$`GRAD PLUS: $ of Disbursements`[is.na(loans$`GRAD PLUS: $ of Disbursements`)] <- 0
+    
+    loans <- loans %>% mutate(`Total $ of Disbursements` = `SUBSIDIZED: $ of Disbursements` + `UNSUBSIDIZED: $ of Disbursements` + `PARENT PLUS: $ of Disbursements` + `GRAD PLUS: $ of Disbursements`)
+    loans <- loans %>% select(`OPEID`, `State`, `Total $ of Disbursements`, `PARENT PLUS: $ of Disbursements`, `GRAD PLUS: $ of Disbursements`)
+  }
+  
+  loans$`State`[loans$`State` != "CA"] <- "Rest of U.S."
+  results <- aggregate(data=loans, cbind(`Total $ of Disbursements`, `PARENT PLUS: $ of Disbursements`, `GRAD PLUS: $ of Disbursements`) ~ State, FUN=sum)
+  
+  loans <- loans %>% mutate(`PARENT PLUS share of total` = `PARENT PLUS: $ of Disbursements` / `Total $ of Disbursements`)
+  loans <- loans %>% mutate(`GRAD PLUS share of total` = `GRAD PLUS: $ of Disbursements` / `Total $ of Disbursements`)
+  loans$Year <- rep(loansyear, nrow(loans))
+  return(results)
+}
+
+plusOverTime <- rbind(
+  derivePLUStotals(loansyear = 2006, loanfile = loanfile06, nskip = nskip06, colnames = colnames3),
+  derivePLUStotals(loansyear = 2007, loanfile = loanfile07, nskip = nskip07, colnames = colnames3),
+  derivePLUStotals(loansyear = 2008, loanfile = loanfile08, nskip = nskip08, colnames = colnames3), 
+  derivePLUStotals(loansyear = 2009, loanfile = loanfile09, nskip = nskip09, colnames = colnames3), 
+  derivePLUStotals(loansyear = 2010, loanfile = loanfile10, nskip = nskip10, colnames = colnames3), 
+  derivePLUStotals(loansyear = 2011, loanfile = loanfile11, nskip = nskip11, colnames = colnames2), 
+  derivePLUStotals(loansyear = 2012, loanfile = loanfile12, nskip = nskip12, colnames = colnames2), 
+  derivePLUStotals(loansyear = 2013, loanfile = loanfile13, nskip = nskip13, colnames = colnames1), 
+  derivePLUStotals(loansyear = 2014, loanfile = loanfile14, nskip = nskip14, colnames = colnames1), 
+  derivePLUStotals(loansyear = 2015, loanfile = loanfile15, nskip = nskip15, colnames = colnames1), 
+  derivePLUStotals(loansyear = 2016, loanfile = loanfile16, nskip = nskip16, colnames = colnames1), 
+  derivePLUStotals(loansyear = 2017, loanfile = loanfile17, nskip = nskip17, colnames = colnames1), 
+  derivePLUStotals(loansyear = 2018, loanfile = loanfile18, nskip = nskip18, colnames = colnames1), 
+  derivePLUStotals(loansyear = 2019, loanfile = loanfile19, nskip = nskip19, colnames = colnames1), 
+  derivePLUStotals(loansyear = 2020, loanfile = loanfile20, nskip = nskip20, colnames = colnames1), 
+  derivePLUStotals(loansyear = 2021, loanfile = loanfile21, nskip = nskip21, colnames = colnames1), 
+  derivePLUStotals(loansyear = 2022, loanfile = loanfile22, nskip = nskip22, colnames = colnames1)
+)
+
+
+```
