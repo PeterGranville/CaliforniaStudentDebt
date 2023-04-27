@@ -100,6 +100,8 @@ The FSA Data Center is a repository of data and statistics on federal student ai
 
 For "per capita" measures of student debt and borrowing in Table 1, the population for comparison is the estimated total of all California adults aged 18 to 50. I estimate these population totals using American Community Survey data reflecting calendar year 2021, [available here](https://www.census.gov/programs-surveys/acs/microdata/access.html). 
 
+Please note that Ashford University, which is an institution headquartered in San Diego that has undergone changes in ownership and in name in recent years, has been re-coded in this analysis as a *non*-California institution. This affects Table 3 and Figure 1. I made this imputation because the institution has an exceptionally large non-California online enrollment. When included among California's colleges, it dominates some aggregations of for-profit California colleges, both in this section and later in this document. Searching for "Ashford" in this document will direct you to any instances where it has been re-coded as a non-California institution. 
+
 #### Findings
 
 ```{r statenames}
@@ -613,6 +615,8 @@ names(loans2122) <- c(
   "GRAD PLUS: $ of Disbursements"
 )
 
+loans2122$State[loans2122$`OPEID` == 188100] <- "Rest of U.S."
+
 ######################################################
 ### Here we must format the OPEIDs, bringing them  ###
 ### to eight digits.                               ###
@@ -696,12 +700,9 @@ loans2122$`PARENT PLUS: $ of Disbursements`[is.na(loans2122$`PARENT PLUS: $ of D
 loans2122$`GRAD PLUS: Recipients`[is.na(loans2122$`GRAD PLUS: Recipients`)] <- 0
 loans2122$`GRAD PLUS: $ of Disbursements`[is.na(loans2122$`GRAD PLUS: $ of Disbursements`)] <- 0
 
-######################################################
-### Here we create a variable for total loan       ###
-### disbursements at a college.                    ###
-######################################################
-
 loans2122$`Total $ of Disbursements` <- loans2122$`SUBSIDIZED: $ of Disbursements` + loans2122$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements` + loans2122$`UNSUBSIDIZED - GRADUATE: $ of Disbursements` + loans2122$`PARENT PLUS: $ of Disbursements` + loans2122$`GRAD PLUS: $ of Disbursements`
+
+loans2122$`Total $ of Undergraduate Disbursements` <- loans2122$`SUBSIDIZED: $ of Disbursements` + loans2122$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements` + loans2122$`PARENT PLUS: $ of Disbursements`
 
 ```
 
@@ -722,7 +723,8 @@ table3.1 <- aggregate(data=table3.1, cbind(
   `UNSUBSIDIZED - GRADUATE: $ of Disbursements`, 
   `PARENT PLUS: $ of Disbursements`, 
   `GRAD PLUS: $ of Disbursements`, 
-  `Total $ of Disbursements`) ~ State, FUN=sum)
+  `Total $ of Disbursements`, 
+  `Total $ of Undergraduate Disbursements`) ~ State, FUN=sum)
 
 table3.2 <- aggregate(data=table3.2, cbind(  
   `SUBSIDIZED: $ of Disbursements`, 
@@ -730,7 +732,8 @@ table3.2 <- aggregate(data=table3.2, cbind(
   `UNSUBSIDIZED - GRADUATE: $ of Disbursements`, 
   `PARENT PLUS: $ of Disbursements`, 
   `GRAD PLUS: $ of Disbursements`, 
-  `Total $ of Disbursements`) ~ State, FUN=sum)
+  `Total $ of Disbursements`, 
+  `Total $ of Undergraduate Disbursements`) ~ State, FUN=sum)
 table3.2 <- table3.2 %>% add_row(
   State = "Nationwide",
   "SUBSIDIZED: $ of Disbursements" = sum(table3.2$`SUBSIDIZED: $ of Disbursements`), 
@@ -738,7 +741,8 @@ table3.2 <- table3.2 %>% add_row(
   "UNSUBSIDIZED - GRADUATE: $ of Disbursements" = sum(table3.2$`UNSUBSIDIZED - GRADUATE: $ of Disbursements`), 
   "PARENT PLUS: $ of Disbursements" = sum(table3.2$`PARENT PLUS: $ of Disbursements`), 
   "GRAD PLUS: $ of Disbursements" = sum(table3.2$`GRAD PLUS: $ of Disbursements`), 
-  "Total $ of Disbursements" = sum(table3.2$`Total $ of Disbursements`)
+  "Total $ of Disbursements" = sum(table3.2$`Total $ of Disbursements`), 
+  "Total $ of Undergraduate Disbursements" = sum(table3.2$`Total $ of Undergraduate Disbursements`)
 )
 
 ######################################################
@@ -746,11 +750,18 @@ table3.2 <- table3.2 %>% add_row(
 ### total borrowing in every state.                ###
 ######################################################
 
-table3.1$`SUBSIDIZED share of total` <- table3.1$`SUBSIDIZED: $ of Disbursements` / table3.1$`Total $ of Disbursements`
-table3.1$`UNSUBSIDIZED - UNDERGRADUATE share of total` <- table3.1$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements` / table3.1$`Total $ of Disbursements`
-table3.1$`UNSUBSIDIZED - GRADUATE share of total` <- table3.1$`UNSUBSIDIZED - GRADUATE: $ of Disbursements` / table3.1$`Total $ of Disbursements`
-table3.1$`PARENT PLUS share of total` <- table3.1$`PARENT PLUS: $ of Disbursements` / table3.1$`Total $ of Disbursements`
-table3.1$`GRAD PLUS share of total` <- table3.1$`GRAD PLUS: $ of Disbursements` / table3.1$`Total $ of Disbursements`
+table3.1A <- table3.1
+table3.1B <- table3.1
+
+table3.1A$`SUBSIDIZED share of total` <- table3.1A$`SUBSIDIZED: $ of Disbursements` / table3.1A$`Total $ of Disbursements`
+table3.1A$`UNSUBSIDIZED - UNDERGRADUATE share of total` <- table3.1A$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements` / table3.1A$`Total $ of Disbursements`
+table3.1A$`UNSUBSIDIZED - GRADUATE share of total` <- table3.1A$`UNSUBSIDIZED - GRADUATE: $ of Disbursements` / table3.1A$`Total $ of Disbursements`
+table3.1A$`PARENT PLUS share of total` <- table3.1A$`PARENT PLUS: $ of Disbursements` / table3.1A$`Total $ of Disbursements`
+table3.1A$`GRAD PLUS share of total` <- table3.1A$`GRAD PLUS: $ of Disbursements` / table3.1A$`Total $ of Disbursements`
+
+table3.1B$`SUBSIDIZED share of total` <- table3.1B$`SUBSIDIZED: $ of Disbursements` / table3.1B$`Total $ of Undergraduate Disbursements`
+table3.1B$`UNSUBSIDIZED - UNDERGRADUATE share of total` <- table3.1B$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements` / table3.1B$`Total $ of Undergraduate Disbursements`
+table3.1B$`PARENT PLUS share of total` <- table3.1B$`PARENT PLUS: $ of Disbursements` / table3.1B$`Total $ of Undergraduate Disbursements`
 
 table3.2$`SUBSIDIZED share of total` <- table3.2$`SUBSIDIZED: $ of Disbursements` / table3.2$`Total $ of Disbursements`
 table3.2$`UNSUBSIDIZED - UNDERGRADUATE share of total` <- table3.2$`UNSUBSIDIZED - UNDERGRADUATE: $ of Disbursements` / table3.2$`Total $ of Disbursements`
@@ -763,13 +774,19 @@ table3.2$`GRAD PLUS share of total` <- table3.2$`GRAD PLUS: $ of Disbursements` 
 ### versus the rest of the nation.                 ###
 ######################################################
 
-table3.1 <- table3.1 %>% filter(State %in% c("CA", "Rest of U.S.")) %>% select(State, `SUBSIDIZED share of total`, `UNSUBSIDIZED - UNDERGRADUATE share of total`, `UNSUBSIDIZED - GRADUATE share of total`, `PARENT PLUS share of total`, `GRAD PLUS share of total`)
-names(table3.1) <- c("State", "Subsidized", "Unsubsidized undergraduate", "Unsubsidized graduate", "Parent PLUS loans", "Grad PLUS")
-table3.1$`Subsidized` <- percent(table3.1$`Subsidized`, accuracy=0.1)
-table3.1$`Unsubsidized undergraduate` <- percent(table3.1$`Unsubsidized undergraduate`, accuracy=0.1)
-table3.1$`Unsubsidized graduate` <- percent(table3.1$`Unsubsidized graduate`, accuracy=0.1)
-table3.1$`Parent PLUS loans` <- percent(table3.1$`Parent PLUS loans`, accuracy=0.1)
-table3.1$`Grad PLUS` <- percent(table3.1$`Grad PLUS`, accuracy=0.1)
+table3.1A <- table3.1A %>% filter(State %in% c("CA", "Rest of U.S.")) %>% select(State, `SUBSIDIZED share of total`, `UNSUBSIDIZED - UNDERGRADUATE share of total`, `UNSUBSIDIZED - GRADUATE share of total`, `PARENT PLUS share of total`, `GRAD PLUS share of total`)
+names(table3.1A) <- c("State", "Subsidized", "Unsubsidized undergraduate", "Unsubsidized graduate", "Parent PLUS loans", "Grad PLUS")
+table3.1A$`Subsidized` <- percent(table3.1A$`Subsidized`, accuracy=0.1)
+table3.1A$`Unsubsidized undergraduate` <- percent(table3.1A$`Unsubsidized undergraduate`, accuracy=0.1)
+table3.1A$`Unsubsidized graduate` <- percent(table3.1A$`Unsubsidized graduate`, accuracy=0.1)
+table3.1A$`Parent PLUS loans` <- percent(table3.1A$`Parent PLUS loans`, accuracy=0.1)
+table3.1A$`Grad PLUS` <- percent(table3.1A$`Grad PLUS`, accuracy=0.1)
+
+table3.1B <- table3.1B %>% filter(State %in% c("CA", "Rest of U.S.")) %>% select(State, `SUBSIDIZED share of total`, `UNSUBSIDIZED - UNDERGRADUATE share of total`, `PARENT PLUS share of total`)
+names(table3.1B) <- c("State", "Subsidized", "Unsubsidized undergraduate", "Parent PLUS loans")
+table3.1B$`Subsidized` <- percent(table3.1B$`Subsidized`, accuracy=0.1)
+table3.1B$`Unsubsidized undergraduate` <- percent(table3.1B$`Unsubsidized undergraduate`, accuracy=0.1)
+table3.1B$`Parent PLUS loans` <- percent(table3.1B$`Parent PLUS loans`, accuracy=0.1)
 
 table3.2 <- table3.2 %>% filter(State != "") %>% select(State, `SUBSIDIZED share of total`, `UNSUBSIDIZED - UNDERGRADUATE share of total`, `UNSUBSIDIZED - GRADUATE share of total`, `PARENT PLUS share of total`, `GRAD PLUS share of total`)
 names(table3.2) <- c("State", "Subsidized", "Unsubsidized undergraduate", "Unsubsidized graduate", "Parent PLUS loans", "Grad PLUS")
@@ -782,12 +799,16 @@ table3.2$`Grad PLUS` <- percent(table3.2$`Grad PLUS`, accuracy=0.1)
 
 #### {.tabset}
 ##### Table 3
-```{r kable3.1}
-kable(table3.1, caption="Share of loan dollars disbursed in 2021-22 by loan type, California vs. Rest of U.S.") %>% kable_paper("hover", full_width = F)
+```{r kable3.1A}
+kable(table3.1A, caption="Share of loan dollars disbursed in 2021-22 by loan type, California vs. Rest of U.S.") %>% kable_paper("hover", full_width = F)
+```
+
+```{r kable3.1B}
+kable(table3.1B, caption="Share of loan undergraduate dollars disbursed in 2021-22 by loan type, California vs. Rest of U.S.") %>% kable_paper("hover", full_width = F)
 ```
 ##### Table 3: All states
 ```{r kable3.2}
-kable(table3.2, caption="Share of loan dollars disbursed in 2021-122 by loan type") %>% kable_paper("hover", full_width = F)
+kable(table3.2, caption="Share of loan dollars disbursed in 2021-22 by loan type") %>% kable_paper("hover", full_width = F)
 ```
 
 ##### Data Source and Notes
@@ -796,7 +817,7 @@ kable(table3.2, caption="Share of loan dollars disbursed in 2021-122 by loan typ
 
 **Timeframe reflected:** Figures in this table reflect the 2021-22 award year. 
 
-**Notes:** Here I use the data on loan disbursements, not loan originations.
+**Notes:** Here I use the data on loan disbursements, not loan originations. Note that Ashford University has been recoded as a non-California institution for the purpose of this analysis. 
 
 ***
 
@@ -932,7 +953,7 @@ ggplotly(g1, width=800, height=500, tooltip="text")
 
 **Timeframe reflected:** Figures in this graph reflect the 2021-22 award year. 
 
-**Notes:** Here I use the data on loan disbursements, not loan originations. These averages do not include students who receive no loans. Only four-year institutions are included. 
+**Notes:** Here I use the data on loan disbursements, not loan originations. These averages do not include students who receive no loans. Only four-year institutions are included. Ashford University has been recoded as a non-California institution for the purpose of this analysis. 
 
 ***
 
@@ -7802,6 +7823,7 @@ A few data notes may be useful when interpreting Figures 36 and 37:
 * These data reflect pre-pandemic balances. 
 * DBRR does not track the same cohort of borrowers and report their loan balances at 1, 5, 10, and 20 years. Rather, each of these cohorts is a separate group of borrowers.
 * Not all colleges and universities have DBRR data in the College Scorecard. In Figures 36 and 37, you can hover over the points in the chart to see the count of institution represented in each cohort.  
+* Ashford University has been re-coded in this analysis as a *non*-California institution. I made this imputation because the institution has an exceptionally large non-California online enrollment, skewing aggregations of data on California's colleges. 
 
 In the College Scorecard, DBRR data are reported at the institution level and disaggregated by loan type (Stafford, Parent PLUS, and Grad PLUS). I aggregated the DBRR values across all institutions with sufficient data and compared institutions in California to institutions in the rest of the U.S., with breakouts by institutional control and loan type. 
 
@@ -7915,6 +7937,8 @@ CSI2 <- fread("Most-Recent-Cohorts-Institution.csv", header=TRUE, select=c(
   "DBRR20_PP_UG_DEN",  # Undergraduate Parent PLUS Loan dollar-based 20-year repayment rate denominator
   "DBRR20_PP_UG_RT"    # Undergraduate Parent PLUS Loan dollar-based 20-year repayment rate
   ))
+
+CSI2$STABBR[CSI2$`OPEID` == 188100] <- "Ashford" # Coding Ashford University as not in California
 
 CSI2$DBRR1_FED_UG_N   <- as.numeric(CSI2$DBRR1_FED_UG_N)
 CSI2$DBRR1_FED_UG_NUM <- as.numeric(CSI2$DBRR1_FED_UG_NUM)
@@ -8064,6 +8088,8 @@ Q28$DBRR20_FED_UG_INST <- ifelse(Q28$DBRR20_FED_UG_NUM > 0, 1, 0)
 Q28$DBRR20_FED_GR_INST <- ifelse(Q28$DBRR20_FED_GR_NUM > 0, 1, 0)
 Q28$DBRR20_PP_UG_INST  <- ifelse(Q28$DBRR20_PP_UG_NUM > 0, 1, 0)
 
+Q28.check <- Q28
+
 Q28.1 <- aggregate(data=Q28, cbind(
   DBRR1_FED_UG_N,
   DBRR1_FED_UG_NUM,
@@ -8114,7 +8140,6 @@ Q28.1 <- aggregate(data=Q28, cbind(
   DBRR20_FED_GR_INST,
   DBRR20_PP_UG_INST
 ) ~ State + Control, FUN=sum)
-
 
 Q28.2 <- aggregate(data=Q28, cbind(
   DBRR1_FED_UG_N,
@@ -8276,7 +8301,7 @@ More specifically, the cohorts are defined as the following:
 
 The measures reflect pre-pandemic balances.
 
-**Notes:**
+**Notes:** Ashford University has been recoded as a non-California institution for the purpose of this analysis. 
 
 ***
 
@@ -8367,6 +8392,7 @@ More specifically, the cohorts are defined as the following:
 The measures reflect pre-pandemic balances.
 
 **Notes:** One factor influencing the slope of these lines is the rising cost of college. For example, the far-right points in each chart represent borrowers who entered repayment twenty years ago, when college costs were somewhat lower than they are today; it follows that their average loan amount would be slightly lower than other cohorts', even after accounting for the additional time the 20-year cohort has had to repay their loans. 
+Ashford University has been recoded as a non-California institution for the purpose of this analysis. 
 
 ***
 
@@ -8870,7 +8896,7 @@ kable(table12B, caption="Average annual wages of workers by highest education: B
 
 In this final section, I provide further statistics to check the validity of our data universes and samples. 
 
-*Is the sub-sample on California households from SHED sufficiently large to draw comparisons across groups?*
+**Is the sub-sample on California households from SHED sufficiently large to draw comparisons across groups?**
 
 The pooled data from SHED that we use contains survey records from 71,710 households nationwide, of which 7,891 (or 11%) are from California. Of those 7,891 California households, 1,117 hold student loan debt.  
 
@@ -9394,7 +9420,7 @@ pc.n2 <- N.CreditScore$`Survey respondents`[(N.CreditScore$State=="CA") & (N.Cre
 pc.p1 <- tblCreditScore2$`Poor or very poor`[(tblCreditScore2$State=="CA") & (tblCreditScore2$Race=="Black, Non-Hispanic") & (tblCreditScore2$AnyStudentLoans=="Yes")]
 pc.p2 <- tblCreditScore2$`Poor or very poor`[(tblCreditScore2$State=="CA") & (tblCreditScore2$Race=="White, Non-Hispanic") & (tblCreditScore2$AnyStudentLoans=="Yes")]
 power.SHED <- power.SHED %>% add_row(
-  `Measure`="Share who report living comfortably", 
+  `Measure`="Share who have a poor or very poor credit score", 
   `Figure`="Figure 21", 
   `Group 1`="Black borrowers in CA",
   `Group 2`="White borrowers in CA", 
@@ -9414,7 +9440,7 @@ pc.n2 <- N.CreditScore$`Survey respondents`[(N.CreditScore$State=="Rest of U.S."
 pc.p1 <- tblCreditScore2$`Poor or very poor`[(tblCreditScore2$State=="CA") & (tblCreditScore2$Race=="Black, Non-Hispanic") & (tblCreditScore2$AnyStudentLoans=="Yes")]
 pc.p2 <- tblCreditScore2$`Poor or very poor`[(tblCreditScore2$State=="Rest of U.S.") & (tblCreditScore2$Race=="Black, Non-Hispanic") & (tblCreditScore2$AnyStudentLoans=="Yes")]
 power.SHED <- power.SHED %>% add_row(
-  `Measure`="Share who report living comfortably", 
+  `Measure`="Share who have a poor or very poor credit score", 
   `Figure`="Figure 21", 
   `Group 1`="Black borrowers in CA",
   `Group 2`="Black borrowers in rest of U.S.", 
@@ -9548,7 +9574,7 @@ kable(power.SHED, caption="Checking statistical power values of SHED analyses") 
 
 #### Data Source and Notes
 
-**Data source:** Survey of Household Economics and Decision-making, accessed November 2022, available through the U.S. Federal Reserve [here](https://www.federalreserve.gov/consumerscommunities/shed_data.htm).
+**Data source:** Survey of Household Economics and Decision-making, accessed November 2022, available through the U.S. Federal Reserve [here](https://www.federalreserve.gov/consumerscommunities/shed_data.htm). See the data notes under the specified figures for more details about individual analyses summarized here. 
 
 **Notes:** I use the R package `pwr` and the `pwr.2p2n.test` function to calculate the power of certain subgroup comparisons, using two-sample t-tests with different sample sizes. The alpha level is set at 0.05 for all tests, which is considered standard. I do not factor in the population weight of respondents, for the purposes of measuring sample size: each respondent counts the same. 
 
@@ -9558,16 +9584,7 @@ kable(power.SHED, caption="Checking statistical power values of SHED analyses") 
 
 Not all the comparisons have a power value of at least 0.8. This informs how the accompanying policy report is written. For comparisons that meet the power threshold of 0.8, the report makes more definitive claims, such as "Hispanic student loan borrowers in California are less likely to have a college degree than white student loan borrowers in California." For comparisons that are close to 0.8 but not above it (0.65 or higher), the report makes more cautious claims, such as "The data suggest that, in California, Black and Hispanic borrowers are less likely to report living comfortably than white student loan borrowers." And comparisons that have power values even lower are not included in the policy report. 
 
-*Is the SHED sample representative of California households?*
-
-Because the SHED sample can get small for certain sub-groups that are of interest to our analysis, sample bias can become a concern. 
-
-```{r check.SHED2}
-```
-
-*To what extent are the aggregate statistics based on FSA data influenced by individual institutions?* 
-
-We can start by determining the 
+**To what extent are the aggregate statistics based on FSA data influenced by individual institutions?** 
 
 Figure 1 has twenty bars reflecting the average annual loan at California institutions: four rows for institutional control, five columns for loan program. For each of those bars, we can assess the amount that any individual institution is driving the height of the bar, which represents the average annual loan amount. 
 
@@ -9711,9 +9728,18 @@ ca.loans2$`Loan program` <- factor(ca.loans2$`Loan program`, levels=c(
   "Grad PLUS"
 ))
 
+ca.loans2$`Control` <- as.factor(ca.loans2$`Control`)
+ca.loans2$`Control` <- factor(ca.loans2$`Control`, levels=c(
+  "All controls",
+  "Public", 
+  "Non-profit", 
+  "For-profit"
+))
+
 ca.loans2$`For Tooltip` <- paste(
   "College: ", ca.loans2$School, '\n',
   "Program: ", ca.loans2$`Loan program`, '\n',
+  "Control: ", ca.loans2$`Control`, '\n',
   "College's share of California loan recipients: ", percent(ca.loans2$`Share of loan recipients`, accuracy=0.1), '\n',
   "College's average loan: ", dollar(ca.loans2$`Institution's average loan`, accuracy=1), '\n',
   "Sector-wide average loan: ", dollar(ca.loans2$`Sector-wide average loan`, accuracy=1), '\n',
@@ -9744,74 +9770,603 @@ This figure gives good context to Figure 1, and particularly the concerns about 
 * All the public institutions with above-average Grad PLUS loans are from the UC system.  
 * CSU campuses tend to bring the statewide Grad PLUS average down. 
 
-*To what extent are the aggregate statistics based on College Scorecard data influenced by individual institutions?*
+**To what extent are the aggregate statistics based on College Scorecard data influenced by individual institutions?**
+
+As we did with the check on FSA data, we will assess the influence of individual institutions on the average balances over time, which is in Figure 37 in this document. 
 
 ```{r check.Scorecard1}
+Q42 <- Q28.check %>% filter(State=="California")
 
-# We're primarily interested in 37, so that's what we'll focus on. 
-# Figure 37 
+Q42.S <- Q42 %>% select(
+  UNITID, INSTNM, Control, 
+  DBRR1_FED_UG_N, DBRR1_FED_UG_NUM, DBRR1_FED_UG_DEN, 
+  DBRR5_FED_UG_N, DBRR5_FED_UG_NUM, DBRR5_FED_UG_DEN, 
+  DBRR10_FED_UG_N, DBRR10_FED_UG_NUM, DBRR10_FED_UG_DEN, 
+  DBRR20_FED_UG_N, DBRR20_FED_UG_NUM, DBRR20_FED_UG_DEN)
 
+Q42.P <- Q42 %>% select(
+  UNITID, INSTNM, Control, 
+  DBRR1_PP_UG_N, DBRR1_PP_UG_NUM, DBRR1_PP_UG_DEN,
+  DBRR5_PP_UG_N, DBRR5_PP_UG_NUM, DBRR5_PP_UG_DEN,
+  DBRR10_PP_UG_N, DBRR10_PP_UG_NUM, DBRR10_PP_UG_DEN, 
+  DBRR20_PP_UG_N, DBRR20_PP_UG_NUM, DBRR20_PP_UG_DEN)
+
+Q42.G <- Q42 %>% select(
+  UNITID, INSTNM, Control, 
+  DBRR1_FED_GR_N, DBRR1_FED_GR_NUM, DBRR1_FED_GR_DEN,
+  DBRR5_FED_GR_N, DBRR5_FED_GR_NUM, DBRR5_FED_GR_DEN, 
+  DBRR10_FED_GR_N, DBRR10_FED_GR_NUM, DBRR10_FED_GR_DEN, 
+  DBRR20_FED_GR_N, DBRR20_FED_GR_NUM, DBRR20_FED_GR_DEN)
+
+Q42.S <- reshape2::melt(data=Q42.S, id.vars=c("UNITID", "INSTNM", "Control"))
+Q42.P <- reshape2::melt(data=Q42.P, id.vars=c("UNITID", "INSTNM", "Control"))
+Q42.G <- reshape2::melt(data=Q42.G, id.vars=c("UNITID", "INSTNM", "Control"))
+Q42.S$Program <- rep("Stafford", nrow(Q42.S))
+Q42.P$Program <- rep("Parent PLUS", nrow(Q42.P))
+Q42.G$Program <- rep("Grad PLUS", nrow(Q42.G))
+
+Q42.S$Year <- rep(NA, nrow(Q42.S))
+Q42.S$Year[grepl("DBRR1_", Q42.S$variable)] <- 1
+Q42.S$Year[grepl("DBRR5_", Q42.S$variable)] <- 5
+Q42.S$Year[grepl("DBRR10_", Q42.S$variable)] <- 10
+Q42.S$Year[grepl("DBRR20_", Q42.S$variable)] <- 20
+Q42.S$Measure <- rep(NA, nrow(Q42.S))
+Q42.S$Measure[grepl("_N", Q42.S$variable)] <- "Institutional borrower count"
+Q42.S$Measure[grepl("_NUM", Q42.S$variable)] <- "Institutional balance at repayment year X" 
+Q42.S$Measure[grepl("_DEN", Q42.S$variable)] <- "Institutional original balance"
+
+Q42.P$Year <- rep(NA, nrow(Q42.P))
+Q42.P$Year[grepl("DBRR1_", Q42.P$variable)] <- 1
+Q42.P$Year[grepl("DBRR5_", Q42.P$variable)] <- 5
+Q42.P$Year[grepl("DBRR10_", Q42.P$variable)] <- 10
+Q42.P$Year[grepl("DBRR20_", Q42.P$variable)] <- 20
+Q42.P$Measure <- rep(NA, nrow(Q42.P))
+Q42.P$Measure[grepl("_N", Q42.P$variable)] <- "Institutional borrower count"
+Q42.P$Measure[grepl("_NUM", Q42.P$variable)] <- "Institutional balance at repayment year X" 
+Q42.P$Measure[grepl("_DEN", Q42.P$variable)] <- "Institutional original balance"
+
+Q42.G$Year <- rep(NA, nrow(Q42.G))
+Q42.G$Year[grepl("DBRR1_", Q42.G$variable)] <- 1
+Q42.G$Year[grepl("DBRR5_", Q42.G$variable)] <- 5
+Q42.G$Year[grepl("DBRR10_", Q42.G$variable)] <- 10
+Q42.G$Year[grepl("DBRR20_", Q42.G$variable)] <- 20
+Q42.G$Measure <- rep(NA, nrow(Q42.G))
+Q42.G$Measure[grepl("_N", Q42.G$variable)] <- "Institutional borrower count"
+Q42.G$Measure[grepl("_NUM", Q42.G$variable)] <- "Institutional balance at repayment year X" 
+Q42.G$Measure[grepl("_DEN", Q42.G$variable)] <- "Institutional original balance"
+
+Q42.S <- reshape2::dcast(data=Q42.S, UNITID + INSTNM + Control + Program + Year ~ Measure, value.var="value")
+Q42.P <- reshape2::dcast(data=Q42.P, UNITID + INSTNM + Control + Program + Year ~ Measure, value.var="value")
+Q42.G <- reshape2::dcast(data=Q42.G, UNITID + INSTNM + Control + Program + Year ~ Measure, value.var="value")
+
+Q42.S <- Q42.S %>% filter(`Institutional borrower count` > 0)
+Q42.G <- Q42.G %>% filter(`Institutional borrower count` > 0)
+Q42.P <- Q42.P %>% filter(`Institutional borrower count` > 0)
+
+Q42.S.All <- Q42.S
+Q42.S.All$Control <- rep("All controls", nrow(Q42.S.All))
+Q42.P.All <- Q42.P
+Q42.P.All$Control <- rep("All controls", nrow(Q42.P.All))
+Q42.G.All <- Q42.G
+Q42.G.All$Control <- rep("All controls", nrow(Q42.G.All))
+
+Q42.S <- rbind(Q42.S, Q42.S.All)
+Q42.P <- rbind(Q42.P, Q42.P.All)
+Q42.G <- rbind(Q42.G, Q42.G.All)
+
+all.borrowers.S <- aggregate(data=Q42.S, cbind(`Institutional borrower count`, `Institutional balance at repayment year X`, `Institutional original balance`) ~ `Control` + `Year`, FUN=sum)
+all.borrowers.P <- aggregate(data=Q42.P, cbind(`Institutional borrower count`, `Institutional balance at repayment year X`, `Institutional original balance`) ~ `Control` + `Year`, FUN=sum)
+all.borrowers.G <- aggregate(data=Q42.G, cbind(`Institutional borrower count`, `Institutional balance at repayment year X`, `Institutional original balance`) ~ `Control` + `Year`, FUN=sum)
+names(all.borrowers.S) <- c("Control", "Year", "Global borrower count", "Global balance at repayment year X", "Global original balance")
+names(all.borrowers.P) <- c("Control", "Year", "Global borrower count", "Global balance at repayment year X", "Global original balance")
+names(all.borrowers.G) <- c("Control", "Year", "Global borrower count", "Global balance at repayment year X", "Global original balance")
+
+Q42.S <- left_join(x=Q42.S, y=all.borrowers.S, by=c("Control", "Year"))
+Q42.P <- left_join(x=Q42.P, y=all.borrowers.P, by=c("Control", "Year"))
+Q42.G <- left_join(x=Q42.G, y=all.borrowers.G, by=c("Control", "Year"))
+
+Q42.S <- Q42.S %>% mutate(`Institution's share of all borrowers` = `Institutional borrower count` / `Global borrower count`)
+Q42.P <- Q42.P %>% mutate(`Institution's share of all borrowers` = `Institutional borrower count` / `Global borrower count`)
+Q42.G <- Q42.G %>% mutate(`Institution's share of all borrowers` = `Institutional borrower count` / `Global borrower count`)
+
+Q42.S <- Q42.S %>% mutate(`Institutional DBRR ratio` = `Institutional balance at repayment year X` / `Institutional original balance`)
+Q42.P <- Q42.P %>% mutate(`Institutional DBRR ratio` = `Institutional balance at repayment year X` / `Institutional original balance`)
+Q42.G <- Q42.G %>% mutate(`Institutional DBRR ratio` = `Institutional balance at repayment year X` / `Institutional original balance`)
+
+Q42.S <- Q42.S %>% mutate(`Global DBRR ratio` = `Global balance at repayment year X` / `Global original balance`)
+Q42.P <- Q42.P %>% mutate(`Global DBRR ratio` = `Global balance at repayment year X` / `Global original balance`)
+Q42.G <- Q42.G %>% mutate(`Global DBRR ratio` = `Global balance at repayment year X` / `Global original balance`)
+
+Q42.S <- Q42.S %>% mutate(`Institution's average balance` = `Institutional balance at repayment year X` / `Institutional borrower count`)
+Q42.P <- Q42.P %>% mutate(`Institution's average balance` = `Institutional balance at repayment year X` / `Institutional borrower count`)
+Q42.G <- Q42.G %>% mutate(`Institution's average balance` = `Institutional balance at repayment year X` / `Institutional borrower count`)
+
+Q42.S <- Q42.S %>% mutate(`Global average balance` = `Global balance at repayment year X` / `Global borrower count`)
+Q42.P <- Q42.P %>% mutate(`Global average balance` = `Global balance at repayment year X` / `Global borrower count`)
+Q42.G <- Q42.G %>% mutate(`Global average balance` = `Global balance at repayment year X` / `Global borrower count`)
+
+Q42.S <- Q42.S %>% mutate(`Difference in ratios` = `Institutional DBRR ratio` - `Global DBRR ratio`)
+Q42.P <- Q42.P %>% mutate(`Difference in ratios` = `Institutional DBRR ratio` - `Global DBRR ratio`)
+Q42.G <- Q42.G %>% mutate(`Difference in ratios` = `Institutional DBRR ratio` - `Global DBRR ratio`)
+
+Q42.S <- Q42.S %>% mutate(`Ratio of average balance` = `Institution's average balance` / `Global average balance`)
+Q42.P <- Q42.P %>% mutate(`Ratio of average balance` = `Institution's average balance` / `Global average balance`)
+Q42.G <- Q42.G %>% mutate(`Ratio of average balance` = `Institution's average balance` / `Global average balance`)
+
+Q43.S <- Q42.S
+Q43.P <- Q42.P
+Q43.G <- Q42.G
 ```
+### {.tabset}
+#### Figure 42: Stafford
+```{r figure42S}
+Q42.S$`For Tooltip` <- paste(
+  "College: ", Q42.S$INSTNM, '\n',
+  "Sector: ", Q42.S$Control, '\n',
+  "Program: ", Q42.S$`Program`, '\n',
+  "Repayment year: ", Q42.S$`Year`, '\n',
+  "Number of borrowers in cohort: ", Q42.S$`Institutional borrower count`, '\n',
+  "College's share of borrowers in cohort: ", percent(Q42.S$`Institution's share of all borrowers`, accuracy=0.1), '\n',
+  "College's repayment ratio: ", round(Q42.S$`Institutional DBRR ratio`, 2), '\n',
+  "Sector-wide repayment ratio: ", round(Q42.S$`Global DBRR ratio`, 2), '\n',
+  "Difference in ratios: ", round(Q42.S$`Difference in ratios`, 2), 
+  sep=""
+)
 
-*How strong is our confidence in the statistics derived from NPSAS?*
+Q42.S$Year <- paste("Year ", Q42.S$Year, sep="")
+Q42.S$Year <- as.factor(Q42.S$Year)
+Q42.S$Year <- factor(Q42.S$Year, levels=c("Year 1", "Year 5", "Year 10", "Year 20"))
+
+g42S <- ggplot(data=Q42.S, mapping=aes(x=`Institution's share of all borrowers`, y=`Difference in ratios`, text=`For Tooltip`)) + geom_point(stat="identity", alpha=0.7) + geom_hline(yintercept=0, linetype=4) + facet_grid(`Control` ~ `Year`) + theme(legend.position='none', text=element_text(family="Optima")) + labs(x="Institution's share of California borrower cohort") + scale_x_continuous(labels=percent_format(accuracy=1))
+
+ggplotly(g42S, width=900, height=800, tooltip="text")
+```
+#### Figure 42: Parent PLUS
+```{r figure42P}
+Q42.P$`For Tooltip` <- paste(
+  "College: ", Q42.P$INSTNM, '\n',
+  "Sector: ", Q42.P$Control, '\n',
+  "Program: ", Q42.P$`Program`, '\n',
+  "Repayment year: ", Q42.P$`Year`, '\n',
+  "Number of borrowers in cohort: ", Q42.P$`Institutional borrower count`, '\n',
+  "College's share of borrowers in cohort: ", percent(Q42.P$`Institution's share of all borrowers`, accuracy=0.1), '\n',
+  "College's repayment ratio: ", round(Q42.P$`Institutional DBRR ratio`, 2), '\n',
+  "Sector-wide repayment ratio: ", round(Q42.P$`Global DBRR ratio`, 2), '\n',
+  "Difference in ratios: ", round(Q42.P$`Difference in ratios`, 2), 
+  sep=""
+)
+
+Q42.P$Year <- paste("Year ", Q42.P$Year, sep="")
+Q42.P$Year <- as.factor(Q42.P$Year)
+Q42.P$Year <- factor(Q42.P$Year, levels=c("Year 1", "Year 5", "Year 10", "Year 20"))
+
+g42P <- ggplot(data=Q42.P, mapping=aes(x=`Institution's share of all borrowers`, y=`Difference in ratios`, text=`For Tooltip`)) + geom_point(stat="identity", alpha=0.7) + geom_hline(yintercept=0, linetype=4) + facet_grid(`Control` ~ `Year`) + theme(legend.position='none', text=element_text(family="Optima")) + labs(x="Institution's share of California borrower cohort") + scale_x_continuous(labels=percent_format(accuracy=1))
+
+ggplotly(g42P, width=900, height=800, tooltip="text")
+```
+#### Figure 42: Grad PLUS
+```{r figure42G}
+Q42.G$`For Tooltip` <- paste(
+  "College: ", Q42.G$INSTNM, '\n',
+  "Sector: ", Q42.G$Control, '\n',
+  "Program: ", Q42.G$`Program`, '\n',
+  "Repayment year: ", Q42.G$`Year`, '\n',
+  "Number of borrowers in cohort: ", Q42.G$`Institutional borrower count`, '\n',
+  "College's share of borrowers in cohort: ", percent(Q42.G$`Institution's share of all borrowers`, accuracy=0.1), '\n',
+  "College's repayment ratio: ", round(Q42.G$`Institutional DBRR ratio`, 2), '\n',
+  "Sector-wide repayment ratio: ", round(Q42.G$`Global DBRR ratio`, 2), '\n',
+  "Difference in ratios: ", round(Q42.G$`Difference in ratios`, 2), 
+  sep=""
+)
+
+Q42.G$Year <- paste("Year ", Q42.G$Year, sep="")
+Q42.G$Year <- as.factor(Q42.G$Year)
+Q42.G$Year <- factor(Q42.G$Year, levels=c("Year 1", "Year 5", "Year 10", "Year 20"))
+
+g42G <- ggplot(data=Q42.G, mapping=aes(x=`Institution's share of all borrowers`, y=`Difference in ratios`, text=`For Tooltip`)) + geom_point(stat="identity", alpha=0.7) + geom_hline(yintercept=0, linetype=4) + facet_grid(`Control` ~ `Year`) + theme(legend.position='none', text=element_text(family="Optima")) + labs(x="Institution's share of California borrower cohort") + scale_x_continuous(labels=percent_format(accuracy=1))
+
+ggplotly(g42G, width=900, height=800, tooltip="text")
+```
+#### Data Source and Notes
+
+**Data source:** College Scorecard institution dataset, accessed November 2022, available through the U.S. Department of Education [here](https://collegescorecard.ed.gov/data/). 
+
+**Timeframe reflected:** These charts are comprised of data on loan balances for four distinct cohorts: the "1-year cohort," the "5-year cohort," the "10-year cohort," and the "20-year cohort," signifying how many years the cohort of borrowers has been in repayment. The data values are derived from the current balance of the borrowers compared to the original balance when they entered repayment (be it 1, 5, 10, or 20 years prior). 
+
+More specifically, the cohorts are defined as the following: 
+
+* 1-year cohort: Borrowers who entered repayment in AY2017-18 or AY2018-19. Data on current balances reflect balances in 2018-2019 or 2019-2020. 
+* 5-year cohort: Borrowers who entered repayment in AY2013-14 or AY2014-15. Data on current balances reflect balances in 2018-2019 or 2019-2020. 
+* 10-year cohort: Borrowers who entered repayment in AY2008-09 or AY2009-10. Data on current balances reflect balances in 2018-2019 or 2019-2020.
+* 20-year cohort: Borrowers who entered repayment in AY1998-99 or AY1999-00. Data on current balances reflect balances in 2018-2019 or 2019-2020.
+
+The measures reflect pre-pandemic balances.
+
+***
+### {-}
+
+Next we examine Figure 37. 
+
+### {.tabset}
+#### Figure 43: Stafford
+```{r figure43S}
+Q43.S$`For Tooltip` <- paste(
+  "College: ", Q43.S$INSTNM, '\n',
+  "Sector: ", Q43.S$Control, '\n',
+  "Program: ", Q43.S$`Program`, '\n',
+  "Repayment year: ", Q43.S$`Year`, '\n',
+  "Number of borrowers in cohort: ", Q43.S$`Institutional borrower count`, '\n',
+  "College's share of borrowers in cohort: ", percent(Q43.S$`Institution's share of all borrowers`, accuracy=0.1), '\n',
+  "College's average loan balance: ", dollar(Q43.S$`Institution's average balance`, accuracy=1), '\n',
+  "Sector-wide average loan balance: ", dollar(Q43.S$`Global average balance`, accuracy=1), '\n',
+  "Ratio of college's average to sector average: ", round(Q43.S$`Ratio of average balance`, 2), 
+  sep=""
+)
+
+Q43.S$Year <- paste("Year ", Q43.S$Year, sep="")
+Q43.S$Year <- as.factor(Q43.S$Year)
+Q43.S$Year <- factor(Q43.S$Year, levels=c("Year 1", "Year 5", "Year 10", "Year 20"))
+
+g43S <- ggplot(data=Q43.S, mapping=aes(x=`Institution's share of all borrowers`, y=`Ratio of average balance`, text=`For Tooltip`)) + geom_point(stat="identity", alpha=0.7) + geom_hline(yintercept=1, linetype=4) + facet_grid(`Control` ~ `Year`) + theme(legend.position='none', text=element_text(family="Optima")) + labs(x="Institution's share of California borrower cohort") + scale_x_continuous(labels=percent_format(accuracy=1))
+
+ggplotly(g43S, width=900, height=800, tooltip="text")
+```
+#### Figure 43: Parent PLUS
+```{r figure43P}
+Q43.P$`For Tooltip` <- paste(
+  "College: ", Q43.P$INSTNM, '\n',
+  "Sector: ", Q43.P$Control, '\n',
+  "Program: ", Q43.P$`Program`, '\n',
+  "Repayment year: ", Q43.P$`Year`, '\n',
+  "Number of borrowers in cohort: ", Q43.P$`Institutional borrower count`, '\n',
+  "College's share of borrowers in cohort: ", percent(Q43.P$`Institution's share of all borrowers`, accuracy=0.1), '\n',
+  "College's average loan balance: ", dollar(Q43.P$`Institution's average balance`, accuracy=1), '\n',
+  "Sector-wide average loan balance: ", dollar(Q43.P$`Global average balance`, accuracy=1), '\n',
+  "Ratio of college's average to sector average: ", round(Q43.P$`Ratio of average balance`, 2), 
+  sep=""
+)
+
+Q43.P$Year <- paste("Year ", Q43.P$Year, sep="")
+Q43.P$Year <- as.factor(Q43.P$Year)
+Q43.P$Year <- factor(Q43.P$Year, levels=c("Year 1", "Year 5", "Year 10", "Year 20"))
+
+g43P <- ggplot(data=Q43.P, mapping=aes(x=`Institution's share of all borrowers`, y=`Ratio of average balance`, text=`For Tooltip`)) + geom_point(stat="identity", alpha=0.7) + geom_hline(yintercept=1, linetype=4) + facet_grid(`Control` ~ `Year`) + theme(legend.position='none', text=element_text(family="Optima")) + labs(x="Institution's share of California borrower cohort") + scale_x_continuous(labels=percent_format(accuracy=1))
+
+ggplotly(g43P, width=900, height=800, tooltip="text")
+```
+#### Figure 43: Grad PLUS
+```{r figure43G}
+Q43.G$`For Tooltip` <- paste(
+  "College: ", Q43.G$INSTNM, '\n',
+  "Sector: ", Q43.G$Control, '\n',
+  "Program: ", Q43.G$`Program`, '\n',
+  "Repayment year: ", Q43.G$`Year`, '\n',
+  "Number of borrowers in cohort: ", Q43.G$`Institutional borrower count`, '\n',
+  "College's share of borrowers in cohort: ", percent(Q43.G$`Institution's share of all borrowers`, accuracy=0.1), '\n',
+  "College's average loan balance: ", dollar(Q43.G$`Institution's average balance`, accuracy=1), '\n',
+  "Sector-wide average loan balance: ", dollar(Q43.G$`Global average balance`, accuracy=1), '\n',
+  "Ratio of college's average to sector average: ", round(Q43.G$`Ratio of average balance`, 2), 
+  sep=""
+)
+
+Q43.G$Year <- paste("Year ", Q43.G$Year, sep="")
+Q43.G$Year <- as.factor(Q43.G$Year)
+Q43.G$Year <- factor(Q43.G$Year, levels=c("Year 1", "Year 5", "Year 10", "Year 20"))
+
+g43G <- ggplot(data=Q43.G, mapping=aes(x=`Institution's share of all borrowers`, y=`Ratio of average balance`, text=`For Tooltip`)) + geom_point(stat="identity", alpha=0.7) + geom_hline(yintercept=1, linetype=4) + facet_grid(`Control` ~ `Year`) + theme(legend.position='none', text=element_text(family="Optima")) + labs(x="Institution's share of California borrower cohort") + scale_x_continuous(labels=percent_format(accuracy=1))
+
+ggplotly(g43G, width=900, height=800, tooltip="text")
+```
+#### Data Source and Notes
+
+**Data source:** College Scorecard institution dataset, accessed November 2022, available through the U.S. Department of Education [here](https://collegescorecard.ed.gov/data/). 
+
+**Timeframe reflected:** These charts are comprised of data on loan balances for four distinct cohorts: the "1-year cohort," the "5-year cohort," the "10-year cohort," and the "20-year cohort," signifying how many years the cohort of borrowers has been in repayment. The data values are derived from the current balance of the borrowers compared to the original balance when they entered repayment (be it 1, 5, 10, or 20 years prior). 
+
+More specifically, the cohorts are defined as the following: 
+
+* 1-year cohort: Borrowers who entered repayment in AY2017-18 or AY2018-19. Data on current balances reflect balances in 2018-2019 or 2019-2020. 
+* 5-year cohort: Borrowers who entered repayment in AY2013-14 or AY2014-15. Data on current balances reflect balances in 2018-2019 or 2019-2020. 
+* 10-year cohort: Borrowers who entered repayment in AY2008-09 or AY2009-10. Data on current balances reflect balances in 2018-2019 or 2019-2020.
+* 20-year cohort: Borrowers who entered repayment in AY1998-99 or AY1999-00. Data on current balances reflect balances in 2018-2019 or 2019-2020.
+
+The measures reflect pre-pandemic balances.
+
+***
+### {-}
+
+
+
+**How strong is our confidence in the statistics derived from NPSAS?**
 
 For the statistics in this report that are derived from NPSAS, I use the National Center on Education Statistics' Datalab tool, which is an online user interface for aggregating NCES survey data. With each query, Datalab provides the standard error of each estimate, allowing us to generate confidence intervals. 
 
 Including confidence intervals on every NPSAS query included above would have required significant additional coding time. In this section, I provide confidence intervals for selected key findings that were derived from the NPSAS data. 
 
+### {.tabset}
+#### Table 14
 ```{r check.NPSAS1}
-
 # Figure 2: Share borrowing  
-# CA vs US 
+# Overall CA  # Line 124, D-E
+# Overall US  # Line 60, D-E
+# White in CA # Line 126, D-E
+# Black in CA # Line 127, D-E
+# File: "PowerStats njviui.csv"
 
-# Figure 2: Average loan
-# CA vs US
+NC.1.1 <- read.csv("PowerStats njviui.csv", header=FALSE, skip=(124 - 1), nrow=1) %>% select(V1, V4, V5)
+NC.1.1$Group <- c("Overall")
+NC.1.1$State <- c("CA")
 
-# Figure 2: Share borrowing 
-# Black in CA vs Overall CA 
+NC.1.2 <- read.csv("PowerStats njviui.csv", header=FALSE, skip=(60 - 1), nrow=1) %>% select(V1, V4, V5)
+NC.1.2$Group <- c("Overall")
+NC.1.2$State <- c("US")
 
-# Figure 3: Share borrowing 
-# Overall CA
-# Black in CA 
-# Black in US 
-# Latino in CA
-# Latino in US
+NC.1.3 <- read.csv("PowerStats njviui.csv", header=FALSE, skip=(126 - 1), nrow=1) %>% select(V1, V4, V5)
+NC.1.3$Group <- c("White")
+NC.1.3$State <- c("CA")
 
-# Figure 3: Average loan 
-# Overall CA
-# Black in CA 
-# Black in US 
-# Latino in CA
-# Latino in US
+NC.1.4 <- read.csv("PowerStats njviui.csv", header=FALSE, skip=(127 - 1), nrow=1) %>% select(V1, V4, V5)
+NC.1.4$Group <- c("Black")
+NC.1.4$State <- c("CA")
 
-# Figure 3: Share borrowing (race/gender)
-# Black women in CA vs Overall CA 
-
-# Figure 5: Share borrowing 
-# Black in CA
-# Latino in CA
-# Pacific Islander in CA
-# Asian in CA 
-# White in CA 
-# Overall CA
-
-# Figure 5: Average loan 
-# Black in CA
-# Latino in CA
-# Pacific Islander in CA
-# Asian in CA 
-# White in CA 
-# Overall CA
-
-# 
-
+NC.1 <- rbind(NC.1.1, NC.1.2, NC.1.3, NC.1.4)
+NC.1$`Measure` <- rep("Share borrowing undergraduate loans", nrow(NC.1))
+NC.1$`Figure` <- rep("Figure 2", nrow(NC.1))
+NC.1$`Type` <- rep("Percentage", nrow(NC.1))
 ```
 
+```{r check.NPSAS2}
+# Figure 2: Average loan
+# Overall CA # Line 119, B-C
+# Overall US # Line 58, B-C
+# File: "Powerstats opspco.csv"
 
+NC.2.1 <- read.csv("Powerstats opspco.csv", header=FALSE, skip=(119 - 1), nrow=1) %>% select(V1, V2, V3)
+NC.2.1$Group <- c("Overall")
+NC.2.1$State <- c("CA")
+
+NC.2.2 <- read.csv("Powerstats opspco.csv", header=FALSE, skip=(58 - 1), nrow=1) %>% select(V1, V2, V3)
+NC.2.2$Group <- c("Overall")
+NC.2.2$State <- c("US")
+
+NC.2 <- rbind(NC.2.1, NC.2.2)
+NC.2$`Measure` <- rep("Average undergraduate loan", nrow(NC.2))
+NC.2$`Figure` <- rep("Figure 2", nrow(NC.2))
+NC.2$`Type` <- rep("Dollar", nrow(NC.2))
+```
+
+```{r check.NPSAS3}
+# Figure 3: Share borrowing 
+# Overall CA   # Line 124, D-E
+# Overall US   # Line 60, D-E
+# Black in CA  # Line 127, D-E 
+# Black in US  # Line 63, D-E 
+# Latino in CA # Line 128, D-E
+# Latino in US # Line 64, D-E
+# White in CA  # Line 126, D-E
+# White in US  # Line 62, D-E
+# File: "Powerstats lhkurg.csv"
+
+NC.3.1 <- read.csv("Powerstats lhkurg.csv", header=FALSE, skip=(124 - 1), nrow=1) %>% select(V1, V4, V5)
+NC.3.1$Group <- c("Overall")
+NC.3.1$State <- c("CA")
+
+NC.3.2 <- read.csv("Powerstats lhkurg.csv", header=FALSE, skip=(60 - 1), nrow=1) %>% select(V1, V4, V5)
+NC.3.2$Group <- c("Overall")
+NC.3.2$State <- c("US")
+
+NC.3.3 <- read.csv("Powerstats lhkurg.csv", header=FALSE, skip=(127 - 1), nrow=1) %>% select(V1, V4, V5)
+NC.3.3$Group <- c("Black")
+NC.3.3$State <- c("CA")
+
+NC.3.4 <- read.csv("Powerstats lhkurg.csv", header=FALSE, skip=(63 - 1), nrow=1) %>% select(V1, V4, V5)
+NC.3.4$Group <- c("Black")
+NC.3.4$State <- c("US")
+
+NC.3.5 <- read.csv("Powerstats lhkurg.csv", header=FALSE, skip=(128 - 1), nrow=1) %>% select(V1, V4, V5)
+NC.3.5$Group <- c("Latino/a")
+NC.3.5$State <- c("CA")
+
+NC.3.6 <- read.csv("Powerstats lhkurg.csv", header=FALSE, skip=(64 - 1), nrow=1) %>% select(V1, V4, V5)
+NC.3.6$Group <- c("Latino/a")
+NC.3.6$State <- c("US")
+
+NC.3.7 <- read.csv("Powerstats lhkurg.csv", header=FALSE, skip=(126 - 1), nrow=1) %>% select(V1, V4, V5)
+NC.3.7$Group <- c("White")
+NC.3.7$State <- c("CA")
+
+NC.3.8 <- read.csv("Powerstats lhkurg.csv", header=FALSE, skip=(62 - 1), nrow=1) %>% select(V1, V4, V5)
+NC.3.8$Group <- c("White")
+NC.3.8$State <- c("US")
+
+NC.3 <- rbind(NC.3.1, NC.3.2, NC.3.3, NC.3.4, NC.3.5, NC.3.6, NC.3.7, NC.3.8)
+NC.3$`Measure` <- rep("Share borrowing graduate loans", nrow(NC.3))
+NC.3$`Figure` <- rep("Figure 3", nrow(NC.3))
+NC.3$`Type` <- rep("Percentage", nrow(NC.3))
+```
+
+```{r check.NPSAS4}
+# Figure 3: Share borrowing (race/gender)
+# Black women in CA # Line 194
+# Overall CA        # Line 187
+# File: "Powerstats ukuclj.csv"
+
+NC.4.1 <- read.csv("Powerstats ukuclj.csv", header=FALSE, skip=(194 - 1), nrow=1) %>% select(V1, V4, V5)
+NC.4.1$Group <- c("Black women")
+NC.4.1$State <- c("CA")
+
+NC.4.2 <- read.csv("Powerstats ukuclj.csv", header=FALSE, skip=(187 - 1), nrow=1) %>% select(V1, V4, V5)
+NC.4.2$Group <- c("Overall")
+NC.4.2$State <- c("CA")
+
+NC.4 <- rbind(NC.4.1, NC.4.2)
+NC.4$`Measure` <- rep("Share borrowing graduate loans", nrow(NC.4))
+NC.4$`Figure` <- rep("Figure 3", nrow(NC.4))
+NC.4$`Type` <- rep("Percentage", nrow(NC.4))
+```
+
+```{r check.NPSAS5}
+# Figure 3: Average loan 
+# Overall CA   # Line 119, B-C 
+# Black in CA  # Line 122, B-C
+# Black in US  # Line 61, B-C
+# Latino in CA # Line 123, B-C
+# Latino in US # Line 62, B-C
+# File: "Powerstats avflfm.csv"
+
+NC.5.1 <- read.csv("Powerstats avflfm.csv", header=FALSE, skip=(119 - 1), nrow=1) %>% select(V1, V2, V3)
+NC.5.1$Group <- c("Overall")
+NC.5.1$State <- c("CA")
+
+NC.5.2 <- read.csv("Powerstats avflfm.csv", header=FALSE, skip=(122 - 1), nrow=1) %>% select(V1, V2, V3)
+NC.5.2$Group <- c("Black")
+NC.5.2$State <- c("CA")
+
+NC.5.3 <- read.csv("Powerstats avflfm.csv", header=FALSE, skip=(61 - 1), nrow=1) %>% select(V1, V2, V3)
+NC.5.3$Group <- c("Black")
+NC.5.3$State <- c("US")
+
+NC.5.4 <- read.csv("Powerstats avflfm.csv", header=FALSE, skip=(123 - 1), nrow=1) %>% select(V1, V2, V3)
+NC.5.4$Group <- c("Latino/a")
+NC.5.4$State <- c("CA")
+
+NC.5.5 <- read.csv("Powerstats avflfm.csv", header=FALSE, skip=(62 - 1), nrow=1) %>% select(V1, V2, V3)
+NC.5.5$Group <- c("Latino/a")
+NC.5.5$State <- c("US")
+
+NC.5 <- rbind(NC.5.1, NC.5.2, NC.5.3, NC.5.4, NC.5.5)
+NC.5$`Measure` <- rep("Average graduate loan", nrow(NC.5))
+NC.5$`Figure` <- rep("Figure 3", nrow(NC.5))
+NC.5$`Type` <- rep("Dollar", nrow(NC.5))
+```
+
+```{r check.NPSAS6}
+# Figure 5: Share borrowing 
+# Black in CA            # Line 127, D-E
+# Latino in CA           # Line 128, D-E
+# Pacific Islander in CA # Line 131, D-E
+# Asian in CA            # Line 129, D-E
+# White in CA            # Line 126, D-E 
+# Overall CA             # Line 124, D-E
+# File: "PowerStats admfpj.csv"
+
+NC.6.1 <- read.csv("PowerStats admfpj.csv", header=FALSE, skip=(127 - 1), nrow=1) %>% select(V1, V4, V5)
+NC.6.1$Group <- c("Black")
+NC.6.1$State <- c("CA")
+
+NC.6.2 <- read.csv("PowerStats admfpj.csv", header=FALSE, skip=(128 - 1), nrow=1) %>% select(V1, V4, V5)
+NC.6.2$Group <- c("Latino/a")
+NC.6.2$State <- c("CA")
+
+NC.6.3 <- read.csv("PowerStats admfpj.csv", header=FALSE, skip=(131 - 1), nrow=1) %>% select(V1, V4, V5)
+NC.6.3$Group <- c("Pacific Islander")
+NC.6.3$State <- c("CA")
+
+NC.6.4 <- read.csv("PowerStats admfpj.csv", header=FALSE, skip=(129 - 1), nrow=1) %>% select(V1, V4, V5)
+NC.6.4$Group <- c("Asian")
+NC.6.4$State <- c("CA")
+
+NC.6.5 <- read.csv("PowerStats admfpj.csv", header=FALSE, skip=(126 - 1), nrow=1) %>% select(V1, V4, V5)
+NC.6.5$Group <- c("White")
+NC.6.5$State <- c("CA")
+
+NC.6.6 <- read.csv("PowerStats admfpj.csv", header=FALSE, skip=(124 - 1), nrow=1) %>% select(V1, V4, V5)
+NC.6.6$Group <- c("Overall")
+NC.6.6$State <- c("CA")
+
+NC.6 <- rbind(NC.6.1, NC.6.2, NC.6.3, NC.6.4, NC.6.5, NC.6.6)
+NC.6$`Measure` <- rep("Share with undergraduate loans by graduation", nrow(NC.6))
+NC.6$`Figure` <- rep("Figure 5", nrow(NC.6))
+NC.6$`Type` <- rep("Percentage", nrow(NC.6))
+```
+
+```{r check.NPSAS7}
+# Figure 5: Average loan 
+# Overall CA             # Line 119, B-C
+# Black in CA            # Line 122, B-C
+# Latino in CA           # Line 123, B-C
+# Pacific Islander in CA # Line 126, B-C
+# Asian in CA            # Line 124, B-C
+# White in CA            # Line 121, B-C
+# File: "PowerStats rcefsb.csv"
+
+NC.7.1 <- read.csv("PowerStats rcefsb.csv", header=FALSE, skip=(119 - 1), nrow=1) %>% select(V1, V2, V3)
+NC.7.1$Group <- c("Overall")
+NC.7.1$State <- c("CA")
+
+NC.7.2 <- read.csv("PowerStats rcefsb.csv", header=FALSE, skip=(122 - 1), nrow=1) %>% select(V1, V2, V3)
+NC.7.2$Group <- c("Black")
+NC.7.2$State <- c("CA")
+
+NC.7.3 <- read.csv("PowerStats rcefsb.csv", header=FALSE, skip=(123 - 1), nrow=1) %>% select(V1, V2, V3)
+NC.7.3$Group <- c("Latino/a")
+NC.7.3$State <- c("CA")
+
+NC.7.4 <- read.csv("PowerStats rcefsb.csv", header=FALSE, skip=(126 - 1), nrow=1) %>% select(V1, V2, V3)
+NC.7.4$Group <- c("Pacific Islander")
+NC.7.4$State <- c("CA")
+
+NC.7.5 <- read.csv("PowerStats rcefsb.csv", header=FALSE, skip=(124 - 1), nrow=1) %>% select(V1, V2, V3)
+NC.7.5$Group <- c("Asian")
+NC.7.5$State <- c("CA")
+
+NC.7.6 <- read.csv("PowerStats rcefsb.csv", header=FALSE, skip=(121 - 1), nrow=1) %>% select(V1, V2, V3)
+NC.7.6$Group <- c("White")
+NC.7.6$State <- c("CA")
+
+NC.7 <- rbind(NC.7.1, NC.7.2, NC.7.3, NC.7.4, NC.7.5, NC.7.6)
+NC.7$`Measure` <- rep("Average cumulative undergraduate loan at graduation", nrow(NC.7))
+NC.7$`Figure` <- rep("Figure 5", nrow(NC.7))
+NC.7$`Type` <- rep("Dollar", nrow(NC.7))
+```
+
+```{r check.NPSAS.end}
+names(NC.1)[1:3] <- c("GroupNameCheck", "Estimate", "95% Confidence Interval")
+names(NC.2)[1:3] <- c("GroupNameCheck", "Estimate", "95% Confidence Interval")
+names(NC.3)[1:3] <- c("GroupNameCheck", "Estimate", "95% Confidence Interval")
+names(NC.4)[1:3] <- c("GroupNameCheck", "Estimate", "95% Confidence Interval")
+names(NC.5)[1:3] <- c("GroupNameCheck", "Estimate", "95% Confidence Interval")
+names(NC.6)[1:3] <- c("GroupNameCheck", "Estimate", "95% Confidence Interval")
+names(NC.7)[1:3] <- c("GroupNameCheck", "Estimate", "95% Confidence Interval")
+NC <- rbind(NC.1, NC.2, NC.3, NC.4, NC.5, NC.6, NC.7)
+
+setDT(NC)[, paste0("95% Confidence Interval", 1:3) := tstrsplit(`95% Confidence Interval`, " ")]
+
+NC <- NC %>% rename(`Conf. Int. Lower Bound` = `95% Confidence Interval1`)
+NC <- NC %>% rename(`Conf. Int. Upper Bound` = `95% Confidence Interval3`)
+NC <- NC %>% select(!(`95% Confidence Interval2`))
+
+NC$`Estimate` <- gsub(",", "", NC$`Estimate`)
+NC$`Conf. Int. Lower Bound` <- gsub(",", "", NC$`Conf. Int. Lower Bound`)
+NC$`Conf. Int. Upper Bound` <- gsub(",", "", NC$`Conf. Int. Upper Bound`)
+
+for(i in (1:nrow(NC))){
+  if(NC$Type[i]=="Percentage"){
+    NC$Estimate[i] <- percent((as.numeric(NC$Estimate[i]) / 100), accuracy=0.1)
+    NC$`Conf. Int. Lower Bound`[i] <- percent((as.numeric(NC$`Conf. Int. Lower Bound`[i]) / 100), accuracy=0.1)
+    NC$`Conf. Int. Upper Bound`[i] <- percent((as.numeric(NC$`Conf. Int. Upper Bound`[i]) / 100), accuracy=0.1)
+  }
+  if(NC$Type[i]=="Dollar"){
+    NC$Estimate[i] <- dollar(as.numeric(NC$Estimate[i]), accuracy=1)
+    NC$`Conf. Int. Lower Bound`[i] <- dollar(as.numeric(NC$`Conf. Int. Lower Bound`[i]), accuracy=1)
+    NC$`Conf. Int. Upper Bound`[i] <- dollar(as.numeric(NC$`Conf. Int. Upper Bound`[i]), accuracy=1)
+  }
+}
+NC.final <- NC %>% select(`Measure`, `Figure`, `Group`, `State`, `Conf. Int. Lower Bound`, `Estimate`, `Conf. Int. Upper Bound`)
+kable(NC.final, caption="Checking confidence intervals of NPSAS analyses") %>% kable_paper("hover", full_width = F) %>% scroll_box(height = "400px")
+```
+#### Data Source and Notes
+
+**Data source:** National Postsecondary Student Aid Study. Datalab interface available [here](https://nces.ed.gov/datalab/). See the data notes under the specified figures for more details about individual analyses summarized here. 
+
+**Timeframe reflected:** Figures in this graph reflect students enrolled in the 2015-16 academic year. 
+
+***
+### {-}
 
 <!-- The code chunks below are for anlayses that are not included in this report but are included in the accompanying policy report.  -->
 
-```{r ForPolicyReport1, eval=FALSE}
+```{r forPolicyReport1, eval=FALSE}
 # Chart on home ownership
 
 shed.HomeOwn$`Owns home` <- rep("No", nrow(shed.HomeOwn))
@@ -9855,7 +10410,7 @@ ggplot(data=tblFinManage0, mapping=aes(y=`Share living comfortably`, x=Race, fil
 
 ```
 
-```{r ForPolicyReport3, eval=FALSE}
+```{r forPolicyReport3, eval=FALSE}
 tblOwnDebtCC0 <- tblOwnDebtCC %>% filter(Race != "Other, Non-Hispanic")
 tblOwnDebtCC0$Race <- as.factor(tblOwnDebtCC0$Race)
 tblOwnDebtCC0$Race <- factor(tblOwnDebtCC0$Race, levels=c("All", "White, Non-Hispanic", "Hispanic", "Black, Non-Hispanic"))
@@ -10027,7 +10582,7 @@ effy2021 <- effy2021 %>% filter((SECTOR %in% c(4, 7))==FALSE) # Filtering out co
 agg1 <- aggregate(data=effy2021, cbind(EFYTOTLT,  EFYAIANT,  EFYASIAT,  EFYBKAAT,  EFYHISPT,  EFYNHPIT,  EFYWHITT,  EFY2MORT,  EFYUNKNT,  EFYNRALT) ~ STABBR, FUN=sum)
 agg1 <- agg1 %>% filter(STABBR=="CA")
 agg1 <- reshape2::melt(data=agg1, id.vars=c("STABBR"))
-agg1 <- agg1 %>% mutate(`Enrollment share` = percent(`value` / (agg1$value[1] - (agg1$value[9] + agg1$value[10])), accuracy=0.01))
+agg1 <- agg1 %>% mutate(`Enrollment share` = percent(`value` / (agg1$value[1] - (agg1$value[9] + agg1$value[10])), accuracy=0.1))
 agg1 <- agg1 %>% filter((variable %in% c("EFYTOTLT", "EFYNRALT", "EFYUNKNT"))==FALSE)
 
 pusa21 <- fread("psam_pusa_2021.csv", header=TRUE, select=c(
@@ -10057,7 +10612,7 @@ pusm2021$Group[(pusm2021$HISP==1) & (pusm2021$RAC1P %in% c(3, 4, 5))] <- "Native
 pusm2021$Group[(pusm2021$HISP==1) & (pusm2021$RAC1P %in% c(6, 7))] <- "AAPI"
 pusm2021$Group[(pusm2021$HISP==1) & (pusm2021$RAC1P %in% c(8, 9))] <- "Other / more than one race"
 agg2 <- aggregate(data=pusm2021, PWGTP ~ Group, FUN=sum)
-agg2 <- agg2 %>% mutate(`Population share` = percent(`PWGTP` / sum(agg2$PWGTP), accuracy=0.01))
+agg2 <- agg2 %>% mutate(`Population share` = percent(`PWGTP` / sum(agg2$PWGTP), accuracy=0.1))
 
 
 ```
@@ -10145,11 +10700,11 @@ nskip08 <- 5
 nskip07 <- 4
 nskip06 <- 5
 
-derivePLUStotals <- function(loansyear, loanfile, nskip, colnames) {
-  loans <- fread(loanfile, header=TRUE, skip=nskip)
+derivePLUStotals <- function(loansyear, loanfile, nskip, colnames, index) {
+  loans <- fread(loanfile, header=TRUE, skip=nskip) 
   names(loans) <- colnames
   
-  if(colnames==colnames1){
+  if(index==1){
     loans <- loans %>% select(
       `OPEID`,
       `State`, 
@@ -10159,6 +10714,7 @@ derivePLUStotals <- function(loansyear, loanfile, nskip, colnames) {
       `PARENT PLUS: $ of Disbursements`, 
       `GRAD PLUS: $ of Disbursements`
     )
+    loans$State[loans$OPEID==188100] <- "Ashford"
     
     loans$`SUBSIDIZED: $ of Disbursements` <- as.numeric(loans$`SUBSIDIZED: $ of Disbursements`)
     loans$`SUBSIDIZED: $ of Disbursements`[is.na(loans$`SUBSIDIZED: $ of Disbursements`)] <- 0
@@ -10179,7 +10735,7 @@ derivePLUStotals <- function(loansyear, loanfile, nskip, colnames) {
     loans <- loans %>% select(`OPEID`, `State`, `Total $ of Disbursements`, `PARENT PLUS: $ of Disbursements`, `GRAD PLUS: $ of Disbursements`)
   }
   
-  if(colnames==colnames2){
+  if(index==2){
     loans <- loans %>% select(
       `OPEID`,
       `State`, 
@@ -10190,6 +10746,8 @@ derivePLUStotals <- function(loansyear, loanfile, nskip, colnames) {
       `PARENT PLUS: $ of Disbursements`, 
       `GRAD PLUS: $ of Disbursements`
     )
+    loans$State[loans$OPEID==188100] <- "Ashford"
+    
     loans$`SUBSIDIZED - UNDERGRADUATE: $ of Disbursements` <- as.numeric(loans$`SUBSIDIZED - UNDERGRADUATE: $ of Disbursements`)
     loans$`SUBSIDIZED - UNDERGRADUATE: $ of Disbursements`[is.na(loans$`SUBSIDIZED - UNDERGRADUATE: $ of Disbursements`)] <- 0
     
@@ -10212,7 +10770,7 @@ derivePLUStotals <- function(loansyear, loanfile, nskip, colnames) {
     loans <- loans %>% select(`OPEID`, `State`, `Total $ of Disbursements`, `PARENT PLUS: $ of Disbursements`, `GRAD PLUS: $ of Disbursements`)
   }
   
-  if(colnames==colnames3){
+  if(index==3){
     loans <- loans %>% select(
       `OPEID`,
       `State`, 
@@ -10221,6 +10779,8 @@ derivePLUStotals <- function(loansyear, loanfile, nskip, colnames) {
       `PARENT PLUS: $ of Disbursements`, 
       `GRAD PLUS: $ of Disbursements`
     )
+    loans$State[loans$OPEID==188100] <- "Ashford"
+    
     loans$`SUBSIDIZED: $ of Disbursements` <- as.numeric(loans$`SUBSIDIZED: $ of Disbursements`)
     loans$`SUBSIDIZED: $ of Disbursements`[is.na(loans$`SUBSIDIZED: $ of Disbursements`)] <- 0
     
@@ -10240,31 +10800,111 @@ derivePLUStotals <- function(loansyear, loanfile, nskip, colnames) {
   loans$`State`[loans$`State` != "CA"] <- "Rest of U.S."
   results <- aggregate(data=loans, cbind(`Total $ of Disbursements`, `PARENT PLUS: $ of Disbursements`, `GRAD PLUS: $ of Disbursements`) ~ State, FUN=sum)
   
-  loans <- loans %>% mutate(`PARENT PLUS share of total` = `PARENT PLUS: $ of Disbursements` / `Total $ of Disbursements`)
-  loans <- loans %>% mutate(`GRAD PLUS share of total` = `GRAD PLUS: $ of Disbursements` / `Total $ of Disbursements`)
-  loans$Year <- rep(loansyear, nrow(loans))
+  results <- results %>% mutate(`PARENT PLUS share of total` = `PARENT PLUS: $ of Disbursements` / `Total $ of Disbursements`)
+  results <- results %>% mutate(`GRAD PLUS share of total` = `GRAD PLUS: $ of Disbursements` / `Total $ of Disbursements`)
+  results$Year <- rep(loansyear, nrow(results))
   return(results)
 }
 
 plusOverTime <- rbind(
-  derivePLUStotals(loansyear = 2006, loanfile = loanfile06, nskip = nskip06, colnames = colnames3),
-  derivePLUStotals(loansyear = 2007, loanfile = loanfile07, nskip = nskip07, colnames = colnames3),
-  derivePLUStotals(loansyear = 2008, loanfile = loanfile08, nskip = nskip08, colnames = colnames3), 
-  derivePLUStotals(loansyear = 2009, loanfile = loanfile09, nskip = nskip09, colnames = colnames3), 
-  derivePLUStotals(loansyear = 2010, loanfile = loanfile10, nskip = nskip10, colnames = colnames3), 
-  derivePLUStotals(loansyear = 2011, loanfile = loanfile11, nskip = nskip11, colnames = colnames2), 
-  derivePLUStotals(loansyear = 2012, loanfile = loanfile12, nskip = nskip12, colnames = colnames2), 
-  derivePLUStotals(loansyear = 2013, loanfile = loanfile13, nskip = nskip13, colnames = colnames1), 
-  derivePLUStotals(loansyear = 2014, loanfile = loanfile14, nskip = nskip14, colnames = colnames1), 
-  derivePLUStotals(loansyear = 2015, loanfile = loanfile15, nskip = nskip15, colnames = colnames1), 
-  derivePLUStotals(loansyear = 2016, loanfile = loanfile16, nskip = nskip16, colnames = colnames1), 
-  derivePLUStotals(loansyear = 2017, loanfile = loanfile17, nskip = nskip17, colnames = colnames1), 
-  derivePLUStotals(loansyear = 2018, loanfile = loanfile18, nskip = nskip18, colnames = colnames1), 
-  derivePLUStotals(loansyear = 2019, loanfile = loanfile19, nskip = nskip19, colnames = colnames1), 
-  derivePLUStotals(loansyear = 2020, loanfile = loanfile20, nskip = nskip20, colnames = colnames1), 
-  derivePLUStotals(loansyear = 2021, loanfile = loanfile21, nskip = nskip21, colnames = colnames1), 
-  derivePLUStotals(loansyear = 2022, loanfile = loanfile22, nskip = nskip22, colnames = colnames1)
+  derivePLUStotals(loansyear = 2006, loanfile = loanfile06, nskip = nskip06, colnames = colnames3, index=3),
+  derivePLUStotals(loansyear = 2007, loanfile = loanfile07, nskip = nskip07, colnames = colnames3, index=3),
+  derivePLUStotals(loansyear = 2008, loanfile = loanfile08, nskip = nskip08, colnames = colnames3, index=3), 
+  derivePLUStotals(loansyear = 2009, loanfile = loanfile09, nskip = nskip09, colnames = colnames3, index=3), 
+  derivePLUStotals(loansyear = 2010, loanfile = loanfile10, nskip = nskip10, colnames = colnames3, index=3), 
+  derivePLUStotals(loansyear = 2011, loanfile = loanfile11, nskip = nskip11, colnames = colnames2, index=2), 
+  derivePLUStotals(loansyear = 2012, loanfile = loanfile12, nskip = nskip12, colnames = colnames2, index=2), 
+  derivePLUStotals(loansyear = 2013, loanfile = loanfile13, nskip = nskip13, colnames = colnames1, index=1), 
+  derivePLUStotals(loansyear = 2014, loanfile = loanfile14, nskip = nskip14, colnames = colnames1, index=1), 
+  derivePLUStotals(loansyear = 2015, loanfile = loanfile15, nskip = nskip15, colnames = colnames1, index=1), 
+  derivePLUStotals(loansyear = 2016, loanfile = loanfile16, nskip = nskip16, colnames = colnames1, index=1), 
+  derivePLUStotals(loansyear = 2017, loanfile = loanfile17, nskip = nskip17, colnames = colnames1, index=1), 
+  derivePLUStotals(loansyear = 2018, loanfile = loanfile18, nskip = nskip18, colnames = colnames1, index=1), 
+  derivePLUStotals(loansyear = 2019, loanfile = loanfile19, nskip = nskip19, colnames = colnames1, index=1), 
+  derivePLUStotals(loansyear = 2020, loanfile = loanfile20, nskip = nskip20, colnames = colnames1, index=1), 
+  derivePLUStotals(loansyear = 2021, loanfile = loanfile21, nskip = nskip21, colnames = colnames1, index=1), 
+  derivePLUStotals(loansyear = 2022, loanfile = loanfile22, nskip = nskip22, colnames = colnames1, index=1)
 )
 
+plusOverTime <- plusOverTime %>% select(`State`, `Year`, `PARENT PLUS share of total`, `GRAD PLUS share of total`)
+names(plusOverTime) <- c("State", "Year", "Parent PLUS", "Grad PLUS")
+plusOverTime <- reshape2::melt(data=plusOverTime, id.vars=c("State", "Year"))
+plusOverTime$Loan <- rep(NA, nrow(plusOverTime))
+plusOverTime$Loan[(plusOverTime$variable=="Parent PLUS") & (plusOverTime$State=="CA")] <- "Parent PLUS share of loan dollars in California"
+plusOverTime$Loan[(plusOverTime$variable=="Grad PLUS") & (plusOverTime$State=="CA")] <- "Grad PLUS share of loan dollars in California"
+plusOverTime$Loan[(plusOverTime$variable=="Parent PLUS") & (plusOverTime$State=="Rest of U.S.")] <- "Parent PLUS share of loan dollars in rest of U.S."
+plusOverTime$Loan[(plusOverTime$variable=="Grad PLUS") & (plusOverTime$State=="Rest of U.S.")] <- "Grad PLUS share of loan dollars in rest of U.S."
+
+loancolors <- c(
+  "purple3",   "purple1",   "dodgerblue3",   "dodgerblue1"
+)
+
+ggplot(data=plusOverTime, mapping=aes(x=Year, y=value, color=Loan, linetype=State)) + geom_point(stat="identity") + geom_line(stat="identity") + scale_y_continuous(labels=percent_format(accuracy=1)) + scale_color_manual(values=loancolors) + theme(legend.title=element_blank(), text=element_text(family="Optima"), axis.text = element_text(size = 7)) + labs(x="Year", y="Share of all loan dollars")
 
 ```
+
+```{r forPolicyReport9, eval=FALSE}
+shed.DebtVsInc <- shed %>% filter(`TotalInc` %in% c("Refused", "") == FALSE) %>% filter(`OwnDebtTot3` %in% c("") == FALSE) %>% filter(is.na(OwnDebtTot3)==FALSE)
+shed.DebtVsInc$DebtThreshold <- rep(NA, nrow(shed.DebtVsInc))
+shed.DebtVsInc$IncThreshold <- rep(NA, nrow(shed.DebtVsInc))
+
+shed.DebtVsInc$DebtThreshold[shed.DebtVsInc$OwnDebtTot3=="Less than $5,000"] <- 5000
+shed.DebtVsInc$DebtThreshold[shed.DebtVsInc$OwnDebtTot3=="$5,000 to $9,999"] <- 15000
+shed.DebtVsInc$DebtThreshold[shed.DebtVsInc$OwnDebtTot3=="$10,000 to $14,999"] <- 15000
+shed.DebtVsInc$DebtThreshold[shed.DebtVsInc$OwnDebtTot3=="$15,000 to $19,999"] <- 25000
+shed.DebtVsInc$DebtThreshold[shed.DebtVsInc$OwnDebtTot3=="$20,000 to $24,999"] <- 25000
+shed.DebtVsInc$DebtThreshold[shed.DebtVsInc$OwnDebtTot3=="$25,000 to $29,999"] <- 40000
+shed.DebtVsInc$DebtThreshold[shed.DebtVsInc$OwnDebtTot3=="$30,000 to $39,999"] <- 40000
+shed.DebtVsInc$DebtThreshold[shed.DebtVsInc$OwnDebtTot3=="$40,000 to $49,999"] <- 50000
+shed.DebtVsInc$DebtThreshold[shed.DebtVsInc$OwnDebtTot3=="$50,000 to $74,999"] <- 75000
+shed.DebtVsInc$DebtThreshold[shed.DebtVsInc$OwnDebtTot3=="$75,000 to $99,999"] <- 100000
+shed.DebtVsInc$DebtThreshold[shed.DebtVsInc$OwnDebtTot3=="$100,000 or above"] <- 999999
+
+shed.DebtVsInc$IncThreshold[shed.DebtVsInc$TotalInc=="$0 to $4,999"] <- 5000
+shed.DebtVsInc$IncThreshold[shed.DebtVsInc$TotalInc=="$5,000 to $14,999"] <- 15000
+shed.DebtVsInc$IncThreshold[shed.DebtVsInc$TotalInc=="$15,000 to $24,999"] <- 25000
+shed.DebtVsInc$IncThreshold[shed.DebtVsInc$TotalInc=="$25,000 to $39,999"] <- 40000
+shed.DebtVsInc$IncThreshold[shed.DebtVsInc$TotalInc=="$40,000 to $49,999"] <- 50000
+shed.DebtVsInc$IncThreshold[shed.DebtVsInc$TotalInc=="$50,000 to $74,999"] <- 75000
+shed.DebtVsInc$IncThreshold[shed.DebtVsInc$TotalInc=="$75,000 to $99,999"] <- 100000
+shed.DebtVsInc$IncThreshold[shed.DebtVsInc$TotalInc=="$100,000 to $149,999"] <- 999999
+shed.DebtVsInc$IncThreshold[shed.DebtVsInc$TotalInc=="$150,000 to $199,999"] <- 999999
+shed.DebtVsInc$IncThreshold[shed.DebtVsInc$TotalInc=="$200,000 or higher"] <- 999999
+
+shed.DebtVsInc$DebtVsInc <- rep(NA, nrow(shed.DebtVsInc))
+shed.DebtVsInc$DebtVsInc[shed.DebtVsInc$DebtThreshold < shed.DebtVsInc$IncThreshold] <- "Debt is less than income"
+shed.DebtVsInc$DebtVsInc[shed.DebtVsInc$DebtThreshold == shed.DebtVsInc$IncThreshold] <- "Debt is roughly equal to income"
+shed.DebtVsInc$DebtVsInc[shed.DebtVsInc$DebtThreshold > shed.DebtVsInc$IncThreshold] <- "Debt is greater than income"
+
+tblDebtVsInc <- aggregate(data=shed.DebtVsInc, Weight ~ DebtVsInc + Race + State, FUN=sum)
+tblDebtVsInc2 <- aggregate(data=shed.DebtVsInc, Weight ~ DebtVsInc + State, FUN=sum)
+tblDebtVsInc2$Race <- rep("All", nrow(tblDebtVsInc2))
+tblDebtVsInc <- rbind(tblDebtVsInc, tblDebtVsInc2)
+tblDebtVsInc <- reshape2::dcast(data=tblDebtVsInc, Race + State ~ DebtVsInc, value.var="Weight")
+tblDebtVsInc$`Total weight` <- tblDebtVsInc$`Debt is less than income` + tblDebtVsInc$`Debt is roughly equal to income` + tblDebtVsInc$`Debt is greater than income`
+tblDebtVsInc$`Debt is less than income` <- tblDebtVsInc$`Debt is less than income` / tblDebtVsInc$`Total weight`
+tblDebtVsInc$`Debt is roughly equal to income` <- tblDebtVsInc$`Debt is roughly equal to income` / tblDebtVsInc$`Total weight`
+tblDebtVsInc$`Debt is greater than income` <- tblDebtVsInc$`Debt is greater than income` / tblDebtVsInc$`Total weight`
+tblDebtVsInc <- reshape2::melt(data=tblDebtVsInc, id.vars=c("Race", "State"), value.name="Share of borrowers") 
+tblDebtVsInc <- tblDebtVsInc %>% filter(variable != "Total weight")
+
+tblDebtVsInc$variable <- factor(tblDebtVsInc$variable, levels=c(
+  "Debt is greater than income",
+  "Debt is roughly equal to income", 
+  "Debt is less than income"
+))
+
+tblDebtVsInc$`For Tooltip` <- paste(
+  "State: ", tblDebtVsInc$State, '\n',
+  "Group: ", tblDebtVsInc$Race, '\n',
+  "Category: ", tblDebtVsInc$variable, '\n',
+  "Share: ", percent(tblDebtVsInc$`Share of borrowers`, accuracy=0.1),
+  sep=""
+)
+
+gFP9 <- ggplot(data=tblDebtVsInc, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + facet_grid(State ~ .) + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of student loan borrowers", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
+
+ggplotly(gFP9, width=800, height=350, tooltip="text")
+```
+
+
