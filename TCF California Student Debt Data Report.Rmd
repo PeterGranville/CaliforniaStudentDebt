@@ -1,5 +1,5 @@
 ---
-title: "What the Data Tell Us About Student Debt and Race in California"
+title: "What the Data Tell Us About Student Debt in California"
 author: "Peter Granville"
 date: 'April 2023'
 output:
@@ -841,6 +841,7 @@ Figure 1 below shows that the average Grad PLUS and Parent PLUS loans in Califor
 #######################################################
 
 scorecard1 <- fread("Most-Recent-Cohorts-Institution.csv", header=TRUE, select=c(
+# scorecard1 <- fread("Most-Recent-Cohorts-Institution-Apr2023.csv", header=TRUE, select=c(
   "OPEID",   # 8-digit OPE ID for institution
   "CONTROL", # Control of institution
   "CCBASIC"  # Carnegie Classification -- basic
@@ -6829,7 +6830,7 @@ c2yr$`Share who are BKAA or HISP` <- (c2yr$CBKAAT + c2yr$CHISPT) / c2yr$CTOTALT
 
 ```{r CSILoad}
 CSI <- fread("Most-Recent-Cohorts-Institution.csv", header=TRUE, select=c(
-  
+# CSI <- fread("Most-Recent-Cohorts-Institution-Apr2023.csv", header=TRUE, select=c(
   # Basic information about institutions: 
   "UNITID",       # Unit ID for institution
   "OPEID",        # 8-digit OPEID
@@ -6925,7 +6926,7 @@ Institutions.Based.At.Least.Partially.Outside.CA <- notInCA$OPEID6
 
 ```{r CSPLoad}
 CSP <- fread("Most-Recent-Cohorts-Field-of-Study.csv", header=TRUE, select=c(
-  
+# CSP <- fread("Most-Recent-Cohorts-Field-of-Study-Apr2023.csv", header=TRUE, select=c(
   # Basic information about institutions: 
   "UNITID",       # Unit ID for institution
   "OPEID6",       # 6-digit OPE ID for institution
@@ -7834,7 +7835,7 @@ In all three tabs, we see that loan borrowers from California public institution
 ### {.tabset}
 ```{r CSI.DBRR, warning=FALSE}
 CSI2 <- fread("Most-Recent-Cohorts-Institution.csv", header=TRUE, select=c(
-  
+# CSI2 <- fread("Most-Recent-Cohorts-Institution-Apr2023.csv", header=TRUE, select=c(
   # Basic information about institutions: 
   "UNITID",       # Unit ID for institution
   "OPEID",        # 8-digit OPEID
@@ -8409,7 +8410,7 @@ Figure 38 shows that, overall, California institutions have lower CDR rates than
 ### {.tabset}
 ```{r CDR, warning=FALSE}
 CSI3 <- fread("Most-Recent-Cohorts-Institution.csv", header=TRUE, select=c(
-  
+# CSI3 <- fread("Most-Recent-Cohorts-Institution-Apr2023.csv", header=TRUE, select=c(
   # Basic information about institutions: 
   "UNITID",       # Unit ID for institution
   "OPEID",        # 8-digit OPEID
@@ -10905,6 +10906,43 @@ tblDebtVsInc$`For Tooltip` <- paste(
 gFP9 <- ggplot(data=tblDebtVsInc, mapping=aes(y=Race, x=`Share of borrowers`, fill=variable, text=`For Tooltip`)) + geom_bar(stat="identity") + facet_grid(State ~ .) + scale_x_continuous(labels=scales::percent_format(accuracy=1)) + labs(fill="", x="Share of student loan borrowers", y="") + theme(text=element_text(family="Optima")) + scale_fill_brewer(palette="Spectral") 
 
 ggplotly(gFP9, width=800, height=350, tooltip="text")
+```
+
+```{r forPolicyReport10, eval=FALSE}
+tblOwnDebt$Race <- factor(tblOwnDebt$Race, levels=c("All", "White, Non-Hispanic", "Hispanic", "Black, Non-Hispanic", "Other, Non-Hispanic"))
+tblOwnDebt <- tblOwnDebt %>% filter(Race != "Other, Non-Hispanic")
+
+ggplot(data=tblOwnDebt, mapping=aes(x=Race, y=`Share with debt`, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.7) + scale_y_continuous(labels=scales::percent_format(accuracy=1)) + labs(x="Group", title="", y="Share with education debt") + theme(text=element_text(family="Optima")) + scale_fill_manual(values = stateCols2)
+```
+
+```{r forPolicyReport11, eval=FALSE}
+gFP11 <- ggplot(data=npsas2P, mapping=aes(x=Group, y=`Share Borrowing Loans`, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.6) + labs(title="", y="Share Borrowing Loans", x="Group") + scale_y_continuous(labels=scales::percent_format(accuracy=1)) + scale_fill_manual(values = stateCols2) + theme(legend.position="right", text=element_text(family="Optima"))
+
+ggplotly(gFP11, width=800, height=350, tooltip="text")
+```
+
+```{r forPolicyReport12, eval=FALSE}
+gFP12 <- ggplot(data=npsas4P, mapping=aes(x=Group, y=`Share with Cumulative Loans`, fill=State, text=`For Tooltip`)) + geom_bar(stat="identity", position="dodge", width=0.6) + scale_y_continuous(label=scales::percent_format(accuracy=1)) + labs(x="Group", title="", y="Share with Cumulative Loans") + scale_fill_manual(values = stateCols2) + theme(legend.position="right", text=element_text(family="Optima"))
+
+ggplotly(gFP12, width=800, height=350, tooltip="text")
+```
+
+```{r forPolicyReport13, eval=FALSE}
+CSI4 <- fread("Most-Recent-Cohorts-Institution.csv", header=TRUE, select=c(
+  "OPEID6",                     # Six-digit OPEID
+  "INSTNM",                     # Name
+  "STABBR",                     # State abbreviation
+  "ACCREDAGENCY",               # Accreditor for institution
+  "CONTROL",                    # Control of institution
+  "MAIN",                       # Main campus
+  "PLUS_DEBT_INST_MD",          # Median PLUS loan debt disbursed at this institution
+  "PPLUS_PCT_LOW_POOLED_SUPP",  # Lower bound of estimated percentage range of students whose parents took out a PLUS loan, pooled in rolling averages and suppressed for small n size
+  "PPLUS_PCT_HIGH_POOLED_SUPP"  # Upper bound of estimated percentage range of students whose parents took out a PLUS loan, pooled in rolling averages and suppressed for small n size
+)) 
+CSI4 <- CSI4 %>% arrange(desc(`MAIN`)) %>% filter(duplicated(`OPEID6`)==FALSE) %>% filter(`STABBR`=="CA")
+CSI4 <- CSI4 %>% mutate(`PPLUS_PCT_LOW_POOLED_SUPP` = as.numeric(`PPLUS_PCT_LOW_POOLED_SUPP`)) %>% mutate(`PPLUS_PCT_HIGH_POOLED_SUPP` = as.numeric(`PPLUS_PCT_HIGH_POOLED_SUPP`)) %>% mutate(`PLUS_DEBT_INST_MD` = as.numeric(`PLUS_DEBT_INST_MD`))
+
+CSI4 <- CSI4 %>% filter((is.na(`PPLUS_PCT_LOW_POOLED_SUPP`)==FALSE) & (is.na(`PPLUS_PCT_HIGH_POOLED_SUPP`)==FALSE)) %>% filter(is.na(`PLUS_DEBT_INST_MD`)==FALSE)
 ```
 
 
